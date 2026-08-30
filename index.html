@@ -7,13 +7,13 @@
 <style>
   :root {
     --bg:#fbfbfa; --panel:#fff; --fg:#18181b; --dim:#71717a; --faint:#a1a1aa;
-    --line:#e4e4e7; --line2:#d4d4d8; --ok:#059669;
+    --line:#e4e4e7; --line2:#d4d4d8; --ok:#059669; --flow:#2563eb;
     --mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, "D2Coding", monospace;
   }
   @media (prefers-color-scheme: dark) {
     :root {
       --bg:#0f0f11; --panel:#17171a; --fg:#e8e8ea; --dim:#a1a1aa; --faint:#71717a;
-      --line:#27272a; --line2:#3f3f46; --ok:#34d399;
+      --line:#27272a; --line2:#3f3f46; --ok:#34d399; --flow:#60a5fa;
     }
   }
   * { box-sizing:border-box; }
@@ -41,17 +41,26 @@
   h2 { font-size:22px; margin:0 0 8px; letter-spacing:-0.02em; font-weight:640; }
   .lede { color:var(--dim); margin:0 0 28px; max-width:64ch; }
 
-  .stack { display:flex; flex-direction:column-reverse; gap:3px; margin:0; }
-  .layer {
-    display:grid; grid-template-columns:132px 1fr; gap:16px; align-items:baseline;
-    padding:11px 16px; background:var(--panel);
-    border:1px solid var(--line); border-radius:7px;
-  }
-  .layer:hover { border-color:var(--line2); }
-  .layer .name { font:600 12.5px/1.5 var(--mono); color:var(--fg); }
-  .layer .what { font-size:13.5px; color:var(--dim); }
-  .layer .what b { color:var(--fg); font-weight:600; }
   .stack-note { font-size:13px; color:var(--faint); margin:14px 0 0; }
+
+  /* 다이어그램 */
+  figure { margin:0; }
+  figure svg { display:block; width:100%; max-width:100%; height:auto; }
+  figcaption { font-size:13px; color:var(--dim); margin-top:16px; max-width:72ch; line-height:1.75; }
+  figcaption b { color:var(--fg); font-weight:600; }
+  code { font-family:var(--mono); font-size:12px; background:var(--line);
+         padding:1.5px 5px; border-radius:4px; color:var(--fg); }
+
+  .dg-zone   { fill:none; stroke:var(--line2); stroke-dasharray:4 4; }
+  .dg-zone-l { fill:var(--faint); font:600 10.5px/1 var(--mono); letter-spacing:0.1em; }
+  .dg-box    { fill:var(--panel); stroke:var(--line2); }
+  .dg-t      { fill:var(--fg); font:600 12.5px/1 var(--mono); }
+  .dg-s      { fill:var(--dim); font:11px/1 var(--mono); }
+  .dg-flow   { stroke:var(--flow); stroke-width:1.6; fill:none; }
+  .dg-fl     { fill:var(--flow); font:10.5px/1 var(--mono); }
+  .dg-link   { stroke:var(--line2); stroke-width:1.2; fill:none; }
+  .dg-head   { fill:var(--flow); }
+  .dg-mine   { fill:var(--flow); }
 
   .facts {
     display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
@@ -142,25 +151,97 @@
     올린 서비스는 티켓팅 대기열이고, 그 위에서 부하를 걸어 운영 스펙을 실측으로 정했습니다.
   </p>
 
-  <div class="stack">
-    <div class="layer"><span class="name">노트북 · SSD</span>
-      <span class="what">외장 USB SSD에 <b>Proxmox VE</b> — 내장 Windows와 부팅 디스크를 분리</span></div>
-    <div class="layer"><span class="name">가상화</span>
-      <span class="what">VM 4대 — k3s 노드 3 + <b>OPNsense</b>(방화벽 · 게이트웨이 · VPN 종단)</span></div>
-    <div class="layer"><span class="name">클러스터</span>
-      <span class="what">k3s 3-server <b>embedded etcd 쿼럼 3</b> · 번들(flannel · ServiceLB · Traefik) 전부 교체</span></div>
-    <div class="layer"><span class="name">플랫폼</span>
-      <span class="what"><b>Calico · MetalLB · Traefik</b> · 정적 PV 10장 · SealedSecret 17종</span></div>
-    <div class="layer"><span class="name">GitOps · CI/CD</span>
-      <span class="what">자체 GitLab → 5단 파이프라인 → 불변 태그 → <b>ArgoCD</b> · 태그 write-back</span></div>
-    <div class="layer"><span class="name">서비스</span>
-      <span class="what">queue(Go) · booking(Java) · frontend — <b>Kafka로만 연결</b>해 장애 격리</span></div>
-    <div class="layer"><span class="name">관측</span>
-      <span class="what"><b>LGTM 4축</b> + Alloy · 대시보드 7장 · 지표 ↔ 트레이스 ↔ 로그 상관</span></div>
-    <div class="layer"><span class="name">공개</span>
-      <span class="what">격리망 이전 · NetworkPolicy 24건 · <b>TLS · CDN 엣지</b> — 인터넷 공개</span></div>
-  </div>
-  <p class="stack-note">아래에서 위로 쌓은 순서입니다. 각 층은 그 아래 층이 서야 성립합니다.</p>
+  <figure>
+  <svg viewBox="0 0 720 580" role="img"
+       aria-label="방문자 요청이 인터넷에서 앱까지 내려가는 경로. Cloudflare 엣지, 집 공유기, OPNsense 방화벽, Traefik 순으로 지나며 그 아래에 queue·booking·frontend와 Redis·Kafka·MySQL이 있다. 공유기 아래 전부가 노트북 한 대 위의 가상 머신이다.">
+    <defs>
+      <marker id="ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+        <polygon points="0,0 8,4 0,8" class="dg-head"/>
+      </marker>
+    </defs>
+
+    <!-- 영역 -->
+    <text x="14" y="16" class="dg-zone-l">INTERNET</text>
+    <rect x="8" y="152" width="704" height="416" rx="10" class="dg-zone"/>
+    <text x="20" y="172" class="dg-zone-l">노트북 한 대 · PROXMOX VE</text>
+    <rect x="24" y="316" width="672" height="240" rx="8" class="dg-zone"/>
+    <text x="36" y="334" class="dg-zone-l">VMBR1 — 물리 NIC 없음</text>
+
+    <!-- 방문자 -->
+    <rect x="285" y="26" width="150" height="32" rx="6" class="dg-box"/>
+    <text x="360" y="47" text-anchor="middle" class="dg-t">방문자</text>
+    <line x1="360" y1="58" x2="360" y2="82" class="dg-flow" marker-end="url(#ah)"/>
+    <text x="368" y="74" class="dg-fl">https</text>
+
+    <!-- Cloudflare -->
+    <rect x="245" y="88" width="230" height="40" rx="6" class="dg-box"/>
+    <text x="360" y="105" text-anchor="middle" class="dg-t">Cloudflare 엣지</text>
+    <text x="360" y="120" text-anchor="middle" class="dg-s">TLS 종단 · 정적 캐시</text>
+    <line x1="360" y1="128" x2="360" y2="188" class="dg-flow" marker-end="url(#ah)"/>
+    <text x="368" y="152" class="dg-fl">443/TCP</text>
+
+    <!-- 공유기 -->
+    <rect x="245" y="194" width="230" height="36" rx="6" class="dg-box"/>
+    <text x="360" y="211" text-anchor="middle" class="dg-t">공유기</text>
+    <text x="360" y="224" text-anchor="middle" class="dg-s">포트포워딩 2개 — 443 · 51820</text>
+    <line x1="360" y1="230" x2="360" y2="252" class="dg-flow" marker-end="url(#ah)"/>
+
+    <!-- OPNsense -->
+    <rect x="200" y="258" width="320" height="44" rx="6" class="dg-box"/>
+    <text x="360" y="277" text-anchor="middle" class="dg-t">OPNsense</text>
+    <text x="360" y="292" text-anchor="middle" class="dg-s">출발지가 엣지 대역일 때만 통과 · vmbr0 ↔ vmbr1</text>
+    <line x1="360" y1="302" x2="360" y2="352" class="dg-flow" marker-end="url(#ah)"/>
+    <text x="368" y="330" class="dg-fl">DNAT → 10.0.0.240</text>
+
+    <!-- Traefik -->
+    <rect x="245" y="358" width="230" height="36" rx="6" class="dg-box"/>
+    <text x="360" y="375" text-anchor="middle" class="dg-t">MetalLB → Traefik</text>
+    <text x="360" y="388" text-anchor="middle" class="dg-s">경로별 라우팅</text>
+
+    <!-- 분기 -->
+    <path d="M360 394 V 408 H 130 V 424" class="dg-flow" marker-end="url(#ah)"/>
+    <path d="M360 394 V 424" class="dg-flow" marker-end="url(#ah)"/>
+    <path d="M360 394 V 408 H 590 V 424" class="dg-flow" marker-end="url(#ah)"/>
+    <text x="120" y="405" text-anchor="end" class="dg-fl">/api/admission</text>
+    <text x="600" y="405" class="dg-fl">/</text>
+
+    <!-- 앱 -->
+    <rect x="60" y="430" width="140" height="38" rx="6" class="dg-box"/>
+    <text x="130" y="448" text-anchor="middle" class="dg-t">queue</text>
+    <text x="130" y="461" text-anchor="middle" class="dg-s">Go · 정원 · 순번</text>
+
+    <rect x="290" y="430" width="140" height="38" rx="6" class="dg-box"/>
+    <text x="360" y="448" text-anchor="middle" class="dg-t">booking</text>
+    <text x="360" y="461" text-anchor="middle" class="dg-s">Java · 좌석 · 확정</text>
+
+    <rect x="520" y="430" width="140" height="38" rx="6" class="dg-box"/>
+    <text x="590" y="448" text-anchor="middle" class="dg-t">frontend</text>
+    <text x="590" y="461" text-anchor="middle" class="dg-s">nginx · 정적</text>
+
+    <!-- Kafka -->
+    <rect x="185" y="486" width="120" height="30" rx="6" class="dg-box"/>
+    <text x="245" y="505" text-anchor="middle" class="dg-t">Kafka</text>
+    <line x1="185" y1="501" x2="140" y2="501" class="dg-link"/>
+    <line x1="140" y1="501" x2="140" y2="470" class="dg-link"/>
+    <line x1="305" y1="501" x2="350" y2="501" class="dg-link"/>
+    <line x1="350" y1="501" x2="350" y2="470" class="dg-link"/>
+    <text x="245" y="532" text-anchor="middle" class="dg-s">직접 호출 없음 — 한쪽이 죽어도 전파되지 않는다</text>
+
+    <!-- 저장소 -->
+    <rect x="60" y="530" width="90" height="28" rx="6" class="dg-box"/>
+    <text x="105" y="548" text-anchor="middle" class="dg-t">Redis</text>
+    <line x1="105" y1="530" x2="105" y2="470" class="dg-link"/>
+
+    <rect x="400" y="530" width="90" height="28" rx="6" class="dg-box"/>
+    <text x="445" y="548" text-anchor="middle" class="dg-t">MySQL</text>
+    <line x1="420" y1="530" x2="420" y2="470" class="dg-link"/>
+  </svg>
+  <figcaption>
+    방문자의 요청이 지나는 길입니다. <b>이 경로의 모든 홉을 직접 세웠습니다</b> —
+    엣지 설정, 공유기 포워딩, 방화벽 규칙, 격리망, 로드밸런서, Ingress, 그 뒤의 앱과 저장소까지.
+    <code>vmbr1</code> 에는 물리 NIC 이 없어서, 그 안에 있는 것은 OPNsense 를 거치지 않으면 밖으로 나가지 못합니다.
+  </figcaption>
+  </figure>
 
   <div class="demo">
     <span class="live">● LIVE</span>
@@ -178,7 +259,7 @@
 
 <section>
   <p class="kicker">무엇을 했나</p>
-  <h2>세우고 · 재고 · 고치고 · 손을 뗐습니다</h2>
+  <h2>세우고 · 재고 · 고치고 · 코드로 옮겼습니다</h2>
   <div class="cards">
 
     <div class="card">
@@ -215,7 +296,7 @@
     </div>
 
     <div class="card">
-      <h3>손을 뗐습니다</h3>
+      <h3>운영을 코드로 옮겼습니다</h3>
       <p class="sub">GitOps · 자동화</p>
       <ul>
         <li>push → 5단 게이트 → 불변 태그 → <b>태그 write-back</b> → 롤아웃. 사람 손 0</li>
