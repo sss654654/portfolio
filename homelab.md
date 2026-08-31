@@ -189,40 +189,40 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
   <a class="hlc-card" href="/homelab/cluster/">
     <span class="hlc-shot" data-label="Proxmox · VM 3대"></span>
     <span class="hlc-tag">클러스터</span>
-    <h3>기본으로 주는 것을 끄고 직접 골랐다</h3>
-    <p>k3s가 얹어 주는 네트워크·로드밸런서·인그레스를 전부 끄고 직접 골랐습니다. 디스크도 워크로드마다 따로 잘라 붙였습니다.</p>
+    <span class="hlc-title">기본으로 주는 것을 끄고 직접 골랐다</span>
+    <span class="hlc-desc">k3s가 얹어 주는 네트워크·로드밸런서·인그레스를 전부 끄고 직접 골랐습니다. 디스크도 워크로드마다 따로 잘라 붙였습니다.</span>
     <span class="hlc-num">VM 3대 · etcd 3멤버 · 정적 PV 10장</span>
   </a>
 
   <a class="hlc-card" href="/homelab/deploy/">
     <span class="hlc-shot" data-label="ArgoCD · 자동 배포"></span>
     <span class="hlc-tag">배포</span>
-    <h3>미는 대신 당겨가게 했다</h3>
-    <p>배포 도구에 클러스터 자격을 쥐여 주는 대신, 클러스터가 저장소를 당겨가게 했습니다. 저장소의 상태가 곧 클러스터의 상태입니다.</p>
+    <span class="hlc-title">미는 대신 당겨가게 했다</span>
+    <span class="hlc-desc">배포 도구에 클러스터 자격을 쥐여 주는 대신, 클러스터가 저장소를 당겨가게 했습니다. 저장소의 상태가 곧 클러스터의 상태입니다.</span>
     <span class="hlc-num">push → 반영 3초 · 파이프라인 6분 6초 → 46초</span>
   </a>
 
   <a class="hlc-card" href="/homelab/observability/">
     <span class="hlc-shot" data-label="Grafana · LGTM"></span>
     <span class="hlc-tag">관측</span>
-    <h3>재기 전에 볼 눈부터 만들었다</h3>
-    <p>부하를 걸기 전에 지표·로그·트레이스를 먼저 세웠습니다. 볼 눈이 없으면 "느렸다"까지만 알고 어디서 느렸는지는 못 잡습니다.</p>
+    <span class="hlc-title">재기 전에 볼 눈부터 만들었다</span>
+    <span class="hlc-desc">부하를 걸기 전에 지표·로그·트레이스를 먼저 세웠습니다. 볼 눈이 없으면 "느렸다"까지만 알고 어디서 느렸는지는 못 잡습니다.</span>
     <span class="hlc-num">중복 수집 제거 후 지표 거절 0건</span>
   </a>
 
   <a class="hlc-card" href="/homelab/capacity/">
     <span class="hlc-shot" data-label="부하 판 · 트레이스"></span>
     <span class="hlc-tag">서비스와 용량</span>
-    <h3>정원은 정한 게 아니라 잰 값이다</h3>
-    <p>동시 입장 정원을 몇으로 둘지가 이 서비스의 전부인데, 처음엔 근거 없이 적어 둔 숫자였습니다. 판을 거듭하며 막히는 자리를 따라갔습니다.</p>
+    <span class="hlc-title">정원은 정한 게 아니라 잰 값이다</span>
+    <span class="hlc-desc">동시 입장 정원을 몇으로 둘지가 이 서비스의 전부인데, 처음엔 근거 없이 적어 둔 숫자였습니다. 판을 거듭하며 막히는 자리를 따라갔습니다.</span>
     <span class="hlc-num">판 34회 · 동시 입장 1,000명 · 76만 요청에 5xx 0건</span>
   </a>
 
   <a class="hlc-card" href="/homelab/security/">
     <span class="hlc-shot" data-label="OPNsense · 방화벽 규칙"></span>
     <span class="hlc-tag">격리와 공개</span>
-    <h3>열되, 열린 자리를 세어 두었다</h3>
-    <p>공개하기 전에 클러스터를 방화벽 뒤 격리망으로 옮겼습니다. 관리 통로는 VPN 하나만 남기고, 안쪽도 통로를 지정해 잠갔습니다.</p>
+    <span class="hlc-title">열되, 열린 자리를 세어 두었다</span>
+    <span class="hlc-desc">공개하기 전에 클러스터를 방화벽 뒤 격리망으로 옮겼습니다. 관리 통로는 VPN 하나만 남기고, 안쪽도 통로를 지정해 잠갔습니다.</span>
     <span class="hlc-num">인터넷에 열린 포트 2개 · 파드 간 통로 16줄</span>
   </a>
 

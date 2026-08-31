@@ -233,6 +233,8 @@ ul.timeline > li:has(> small)::before {
 }
 .hlc-card:hover .hlc-shot { border-color: #e03131; }
 
+/* 카드 안은 전부 span 이다 — compress_html 이 </p> 를 지우고 테마가 heading 에
+   앵커를 넣는 탓에, 블록 요소나 h3 를 넣으면 <a> 가 파서에서 쪼개진다 */
 .hlc-tag {
   display: block;
   font-size: .72rem;
@@ -240,14 +242,18 @@ ul.timeline > li:has(> small)::before {
   letter-spacing: .06em;
   color: var(--gray);
 }
-.hlc-card h3 {
+.hlc-title {
+  display: block;
   margin: .3rem 0 .45rem;
   font-size: 1.04rem;
+  font-weight: 700;
   line-height: 1.45;
+  color: var(--body-color);
   text-wrap: balance;
 }
-.hlc-card:hover h3 { text-decoration: underline; text-underline-offset: 3px; }
-.hlc-card p {
+.hlc-card:hover .hlc-title { text-decoration: underline; text-underline-offset: 3px; }
+.hlc-desc {
+  display: block;
   margin: 0 0 .6rem;
   font-size: .86rem;
   line-height: 1.7;
