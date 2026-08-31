@@ -88,11 +88,10 @@ theme: jekyll-theme-hydejack
 # ----------------------------------------------------------------------------------------
  
 # Sidebar image and theme color of the site.
-# 도서관(트리니티 서가) 톤 — Unsplash, 라이선스상 출처 표기 불요.
-# overlay: true 는 글자 가독성용 어두운 그라데이션을 사진 위에 깐다.
+# 배경 사진은 선택 대기 — 그때까지 단색.
 accent_image:
-  background:          url('/assets/img/sidebar-bg.jpg') center/cover
-  overlay:             true
+  background:          rgb(37,48,66)
+  overlay:             false
 accent_color:          rgb(133,94,44)
 
 # This is used for the `theme-color` meta tag,
@@ -112,11 +111,12 @@ theme_color:           rgb(38,42,36)
 
 # The text font. Expects a string that is a valid CSS font-family value.
 # To change font-weight, see _sass/variables.scss
-# font:                  Noto Sans, Helvetica, Arial, sans-serif
+# Pretendard 는 _includes/my-head.html 에서 로드한다.
+font:                  "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif"
 
 # The font used for headings. Expects a string that is a valid CSS font-family value.
 # To change font-weight, see _sass/variables.scss
-# font_heading:          Roboto Slab, Helvetica, Arial, sans-serif
+font_heading:          "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif"
 
 # The font used for code blocks. Expects a string that is a valid CSS font-family value. 
 # Defaults to the [System Monospace Font Stack](https://qwtel.com/posts/software/the-monospaced-system-ui-css-font-stack/).
