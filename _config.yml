@@ -88,17 +88,16 @@ theme: jekyll-theme-hydejack
 # ----------------------------------------------------------------------------------------
  
 # Sidebar image and theme color of the site.
-# 책·커피 파스텔 톤(Unsplash, 출처 표기 불요) — 밝은 배경이라 사이드바 글자는
-# 아래 defaults 의 invert_sidebar 로 검정으로 뒤집는다.
+# 따뜻한 차콜 단색 — 배경은 조용하게, 색은 아바타가 담당한다.
 accent_image:
-  background:          url('/assets/img/sidebar-bg.jpg') center/cover
+  background:          rgb(42,38,40)
   overlay:             false
 accent_color:          rgb(133,94,44)
 
 # This is used for the `theme-color` meta tag,
 # which changes the background color of the browser UI in certain browsers.
 # Defaults to `accent_color`.
-theme_color:           rgb(226,213,214)
+theme_color:           rgb(42,38,40)
 
 # IMPORTANT:
 # As of Hydejack 9.2, Google Fonts are turned off by default due to a stronger focus on privacy.
@@ -124,12 +123,6 @@ font_heading:          "'Pretendard Variable', Pretendard, -apple-system, BlinkM
 # font_code:             Fira Code, Menlo, Monaco, Consolas, monospace;
 
 defaults:
-  # 밝은 배경 위 사이드바 글자를 검정으로 (전 페이지)
-  - scope:
-      path:            ""
-    values:
-      invert_sidebar:  true
-
   # Don't include documents in assets in the sitemap
   - scope:
       path:            assets/
