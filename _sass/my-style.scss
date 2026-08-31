@@ -196,7 +196,72 @@ ul.timeline > li:has(> small)::before {
   .hla-dot { display: none; }
 }
 
-/* 다섯 갈래 — 전폭 행. 왼쪽은 스캔용(태그·제목·실측), 오른쪽은 읽기용(이유·근거) */
+/* 다섯 갈래 — 썸네일 카드. 클릭하면 하위 페이지로 */
+.hlc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem 1.4rem;
+  margin: 1.4rem 0 0;
+}
+.hlc-card {
+  display: block;
+  color: inherit !important;
+  text-decoration: none !important;
+  border-bottom: none !important;
+}
+.hlc-card::after { content: none !important; }
+
+/* 썸네일 — 이미지가 들어오기 전에는 라벨이 있는 자리표시 블록 */
+.hlc-shot {
+  display: flex;
+  align-items: flex-end;
+  aspect-ratio: 16 / 9;
+  margin-bottom: .85rem;
+  padding: .7rem .85rem;
+  border: 1px solid var(--border-color);
+  border-radius: .6rem;
+  background:
+    linear-gradient(135deg, rgba(224, 49, 49, .05), transparent 60%),
+    repeating-linear-gradient(135deg, var(--gray-bg) 0 9px, transparent 9px 18px);
+  transition: border-color .15s;
+}
+.hlc-shot::after {
+  content: attr(data-label);
+  font-size: .74rem;
+  color: var(--gray);
+  letter-spacing: .02em;
+}
+.hlc-card:hover .hlc-shot { border-color: #e03131; }
+
+.hlc-tag {
+  display: block;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  color: var(--gray);
+}
+.hlc-card h3 {
+  margin: .3rem 0 .45rem;
+  font-size: 1.04rem;
+  line-height: 1.45;
+  text-wrap: balance;
+}
+.hlc-card:hover h3 { text-decoration: underline; text-underline-offset: 3px; }
+.hlc-card p {
+  margin: 0 0 .6rem;
+  font-size: .86rem;
+  line-height: 1.7;
+  color: var(--gray-text);
+}
+.hlc-num {
+  display: block;
+  font-size: .78rem;
+  font-weight: 700;
+  color: #e03131;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 하위 페이지 — 전폭 행. 왼쪽은 스캔용(태그·제목·실측), 오른쪽은 읽기용(이유·근거) */
 .hl-list { margin: 1.1rem 0 0; }
 .hl-item {
   display: grid;
@@ -300,3 +365,20 @@ ul.timeline > li:has(> small)::before {
 }
 
 .hl-note { font-size: .78rem; color: var(--gray); margin: .3rem 0 0; }
+
+/* 하위 페이지 — 상단 되돌아가기, 실측 가로 배치, 하단 블로그 안내 */
+.hl-back { margin: 0 0 .9rem; font-size: .82rem; }
+.hl-back a { color: var(--gray) !important; }
+.hl-stats-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 2.2rem;
+  margin: 1.1rem 0 1.6rem;
+  padding: .9rem 1.1rem;
+  border: 1px solid var(--border-color);
+  border-radius: .6rem;
+  background: var(--gray-bg);
+}
+.hl-stats-row > div { display: flex; align-items: baseline; gap: .5rem; margin: 0; }
+.hl-stats-row dt { flex: none; }
+.hl-more { font-size: .84rem; color: var(--gray); }
