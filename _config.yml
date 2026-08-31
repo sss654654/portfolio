@@ -88,16 +88,17 @@ theme: jekyll-theme-hydejack
 # ----------------------------------------------------------------------------------------
  
 # Sidebar image and theme color of the site.
-# 배경 이미지 대신 단색 — 차분한 진회청색
+# 도서관(트리니티 서가) 톤 — Unsplash, 라이선스상 출처 표기 불요.
+# overlay: true 는 글자 가독성용 어두운 그라데이션을 사진 위에 깐다.
 accent_image:
-  background:          rgb(37,48,66)
-  overlay:             false
-accent_color:          rgb(46,116,151)
+  background:          url('/assets/img/sidebar-bg.jpg') center/cover
+  overlay:             true
+accent_color:          rgb(133,94,44)
 
 # This is used for the `theme-color` meta tag,
 # which changes the background color of the browser UI in certain browsers.
 # Defaults to `accent_color`.
-theme_color:           rgb(37,48,66)
+theme_color:           rgb(38,42,36)
 
 # IMPORTANT:
 # As of Hydejack 9.2, Google Fonts are turned off by default due to a stronger focus on privacy.
