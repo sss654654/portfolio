@@ -31,8 +31,10 @@ sitemap: true
 </div>
 
 <!-- 가동 상태 점 — 데모의 stats 엔드포인트(읽기 전용 GET)를 한 번 조회한다.
-     응답을 받았을 때만 점을 띄운다. 응답이 없으면(꺼짐·타임아웃·차단) 아무것도 표시하지 않는다 —
-     확인하지 못한 상태를 단정해서 보여주지 않기 위해서다.
+     판정: 응답이 오면(상태코드 무관) 가동 중 — CORS 헤더가 실린 응답을 받았다는 것 자체가
+     origin이 살아 있다는 증거다. 꺼져 있으면 CF 에러 페이지에 그 헤더가 없어 fetch가
+     실패하고, 그때는 아무것도 표시하지 않는다(확인 못 한 상태를 단정하지 않기 위해).
+     movieId는 2026-08-31 실측값 — 틀려도 404 응답이 오므로 판정은 안 깨진다.
      교차 출처라 cgv-infra의 portfolio-status-cors 라우터가 이 origin에 CORS를 열어야 동작한다. -->
 <script>
 (function () {
@@ -40,13 +42,12 @@ sitemap: true
   if (!box || !window.fetch || !window.AbortController) return;
   var ctrl = new AbortController();
   var timer = setTimeout(function () { ctrl.abort(); }, 6000);
-  fetch('https://ticket.subinhong.dev/api/admission/stats?movieId=1',
+  fetch('https://ticket.subinhong.dev/api/admission/stats?movieId=kbo-allstar-2025',
         { cache: 'no-store', signal: ctrl.signal })
     .then(function (r) {
       clearTimeout(timer);
-      box.className = r.ok ? 'up' : 'down';
-      box.getElementsByTagName('span')[0].textContent =
-        r.ok ? '지금 돌아가고 있습니다' : '지금은 꺼져 있습니다';
+      box.className = 'up';
+      box.getElementsByTagName('span')[0].textContent = '지금 돌아가고 있습니다';
       box.hidden = false;
     })
     .catch(function () { clearTimeout(timer); });
