@@ -9,32 +9,37 @@ sitemap: true
 
 ## 홈랩 — 지금 돌아가고 있는 것
 
-노트북 한 대 위 쿠버네티스 클러스터에서 돌고 있는 영화 예매 대기열 서비스입니다.
+만든 척이 아니라 **지금 인터넷에 떠 있는 서비스**의 실제 화면입니다.
+노트북 한 대 위 쿠버네티스 클러스터가 예매 오픈의 폭주를 대기열로 받아냅니다 —
+오픈 → 러시 100명 → 대기 순번 → 예매 완료까지.
 
-<!-- 시연 영상 — 소리 없는 자동 재생 루프. 브라우저 창 목업으로 감싸 "실서비스 화면"임이
-     형태로 읽히게 한다. 클릭하면 실서비스로. 심야(서비스 꺼짐)에도 이 영상이 데모를 대신한다.
-     markdown="0": kramdown이 여러 줄 HTML 안을 건드려 </a>가 새는 것 방지 -->
+<!-- 시연 영상 — 무음 자동 재생 루프, 브라우저 창 목업 프레임. 클릭하면 실서비스로.
+     심야(서비스 꺼짐)에도 이 영상이 데모를 대신한다. markdown="0" = kramdown 개입 차단 -->
 <div class="demo-frame" markdown="0">
-  <a class="demo-chrome" href="https://ticket.subinhong.dev" target="_blank" rel="noopener" aria-label="실서비스로 이동">
+  <div class="demo-chrome">
     <span class="demo-dots"><i></i><i></i><i></i></span>
     <span class="demo-url">ticket.subinhong.dev</span>
-  </a>
-  <a class="demo-shot" href="https://ticket.subinhong.dev" target="_blank" rel="noopener">
+  </div>
+  <a class="demo-shot" href="https://ticket.subinhong.dev" target="_blank" rel="noopener" aria-label="실서비스로 이동">
     <video autoplay loop muted playsinline preload="metadata" poster="/assets/img/demo-poster.jpg">
       <source src="/assets/video/demo.mp4" type="video/mp4">
     </video>
   </a>
-  <div class="demo-cap">
-    <span>예매 오픈 → 러시 100명 → 대기열 → 예매 완료 · 실측 화면</span>
-    <a href="https://ticket.subinhong.dev" target="_blank" rel="noopener">직접 해보기 →</a>
-  </div>
 </div>
 
-[**ticket.subinhong.dev**](https://ticket.subinhong.dev) — 직접 접속해 예매 흐름을 눌러볼 수 있습니다. 매일 아침부터 23:30 KST까지 가동됩니다.
+<div class="demo-stats" markdown="0">
+  <span><b>30,000</b>명 동시 접속 실측</span>
+  <span><b>0</b>건 5xx / 759,813 요청</span>
+  <span><b>34</b>회 부하 테스트</span>
+  <span><b>7</b>장 대시보드 관측</span>
+</div>
 
-(두세 줄 소개 + 실측 수치가 든 문장 — 여기 채운다)
+<div class="demo-ctas" markdown="0">
+  <a class="primary" href="https://ticket.subinhong.dev" target="_blank" rel="noopener">지금 직접 예매해 보기 →</a>
+  <a class="ghost" href="/homelab/">어떻게 만들었는지 →</a>
+</div>
 
-[홈랩 →](/homelab/){:.heading.flip-title}
+<p class="demo-note" markdown="0">서비스는 매일 아침 – 23:30 KST 가동 · 꺼진 시간에는 위 영상이 대신합니다.</p>
 
 ## 여기까지 온 길
 

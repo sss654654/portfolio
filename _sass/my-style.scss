@@ -61,21 +61,22 @@ ul.timeline > li:has(> small)::before {
   border-color: var(--gray);
 }
 
-/* 홈 시연 영상 — 브라우저 창 목업 프레임. 색은 전부 테마 토큰이라 라이트·다크 둘 다 산다 */
+/* 홈 시연 영상 — 브라우저 창 목업 + 수치 줄 + CTA. 색은 전부 테마 토큰(라이트·다크 공용).
+   ::after content:none = 테마가 외부 링크에 붙이는 ↗ 아이콘을 이 블록 안에서만 끈다 */
 .demo-frame {
-  margin: 1.25rem 0;
+  margin: 1.1rem 0 0;
   border: 1px solid var(--border-color);
   border-radius: .6rem;
   overflow: hidden;
   background: var(--gray-bg);
 }
+.demo-frame a::after { content: none !important; }
 .demo-chrome {
   display: flex;
   align-items: center;
   gap: .75rem;
   padding: .5rem .85rem;
-  border-bottom: 1px solid var(--border-color) !important;
-  text-decoration: none !important;
+  border-bottom: 1px solid var(--border-color);
 }
 .demo-dots i {
   display: inline-block;
@@ -86,12 +87,7 @@ ul.timeline > li:has(> small)::before {
   margin-right: 5px;
   opacity: .7;
 }
-.demo-url {
-  font-size: .78rem;
-  color: var(--gray);
-  letter-spacing: .02em;
-}
-.demo-chrome:hover .demo-url { color: var(--accent-color); }
+.demo-url { font-size: .78rem; color: var(--gray); letter-spacing: .02em; }
 .demo-shot {
   display: block;
   line-height: 0;
@@ -99,13 +95,37 @@ ul.timeline > li:has(> small)::before {
   text-decoration: none !important;
 }
 .demo-frame video { width: 100%; height: auto; display: block; }
-.demo-cap {
+
+.demo-stats {
   display: flex;
-  justify-content: space-between;
   flex-wrap: wrap;
-  gap: .35rem 1rem;
-  padding: .55rem .85rem;
-  font-size: .8rem;
+  gap: .35rem 1.7rem;
+  margin: .9rem 0 0;
+  font-size: .86rem;
   color: var(--gray-text);
-  border-top: 1px solid var(--border-color);
 }
+.demo-stats b {
+  font-size: 1.18rem;
+  color: var(--body-color);
+  font-variant-numeric: tabular-nums;
+  margin-right: .18rem;
+}
+
+.demo-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .7rem;
+  margin: 1rem 0 0;
+}
+.demo-ctas a {
+  padding: .5rem 1.05rem;
+  border: 1px solid var(--accent-color);
+  border-radius: .45rem;
+  font-weight: 700;
+  font-size: .9rem;
+  text-decoration: none !important;
+}
+.demo-ctas a::after { content: none !important; }
+.demo-ctas a.primary { background: var(--accent-color); color: #fff !important; }
+.demo-ctas a.ghost { color: var(--accent-color); }
+.demo-note { font-size: .78rem; color: var(--gray); margin: .5rem 0 0; }
