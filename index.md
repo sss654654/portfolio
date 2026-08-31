@@ -4,30 +4,33 @@ title: 안녕하세요, 홍수빈입니다 👋
 sitemap: true
 ---
 
-인프라를 직접 세우고 운영합니다.
+인프라를 직접 세우고 운영합니다. 지금까지 공부하고 만들어 온 것들을 기록해 둔 공간입니다.
 {:.lead}
 
 ## 홈랩
 
-노트북 한 대에 쿠버네티스 클러스터를 구축해, 예매 대기열 데모 서비스를 운영하고 있습니다.
+노트북 한 대에 k3s로 쿠버네티스 클러스터를 구축해, 예매 대기열 데모 서비스를 운영하고 있습니다.
 
-<!-- 시연 영상 — 무음 자동 재생 루프, 브라우저 창 목업 프레임. 재생 전용 — 실서비스 이동은 아래 버튼 하나로.
-     심야(서비스 꺼짐)에도 이 영상이 데모를 대신한다. markdown="0" = kramdown 개입 차단 -->
+<!-- 시연 영상 — 무음 자동 재생 루프, 브라우저 창 목업 프레임. 영상 클릭과 아래 버튼 둘 다 실서비스로 이동
+     (hover 시 demo-shot::before 배지가 이동 대상임을 알린다). 심야(서비스 꺼짐)에도 이 영상이 데모를 대신한다.
+     markdown="0" = kramdown 개입 차단 -->
 <div class="demo-frame" markdown="0">
   <div class="demo-chrome">
     <span class="demo-dots"><i></i><i></i><i></i></span>
     <span class="demo-url">ticket.subinhong.dev</span>
   </div>
-  <video autoplay loop muted playsinline preload="metadata" poster="/assets/img/demo-poster.jpg">
-    <source src="/assets/video/demo.mp4" type="video/mp4">
-  </video>
+  <a class="demo-shot" href="https://ticket.subinhong.dev" target="_blank" rel="noopener" aria-label="실서비스로 이동">
+    <video autoplay loop muted playsinline preload="metadata" poster="/assets/img/demo-poster.jpg">
+      <source src="/assets/video/demo.mp4" type="video/mp4">
+    </video>
+  </a>
 </div>
 
-<p class="demo-caption" markdown="0">예매 오픈부터 대기열 입장, 예매 완료까지의 실제 화면 녹화입니다.</p>
+<p class="demo-caption" markdown="0">예매가 열리는 순간부터 대기열을 지나 예매를 마치기까지, 실제 서비스 화면을 녹화한 것입니다.</p>
 
 <div class="demo-ctas" markdown="0">
   <a class="primary" href="https://ticket.subinhong.dev" target="_blank" rel="noopener">직접 해보기 →</a>
-  <span class="demo-note"><span id="demo-status" hidden><i></i><span></span> · </span>매일 07:30–23:30 KST 가동 · 이 시간 외에는 서버가 꺼져 있습니다</span>
+  <span class="demo-note"><span id="demo-status" hidden><i></i><span></span> · </span>서버는 매일 07:30–23:30 KST에만 켜 둡니다</span>
 </div>
 
 <!-- 가동 상태 점 — 데모의 stats 엔드포인트(읽기 전용 GET)를 한 번 조회한다.
@@ -47,15 +50,15 @@ sitemap: true
     .then(function (r) {
       clearTimeout(timer);
       box.className = 'up';
-      box.getElementsByTagName('span')[0].textContent = '지금 돌아가고 있습니다';
+      box.getElementsByTagName('span')[0].textContent = '지금 가동 중';
       box.hidden = false;
     })
     .catch(function () { clearTimeout(timer); });
 })();
 </script>
 
-데모 설정입니다 — 대기 행렬이 보이도록 동시 입장을 줄였고, 좌석은 3시간마다 초기화됩니다.
-구축 과정과 부하 실측 기록은 [홈랩 페이지](/homelab/)에 있습니다.
+지금 배포된 서비스는 데모용 설정입니다 — 대기 행렬이 보이도록 동시 입장을 20명으로 줄였고, 좌석은 3시간마다 초기화됩니다.
+서비스와 그 아래 홈랩 인프라를 만들어 온 과정은 [홈랩 페이지](/homelab/)에 정리되어 있습니다.
 
 ## 여기까지 온 길
 
@@ -72,8 +75,7 @@ sitemap: true
 
 ## 그 밖에
 
-취미는 독서입니다. 기록하는 습관도 읽은 책을 남기는 데서 시작했고,
-지금은 공부한 것들까지 블로그에 쓰고 있습니다.
+군 복무 때 100권 읽기를 시작한 뒤로 소설, 그중에서도 추리소설을 즐겨 읽습니다.
 
 * [블로그](https://zed6740.tistory.com) — 공부와 일상의 기록
-* [읽은 책](https://zed6740.tistory.com/category/%EC%9D%BC%EC%83%81/%EC%B1%85) — 그 시작이 된 독서록 61편
+* [읽은 책](https://zed6740.tistory.com/category/%EC%9D%BC%EC%83%81/%EC%B1%85) — 기록하는 습관이 시작된 독서록 61편
