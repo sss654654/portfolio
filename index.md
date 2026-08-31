@@ -11,13 +11,24 @@ sitemap: true
 
 노트북 한 대 위 쿠버네티스 클러스터에서 돌고 있는 영화 예매 대기열 서비스입니다.
 
-<!-- 시연 영상 — 소리 없는 자동 재생 루프. 클릭하면 실서비스로 간다.
-     서비스가 꺼진 시간(심야)에도 이 영상이 데모를 대신한다 -->
-<a href="https://ticket.subinhong.dev" target="_blank" rel="noopener" class="demo-video">
-  <video autoplay loop muted playsinline preload="metadata" poster="/assets/img/demo-poster.jpg">
-    <source src="/assets/video/demo.mp4" type="video/mp4">
-  </video>
-</a>
+<!-- 시연 영상 — 소리 없는 자동 재생 루프. 브라우저 창 목업으로 감싸 "실서비스 화면"임이
+     형태로 읽히게 한다. 클릭하면 실서비스로. 심야(서비스 꺼짐)에도 이 영상이 데모를 대신한다.
+     markdown="0": kramdown이 여러 줄 HTML 안을 건드려 </a>가 새는 것 방지 -->
+<div class="demo-frame" markdown="0">
+  <a class="demo-chrome" href="https://ticket.subinhong.dev" target="_blank" rel="noopener" aria-label="실서비스로 이동">
+    <span class="demo-dots"><i></i><i></i><i></i></span>
+    <span class="demo-url">ticket.subinhong.dev</span>
+  </a>
+  <a class="demo-shot" href="https://ticket.subinhong.dev" target="_blank" rel="noopener">
+    <video autoplay loop muted playsinline preload="metadata" poster="/assets/img/demo-poster.jpg">
+      <source src="/assets/video/demo.mp4" type="video/mp4">
+    </video>
+  </a>
+  <div class="demo-cap">
+    <span>예매 오픈 → 러시 100명 → 대기열 → 예매 완료 · 실측 화면</span>
+    <a href="https://ticket.subinhong.dev" target="_blank" rel="noopener">직접 해보기 →</a>
+  </div>
+</div>
 
 [**ticket.subinhong.dev**](https://ticket.subinhong.dev) — 직접 접속해 예매 흐름을 눌러볼 수 있습니다. 매일 아침부터 23:30 KST까지 가동됩니다.
 
