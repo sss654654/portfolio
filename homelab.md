@@ -24,6 +24,9 @@ permalink: /homelab/
     <marker id="hla-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
       <path d="M0,0 L8,4 L0,8 z" fill="currentColor" opacity=".5"/>
     </marker>
+    <marker id="hla-arrow-back" viewBox="0 0 8 8" refX="1" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
+      <path d="M8,0 L0,4 L8,8 z" fill="currentColor" opacity=".5"/>
+    </marker>
     <pattern id="hla-bricks" width="18" height="12" patternUnits="userSpaceOnUse">
       <path d="M0,0.5 H18 M0,6.5 H18 M4.5,0.5 V6.5 M13.5,6.5 V12" stroke="#d94f00" stroke-opacity=".22" stroke-width="1" fill="none"/>
     </pattern>
@@ -61,17 +64,24 @@ permalink: /homelab/
     <text x="57" y="280" class="hla-s">GitLab · CI · 레지스트리</text>
   </g>
 
-  <!-- 집: 공유기 — 밖에서 오는 둘(443·51820)만 지나는 세로 관문.
-       데스크탑은 같은 홈 LAN이라 포워딩을 거치지 않고 이 아래로 지난다 -->
+  <!-- 집: 공유기 — 사용자 선과 VPN 선 중간. 위아래에서 들어와 오른쪽으로 함께 나간다.
+       데스크탑은 같은 홈 LAN이라 포워딩을 거치지 않고 아래로 지난다 -->
   <g class="hla-g hla-g2">
-    <rect x="316" y="48" width="56" height="150" rx="8" class="hla-box"/>
-    <rect x="333" y="70" width="22" height="11" rx="2" class="hla-glyph"/>
-    <line x1="338" y1="70" x2="335" y2="60" class="hla-glyph"/>
-    <line x1="350" y1="70" x2="353" y2="60" class="hla-glyph"/>
-    <text x="344" y="100" text-anchor="middle" class="hla-t">공유기</text>
-    <text x="344" y="214" text-anchor="middle" class="hla-s">포워딩 443 · 51820만</text>
-    <line x1="290" y1="72" x2="314" y2="72" class="hla-ln" marker-end="url(#hla-arrow)"/>
-    <line x1="374" y1="72" x2="442" y2="72" class="hla-ln" marker-end="url(#hla-arrow)"/>
+    <line x1="290" y1="72" x2="366" y2="72" class="hla-ln"/>
+    <line x1="366" y1="72" x2="366" y2="92" class="hla-ln" marker-end="url(#hla-arrow)"/>
+    <line x1="146" y1="170" x2="366" y2="170" class="hla-ln hla-dash"/>
+    <line x1="366" y1="170" x2="366" y2="150" class="hla-ln hla-dash" marker-end="url(#hla-arrow)"/>
+    <text x="256" y="162" class="hla-s" text-anchor="middle">WireGuard 51820/UDP</text>
+
+    <rect x="310" y="96" width="112" height="50" rx="9" class="hla-box"/>
+    <rect x="320" y="107" width="22" height="11" rx="2" class="hla-glyph"/>
+    <line x1="325" y1="107" x2="322" y2="98" class="hla-glyph"/>
+    <line x1="337" y1="107" x2="340" y2="98" class="hla-glyph"/>
+    <text x="350" y="117" class="hla-t">공유기</text>
+    <text x="320" y="138" class="hla-s">포워딩 443 · 51820만</text>
+
+    <line x1="422" y1="110" x2="442" y2="110" class="hla-ln" marker-end="url(#hla-arrow)"/>
+    <line x1="422" y1="132" x2="442" y2="132" class="hla-ln hla-dash" marker-end="url(#hla-arrow)"/>
   </g>
 
   <!-- 노트북 상자 -->
@@ -123,27 +133,26 @@ permalink: /homelab/
     <path class="hla-pod" d="M732.5,197 L729.25,202.63 L722.75,202.63 L719.5,197 L722.75,191.37 L729.25,191.37 Z"/>
   </g>
 
-  <!-- 흐름선: VPN · GitOps -->
+  <!-- GitOps — 방향이 둘이라 양쪽 화살표: 당김(클러스터→데스크탑) · webhook(터널로) -->
   <g class="hla-g hla-g2">
-    <line x1="146" y1="170" x2="314" y2="170" class="hla-ln hla-dash" marker-end="url(#hla-arrow)"/>
-    <line x1="374" y1="170" x2="442" y2="170" class="hla-ln hla-dash" marker-end="url(#hla-arrow)"/>
-    <text x="230" y="162" class="hla-s" text-anchor="middle">WireGuard 51820/UDP</text>
-    <line x1="170" y1="268" x2="442" y2="268" class="hla-ln hla-dash" marker-end="url(#hla-arrow)"/>
-    <text x="304" y="260" class="hla-s" text-anchor="middle">코드 push → CI → 이미지 → ArgoCD가 당겨가 배포</text>
+    <text x="306" y="256" class="hla-s" text-anchor="middle">코드 push → CI → 이미지</text>
+    <line x1="176" y1="268" x2="440" y2="268" class="hla-ln hla-dash"
+          marker-start="url(#hla-arrow-back)" marker-end="url(#hla-arrow)"/>
+    <text x="306" y="284" class="hla-s" text-anchor="middle">ArgoCD·노드가 당겨간다 · webhook은 터널로</text>
   </g>
 
   <!-- 흐르는 점 셋 — 12초 한 바퀴를 순서대로 (한 사이클 돌고 사라지고 다음) -->
   <circle class="hla-dot hla-dot-u" r="4.5" opacity="0">
     <animateMotion dur="12s" begin="1.2s" repeatCount="indefinite" calcMode="linear"
       keyTimes="0;0.05;0.33;1" keyPoints="0;0;1;1"
-      path="M70,72 L221,72 L344,72 L466,72 L466,132 L560,132 L634,132"/>
+      path="M70,72 L221,72 L366,72 L366,110 L466,110 L466,132 L560,132 L634,132"/>
     <animate attributeName="opacity" dur="12s" begin="1.2s" repeatCount="indefinite"
       keyTimes="0;0.05;0.07;0.31;0.33;1" values="0;0;1;1;0;0"/>
   </circle>
   <circle class="hla-dot hla-dot-v" r="4.5" opacity="0">
     <animateMotion dur="12s" begin="1.2s" repeatCount="indefinite" calcMode="linear"
       keyTimes="0;0.40;0.60;1" keyPoints="0;0;1;1"
-      path="M83,170 L344,170 L466,170 L466,154 L554,154 L554,218"/>
+      path="M83,170 L366,170 L366,132 L466,132 L466,154 L554,154 L554,218"/>
     <animate attributeName="opacity" dur="12s" begin="1.2s" repeatCount="indefinite"
       keyTimes="0;0.40;0.42;0.58;0.60;1" values="0;0;1;1;0;0"/>
   </circle>
