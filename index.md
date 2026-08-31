@@ -11,7 +11,7 @@ sitemap: true
 
 노트북 한 대 위 쿠버네티스 클러스터에서 돌고 있는 영화 예매 대기열 서비스입니다.
 
-[**ticket.subinhong.dev**](https://ticket.subinhong.dev) — 직접 접속해 예매 흐름을 눌러볼 수 있습니다. 매일 07:30 – 23:30 KST에 가동됩니다.
+[**ticket.subinhong.dev**](https://ticket.subinhong.dev) — 직접 접속해 예매 흐름을 눌러볼 수 있습니다.
 
 (두세 줄 소개 + 실측 수치가 든 문장 — 여기 채운다)
 
