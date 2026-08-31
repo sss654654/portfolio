@@ -153,3 +153,62 @@ ul.timeline > li:has(> small)::before {
 }
 #demo-status.up i { background: #1a9e55; }
 #demo-status.down i { background: #9a9a9a; }
+
+/* ---------- 홈랩 페이지 ---------- */
+
+/* 층 그림 — 아래(물리)부터 층이 쌓이고 요청 점이 흘러 들어온다 */
+.hl-diagram {
+  margin: 1.4rem 0 0;
+  max-width: 680px;
+}
+.hl-diagram svg { width: 100%; height: auto; display: block; color: var(--body-color); }
+.hl-diagram figcaption { font-size: .78rem; color: var(--gray); margin-top: .45rem; }
+
+.hl-box { fill: var(--gray-bg); stroke: var(--border-color); stroke-width: 1; }
+.hl-cluster { fill: none; }
+.hl-t { font-size: 13px; font-weight: 600; fill: var(--body-color); }
+.hl-dim { font-size: 11px; font-weight: 400; fill: var(--gray); }
+.hl-chips rect { fill: var(--gray-bg); stroke: var(--border-color); }
+.hl-chips text { font-size: 12px; fill: var(--gray-text); }
+.hl-line { stroke: var(--body-color); stroke-width: 1.5; opacity: .55; }
+.hl-dot { fill: #e03131; }
+
+.hl-l { opacity: 0; animation: hl-rise .55s ease forwards; }
+.hl-l1 { animation-delay: .15s; }
+.hl-l2 { animation-delay: .4s; }
+.hl-l3 { animation-delay: .65s; }
+.hl-l4 { animation-delay: .95s; }
+.hl-l5 { animation-delay: 1.25s; }
+@keyframes hl-rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hl-l { animation: none; opacity: 1; }
+  .hl-dot { display: none; }
+}
+
+.hl-numbers {
+  font-size: .86rem;
+  color: var(--gray-text);
+  margin: .6rem 0 0;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 하위 프로젝트 카드 그리드 */
+.hl-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: .9rem;
+  margin-top: .9rem;
+}
+.hl-card {
+  border: 1px solid var(--border-color);
+  border-radius: .6rem;
+  padding: .95rem 1.05rem;
+  background: var(--gray-bg);
+}
+.hl-card h3 { margin: 0 0 .35rem; font-size: 1.02rem; }
+.hl-card p { margin: 0 0 .6rem; font-size: .86rem; color: var(--gray-text); }
+.hl-num { font-size: .78rem; font-weight: 700; color: #e03131; }
+.hl-note { font-size: .78rem; color: var(--gray); margin: .3rem 0 0; }
