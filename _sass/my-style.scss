@@ -162,7 +162,7 @@ ul.timeline > li:has(> small)::before {
   max-width: 760px;
 }
 .hl-diagram svg { width: 100%; height: auto; display: block; color: var(--body-color); }
-.hl-diagram figcaption { font-size: .78rem; color: var(--gray); margin-top: .45rem; }
+.hl-diagram figcaption { font-size: .82rem; line-height: 1.65; color: var(--gray); margin-top: .55rem; }
 
 .hla-box { fill: var(--gray-bg); stroke: var(--border-color); stroke-width: 1; }
 .hla-outer { fill: none; stroke: var(--border-color); stroke-width: 1.2; }
@@ -199,9 +199,10 @@ ul.timeline > li:has(> small)::before {
 /* 다섯 갈래 — 썸네일 카드. 클릭하면 하위 페이지로 */
 .hlc-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem 1.4rem;
-  margin: 1.4rem 0 0;
+  /* min(100%, …) 이 없으면 좁은 화면에서 카드가 컨테이너를 넘친다 */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 310px), 1fr));
+  gap: 2.4rem 1.6rem;
+  margin: 1.6rem 0 0;
 }
 .hlc-card {
   display: block;
@@ -216,7 +217,7 @@ ul.timeline > li:has(> small)::before {
   display: flex;
   align-items: flex-end;
   aspect-ratio: 16 / 9;
-  margin-bottom: .85rem;
+  margin-bottom: 1rem;
   padding: .7rem .85rem;
   border: 1px solid var(--border-color);
   border-radius: .6rem;
@@ -237,15 +238,15 @@ ul.timeline > li:has(> small)::before {
    앵커를 넣는 탓에, 블록 요소나 h3 를 넣으면 <a> 가 파서에서 쪼개진다 */
 .hlc-tag {
   display: block;
-  font-size: .72rem;
+  font-size: .75rem;
   font-weight: 700;
   letter-spacing: .06em;
   color: var(--gray);
 }
 .hlc-title {
   display: block;
-  margin: .3rem 0 .45rem;
-  font-size: 1.04rem;
+  margin: .35rem 0 .5rem;
+  font-size: 1.15rem;
   font-weight: 700;
   line-height: 1.45;
   color: var(--body-color);
@@ -254,15 +255,16 @@ ul.timeline > li:has(> small)::before {
 .hlc-card:hover .hlc-title { text-decoration: underline; text-underline-offset: 3px; }
 .hlc-desc {
   display: block;
-  margin: 0 0 .6rem;
-  font-size: .86rem;
-  line-height: 1.7;
+  margin: 0 0 .7rem;
+  font-size: .92rem;
+  line-height: 1.75;
   color: var(--gray-text);
 }
 .hlc-num {
   display: block;
-  font-size: .78rem;
+  font-size: .82rem;
   font-weight: 700;
+  line-height: 1.5;
   color: #e03131;
   font-variant-numeric: tabular-nums;
 }
@@ -373,18 +375,19 @@ ul.timeline > li:has(> small)::before {
 .hl-note { font-size: .78rem; color: var(--gray); margin: .3rem 0 0; }
 
 /* 하위 페이지 — 상단 되돌아가기, 실측 가로 배치, 하단 블로그 안내 */
-.hl-back { margin: 0 0 .9rem; font-size: .82rem; }
+.hl-back { margin: 0 0 1rem; font-size: .86rem; }
 .hl-back a { color: var(--gray) !important; }
 .hl-stats-row {
   display: flex;
   flex-wrap: wrap;
-  gap: .5rem 2.2rem;
-  margin: 1.1rem 0 1.6rem;
-  padding: .9rem 1.1rem;
+  gap: .7rem 2.4rem;
+  margin: 1.3rem 0 1.9rem;
+  padding: 1.05rem 1.2rem;
   border: 1px solid var(--border-color);
   border-radius: .6rem;
   background: var(--gray-bg);
 }
-.hl-stats-row > div { display: flex; align-items: baseline; gap: .5rem; margin: 0; }
-.hl-stats-row dt { flex: none; }
-.hl-more { font-size: .84rem; color: var(--gray); }
+.hl-stats-row > div { display: flex; align-items: baseline; gap: .55rem; margin: 0; }
+.hl-stats-row dt { flex: none; font-size: 1.1rem; }
+.hl-stats-row dd { font-size: .85rem; }
+.hl-more { font-size: .9rem; color: var(--gray); }
