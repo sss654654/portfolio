@@ -261,3 +261,8 @@ discord:
 mastodon:
   name: Mastodon
   icon: icon-mastodon
+
+# 커스텀 — 티스토리 블로그 (rss 아이콘 재사용)
+blog:
+  name: Blog
+  icon: icon-rss2

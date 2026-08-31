@@ -23,3 +23,9 @@ permalink: /homelab/
 ## GitOps
 
 (요약 + 하위 페이지 링크 자리)
+
+## 기록
+
+(구축 과정 전부를 블로그에 남겼다는 한 줄 — 여기 채운다)
+
+* [홈랩 구축기 — HomeLab 카테고리](https://zed6740.tistory.com/category/HomeLab) — 본편 18편 · 번외 14편
