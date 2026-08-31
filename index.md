@@ -11,8 +11,6 @@ sitemap: true
 
 노트북 한 대에 k3s로 쿠버네티스 클러스터를 구축해, 예매 대기열 데모 서비스를 운영하고 있습니다.
 
-<p class="demo-note" markdown="0"><span id="demo-status" hidden><i></i><span></span> · </span>서버는 매일 07:30–23:30 KST에만 켜 둡니다</p>
-
 <!-- 시연 영상 — 무음 자동 재생 루프, 브라우저 창 목업 프레임. 영상 클릭과 아래 버튼 둘 다 실서비스로 이동
      (hover 시 demo-shot::before 배지가 이동 대상임을 알린다). 심야(서비스 꺼짐)에도 이 영상이 데모를 대신한다.
      markdown="0" = kramdown 개입 차단 -->
@@ -20,6 +18,7 @@ sitemap: true
   <div class="demo-chrome">
     <span class="demo-dots"><i></i><i></i><i></i></span>
     <span class="demo-url">ticket.subinhong.dev</span>
+    <span class="demo-live"><span id="demo-status" hidden><i></i><span></span> · </span>오픈 08:00–23:30 KST</span>
   </div>
   <a class="demo-shot" href="https://ticket.subinhong.dev" target="_blank" rel="noopener" aria-label="실서비스로 이동">
     <video autoplay loop muted playsinline preload="metadata" poster="/assets/img/demo-poster.jpg">

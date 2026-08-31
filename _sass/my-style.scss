@@ -75,9 +75,17 @@ ul.timeline > li:has(> small)::before {
 .demo-chrome {
   display: flex;
   align-items: center;
-  gap: .75rem;
+  flex-wrap: wrap; /* 좁은 화면에서 가동 표시가 줄바꿈되게 */
+  gap: .3rem .75rem;
   padding: .5rem .85rem;
   border-bottom: 1px solid var(--border-color);
+}
+/* 가동 표시 — 주소창 오른쪽. 시간대는 항상, "지금 가동 중" 점은 JS가 응답 받았을 때만 */
+.demo-live {
+  margin-left: auto;
+  font-size: .74rem;
+  color: var(--gray);
+  white-space: nowrap;
 }
 .demo-dots i {
   display: inline-block;
@@ -133,11 +141,9 @@ ul.timeline > li:has(> small)::before {
   margin-right: .18rem;
 }
 
-.demo-note { font-size: .78rem; color: var(--gray); margin: .35rem 0 0; }
-
 .demo-caption { font-size: .82rem; color: var(--gray-text); margin: .5rem 0 0; }
 
-/* 가동 상태 점 — 홈랩 소개 문장 아래 demo-note 안. index.md 의 JS가 stats 응답을 받았을 때만 hidden 을 푼다 */
+/* 가동 상태 점 색 */
 #demo-status i {
   display: inline-block;
   width: .55em;
