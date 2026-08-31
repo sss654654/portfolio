@@ -82,10 +82,10 @@ permalink: /homelab/
     <!-- OPNsense 세로 벽 — 세로쓰기 한 자씩, 이름은 아래 가로로 -->
     <rect x="444" y="84" width="44" height="232" rx="8" class="hla-wall"/>
     <rect x="444" y="84" width="44" height="232" rx="8" fill="url(#hla-bricks)" stroke="none"/>
-    <image href="/assets/img/icons/opnsense.svg" x="454" y="92" width="24" height="24"/>
-    <text x="466" y="148" text-anchor="middle" class="hla-wallc">방</text>
-    <text x="466" y="168" text-anchor="middle" class="hla-wallc">화</text>
-    <text x="466" y="188" text-anchor="middle" class="hla-wallc">벽</text>
+    <image href="/assets/img/icons/opnsense.svg" x="450" y="94" width="32" height="32"/>
+    <text x="466" y="156" text-anchor="middle" class="hla-wallc">방</text>
+    <text x="466" y="176" text-anchor="middle" class="hla-wallc">화</text>
+    <text x="466" y="196" text-anchor="middle" class="hla-wallc">벽</text>
     <text x="466" y="331" text-anchor="middle" class="hla-s">OPNsense VM</text>
 
     <!-- k3s 클러스터 -->
@@ -93,14 +93,15 @@ permalink: /homelab/
     <image href="/assets/img/icons/kubernetes.svg" x="513" y="94" width="20" height="20"/>
     <text x="539" y="109" class="hla-t">k3s 클러스터 — VM 3대 · HA</text>
 
-    <line x1="490" y1="142" x2="510" y2="142" class="hla-ln" marker-end="url(#hla-arrow)"/>
-    <text x="500" y="134" class="hla-s2" text-anchor="middle">443</text>
-    <rect x="514" y="126" width="80" height="32" rx="16" class="hla-box"/>
-    <image href="/assets/img/icons/traefikproxy.svg" x="520" y="132" width="20" height="20"/>
-    <text x="544" y="147" class="hla-c">Traefik</text>
-    <line x1="594" y1="142" x2="606" y2="142" class="hla-ln" marker-end="url(#hla-arrow)"/>
-    <line x1="554" y1="158" x2="554" y2="192" class="hla-ln" marker-end="url(#hla-arrow)"/>
-    <text x="562" y="178" class="hla-s2">80</text>
+    <line x1="490" y1="132" x2="510" y2="132" class="hla-ln" marker-end="url(#hla-arrow)"/>
+    <text x="500" y="126" class="hla-s2" text-anchor="middle">443</text>
+    <line x1="490" y1="154" x2="510" y2="154" class="hla-ln" marker-end="url(#hla-arrow)"/>
+    <text x="500" y="167" class="hla-s2" text-anchor="middle">80</text>
+    <rect x="512" y="118" width="84" height="46" rx="12" class="hla-box"/>
+    <image href="/assets/img/icons/traefikproxy.svg" x="518" y="132" width="18" height="18"/>
+    <text x="540" y="146" class="hla-c">Traefik</text>
+    <line x1="596" y1="132" x2="606" y2="132" class="hla-ln" marker-end="url(#hla-arrow)"/>
+    <line x1="554" y1="164" x2="554" y2="192" class="hla-ln" marker-end="url(#hla-arrow)"/>
     <rect x="608" y="114" width="126" height="62" rx="10" class="hla-box"/>
     <image href="/assets/img/icons/ticket.svg" x="616" y="124" width="22" height="22"/>
     <text x="643" y="139" class="hla-c">대기열 서비스</text>
@@ -133,14 +134,14 @@ permalink: /homelab/
   <circle class="hla-dot hla-dot-u" r="4.5" opacity="0">
     <animateMotion dur="12s" begin="1.2s" repeatCount="indefinite" calcMode="linear"
       keyTimes="0;0.05;0.33;1" keyPoints="0;0;1;1"
-      path="M70,72 L221,72 L364,72 L466,72 L466,142 L560,142 L634,142"/>
+      path="M70,72 L221,72 L364,72 L466,72 L466,132 L560,132 L634,132"/>
     <animate attributeName="opacity" dur="12s" begin="1.2s" repeatCount="indefinite"
       keyTimes="0;0.05;0.07;0.31;0.33;1" values="0;0;1;1;0;0"/>
   </circle>
   <circle class="hla-dot hla-dot-v" r="4.5" opacity="0">
     <animateMotion dur="12s" begin="1.2s" repeatCount="indefinite" calcMode="linear"
       keyTimes="0;0.40;0.60;1" keyPoints="0;0;1;1"
-      path="M83,170 L466,170 L466,142 L554,142 L554,218"/>
+      path="M83,170 L466,170 L466,154 L554,154 L554,218"/>
     <animate attributeName="opacity" dur="12s" begin="1.2s" repeatCount="indefinite"
       keyTimes="0;0.40;0.42;0.58;0.60;1" values="0;0;1;1;0;0"/>
   </circle>
