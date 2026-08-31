@@ -80,7 +80,7 @@ permalink: /homelab/
     <text transform="rotate(-90 466 268)" x="466" y="272" text-anchor="middle" class="hla-wallt">OPNsense 방화벽 VM — CF 대역만 통과 · 키 없으면 무응답</text>
 
     <!-- k3s 클러스터: 세 덩어리만 -->
-    <rect x="504" y="84" width="234" height="212" rx="10" class="hla-inner"/>
+    <rect x="504" y="84" width="234" height="172" rx="10" class="hla-inner"/>
     <image href="/assets/img/icons/kubernetes.svg" x="513" y="94" width="20" height="20"/>
     <text x="539" y="109" class="hla-t">k3s 클러스터 — VM 3대 · HA</text>
 
@@ -100,9 +100,6 @@ permalink: /homelab/
     <text x="572" y="230" class="hla-s">VPN으로만 접속</text>
     <line x1="660" y1="194" x2="660" y2="178" class="hla-ln hla-dash" marker-end="url(#hla-arrow)"/>
     <text x="668" y="190" class="hla-s2">배포</text>
-
-    <text x="514" y="264" class="hla-s">NetworkPolicy · SealedSecrets · RBAC</text>
-    <text x="514" y="279" class="hla-s">— 격리망 안쪽도 잠급니다</text>
   </g>
 
   <!-- 흐름선: VPN · GitOps -->
