@@ -29,7 +29,7 @@ description:           >
   노트북 한 대에서 인터넷 공개까지 — 홈랩을 직접 세우고 재고 고친 기록.
 
 # A shorter description for the sidebar.
-tagline:               SRE · Observability
+tagline:               DevOps · Observability
 
 # A list of keywords for your blog
 keywords:              [SRE, DevOps, Observability, Kubernetes, k3s, 홈랩]
