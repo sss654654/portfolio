@@ -12,3 +12,12 @@
     margin: 1rem 0;
   }
 }
+
+/* 티스토리 아이콘 — 아이콘 폰트에 T 글리프가 없어 글자로 그린다 */
+.icon-tistory {
+  font-family: inherit !important;
+  font-weight: 700;
+}
+.icon-tistory::before {
+  content: "T";
+}

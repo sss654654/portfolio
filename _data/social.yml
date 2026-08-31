@@ -62,7 +62,7 @@ sina-weibo:
   icon: icon-sina-weibo
 rss:
   name: RSS
-  icon: icon-rss2
+  icon: icon-tistory
 youtube:
   name: YouTube
   icon: icon-youtube
@@ -262,7 +262,7 @@ mastodon:
   name: Mastodon
   icon: icon-mastodon
 
-# 커스텀 — 티스토리 블로그 (rss 아이콘 재사용)
+# 커스텀 — 티스토리 블로그 (글자 T, my-style.scss 참조)
 blog:
   name: Blog
-  icon: icon-rss2
+  icon: icon-tistory
