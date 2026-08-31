@@ -221,8 +221,29 @@ ul.timeline > li:has(> small)::before {
   letter-spacing: .03em;
 }
 .hl-card h3 { margin: 0 0 .35rem; font-size: 1.02rem; }
-.hl-card p { margin: 0 0 .55rem; font-size: .86rem; line-height: 1.65; color: var(--gray-text); }
-.hl-card p + p { margin-top: -.1rem; }
+.hl-card p { margin: 0 0 .55rem; font-size: .86rem; line-height: 1.6; color: var(--gray-text); }
 .hl-card b { color: var(--body-color); font-weight: 700; }
+.hl-card ul {
+  margin: 0 0 .65rem;
+  padding-left: .95rem;
+  list-style: none;
+}
+.hl-card li {
+  position: relative;
+  margin: 0 0 .3rem;
+  font-size: .82rem;
+  line-height: 1.55;
+  color: var(--gray);
+}
+.hl-card li::before {
+  content: "";
+  position: absolute;
+  left: -.8rem;
+  top: .55em;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--border-color);
+}
 .hl-num { font-size: .78rem; font-weight: 700; color: #e03131; }
 .hl-note { font-size: .78rem; color: var(--gray); margin: .3rem 0 0; }
