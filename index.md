@@ -11,6 +11,14 @@ sitemap: true
 
 노트북 한 대 위 쿠버네티스 클러스터에서 돌고 있는 영화 예매 대기열 서비스입니다.
 
+<!-- 시연 영상 — 소리 없는 자동 재생 루프. 클릭하면 실서비스로 간다.
+     서비스가 꺼진 시간(심야)에도 이 영상이 데모를 대신한다 -->
+<a href="https://ticket.subinhong.dev" target="_blank" rel="noopener" class="demo-video">
+  <video autoplay loop muted playsinline preload="metadata" poster="/assets/img/demo-poster.jpg">
+    <source src="/assets/video/demo.mp4" type="video/mp4">
+  </video>
+</a>
+
 [**ticket.subinhong.dev**](https://ticket.subinhong.dev) — 직접 접속해 예매 흐름을 눌러볼 수 있습니다. 매일 아침부터 23:30 KST까지 가동됩니다.
 
 (두세 줄 소개 + 실측 수치가 든 문장 — 여기 채운다)
