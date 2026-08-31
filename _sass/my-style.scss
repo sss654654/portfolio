@@ -220,13 +220,51 @@ ul.timeline > li:has(> small)::before {
   line-height: 1.45;
   text-wrap: balance;
 }
-.hl-num {
-  display: block;
-  font-size: .78rem;
+/* 실측 — 값은 크게 왼쪽에 모으고 라벨은 작게. 자릿수를 맞춰 세로로 읽히게 */
+.hl-stats { margin: .1rem 0 0; }
+.hl-stats > div {
+  display: flex;
+  align-items: baseline;
+  gap: .55rem;
+  margin-bottom: .35rem;
+}
+.hl-stats dt {
+  flex: 0 0 4.1rem;
+  font-size: .98rem;
   font-weight: 700;
-  line-height: 1.5;
   color: #e03131;
   font-variant-numeric: tabular-nums;
+  letter-spacing: -.01em;
+}
+.hl-stats dd {
+  margin: 0;
+  font-size: .78rem;
+  line-height: 1.45;
+  color: var(--gray);
+}
+
+/* 병목이 옮겨 간 자리 — 글머리표 대신 순서로 */
+.hl-chain {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .3rem .4rem;
+  margin: 0 0 .8rem;
+}
+.hl-chain span {
+  padding: .22rem .6rem;
+  border: 1px solid var(--border-color);
+  border-radius: 1rem;
+  background: var(--gray-bg);
+  font-size: .78rem;
+  color: var(--gray-text);
+  white-space: nowrap;
+}
+.hl-chain i {
+  font-style: normal;
+  font-size: .78rem;
+  color: var(--gray);
+  opacity: .6;
 }
 
 .hl-item-body p {

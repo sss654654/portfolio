@@ -190,7 +190,10 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
     <div class="hl-item-head">
       <span class="hl-tag">클러스터</span>
       <h3>기본으로 주는 것을 끄고 직접 골랐다</h3>
-      <span class="hl-num">VM 3대 · etcd 3멤버 · 정적 PV 10장</span>
+      <dl class="hl-stats">
+        <div><dt>3대</dt><dd>VM — 전부 control-plane 겸 워커</dd></div>
+        <div><dt>10장</dt><dd>워크로드마다 따로 자른 정적 PV</dd></div>
+      </dl>
     </div>
     <div class="hl-item-body">
       <p>k3s가 얹어 주는 네트워크·로드밸런서·인그레스를 전부 끄고 Calico·MetalLB·Traefik으로 바꿨습니다. 설정을 남이 쥐고 있으면 나중에 부하를 재도 손댈 곳이 없습니다.</p>
@@ -205,7 +208,10 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
     <div class="hl-item-head">
       <span class="hl-tag">배포</span>
       <h3>미는 대신 당겨가게 했다</h3>
-      <span class="hl-num">push → 반영 3초 · 파이프라인 6분 6초 → 46초</span>
+      <dl class="hl-stats">
+        <div><dt>3초</dt><dd>push 에서 클러스터 반영까지</dd></div>
+        <div><dt>46초</dt><dd>파이프라인 — 캐시 정리 전 6분 6초</dd></div>
+      </dl>
     </div>
     <div class="hl-item-body">
       <p>배포 도구에 클러스터 자격을 쥐여 주는 대신, 클러스터가 저장소를 당겨가게 했습니다. 자격이 밖으로 나가지 않고, 저장소의 상태가 곧 클러스터의 상태가 됩니다.</p>
@@ -220,7 +226,10 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
     <div class="hl-item-head">
       <span class="hl-tag">관측</span>
       <h3>재기 전에 볼 눈부터 만들었다</h3>
-      <span class="hl-num">중복 수집 제거 후 거절 0건</span>
+      <dl class="hl-stats">
+        <div><dt>0건</dt><dd>중복 수집을 걷어낸 뒤 지표 거절</dd></div>
+        <div><dt>3축</dt><dd>지표·로그·트레이스를 한 화면에서</dd></div>
+      </dl>
     </div>
     <div class="hl-item-body">
       <p>부하를 걸기 전에 지표·로그·트레이스를 먼저 세웠습니다. 볼 눈이 없으면 "느렸다"까지만 알고 어디서 느렸는지는 못 잡습니다.</p>
@@ -235,12 +244,18 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
     <div class="hl-item-head">
       <span class="hl-tag">서비스와 용량</span>
       <h3>정원은 정한 게 아니라 잰 값이다</h3>
-      <span class="hl-num">판 34회 · 동시 입장 1,000명 · 76만 요청에 5xx 0건</span>
+      <dl class="hl-stats">
+        <div><dt>34회</dt><dd>부하 판</dd></div>
+        <div><dt>1,000명</dt><dd>확정한 동시 입장 정원</dd></div>
+        <div><dt>0건</dt><dd>76만 요청에서 나온 5xx</dd></div>
+      </dl>
     </div>
     <div class="hl-item-body">
-      <p>대기열은 정원만큼만 예매 화면에 들여보냅니다. 그 정원을 몇으로 둘지가 이 서비스의 전부인데, 처음엔 근거 없이 적어 둔 숫자였습니다.</p>
+      <p>대기열은 정원만큼만 예매 화면에 들여보냅니다. 그 정원을 몇으로 둘지가 이 서비스의 전부인데, 처음엔 근거 없이 적어 둔 숫자였습니다. 판을 거듭할수록 막히는 자리가 앞에서 뒤로 옮겨 갔습니다.</p>
+      <div class="hl-chain">
+        <span>프록시 메모리</span><i>→</i><span>대기열 CPU</span><i>→</i><span>DB 커넥션 풀</span><i>→</i><span>캐시 폭주</span>
+      </div>
       <ul>
-        <li>판을 거듭하자 병목이 옮겨 갔다 — 프록시 메모리 → 대기열 CPU → DB 커넥션 풀 → 캐시 폭주</li>
         <li>값 대신 <b>계수</b>를 남겼다. 사람이 늘면 무엇이 얼마나 느는지를 알아야 다음 규모를 계산한다</li>
         <li>회차 한 번 조회에 Redis를 스무 번 왕복하던 것은 트레이스가 아니었으면 못 찾았다</li>
       </ul>
@@ -251,7 +266,10 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
     <div class="hl-item-head">
       <span class="hl-tag">격리와 공개</span>
       <h3>열되, 열린 자리를 세어 두었다</h3>
-      <span class="hl-num">인터넷에 열린 포트 2개 · 파드 간 통로 16줄</span>
+      <dl class="hl-stats">
+        <div><dt>2개</dt><dd>인터넷에 열린 포트 — 443 과 51820</dd></div>
+        <div><dt>16줄</dt><dd>허용한 파드 간 통로, 나머지는 차단</dd></div>
+      </dl>
     </div>
     <div class="hl-item-body">
       <p>공개하기 전에 클러스터를 방화벽 뒤 격리망으로 옮겼습니다. 관리 화면과 공개 서비스가 한 주소에 같이 있어서, 그대로 열면 둘이 같이 열립니다.</p>
