@@ -91,10 +91,14 @@ permalink: /homelab/
     <image href="/assets/img/icons/kubernetes.svg" x="513" y="94" width="20" height="20"/>
     <text x="539" y="109" class="hla-t">k3s 클러스터 — VM 3대 · HA</text>
 
+    <line x1="490" y1="142" x2="510" y2="142" class="hla-ln" marker-end="url(#hla-arrow)"/>
+    <text x="500" y="134" class="hla-s2" text-anchor="middle">443</text>
     <rect x="514" y="126" width="80" height="32" rx="16" class="hla-box"/>
     <image href="/assets/img/icons/traefikproxy.svg" x="520" y="132" width="20" height="20"/>
     <text x="544" y="147" class="hla-c">Traefik</text>
     <line x1="594" y1="142" x2="606" y2="142" class="hla-ln" marker-end="url(#hla-arrow)"/>
+    <line x1="554" y1="158" x2="554" y2="192" class="hla-ln" marker-end="url(#hla-arrow)"/>
+    <text x="562" y="178" class="hla-s2">80</text>
     <rect x="608" y="114" width="126" height="62" rx="10" class="hla-box"/>
     <image href="/assets/img/icons/ticket.svg" x="616" y="124" width="22" height="22"/>
     <text x="643" y="139" class="hla-c">대기열 서비스</text>
@@ -108,7 +112,11 @@ permalink: /homelab/
     <text x="572" y="230" class="hla-s">VPN으로만 접속</text>
     <line x1="660" y1="194" x2="660" y2="178" class="hla-ln hla-dash" marker-end="url(#hla-arrow)"/>
     <text x="668" y="190" class="hla-s2">배포</text>
-    <text x="621" y="251" class="hla-s2" text-anchor="middle">이 안의 상자는 전부 파드로 떠 있습니다</text>
+
+    <!-- 파드 배지 — 쿠버네티스 도상(육각형)을 각 상자 우상단에 -->
+    <path class="hla-pod" d="M598.5,127 L595.25,132.63 L588.75,132.63 L585.5,127 L588.75,121.37 L595.25,121.37 Z"/>
+    <path class="hla-pod" d="M736.5,116 L733.25,121.63 L726.75,121.63 L723.5,116 L726.75,110.37 L733.25,110.37 Z"/>
+    <path class="hla-pod" d="M732.5,197 L729.25,202.63 L722.75,202.63 L719.5,197 L722.75,191.37 L729.25,191.37 Z"/>
   </g>
 
   <!-- 흐름선: VPN · GitOps -->
@@ -130,7 +138,7 @@ permalink: /homelab/
   <circle class="hla-dot hla-dot-v" r="4.5" opacity="0">
     <animateMotion dur="12s" begin="1.2s" repeatCount="indefinite" calcMode="linear"
       keyTimes="0;0.40;0.60;1" keyPoints="0;0;1;1"
-      path="M83,170 L466,170 L466,218 L600,218"/>
+      path="M83,170 L466,170 L466,142 L554,142 L554,218"/>
     <animate attributeName="opacity" dur="12s" begin="1.2s" repeatCount="indefinite"
       keyTimes="0;0.40;0.42;0.58;0.60;1" values="0;0;1;1;0;0"/>
   </circle>

@@ -178,6 +178,7 @@ ul.timeline > li:has(> small)::before {
 .hla-glyph { fill: none; stroke: var(--gray-text); stroke-width: 1.6; }
 .hla-ln { stroke: var(--body-color); stroke-width: 1.3; opacity: .45; }
 .hla-dash { stroke-dasharray: 5 5; }
+.hla-pod { fill: var(--gray-bg); stroke: #326CE5; stroke-width: 1.4; }
 .hla-dot-u { fill: #e03131; }
 .hla-dot-v { fill: #2f6fdb; }
 .hla-dot-g { fill: #f08c2e; }
