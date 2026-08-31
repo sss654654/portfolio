@@ -184,59 +184,85 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
 
 무엇을 썼는지는 위 그림에 있습니다. 여기서는 **왜 그렇게 정했는지**를 만든 순서대로 적었습니다.
 
-<div class="hl-cards" markdown="0">
-  <div class="hl-card">
-    <span class="hl-tag">클러스터</span>
-    <h3>기본으로 주는 것을 끄고 직접 골랐다</h3>
-    <p>k3s가 얹어 주는 네트워크·로드밸런서·인그레스를 전부 끄고 Calico·MetalLB·Traefik으로 바꿨습니다. 설정을 남이 쥐고 있으면 나중에 부하를 재도 손댈 곳이 없습니다.</p>
-    <ul>
-      <li>디스크는 워크로드마다 따로 잘라 정적 PV로 — 한 볼륨을 나눠 쓰면 누가 채웠는지가 지표에 안 남는다</li>
-      <li>kubelet이 쓸 몫은 짐작 대신 실측해서 예약</li>
-    </ul>
-    <span class="hl-num">VM 3대 · etcd 3멤버 · 정적 PV 10장</span>
-  </div>
-  <div class="hl-card">
-    <span class="hl-tag">배포</span>
-    <h3>미는 대신 당겨가게 했다</h3>
-    <p>배포 도구에 클러스터 자격을 쥐여 주는 대신, 클러스터가 저장소를 당겨가게 했습니다. 자격이 밖으로 나가지 않고, 저장소의 상태가 곧 클러스터의 상태가 됩니다.</p>
-    <ul>
-      <li>이미지 태그는 커밋마다 새 값 — 같은 태그를 덮어쓰면 무엇이 도는지 모르고 되돌릴 수도 없다</li>
-      <li>검사·빌드·보안 스캔을 통과해야 배포까지 간다</li>
-    </ul>
-    <span class="hl-num">push → 반영 3초 · 파이프라인 6분 6초 → 46초</span>
-  </div>
-  <div class="hl-card">
-    <span class="hl-tag">관측</span>
-    <h3>재기 전에 볼 눈부터 만들었다</h3>
-    <p>부하를 걸기 전에 지표·로그·트레이스를 먼저 세웠습니다. 볼 눈이 없으면 "느렸다"까지만 알고 어디서 느렸는지는 못 잡습니다.</p>
-    <ul>
-      <li>시리즈가 상한에 차던 원인은 같은 프로세스를 두 곳에서 중복 수집한 것</li>
-      <li>노드 메모리 패널이 층이 다른 값을 섞어 빼고 있었다 — 화면이 먼저 틀린다</li>
-    </ul>
-    <span class="hl-num">중복 수집 제거 후 거절 0건</span>
-  </div>
-  <div class="hl-card">
-    <span class="hl-tag">서비스와 용량</span>
-    <h3>정원은 정한 게 아니라 잰 값이다</h3>
-    <p>대기열은 정원만큼만 예매 화면에 들여보냅니다. 그 정원을 몇으로 둘지가 이 서비스의 전부인데, 처음엔 근거 없이 적어 둔 숫자였습니다.</p>
-    <ul>
-      <li>판을 거듭하자 병목이 옮겨 갔다 — 프록시 메모리 → 대기열 CPU → DB 커넥션 풀 → 캐시 폭주</li>
-      <li>값 대신 <b>계수</b>를 남겼다. 사람이 늘면 무엇이 얼마나 느는지를 알아야 다음 규모를 계산한다</li>
-      <li>회차 한 번 조회에 Redis를 스무 번 왕복하던 것은 트레이스가 아니었으면 못 찾았다</li>
-    </ul>
-    <span class="hl-num">판 34회 · 동시 입장 1,000명 · 76만 요청에 5xx 0건</span>
-  </div>
-  <div class="hl-card">
-    <span class="hl-tag">격리와 공개</span>
-    <h3>열되, 열린 자리를 세어 두었다</h3>
-    <p>공개하기 전에 클러스터를 방화벽 뒤 격리망으로 옮겼습니다. 관리 화면과 공개 서비스가 한 주소에 같이 있어서, 그대로 열면 둘이 같이 열립니다.</p>
-    <ul>
-      <li>관리 통로는 VPN 하나. 키가 없으면 응답조차 하지 않아 문이 있다는 것도 밖에서는 안 보인다</li>
-      <li>공개 쪽은 Cloudflare를 거친 요청만 받는다 — 집 주소를 알아도 우회로는 못 들어온다</li>
-      <li>격리망 안쪽도 파드끼리 통로를 하나씩 지정하고 나머지는 막았다</li>
-    </ul>
-    <span class="hl-num">인터넷에 열린 포트 2개 · 파드 간 통로 16줄</span>
-  </div>
+<div class="hl-list" markdown="0">
+
+  <section class="hl-item">
+    <div class="hl-item-head">
+      <span class="hl-tag">클러스터</span>
+      <h3>기본으로 주는 것을 끄고 직접 골랐다</h3>
+      <span class="hl-num">VM 3대 · etcd 3멤버 · 정적 PV 10장</span>
+    </div>
+    <div class="hl-item-body">
+      <p>k3s가 얹어 주는 네트워크·로드밸런서·인그레스를 전부 끄고 Calico·MetalLB·Traefik으로 바꿨습니다. 설정을 남이 쥐고 있으면 나중에 부하를 재도 손댈 곳이 없습니다.</p>
+      <ul>
+        <li>디스크는 워크로드마다 따로 잘라 정적 PV로 — 한 볼륨을 나눠 쓰면 누가 채웠는지가 지표에 안 남는다</li>
+        <li>kubelet이 쓸 몫은 짐작 대신 실측해서 예약</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="hl-item">
+    <div class="hl-item-head">
+      <span class="hl-tag">배포</span>
+      <h3>미는 대신 당겨가게 했다</h3>
+      <span class="hl-num">push → 반영 3초 · 파이프라인 6분 6초 → 46초</span>
+    </div>
+    <div class="hl-item-body">
+      <p>배포 도구에 클러스터 자격을 쥐여 주는 대신, 클러스터가 저장소를 당겨가게 했습니다. 자격이 밖으로 나가지 않고, 저장소의 상태가 곧 클러스터의 상태가 됩니다.</p>
+      <ul>
+        <li>이미지 태그는 커밋마다 새 값 — 같은 태그를 덮어쓰면 무엇이 도는지 모르고 되돌릴 수도 없다</li>
+        <li>검사·빌드·보안 스캔을 통과해야 배포까지 간다</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="hl-item">
+    <div class="hl-item-head">
+      <span class="hl-tag">관측</span>
+      <h3>재기 전에 볼 눈부터 만들었다</h3>
+      <span class="hl-num">중복 수집 제거 후 거절 0건</span>
+    </div>
+    <div class="hl-item-body">
+      <p>부하를 걸기 전에 지표·로그·트레이스를 먼저 세웠습니다. 볼 눈이 없으면 "느렸다"까지만 알고 어디서 느렸는지는 못 잡습니다.</p>
+      <ul>
+        <li>시리즈가 상한에 차던 원인은 같은 프로세스를 두 곳에서 중복 수집한 것</li>
+        <li>노드 메모리 패널이 층이 다른 값을 섞어 빼고 있었다 — 화면이 먼저 틀린다</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="hl-item">
+    <div class="hl-item-head">
+      <span class="hl-tag">서비스와 용량</span>
+      <h3>정원은 정한 게 아니라 잰 값이다</h3>
+      <span class="hl-num">판 34회 · 동시 입장 1,000명 · 76만 요청에 5xx 0건</span>
+    </div>
+    <div class="hl-item-body">
+      <p>대기열은 정원만큼만 예매 화면에 들여보냅니다. 그 정원을 몇으로 둘지가 이 서비스의 전부인데, 처음엔 근거 없이 적어 둔 숫자였습니다.</p>
+      <ul>
+        <li>판을 거듭하자 병목이 옮겨 갔다 — 프록시 메모리 → 대기열 CPU → DB 커넥션 풀 → 캐시 폭주</li>
+        <li>값 대신 <b>계수</b>를 남겼다. 사람이 늘면 무엇이 얼마나 느는지를 알아야 다음 규모를 계산한다</li>
+        <li>회차 한 번 조회에 Redis를 스무 번 왕복하던 것은 트레이스가 아니었으면 못 찾았다</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="hl-item">
+    <div class="hl-item-head">
+      <span class="hl-tag">격리와 공개</span>
+      <h3>열되, 열린 자리를 세어 두었다</h3>
+      <span class="hl-num">인터넷에 열린 포트 2개 · 파드 간 통로 16줄</span>
+    </div>
+    <div class="hl-item-body">
+      <p>공개하기 전에 클러스터를 방화벽 뒤 격리망으로 옮겼습니다. 관리 화면과 공개 서비스가 한 주소에 같이 있어서, 그대로 열면 둘이 같이 열립니다.</p>
+      <ul>
+        <li>관리 통로는 VPN 하나. 키가 없으면 응답조차 하지 않아 문이 있다는 것도 밖에서는 안 보인다</li>
+        <li>공개 쪽은 Cloudflare를 거친 요청만 받는다 — 집 주소를 알아도 우회로는 못 들어온다</li>
+        <li>격리망 안쪽도 파드끼리 통로를 하나씩 지정하고 나머지는 막았다</li>
+      </ul>
+    </div>
+  </section>
+
 </div>
 
 <!-- ③ 기록 -->
