@@ -1,10 +1,11 @@
 ---
 layout: page
-title: Welcome
+title: 안녕하세요, 홍수빈입니다.
 sitemap: true
 ---
 
-(인사말 한두 줄 — 여기 채운다)
+지금까지 공부하고 만들어 온 것들을 기록해 둔 공간입니다.
+{:.lead}
 
 ## 홈랩
 
