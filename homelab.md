@@ -68,17 +68,17 @@ permalink: /homelab/
        데스크탑은 같은 홈 LAN이라 포워딩을 거치지 않고 아래로 지난다 -->
   <g class="hla-g hla-g2">
     <line x1="290" y1="72" x2="366" y2="72" class="hla-ln"/>
-    <line x1="366" y1="72" x2="366" y2="92" class="hla-ln" marker-end="url(#hla-arrow)"/>
+    <line x1="366" y1="72" x2="366" y2="86" class="hla-ln" marker-end="url(#hla-arrow)"/>
     <line x1="146" y1="170" x2="366" y2="170" class="hla-ln hla-dash"/>
-    <line x1="366" y1="170" x2="366" y2="150" class="hla-ln hla-dash" marker-end="url(#hla-arrow)"/>
+    <line x1="366" y1="170" x2="366" y2="156" class="hla-ln hla-dash" marker-end="url(#hla-arrow)"/>
     <text x="256" y="162" class="hla-s" text-anchor="middle">WireGuard 51820/UDP</text>
 
-    <rect x="310" y="96" width="112" height="50" rx="9" class="hla-box"/>
-    <rect x="320" y="107" width="22" height="11" rx="2" class="hla-glyph"/>
-    <line x1="325" y1="107" x2="322" y2="98" class="hla-glyph"/>
-    <line x1="337" y1="107" x2="340" y2="98" class="hla-glyph"/>
-    <text x="350" y="117" class="hla-t">공유기</text>
-    <text x="320" y="138" class="hla-s">포워딩 443 · 51820만</text>
+    <rect x="310" y="90" width="112" height="62" rx="9" class="hla-box"/>
+    <rect x="355" y="101" width="22" height="11" rx="2" class="hla-glyph"/>
+    <line x1="360" y1="101" x2="357" y2="92" class="hla-glyph"/>
+    <line x1="372" y1="101" x2="375" y2="92" class="hla-glyph"/>
+    <text x="366" y="128" text-anchor="middle" class="hla-t">공유기</text>
+    <text x="366" y="145" text-anchor="middle" class="hla-s">포워딩 443 · 51820만</text>
 
     <line x1="422" y1="110" x2="442" y2="110" class="hla-ln" marker-end="url(#hla-arrow)"/>
     <line x1="422" y1="132" x2="442" y2="132" class="hla-ln hla-dash" marker-end="url(#hla-arrow)"/>
@@ -93,10 +93,10 @@ permalink: /homelab/
     <!-- OPNsense 세로 벽 — 세로쓰기 한 자씩, 이름은 아래 가로로 -->
     <rect x="444" y="84" width="44" height="232" rx="8" class="hla-wall"/>
     <rect x="444" y="84" width="44" height="232" rx="8" fill="url(#hla-bricks)" stroke="none"/>
-    <image href="/assets/img/icons/opnsense.svg" x="450" y="94" width="32" height="32"/>
-    <text x="466" y="156" text-anchor="middle" class="hla-wallc">방</text>
-    <text x="466" y="176" text-anchor="middle" class="hla-wallc">화</text>
-    <text x="466" y="196" text-anchor="middle" class="hla-wallc">벽</text>
+    <image href="/assets/img/icons/opnsense.svg" x="448" y="148" width="36" height="36"/>
+    <text x="466" y="212" text-anchor="middle" class="hla-wallc">방</text>
+    <text x="466" y="232" text-anchor="middle" class="hla-wallc">화</text>
+    <text x="466" y="252" text-anchor="middle" class="hla-wallc">벽</text>
     <text x="466" y="331" text-anchor="middle" class="hla-s">OPNsense VM</text>
 
     <!-- k3s 클러스터 -->
