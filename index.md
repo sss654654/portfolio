@@ -11,6 +11,8 @@ sitemap: true
 
 노트북 한 대에 k3s로 쿠버네티스 클러스터를 구축해, 예매 대기열 데모 서비스를 운영하고 있습니다.
 
+<p class="demo-note" markdown="0"><span id="demo-status" hidden><i></i><span></span> · </span>서버는 매일 07:30–23:30 KST에만 켜 둡니다</p>
+
 <!-- 시연 영상 — 무음 자동 재생 루프, 브라우저 창 목업 프레임. 영상 클릭과 아래 버튼 둘 다 실서비스로 이동
      (hover 시 demo-shot::before 배지가 이동 대상임을 알린다). 심야(서비스 꺼짐)에도 이 영상이 데모를 대신한다.
      markdown="0" = kramdown 개입 차단 -->
@@ -18,7 +20,6 @@ sitemap: true
   <div class="demo-chrome">
     <span class="demo-dots"><i></i><i></i><i></i></span>
     <span class="demo-url">ticket.subinhong.dev</span>
-    <span id="demo-status" hidden><i></i><span></span></span>
   </div>
   <a class="demo-shot" href="https://ticket.subinhong.dev" target="_blank" rel="noopener" aria-label="실서비스로 이동">
     <video autoplay loop muted playsinline preload="metadata" poster="/assets/img/demo-poster.jpg">
@@ -28,7 +29,6 @@ sitemap: true
 </div>
 
 <p class="demo-caption" markdown="0">예매가 열리는 순간부터 대기열을 지나 예매를 마치기까지, 실제 서비스 화면을 녹화한 것입니다.</p>
-<p class="demo-note" markdown="0">서버는 매일 07:30–23:30 KST에만 켜 둡니다</p>
 
 <!-- 가동 상태 점 — 데모의 stats 엔드포인트(읽기 전용 GET)를 한 번 조회한다.
      판정: 응답이 오면(상태코드 무관) 가동 중 — CORS 헤더가 실린 응답을 받았다는 것 자체가
@@ -76,4 +76,4 @@ sitemap: true
 읽은 책을 한 권씩 남기다 보니 그게 지금의 블로그로 이어졌습니다.
 
 * [블로그](https://zed6740.tistory.com) — 공부와 일상의 기록
-* [읽은 책](https://zed6740.tistory.com/category/%EC%9D%BC%EC%83%81/%EC%B1%85) — 그 시작이 된 독서록 61편
+* [읽은 책](https://zed6740.tistory.com/category/%EC%9D%BC%EC%83%81/%EC%B1%85) — 지금까지의 독서 기록

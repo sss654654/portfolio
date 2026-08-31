@@ -137,13 +137,7 @@ ul.timeline > li:has(> small)::before {
 
 .demo-caption { font-size: .82rem; color: var(--gray-text); margin: .5rem 0 0; }
 
-/* 가동 상태 점 — 목업 주소창 오른쪽. index.md 의 JS가 stats 응답을 받았을 때만 hidden 을 푼다 */
-.demo-chrome #demo-status {
-  margin-left: auto;
-  font-size: .78rem;
-  color: var(--gray);
-  white-space: nowrap;
-}
+/* 가동 상태 점 — 홈랩 소개 문장 아래 demo-note 안. index.md 의 JS가 stats 응답을 받았을 때만 hidden 을 푼다 */
 #demo-status i {
   display: inline-block;
   width: .55em;
