@@ -152,7 +152,7 @@ ul.timeline > li:has(> small)::before {
   margin-right: .3em;
 }
 #demo-status.up i { background: #1a9e55; }
-#demo-status.down i { background: #9a9a9a; }
+#demo-status.down i { background: #d64545; }
 
 /* ---------- 홈랩 페이지 ---------- */
 
@@ -168,7 +168,7 @@ ul.timeline > li:has(> small)::before {
 .hla-outer { fill: none; stroke: var(--border-color); stroke-width: 1.2; }
 .hla-inner { fill: none; stroke: var(--border-color); }
 .hla-wall { fill: #d94f00; fill-opacity: .07; stroke: #d94f00; stroke-opacity: .45; }
-.hla-wallt { font-size: 10.5px; fill: #b34a00; letter-spacing: .02em; }
+.hla-wallc { font-size: 13px; font-weight: 700; fill: #b34a00; }
 .hla-t { font-size: 13px; font-weight: 700; fill: var(--body-color); }
 .hla-s { font-size: 10.5px; fill: var(--gray); }
 .hla-s2 { font-size: 9.5px; fill: var(--gray); }

@@ -17,7 +17,7 @@ permalink: /homelab/
      세 흐름 전부 노트북 안 OPNsense VM(세로 벽)을 지난다. 점 셋이 12초 한 바퀴를 순서대로.
      아이콘 = simple-icons(CC0). prefers-reduced-motion 이면 정지 -->
 <figure class="hl-diagram" markdown="0">
-<svg viewBox="0 0 760 470" role="img" aria-label="사용자는 ticket.subinhong.dev로 Cloudflare와 공유기를 거쳐 대기열 서비스에, 관리자는 WireGuard로 관리 UI에, 배포는 GitLab에서 ArgoCD로 — 세 흐름이 모두 노트북 안 OPNsense 방화벽 VM을 지나는 구조">
+<svg viewBox="0 0 760 384" role="img" aria-label="사용자는 ticket.subinhong.dev로 Cloudflare와 공유기를 거쳐 대기열 서비스에, 관리자는 WireGuard로 관리 UI에, 배포는 GitLab에서 ArgoCD로 — 세 흐름이 모두 노트북 안 OPNsense 방화벽 VM을 지나는 구조">
   <defs>
     <marker id="hla-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
       <path d="M0,0 L8,4 L0,8 z" fill="currentColor" opacity=".5"/>
@@ -46,14 +46,14 @@ permalink: /homelab/
 
   <!-- 관리자 · 데스크탑 -->
   <g class="hla-g hla-g1">
-    <rect x="20" y="196" width="126" height="48" rx="9" class="hla-box"/>
-    <image href="/assets/img/icons/wireguard.svg" x="28" y="207" width="24" height="24"/>
-    <text x="57" y="216" class="hla-t">나 — 관리자</text>
-    <text x="57" y="231" class="hla-s">밖에서 접속할 때</text>
-    <rect x="20" y="330" width="150" height="52" rx="9" class="hla-box"/>
-    <image href="/assets/img/icons/gitlab.svg" x="28" y="343" width="24" height="24"/>
-    <text x="57" y="350" class="hla-t">데스크탑</text>
-    <text x="57" y="366" class="hla-s">GitLab · CI · 레지스트리</text>
+    <rect x="20" y="146" width="126" height="48" rx="9" class="hla-box"/>
+    <image href="/assets/img/icons/wireguard.svg" x="28" y="157" width="24" height="24"/>
+    <text x="57" y="166" class="hla-t">나 — 관리자</text>
+    <text x="57" y="181" class="hla-s">밖에서 접속할 때</text>
+    <rect x="20" y="244" width="150" height="52" rx="9" class="hla-box"/>
+    <image href="/assets/img/icons/gitlab.svg" x="28" y="257" width="24" height="24"/>
+    <text x="57" y="264" class="hla-t">데스크탑</text>
+    <text x="57" y="280" class="hla-s">GitLab · CI · 레지스트리</text>
   </g>
 
   <!-- 집: 공유기 -->
@@ -70,14 +70,17 @@ permalink: /homelab/
 
   <!-- 노트북 상자 -->
   <g class="hla-g hla-g3">
-    <rect x="430" y="40" width="318" height="402" rx="12" class="hla-outer"/>
+    <rect x="430" y="40" width="318" height="300" rx="12" class="hla-outer"/>
     <image href="/assets/img/icons/proxmox.svg" x="443" y="52" width="20" height="20"/>
     <text x="469" y="67" class="hla-t">노트북 1대 — Proxmox · 전부 VM</text>
 
-    <!-- OPNsense 세로 벽 -->
-    <rect x="444" y="84" width="44" height="340" rx="8" class="hla-wall"/>
-    <image href="/assets/img/icons/opnsense.svg" x="454" y="93" width="24" height="24"/>
-    <text transform="rotate(-90 466 268)" x="466" y="272" text-anchor="middle" class="hla-wallt">OPNsense 방화벽 VM — CF 대역만 통과 · 키 없으면 무응답</text>
+    <!-- OPNsense 세로 벽 — 세로쓰기 한 자씩, 이름은 아래 가로로 -->
+    <rect x="444" y="84" width="44" height="232" rx="8" class="hla-wall"/>
+    <image href="/assets/img/icons/opnsense.svg" x="454" y="92" width="24" height="24"/>
+    <text x="466" y="148" text-anchor="middle" class="hla-wallc">방</text>
+    <text x="466" y="168" text-anchor="middle" class="hla-wallc">화</text>
+    <text x="466" y="188" text-anchor="middle" class="hla-wallc">벽</text>
+    <text x="466" y="331" text-anchor="middle" class="hla-s">OPNsense VM</text>
 
     <!-- k3s 클러스터: 세 덩어리만 -->
     <rect x="504" y="84" width="234" height="172" rx="10" class="hla-inner"/>
@@ -89,9 +92,11 @@ permalink: /homelab/
     <text x="546" y="147" class="hla-c">Traefik</text>
     <line x1="606" y1="142" x2="618" y2="142" class="hla-ln" marker-end="url(#hla-arrow)"/>
     <rect x="620" y="118" width="110" height="56" rx="10" class="hla-box"/>
-    <text x="675" y="140" class="hla-c" text-anchor="middle">대기열 서비스</text>
-    <text x="675" y="155" class="hla-s2" text-anchor="middle">queue · booking</text>
-    <text x="675" y="167" class="hla-s2" text-anchor="middle">Redis · MySQL · Kafka</text>
+    <rect x="629" y="128" width="20" height="13" rx="2.5" fill="#e03131"/>
+    <line x1="643" y1="130" x2="643" y2="139" stroke="#fff" stroke-width="1.2" stroke-dasharray="1.6 1.6"/>
+    <text x="655" y="138" class="hla-c">대기열 서비스</text>
+    <text x="675" y="153" class="hla-s2" text-anchor="middle">frontend · queue · booking</text>
+    <text x="675" y="166" class="hla-s2" text-anchor="middle">Redis · MySQL · Kafka</text>
 
     <rect x="514" y="196" width="216" height="44" rx="10" class="hla-box"/>
     <image href="/assets/img/icons/argo.svg" x="523" y="208" width="20" height="20"/>
@@ -104,10 +109,10 @@ permalink: /homelab/
 
   <!-- 흐름선: VPN · GitOps -->
   <g class="hla-g hla-g2">
-    <line x1="146" y1="220" x2="442" y2="220" class="hla-ln hla-dash" marker-end="url(#hla-arrow)"/>
-    <text x="292" y="212" class="hla-s" text-anchor="middle">WireGuard 51820/UDP</text>
-    <line x1="170" y1="358" x2="442" y2="358" class="hla-ln hla-dash" marker-end="url(#hla-arrow)"/>
-    <text x="304" y="350" class="hla-s" text-anchor="middle">코드 push → CI → 이미지 → ArgoCD가 감지·배포</text>
+    <line x1="146" y1="170" x2="442" y2="170" class="hla-ln hla-dash" marker-end="url(#hla-arrow)"/>
+    <text x="292" y="162" class="hla-s" text-anchor="middle">WireGuard 51820/UDP</text>
+    <line x1="170" y1="268" x2="442" y2="268" class="hla-ln hla-dash" marker-end="url(#hla-arrow)"/>
+    <text x="304" y="260" class="hla-s" text-anchor="middle">코드 push → CI → 이미지 → ArgoCD가 감지·배포</text>
   </g>
 
   <!-- 흐르는 점 셋 — 12초 한 바퀴를 순서대로 (한 사이클 돌고 사라지고 다음) -->
@@ -121,29 +126,30 @@ permalink: /homelab/
   <circle class="hla-dot hla-dot-v" r="4.5" opacity="0">
     <animateMotion dur="12s" begin="1.2s" repeatCount="indefinite" calcMode="linear"
       keyTimes="0;0.40;0.60;1" keyPoints="0;0;1;1"
-      path="M83,220 L560,220 L600,218"/>
+      path="M83,170 L466,170 L466,218 L600,218"/>
     <animate attributeName="opacity" dur="12s" begin="1.2s" repeatCount="indefinite"
       keyTimes="0;0.40;0.42;0.58;0.60;1" values="0;0;1;1;0;0"/>
   </circle>
   <circle class="hla-dot hla-dot-g" r="4.5" opacity="0">
     <animateMotion dur="12s" begin="1.2s" repeatCount="indefinite" calcMode="linear"
       keyTimes="0;0.68;0.94;1" keyPoints="0;0;1;1"
-      path="M87,358 L496,358 L496,221 L660,221 L660,176"/>
+      path="M87,268 L496,268 L496,221 L660,221 L660,176"/>
     <animate attributeName="opacity" dur="12s" begin="1.2s" repeatCount="indefinite"
       keyTimes="0;0.68;0.70;0.92;0.94;1" values="0;0;1;1;0;0"/>
   </circle>
 
   <!-- 범례 -->
   <g class="hla-g hla-g3">
-    <circle cx="30" cy="458" r="4.5" fill="#e03131"/>
-    <text x="41" y="462" class="hla-s">사용자 요청</text>
-    <circle cx="140" cy="458" r="4.5" fill="#2f6fdb"/>
-    <text x="151" y="462" class="hla-s">관리자 VPN</text>
-    <circle cx="250" cy="458" r="4.5" fill="#f08c2e"/>
-    <text x="261" y="462" class="hla-s">GitOps 배포</text>
+    <circle cx="30" cy="364" r="4.5" fill="#e03131"/>
+    <text x="41" y="368" class="hla-s">사용자 요청</text>
+    <circle cx="140" cy="364" r="4.5" fill="#2f6fdb"/>
+    <text x="151" y="368" class="hla-s">관리자 VPN</text>
+    <circle cx="250" cy="364" r="4.5" fill="#f08c2e"/>
+    <text x="261" y="368" class="hla-s">GitOps 배포</text>
   </g>
 </svg>
-<figcaption>ticket.subinhong.dev 로 들어오는 세 갈래 — 사용자도, 관리자도, 배포도 전부 한 방화벽을 지납니다</figcaption>
+<figcaption>ticket.subinhong.dev 로 들어오는 세 갈래 — 전부 한 방화벽을 지납니다.
+Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 응답하지 않습니다.</figcaption>
 </figure>
 
 <!-- ② 하위 프로젝트 카드 그리드 — 자리표시. 실제 분리는 블로그 폴더 마크다운 전체를 기준으로

@@ -49,7 +49,18 @@ sitemap: true
       box.getElementsByTagName('span')[0].textContent = '지금 가동 중';
       box.hidden = false;
     })
-    .catch(function () { clearTimeout(timer); });
+    .catch(function () {
+      clearTimeout(timer);
+      // 응답이 없어도 낮에는 단정하지 않는다(방문자 네트워크 문제일 수 있음).
+      // 단, KST가 가동 시간(08:00-23:30) 밖이면 꺼져 있는 시간이라고 확정할 수 있다.
+      var k = new Date(Date.now() + 9 * 3600 * 1000);
+      var m = k.getUTCHours() * 60 + k.getUTCMinutes();
+      if (m < 8 * 60 || m >= 23 * 60 + 30) {
+        box.className = 'down';
+        box.getElementsByTagName('span')[0].textContent = '지금은 꺼져 있는 시간';
+        box.hidden = false;
+      }
+    });
 })();
 </script>
 
