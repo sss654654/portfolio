@@ -1,0 +1,23 @@
+# The primary author of this blog.
+# Must be the same as `author` in `_config.yml`.
+author1:
+  name:              홍수빈
+  email:             subinhong0109@dankook.ac.kr
+
+  # Used at the bottom of each page and at the top of the `about` layout
+  # Markdown enabled, can use multiple paragraphs (enabled by `|`)
+  about:             |
+    (사이드바 하단·글 밑에 붙는 자기소개 — 여기 채운다)
+
+  # This photo will be used in the about section
+  picture:
+    path:            /assets/img/avatar.jpg
+
+  # Social media icons in sidebar
+  # Comment/uncommet to show/hide
+  # Rearrange to change the order in which they appear
+  # You can also provide an absolute URL (starting with https://) instead of usernames
+  social:
+    github:          sss654654
+    linkedin:        subinhong0109
+    email:           subinhong0109@dankook.ac.kr
