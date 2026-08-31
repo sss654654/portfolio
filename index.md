@@ -9,9 +9,9 @@ sitemap: true
 
 ## 지금 돌아가고 있는 것
 
-(어떤 서비스인지 한 줄 — 여기 채운다)
+노트북 한 대 위 쿠버네티스 클러스터에서 돌고 있는 영화 예매 대기열 서비스입니다.
 
-[**ticket.subinhong.dev**](https://ticket.subinhong.dev) — (직접 눌러보라는 한 줄 + 가동 시간. 여기 채운다)
+[**ticket.subinhong.dev**](https://ticket.subinhong.dev) — 직접 접속해 예매 흐름을 눌러볼 수 있습니다. 매일 07:30 – 23:30 KST에 가동됩니다.
 
 ## 홈랩
 
