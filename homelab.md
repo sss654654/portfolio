@@ -39,7 +39,7 @@ permalink: /homelab/
     <text x="30" y="96" class="hla-a">ticket.subinhong.dev</text>
     <line x1="138" y1="72" x2="156" y2="72" class="hla-ln" marker-end="url(#hla-arrow)"/>
     <rect x="158" y="48" width="132" height="56" rx="9" class="hla-box"/>
-    <image href="/assets/img/icons/cloudflare.svg" x="168" y="63" width="22" height="22"/>
+    <image href="/assets/img/icons/cloudflare.svg" x="166" y="61" width="26" height="26"/>
     <text x="197" y="71" class="hla-t">Cloudflare</text>
     <text x="197" y="90" class="hla-s">DNS · TLS · IP 은닉</text>
   </g>
@@ -47,11 +47,11 @@ permalink: /homelab/
   <!-- 관리자 · 데스크탑 -->
   <g class="hla-g hla-g1">
     <rect x="20" y="196" width="126" height="48" rx="9" class="hla-box"/>
-    <image href="/assets/img/icons/wireguard.svg" x="30" y="209" width="20" height="20"/>
+    <image href="/assets/img/icons/wireguard.svg" x="28" y="207" width="24" height="24"/>
     <text x="57" y="216" class="hla-t">나 — 관리자</text>
     <text x="57" y="231" class="hla-s">밖에서 접속할 때</text>
     <rect x="20" y="330" width="150" height="52" rx="9" class="hla-box"/>
-    <image href="/assets/img/icons/gitlab.svg" x="30" y="345" width="20" height="20"/>
+    <image href="/assets/img/icons/gitlab.svg" x="28" y="343" width="24" height="24"/>
     <text x="57" y="350" class="hla-t">데스크탑</text>
     <text x="57" y="366" class="hla-s">GitLab · CI · 레지스트리</text>
   </g>
@@ -71,21 +71,21 @@ permalink: /homelab/
   <!-- 노트북 상자 -->
   <g class="hla-g hla-g3">
     <rect x="430" y="40" width="318" height="402" rx="12" class="hla-outer"/>
-    <image href="/assets/img/icons/proxmox.svg" x="444" y="53" width="18" height="18"/>
+    <image href="/assets/img/icons/proxmox.svg" x="443" y="52" width="20" height="20"/>
     <text x="469" y="67" class="hla-t">노트북 1대 — Proxmox · 전부 VM</text>
 
     <!-- OPNsense 세로 벽 -->
     <rect x="444" y="84" width="44" height="340" rx="8" class="hla-wall"/>
-    <image href="/assets/img/icons/opnsense.svg" x="455" y="94" width="22" height="22"/>
-    <text transform="rotate(-90 466 268)" x="466" y="272" text-anchor="middle" class="hla-wallt">OPNsense — 방화벽 VM · 모든 길이 여길 지난다</text>
+    <image href="/assets/img/icons/opnsense.svg" x="454" y="93" width="24" height="24"/>
+    <text transform="rotate(-90 466 268)" x="466" y="272" text-anchor="middle" class="hla-wallt">OPNsense 방화벽 VM — CF 대역만 통과 · 키 없으면 무응답</text>
 
     <!-- k3s 클러스터: 세 덩어리만 -->
     <rect x="504" y="84" width="234" height="212" rx="10" class="hla-inner"/>
-    <image href="/assets/img/icons/kubernetes.svg" x="514" y="95" width="18" height="18"/>
+    <image href="/assets/img/icons/kubernetes.svg" x="513" y="94" width="20" height="20"/>
     <text x="539" y="109" class="hla-t">k3s 클러스터 — VM 3대 · HA</text>
 
     <rect x="514" y="126" width="92" height="32" rx="16" class="hla-box"/>
-    <image href="/assets/img/icons/traefikproxy.svg" x="523" y="133" width="18" height="18"/>
+    <image href="/assets/img/icons/traefikproxy.svg" x="522" y="132" width="20" height="20"/>
     <text x="546" y="147" class="hla-c">Traefik</text>
     <line x1="606" y1="142" x2="618" y2="142" class="hla-ln" marker-end="url(#hla-arrow)"/>
     <rect x="620" y="118" width="110" height="56" rx="10" class="hla-box"/>
@@ -94,8 +94,8 @@ permalink: /homelab/
     <text x="675" y="167" class="hla-s2" text-anchor="middle">Redis · MySQL · Kafka</text>
 
     <rect x="514" y="196" width="216" height="44" rx="10" class="hla-box"/>
-    <image href="/assets/img/icons/argo.svg" x="524" y="209" width="18" height="18"/>
-    <image href="/assets/img/icons/grafana.svg" x="546" y="209" width="18" height="18"/>
+    <image href="/assets/img/icons/argo.svg" x="523" y="208" width="20" height="20"/>
+    <image href="/assets/img/icons/grafana.svg" x="548" y="208" width="20" height="20"/>
     <text x="572" y="215" class="hla-c">관리 UI — ArgoCD · Grafana</text>
     <text x="572" y="230" class="hla-s">VPN으로만 접속</text>
     <line x1="660" y1="194" x2="660" y2="178" class="hla-ln hla-dash" marker-end="url(#hla-arrow)"/>
@@ -108,16 +108,16 @@ permalink: /homelab/
   <!-- 흐름선: VPN · GitOps -->
   <g class="hla-g hla-g2">
     <line x1="146" y1="220" x2="442" y2="220" class="hla-ln hla-dash" marker-end="url(#hla-arrow)"/>
-    <text x="292" y="212" class="hla-s" text-anchor="middle">WireGuard 51820/UDP · 키 인증</text>
+    <text x="292" y="212" class="hla-s" text-anchor="middle">WireGuard 51820/UDP</text>
     <line x1="170" y1="358" x2="442" y2="358" class="hla-ln hla-dash" marker-end="url(#hla-arrow)"/>
-    <text x="304" y="350" class="hla-s" text-anchor="middle">코드 push → CI → 이미지 → ArgoCD가 pull</text>
+    <text x="304" y="350" class="hla-s" text-anchor="middle">코드 push → CI → 이미지 → ArgoCD가 감지·배포</text>
   </g>
 
   <!-- 흐르는 점 셋 — 12초 한 바퀴를 순서대로 (한 사이클 돌고 사라지고 다음) -->
   <circle class="hla-dot hla-dot-u" r="4.5" opacity="0">
     <animateMotion dur="12s" begin="1.2s" repeatCount="indefinite" calcMode="linear"
       keyTimes="0;0.05;0.33;1" keyPoints="0;0;1;1"
-      path="M70,72 L221,72 L364,72 L466,72 L466,142 L560,142 L672,142"/>
+      path="M70,72 L221,72 L364,72 L466,72 L466,142 L560,142 L634,142"/>
     <animate attributeName="opacity" dur="12s" begin="1.2s" repeatCount="indefinite"
       keyTimes="0;0.05;0.07;0.31;0.33;1" values="0;0;1;1;0;0"/>
   </circle>
@@ -131,7 +131,7 @@ permalink: /homelab/
   <circle class="hla-dot hla-dot-g" r="4.5" opacity="0">
     <animateMotion dur="12s" begin="1.2s" repeatCount="indefinite" calcMode="linear"
       keyTimes="0;0.68;0.94;1" keyPoints="0;0;1;1"
-      path="M87,358 L496,358 L496,218 L660,218 L660,172"/>
+      path="M87,358 L496,358 L496,221 L660,221 L660,176"/>
     <animate attributeName="opacity" dur="12s" begin="1.2s" repeatCount="indefinite"
       keyTimes="0;0.68;0.70;0.92;0.94;1" values="0;0;1;1;0;0"/>
   </circle>
