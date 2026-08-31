@@ -91,15 +91,15 @@ permalink: /homelab/
     <image href="/assets/img/icons/kubernetes.svg" x="513" y="94" width="20" height="20"/>
     <text x="539" y="109" class="hla-t">k3s 클러스터 — VM 3대 · HA</text>
 
-    <rect x="514" y="126" width="92" height="32" rx="16" class="hla-box"/>
-    <image href="/assets/img/icons/traefikproxy.svg" x="522" y="132" width="20" height="20"/>
-    <text x="546" y="147" class="hla-c">Traefik</text>
-    <line x1="606" y1="142" x2="618" y2="142" class="hla-ln" marker-end="url(#hla-arrow)"/>
-    <rect x="620" y="118" width="110" height="56" rx="10" class="hla-box"/>
-    <image href="/assets/img/icons/ticket.svg" x="627" y="126" width="22" height="22"/>
-    <text x="654" y="138" class="hla-c">대기열 서비스</text>
-    <text x="675" y="153" class="hla-s2" text-anchor="middle">frontend · queue · booking</text>
-    <text x="675" y="166" class="hla-s2" text-anchor="middle">Redis · MySQL · Kafka</text>
+    <rect x="514" y="126" width="80" height="32" rx="16" class="hla-box"/>
+    <image href="/assets/img/icons/traefikproxy.svg" x="520" y="132" width="20" height="20"/>
+    <text x="544" y="147" class="hla-c">Traefik</text>
+    <line x1="594" y1="142" x2="606" y2="142" class="hla-ln" marker-end="url(#hla-arrow)"/>
+    <rect x="608" y="114" width="126" height="62" rx="10" class="hla-box"/>
+    <image href="/assets/img/icons/ticket.svg" x="616" y="124" width="22" height="22"/>
+    <text x="643" y="139" class="hla-c">대기열 서비스</text>
+    <text x="671" y="156" class="hla-s2" text-anchor="middle">frontend · queue · booking</text>
+    <text x="671" y="169" class="hla-s2" text-anchor="middle">Redis · MySQL · Kafka</text>
 
     <rect x="514" y="196" width="216" height="44" rx="10" class="hla-box"/>
     <image href="/assets/img/icons/argo.svg" x="523" y="208" width="20" height="20"/>
