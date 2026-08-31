@@ -47,6 +47,8 @@ author:
 
 # Add links to the sidebar.
 menu:
+  - title:             홈
+    url:               /
   - title:             홈랩
     url:               /homelab/
   - title:             프로젝트
