@@ -60,5 +60,5 @@ sitemap: true
 만든 것만큼 기록을 남기는 것을 중요하게 생각합니다.
 공부·자격증·여행, 그리고 읽은 책까지 블로그에 씁니다.
 
-* [블로그](https://zed6740.tistory.com) — 홈랩 구축기 32편을 포함한 공부와 일상의 기록
+* [블로그](https://zed6740.tistory.com) — 홈랩 구축기 21편을 포함한 공부와 일상의 기록
 * [읽은 책](https://zed6740.tistory.com/category/%EC%9D%BC%EC%83%81/%EC%B1%85) — 읽고 남긴 감상 61편
