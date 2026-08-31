@@ -129,3 +129,7 @@ ul.timeline > li:has(> small)::before {
 .demo-ctas a.primary { background: var(--accent-color); color: #fff !important; }
 .demo-ctas a.ghost { color: var(--accent-color); }
 .demo-note { font-size: .78rem; color: var(--gray); margin: .5rem 0 0; }
+
+.demo-caption { font-size: .82rem; color: var(--gray-text); margin: .5rem 0 0; }
+.demo-ctas { align-items: center; }
+.demo-ctas .demo-note { margin: 0; }
