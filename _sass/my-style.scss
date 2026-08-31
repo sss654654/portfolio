@@ -171,6 +171,8 @@ ul.timeline > li:has(> small)::before {
 .hla-wallt { font-size: 11px; fill: #b34a00; letter-spacing: .02em; }
 .hla-t { font-size: 12.5px; font-weight: 700; fill: var(--body-color); }
 .hla-s { font-size: 10px; fill: var(--gray); }
+.hla-s2 { font-size: 9px; fill: var(--gray); }
+.hla-a { font-size: 9.5px; fill: var(--gray); letter-spacing: .01em; }
 .hla-c { font-size: 11px; font-weight: 600; fill: var(--gray-text); }
 .hla-zone { font-size: 11px; letter-spacing: .14em; fill: var(--gray); }
 .hla-glyph { fill: none; stroke: var(--gray-text); stroke-width: 1.6; }
@@ -191,13 +193,6 @@ ul.timeline > li:has(> small)::before {
 @media (prefers-reduced-motion: reduce) {
   .hla-g { animation: none; opacity: 1; }
   .hla-dot { display: none; }
-}
-
-.hl-numbers {
-  font-size: .86rem;
-  color: var(--gray-text);
-  margin: .6rem 0 0;
-  font-variant-numeric: tabular-nums;
 }
 
 /* 하위 프로젝트 카드 그리드 */
