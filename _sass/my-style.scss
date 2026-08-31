@@ -13,11 +13,14 @@
   }
 }
 
-/* 티스토리 아이콘 — 아이콘 폰트에 T 글리프가 없어 글자로 그린다 */
-.icon-tistory {
+/* 티스토리 아이콘 — 아이콘 폰트에 T 글리프가 없어 글자로 그린다.
+   icomoon 이 [class^="icon-"] 에 font-family 를 !important 로 걸고 뒤에 로드되므로,
+   span.icon-tistory 로 특이도를 한 단계 올려야 이 규칙이 이긴다 */
+span.icon-tistory {
   font-family: inherit !important;
   font-weight: 700;
+  font-style: normal;
 }
-.icon-tistory::before {
+span.icon-tistory::before {
   content: "T";
 }
