@@ -105,7 +105,7 @@ ul.timeline > li:has(> small)::before {
   bottom: .8rem;
   padding: .5rem 1rem;
   border-radius: .45rem;
-  background: var(--accent-color);
+  background: #e03131; /* 데모 서비스의 빨강에 맞춤 — 테마 액센트(황토색)와 구분 */
   color: #fff;
   font-size: .85rem;
   font-weight: 700;
