@@ -97,26 +97,25 @@ ul.timeline > li:has(> small)::before {
   border-bottom: none !important;
   text-decoration: none !important;
 }
-/* 영상에 마우스를 올리면 이동 대상임을 알린다 — 모바일은 hover 가 없지만 탭하면 그대로 이동 */
+/* 영상 위 상시 CTA 배지 — 클릭은 앵커(demo-shot)가 받는다. 모바일에서도 항상 보인다 */
 .demo-shot::before {
   content: "직접 해보기 →";
   position: absolute;
   right: .8rem;
   bottom: .8rem;
-  padding: .45rem .9rem;
+  padding: .5rem 1rem;
   border-radius: .45rem;
-  background: rgba(0, 0, 0, .65);
+  background: var(--accent-color);
   color: #fff;
   font-size: .85rem;
   font-weight: 700;
   line-height: 1;
-  opacity: 0;
-  transition: opacity .15s;
+  transition: filter .15s;
   pointer-events: none;
   z-index: 1;
 }
 .demo-shot:hover::before,
-.demo-shot:focus-visible::before { opacity: 1; }
+.demo-shot:focus-visible::before { filter: brightness(1.15); }
 .demo-frame video { width: 100%; height: auto; display: block; }
 
 .demo-stats {
@@ -134,30 +133,17 @@ ul.timeline > li:has(> small)::before {
   margin-right: .18rem;
 }
 
-.demo-ctas {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .7rem;
-  margin: 1rem 0 0;
-}
-.demo-ctas a {
-  padding: .5rem 1.05rem;
-  border: 1px solid var(--accent-color);
-  border-radius: .45rem;
-  font-weight: 700;
-  font-size: .9rem;
-  text-decoration: none !important;
-}
-.demo-ctas a::after { content: none !important; }
-.demo-ctas a.primary { background: var(--accent-color); color: #fff !important; }
-.demo-ctas a.ghost { color: var(--accent-color); }
-.demo-note { font-size: .78rem; color: var(--gray); margin: .5rem 0 0; }
+.demo-note { font-size: .78rem; color: var(--gray); margin: .35rem 0 0; }
 
 .demo-caption { font-size: .82rem; color: var(--gray-text); margin: .5rem 0 0; }
-.demo-ctas { align-items: center; }
-.demo-ctas .demo-note { margin: 0; }
 
-/* 가동 상태 점 — index.md 의 JS가 stats 응답을 받았을 때만 hidden 을 푼다 */
+/* 가동 상태 점 — 목업 주소창 오른쪽. index.md 의 JS가 stats 응답을 받았을 때만 hidden 을 푼다 */
+.demo-chrome #demo-status {
+  margin-left: auto;
+  font-size: .78rem;
+  color: var(--gray);
+  white-space: nowrap;
+}
 #demo-status i {
   display: inline-block;
   width: .55em;

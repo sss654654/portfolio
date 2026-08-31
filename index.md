@@ -18,6 +18,7 @@ sitemap: true
   <div class="demo-chrome">
     <span class="demo-dots"><i></i><i></i><i></i></span>
     <span class="demo-url">ticket.subinhong.dev</span>
+    <span id="demo-status" hidden><i></i><span></span></span>
   </div>
   <a class="demo-shot" href="https://ticket.subinhong.dev" target="_blank" rel="noopener" aria-label="실서비스로 이동">
     <video autoplay loop muted playsinline preload="metadata" poster="/assets/img/demo-poster.jpg">
@@ -27,11 +28,7 @@ sitemap: true
 </div>
 
 <p class="demo-caption" markdown="0">예매가 열리는 순간부터 대기열을 지나 예매를 마치기까지, 실제 서비스 화면을 녹화한 것입니다.</p>
-
-<div class="demo-ctas" markdown="0">
-  <a class="primary" href="https://ticket.subinhong.dev" target="_blank" rel="noopener">직접 해보기 →</a>
-  <span class="demo-note"><span id="demo-status" hidden><i></i><span></span> · </span>서버는 매일 07:30–23:30 KST에만 켜 둡니다</span>
-</div>
+<p class="demo-note" markdown="0">서버는 매일 07:30–23:30 KST에만 켜 둡니다</p>
 
 <!-- 가동 상태 점 — 데모의 stats 엔드포인트(읽기 전용 GET)를 한 번 조회한다.
      판정: 응답이 오면(상태코드 무관) 가동 중 — CORS 헤더가 실린 응답을 받았다는 것 자체가
@@ -75,7 +72,8 @@ sitemap: true
 
 ## 그 밖에
 
-군 복무 때 100권 읽기를 시작한 뒤로 소설, 그중에서도 추리소설을 즐겨 읽습니다.
+군 복무 때 100권 읽기를 시작하면서 추리소설을 즐겨 읽게 됐고,
+읽은 책을 한 권씩 남기다 보니 그게 지금의 블로그로 이어졌습니다.
 
 * [블로그](https://zed6740.tistory.com) — 공부와 일상의 기록
-* [읽은 책](https://zed6740.tistory.com/category/%EC%9D%BC%EC%83%81/%EC%B1%85) — 기록하는 습관이 시작된 독서록 61편
+* [읽은 책](https://zed6740.tistory.com/category/%EC%9D%BC%EC%83%81/%EC%B1%85) — 그 시작이 된 독서록 61편
