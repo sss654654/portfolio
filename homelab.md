@@ -22,6 +22,9 @@ permalink: /homelab/
     <marker id="hla-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
       <path d="M0,0 L8,4 L0,8 z" fill="currentColor" opacity=".5"/>
     </marker>
+    <pattern id="hla-bricks" width="18" height="12" patternUnits="userSpaceOnUse">
+      <path d="M0,0.5 H18 M0,6.5 H18 M4.5,0.5 V6.5 M13.5,6.5 V12" stroke="#d94f00" stroke-opacity=".22" stroke-width="1" fill="none"/>
+    </pattern>
   </defs>
 
   <!-- 구역 라벨 -->
@@ -76,6 +79,7 @@ permalink: /homelab/
 
     <!-- OPNsense 세로 벽 — 세로쓰기 한 자씩, 이름은 아래 가로로 -->
     <rect x="444" y="84" width="44" height="232" rx="8" class="hla-wall"/>
+    <rect x="444" y="84" width="44" height="232" rx="8" fill="url(#hla-bricks)" stroke="none"/>
     <image href="/assets/img/icons/opnsense.svg" x="454" y="92" width="24" height="24"/>
     <text x="466" y="148" text-anchor="middle" class="hla-wallc">방</text>
     <text x="466" y="168" text-anchor="middle" class="hla-wallc">화</text>
@@ -92,9 +96,8 @@ permalink: /homelab/
     <text x="546" y="147" class="hla-c">Traefik</text>
     <line x1="606" y1="142" x2="618" y2="142" class="hla-ln" marker-end="url(#hla-arrow)"/>
     <rect x="620" y="118" width="110" height="56" rx="10" class="hla-box"/>
-    <rect x="629" y="128" width="20" height="13" rx="2.5" fill="#e03131"/>
-    <line x1="643" y1="130" x2="643" y2="139" stroke="#fff" stroke-width="1.2" stroke-dasharray="1.6 1.6"/>
-    <text x="655" y="138" class="hla-c">대기열 서비스</text>
+    <image href="/assets/img/icons/ticket.svg" x="627" y="126" width="22" height="22"/>
+    <text x="654" y="138" class="hla-c">대기열 서비스</text>
     <text x="675" y="153" class="hla-s2" text-anchor="middle">frontend · queue · booking</text>
     <text x="675" y="166" class="hla-s2" text-anchor="middle">Redis · MySQL · Kafka</text>
 
@@ -105,6 +108,7 @@ permalink: /homelab/
     <text x="572" y="230" class="hla-s">VPN으로만 접속</text>
     <line x1="660" y1="194" x2="660" y2="178" class="hla-ln hla-dash" marker-end="url(#hla-arrow)"/>
     <text x="668" y="190" class="hla-s2">배포</text>
+    <text x="621" y="251" class="hla-s2" text-anchor="middle">이 안의 상자는 전부 파드로 떠 있습니다</text>
   </g>
 
   <!-- 흐름선: VPN · GitOps -->
