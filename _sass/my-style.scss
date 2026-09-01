@@ -187,6 +187,9 @@ ul.timeline > li:has(> small)::before {
    주황은 이미지가 가는 길, 파랑은 배포 정의가 가는 길. 배선도의 범례 색을 그대로 쓴다. */
 .hla-ln-img { stroke: #f08c2e; stroke-width: 1.6; opacity: .9; fill: none; }
 .hla-ln-def { stroke: #2f6fdb; stroke-width: 1.6; opacity: .9; fill: none; }
+/* 흐름 순번 — 선 위에 얹어 어느 것이 먼저인지 보이게 한다 */
+.hla-num { fill: var(--gray-bg); stroke: var(--border-color); stroke-width: 1; }
+.hla-nt { font-size: 10px; font-weight: 700; fill: var(--body-color); text-anchor: middle; }
 
 .hla-g { opacity: 0; animation: hl-rise .5s ease forwards; }
 .hla-g1 { animation-delay: .1s; }

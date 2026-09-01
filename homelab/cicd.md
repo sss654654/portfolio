@@ -25,7 +25,7 @@ permalink: /homelab/cicd/
 
 | 정한 것 | 그렇게 한 이유 |
 |---|---|
-| Git 서버를 **클러스터 밖 데스크탑**에 | GitHub은 인터넷에 있어 사설망 안의 ArgoCD를 부를 수 없음 — 커밋마다 최대 3분 대기. 그렇다고 클러스터 안에 세우면 클러스터를 다시 세울 근거가 대상과 함께 무너짐 |
+| Git 서버를 **클러스터 밖 데스크탑**에 | GitHub은 인터넷에 있어 사설망 안의 ArgoCD를 부를 수 없음 — ArgoCD 기본값인 폴링(최대 3분)만 남음. 그렇다고 클러스터 안에 세우면 클러스터를 다시 세울 근거가 대상과 함께 무너짐 |
 | `main`·`dev` 직접 push 차단 — **작업 브랜치를 따서 MR로** | 무료판은 승인을 머지 조건으로 걸 수 없어 사람이 설 자리가 없음. 러너가 선 뒤 그 자리에 **파이프라인 통과**를 걸었음 |
 | 이미지 이름을 커밋마다 다르게 — `dev-15-17dcc495` | 고정하면 `tag:` 줄이 안 변해 ArgoCD가 할 일이 없어짐. 파드를 갈려면 밖에서 클러스터에 명령해야 하고, 그러면 클러스터 전권 자격이 밖에 있어야 함 |
 | 태그를 되쓰는 쪽을 **클러스터 안 도구**로 | 파이프라인이 그 줄을 고치면 배포 정의 저장소에 대한 쓰기 자격이 클러스터 밖으로 나감 |
@@ -36,110 +36,94 @@ permalink: /homelab/cicd/
 
 ## CI/CD 구조
 
-<!-- 이 그림이 말할 것은 둘이다. 어떤 도구로 다섯 단을 채웠나, 그리고 선이 전부
-     아래(클러스터)에서 위(밖)로 나간다는 것. 표준 CI 단계 설명이 아니라 내가 고른 구성을 싣는다.
-     주황은 이미지가 가는 길, 파랑은 배포 정의가 가는 길. image-updater 에서 색이 바뀐다. -->
+<!-- 번호가 커밋에서 파드까지의 순서다. 실선은 전부 클러스터가 밖으로 나가 가져오는 것이고,
+     위에서 아래로 가는 것은 webhook 점선 하나 — 그것도 다시 읽어라 한 마디뿐이다.
+     주황은 이미지가 가는 길, 파랑은 배포 정의가 가는 길. -->
 <figure class="hl-diagram hl-diagram-lg" markdown="0">
-<svg viewBox="0 0 760 562" role="img" aria-label="데스크탑에 GitLab 저장소 둘과 다섯 단 파이프라인을 도는 러너, 레지스트리가 있고, 격리망 안의 ArgoCD·image-updater·노드가 각각 그것들을 읽고 받아가는 그림">
+<svg viewBox="0 0 760 600" role="img" aria-label="데스크탑의 GitLab 안에 저장소 둘과 레지스트리가 있고 GitLab Runner 가 다섯 단을 돈다. 격리망 안의 ArgoCD·image-updater·노드가 각각 읽고 받아가며, 번호가 커밋에서 파드까지의 순서를 나타낸다">
   <defs>
-    <marker id="hlm-img" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto">
-      <path d="M0,0 L8,4 L0,8 z" fill="#f08c2e"/>
-    </marker>
-    <marker id="hlm-def" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto">
-      <path d="M0,0 L8,4 L0,8 z" fill="#2f6fdb"/>
-    </marker>
+    <marker id="hlm-i" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#f08c2e"/></marker>
+    <marker id="hlm-d" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#2f6fdb"/></marker>
+    <marker id="hlm-n" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor" opacity=".5"/></marker>
   </defs>
 
-  <rect class="hla-box" x="20" y="30" width="720" height="300" rx="6"/>
-  <text class="hla-zone" x="36" y="52">데스크탑 · 클러스터 밖</text>
+  <rect class="hla-box" x="18" y="26" width="724" height="330" rx="6"/>
+  <text class="hla-zone" x="34" y="48">데스크탑 · 클러스터 밖</text>
 
-  <rect class="hla-inner" x="36" y="64" width="240" height="112" rx="4"/>
-  <text class="hla-c" x="50" y="84">GitLab</text>
-  <rect class="hla-inner" x="46" y="92" width="220" height="34" rx="3"/>
-  <g class="hla-glyph" transform="translate(58,100)">
-    <circle cx="4" cy="4" r="3"/><circle cx="4" cy="14" r="3"/><path d="M4,7 L4,11"/>
-  </g>
-  <text class="hla-s2" x="80" y="114">cgv-onprem</text>
-  <rect class="hla-inner" x="46" y="132" width="220" height="34" rx="3"/>
-  <g class="hla-glyph" transform="translate(58,140)">
-    <circle cx="4" cy="4" r="3"/><circle cx="4" cy="14" r="3"/><path d="M4,7 L4,11"/>
-  </g>
-  <text class="hla-s2" x="80" y="154">cgv-infra</text>
+  <rect class="hla-inner" x="34" y="58" width="692" height="286" rx="5"/>
+  <image href="/assets/img/icons/gitlab.svg" x="46" y="66" width="20" height="20"/>
+  <text class="hla-c" x="72" y="82">GitLab</text>
 
-  <rect class="hla-inner" x="310" y="64" width="412" height="192" rx="4"/>
-  <text class="hla-c" x="324" y="84">GitLab Runner — 13 job, 저마다 컨테이너를 새로 띄운다</text>
+  <rect class="hla-inner" x="50" y="94" width="252" height="34" rx="3"/>
+  <text class="hla-t" x="64" y="116">cgv-infra</text>
+  <text class="hla-s2" x="150" y="116">배포 정의</text>
 
-  <rect class="hla-inner" x="322" y="92" width="388" height="30" rx="3"/>
-  <text class="hla-t" x="334" y="112">check</text>
-  <text class="hla-s2" x="416" y="112">gitleaks · trivy fs · go vet · SpotBugs</text>
+  <rect class="hla-inner" x="424" y="94" width="288" height="34" rx="3"/>
+  <text class="hla-t" x="438" y="116">cgv-onprem</text>
+  <text class="hla-s2" x="540" y="116">앱 소스 세 종</text>
 
-  <rect class="hla-inner" x="322" y="126" width="388" height="30" rx="3"/>
-  <text class="hla-t" x="334" y="146">test</text>
-  <text class="hla-s2" x="416" y="146">동시 50 요청에 정원 유지 · 좌석 요청 정규화</text>
+  <rect class="hla-inner" x="340" y="150" width="372" height="130" rx="4"/>
+  <text class="hla-c" x="352" y="168">GitLab Runner — 13 job</text>
+  <text class="hla-t" x="352" y="192">check</text><text class="hla-s2" x="424" y="192">gitleaks · trivy fs · go vet · SpotBugs</text>
+  <text class="hla-t" x="352" y="212">test</text><text class="hla-s2" x="424" y="212">동시 50 요청에 정원 유지 · 좌석 정규화</text>
+  <text class="hla-t" x="352" y="232">build</text><text class="hla-s2" x="424" y="232">서비스마다 멀티스테이지 Dockerfile</text>
+  <text class="hla-t" x="352" y="252">scan</text><text class="hla-s2" x="424" y="252">trivy image — 수정판이 있는 것만 막음</text>
+  <text class="hla-t" x="352" y="272">publish</text><text class="hla-s2" x="424" y="272">dev 브랜치에서만 job 이 생김</text>
 
-  <rect class="hla-inner" x="322" y="160" width="388" height="30" rx="3"/>
-  <text class="hla-t" x="334" y="180">build</text>
-  <text class="hla-s2" x="416" y="180">서비스마다 멀티스테이지 Dockerfile</text>
+  <rect class="hla-inner" x="424" y="294" width="288" height="40" rx="3"/>
+  <text class="hla-t" x="438" y="312">레지스트리</text>
+  <text class="hla-s2" x="438" y="328">dev-15-17dcc495 — 커밋마다 다른 이름</text>
 
-  <rect class="hla-inner" x="322" y="194" width="388" height="30" rx="3"/>
-  <text class="hla-t" x="334" y="214">scan</text>
-  <text class="hla-s2" x="416" y="214">trivy image</text>
-  <text class="hla-s2" x="562" y="214">수정판이 있는 것만 막음</text>
+  <line class="hla-ln-img" x1="600" y1="132" x2="600" y2="146" marker-end="url(#hlm-i)" fill="none"/>
+  <circle class="hla-num" cx="620" cy="139" r="9"/><text class="hla-nt" x="620" y="143">1</text>
 
-  <rect class="hla-inner" x="322" y="228" width="388" height="30" rx="3"/>
-  <text class="hla-t" x="334" y="248">publish</text>
-  <text class="hla-s2" x="416" y="248">dev 브랜치에서만 job 이 생김</text>
+  <line class="hla-ln-img" x1="600" y1="284" x2="600" y2="290" marker-end="url(#hlm-i)" fill="none"/>
+  <circle class="hla-num" cx="620" cy="287" r="9"/><text class="hla-nt" x="620" y="291">2</text>
 
-  <rect class="hla-inner" x="310" y="270" width="412" height="46" rx="4"/>
-  <g class="hla-glyph" transform="translate(324,284)">
-    <rect x="0" y="4" width="11" height="9"/><rect x="4" y="0" width="11" height="9"/>
-  </g>
-  <text class="hla-t" x="350" y="292">레지스트리</text>
-  <text class="hla-s2" x="350" y="308">dev-15-17dcc495 — 커밋마다 다른 이름</text>
+  <polyline class="hla-ln-img" points="470,466 470,412 560,412 560,340" marker-end="url(#hlm-i)" fill="none"/>
+  <text class="hla-a" x="478" y="444">새 태그를 본다</text>
+  <circle class="hla-num" cx="470" cy="432" r="9"/><text class="hla-nt" x="470" y="436">3</text>
 
-  <line class="hla-ln-img" x1="270" y1="109" x2="304" y2="109" marker-end="url(#hlm-img)" fill="none"/>
-  <text class="hla-a" x="272" y="100">push</text>
-  <line class="hla-ln-img" x1="516" y1="258" x2="516" y2="266" marker-end="url(#hlm-img)" fill="none"/>
+  <polyline class="hla-ln-def" points="352,466 352,386 250,386 250,134" marker-end="url(#hlm-d)" fill="none"/>
+  <text class="hla-a" x="262" y="378">tag 한 줄을 커밋한다</text>
+  <circle class="hla-num" cx="352" cy="428" r="9"/><text class="hla-nt" x="352" y="432">4</text>
 
-  <line class="hla-ln-def" x1="120" y1="414" x2="120" y2="182" marker-end="url(#hlm-def)" fill="none"/>
-  <text class="hla-a" x="128" y="350">매니페스트를 읽는다</text>
+  <line class="hla-ln" x1="196" y1="134" x2="196" y2="462" stroke-dasharray="4 4" marker-end="url(#hlm-n)" fill="none"/>
+  <text class="hla-a" x="204" y="448">webhook — 3초</text>
+  <circle class="hla-num" cx="196" cy="428" r="9"/><text class="hla-nt" x="196" y="432">5</text>
 
-  <polyline class="hla-ln-def" points="350,414 350,372 200,372 200,182" marker-end="url(#hlm-def)" fill="none"/>
-  <text class="hla-a" x="252" y="392">태그 한 줄을 되쓴다</text>
+  <line class="hla-ln-def" x1="112" y1="466" x2="112" y2="134" marker-end="url(#hlm-d)" fill="none"/>
+  <text class="hla-a" x="104" y="392" text-anchor="end">읽는다</text>
+  <circle class="hla-num" cx="112" cy="372" r="9"/><text class="hla-nt" x="112" y="376">6</text>
 
-  <line class="hla-ln-img" x1="404" y1="414" x2="404" y2="322" marker-end="url(#hlm-img)" fill="none"/>
-  <text class="hla-a" x="412" y="352">새 태그를 본다</text>
+  <line class="hla-ln-img" x1="672" y1="466" x2="672" y2="340" marker-end="url(#hlm-i)" fill="none"/>
+  <text class="hla-a" x="662" y="392" text-anchor="end">이미지를 받는다</text>
+  <circle class="hla-num" cx="672" cy="372" r="9"/><text class="hla-nt" x="672" y="376">7</text>
 
-  <line class="hla-ln-img" x1="620" y1="414" x2="620" y2="322" marker-end="url(#hlm-img)" fill="none"/>
-  <text class="hla-a" x="628" y="352">이미지를 받는다</text>
+  <rect class="hla-box" x="18" y="470" width="724" height="102" rx="6"/>
+  <text class="hla-zone" x="34" y="490">k3s 클러스터 · 격리망 안</text>
 
-  <rect class="hla-box" x="20" y="418" width="720" height="112" rx="6"/>
-  <text class="hla-zone" x="36" y="440">k3s 클러스터 · 격리망 안</text>
+  <rect class="hla-inner" x="34" y="498" width="252" height="60" rx="4"/>
+  <image href="/assets/img/icons/argo.svg" x="46" y="510" width="18" height="18"/>
+  <text class="hla-t" x="70" y="524">ArgoCD</text>
+  <text class="hla-s2" x="46" y="546">git 대로 파드를 맞춘다</text>
 
-  <rect class="hla-inner" x="36" y="450" width="240" height="66" rx="4"/>
-  <g class="hla-glyph" transform="translate(50,466)">
-    <path d="M12,3 A6,6 0 1 0 14,8"/><path d="M14,1 L14,5 L10,5"/>
-  </g>
-  <text class="hla-t" x="76" y="478">ArgoCD</text>
-  <text class="hla-s2" x="50" y="498">git 대로 클러스터를 맞춘다</text>
+  <rect class="hla-inner" x="300" y="498" width="212" height="60" rx="4"/>
+  <text class="hla-t" x="312" y="524">image-updater</text>
+  <text class="hla-s2" x="312" y="546">새 태그를 git 에 되쓴다</text>
 
-  <rect class="hla-inner" x="310" y="450" width="180" height="66" rx="4"/>
-  <text class="hla-t" x="324" y="478">image-updater</text>
-  <text class="hla-s2" x="324" y="498">CI 와 CD 를 잇는다</text>
+  <rect class="hla-inner" x="526" y="498" width="200" height="60" rx="4"/>
+  <image href="/assets/img/icons/kubernetes.svg" x="538" y="510" width="18" height="18"/>
+  <text class="hla-t" x="562" y="524">노드 3대</text>
+  <text class="hla-s2" x="538" y="546">containerd 가 받는다</text>
 
-  <rect class="hla-inner" x="524" y="450" width="198" height="66" rx="4"/>
-  <g class="hla-glyph" transform="translate(538,468)">
-    <rect x="0" y="0" width="5" height="11"/><rect x="8" y="0" width="5" height="11"/><rect x="16" y="0" width="5" height="11"/>
-  </g>
-  <text class="hla-t" x="566" y="478">노드 3대</text>
-  <text class="hla-s2" x="538" y="498">containerd 가 받는다</text>
-
-  <circle class="hla-dot-g" cx="40" cy="550" r="4"/>
-  <text class="hla-a" x="52" y="554">이미지가 가는 길</text>
-  <circle class="hla-dot-v" cx="196" cy="550" r="4"/>
-  <text class="hla-a" x="208" y="554">배포 정의가 가는 길</text>
+  <circle class="hla-dot-g" cx="36" cy="590" r="4"/>
+  <text class="hla-a" x="48" y="594">이미지</text>
+  <circle class="hla-dot-v" cx="124" cy="590" r="4"/>
+  <text class="hla-a" x="136" y="594">배포 정의</text>
+  <text class="hla-a" x="232" y="594">점선 — 알림만. 배포 내용은 안 실린다</text>
 </svg>
-<figcaption>선이 전부 아래에서 위로 갑니다 — 밖에서 클러스터로 미는 선이 없습니다. 주황이 파랑으로 바뀌는 자리가 image-updater입니다.</figcaption>
+<figcaption>번호가 커밋에서 파드까지의 순서입니다. 실선은 전부 클러스터가 밖으로 나가 가져오는 것이고, 위에서 아래로 가는 것은 점선 하나뿐입니다.</figcaption>
 </figure>
 
 ## 트러블슈팅
