@@ -2,7 +2,7 @@
 layout: page
 title: 클러스터
 description: >
-  하이퍼바이저부터 스토리지까지, 기본값 대신 직접 골랐습니다
+  네트워크·로드밸런서·인그레스·스토리지를 k3s 기본 대신 Calico·MetalLB·Traefik·정적 PV로 세웠습니다
 permalink: /homelab/cluster/
 ---
 

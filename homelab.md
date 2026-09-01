@@ -193,7 +193,7 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
     <img class="hlc-img" src="/assets/img/homelab/cluster-thumb.jpg" alt="뚜껑을 연 노트북과 오른쪽에 케이블로 연결된 외장 SSD">
     <span class="hlc-tag">클러스터</span>
     <span class="hlc-title">Proxmox로 k3s HA 클러스터 구축</span>
-    <span class="hlc-desc">하이퍼바이저부터 스토리지까지, 기본값 대신 직접 골랐습니다.</span>
+    <span class="hlc-desc">네트워크·로드밸런서·인그레스·스토리지를 k3s 기본 대신 Calico·MetalLB·Traefik·정적 PV로 세웠습니다.</span>
   </a>
 
   <a class="hlc-card" href="/homelab/deploy/">
