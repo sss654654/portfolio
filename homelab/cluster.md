@@ -91,7 +91,7 @@ permalink: /homelab/cluster/
 
 | | 기본값 | 이 홈랩 | 그렇게 한 이유 |
 |---|---|---|---|
-| 하이퍼바이저 | Windows 위에 얹는 Type 2 | **Proxmox** (Type 1) | Windows가 재부팅되면 그 위의 VM 세 대가 함께 내려감 |
+| 하이퍼바이저 | Windows 위에 얹는 Type&nbsp;2 | **Proxmox** — Type&nbsp;1 | 호스트 OS가 자원을 상시 차지하지 않아 노트북 몫을 전부 VM에 배분할 수 있고, Windows 재부팅에 세 대가 함께 내려가지도 않음 |
 | 게스트 메모리 | ballooning — 호스트가 회수 | **8GB 고정** | kubelet은 노드 RAM 총량이 고정이라는 전제로 배치와 퇴출을 판단함 |
 | 절전 | 뚜껑 닫으면 잠자기 · USB 자동절전 | **둘 다 차단** | 루트 디스크가 외장 USB — 재워지면 파일시스템이 끊김 |
 {:.hl-cmp}
