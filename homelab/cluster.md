@@ -2,14 +2,11 @@
 layout: page
 title: 클러스터
 description: >
-  노트북 한 대를 Proxmox로 나눠 VM 세 대에 k3s를 HA로 세웠습니다
+  자원이 모자라거나 뒤에 필요한 것을 못 하게 돼, 여덟 자리에서 기본값을 걷어냈습니다
 permalink: /homelab/cluster/
 ---
 
 <p class="hl-back" markdown="0"><a href="/homelab/">← 홈랩</a></p>
-
-내장 Windows는 지우지 않고, RAM 32GB를 세 노드가 나눠 씁니다.
-**기본값을 그대로 두면** 이 조건에서 감당이 안 되거나, 뒤에 필요한 것을 못 하게 됩니다.
 
 ## 서 있는 구조
 
@@ -87,6 +84,8 @@ permalink: /homelab/cluster/
 </figure>
 
 ## 기본값을 끄고 직접 고른 것
+
+노트북 한 대에 RAM 32GB. 내장 Windows를 지우지 않은 채 세 노드가 그것을 나눠 씁니다.
 
 <div class="hl-sub" markdown="0">노트북을 서버로 만드는 층</div>
 
