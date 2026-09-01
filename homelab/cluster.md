@@ -30,7 +30,7 @@ permalink: /homelab/cluster/
   <!-- k3s -->
   <rect class="hla-box" x="30" y="44" width="700" height="46" rx="5"/>
   <text class="hla-t" x="46" y="65">k3s v1.36.2 — 세 대 모두 control-plane 겸 워커 · etcd 3멤버</text>
-  <text class="hla-s" x="46" y="81">Calico · MetalLB · Traefik · 정적 PV — 기본 컴포넌트 자리를 직접 고른 것으로 채움</text>
+  <text class="hla-s" x="46" y="81">Calico(파드 네트워크) · MetalLB(로드밸런서) · Traefik(인그레스) · 정적 PV(스토리지)</text>
 
   <!-- VM 3대 -->
   <g>
@@ -96,26 +96,28 @@ permalink: /homelab/cluster/
 
 ## 기본값을 끄고 직접 고른 것
 
-**노트북을 서버로 만드는 층**
+<div class="hl-sub" markdown="0">노트북을 서버로 만드는 층</div>
 
 | | 기본값 | 이 홈랩 | 그렇게 한 이유 |
 |---|---|---|---|
 | 하이퍼바이저 | 호스트 OS 위 Type 2 | **Proxmox** (Type 1) | Windows 업데이트와 재부팅에 VM 세 대가 함께 내려감 |
 | 게스트 메모리 | ballooning — 호스트가 회수 | **8GB 고정** | kubelet이 노드 RAM 총량을 고정으로 전제하고 배치함 |
-| 디스크 캐시 | No cache | **그대로 유지** | Write back은 호스트 RAM 도달 시점에 완료를 보고 — etcd·MySQL의 커밋 보장이 깨짐 |
-| 절전 | 뚜껑 닫으면 잠자기 · 유휴 USB 절전 | **둘 다 차단** | 루트 디스크가 외장 USB라 재워지면 파일시스템이 끊김 |
+| 절전 | 뚜껑 닫으면 잠자기 · 유휴 USB 절전 | **둘 다 차단** | 루트 디스크가 외장 USB라, 재워지면 파일시스템이 끊김 |
+{:.hl-cmp}
 
-**k3s가 안고 오는 층**
+<div class="hl-sub" markdown="0">k3s가 안고 오는 층</div>
 
 | | 기본값 | 이 홈랩 | 그렇게 한 이유 |
 |---|---|---|---|
 | 파드 네트워크 | Flannel | **Calico** | Flannel은 NetworkPolicy를 집행하지 않음 |
-| 로드밸런서 | ServiceLB — 노드 IP를 빌림 | **MetalLB** — `.240-.250` | 서비스에 줄 주소를 공유기 DHCP와 겹치지 않게 직접 지정 |
+| 로드밸런서 | ServiceLB | **MetalLB** `.240-.250` | 노드 IP를 빌리는 대신, 공유기 DHCP와 안 겹치는 대역을 직접 지정 |
 | 인그레스 | 번들 Traefik | **직접 올린 Traefik** | 번들은 설정을 바꿔도 k3s 업그레이드에 덮임 |
-| 스토리지 | local-path — 한 파일시스템에 폴더로 | **정적 PV 10장** | 워크로드별 사용량이 지표에서 갈림 |
-| 노드 예약 | 없음 — 가진 메모리를 전부 파드에게 준다고 신고 | **2Gi** | 메모리가 마르면 커널이 etcd를 안은 프로세스를 죽임 |
+| 노드 예약 | 없음 | **2Gi** | 메모리가 마르면 커널이 etcd를 안은 프로세스를 죽임 |
+| 스토리지 | local-path | **정적 PV 10장** | 워크로드별 사용량이 지표에서 갈림 |
+{:.hl-cmp}
 
-디스크를 워크로드마다 자른 건 성능이 아니라 관측 때문입니다 — 사용량은 `statfs`가 **파일시스템 단위로만** 답해서, 폴더로 나눠 담으면 나중에 쿼리로 "누가 채웠나"를 못 가립니다.
+디스크를 워크로드마다 자른 건 성능이 아니라 관측 때문입니다.
+사용량은 `statfs`가 **파일시스템 단위로만** 답해서, 한 볼륨에 폴더로 나눠 담으면 나중에 쿼리로 "누가 채웠나"를 못 가립니다.
 
 <figure class="hl-shot" markdown="0">
   <div class="hl-shot-wait">cluster-nodes.png — kubectl get nodes -L cgv.io/data</div>
@@ -126,24 +128,25 @@ permalink: /homelab/cluster/
 
 | 이슈 | 원인 | 조치 |
 |---|---|---|
-| 노드가 가진 메모리를 전부 파드 몫으로 신고 | k3s는 API 서버·etcd를 파드가 아닌 프로세스로 돌려 kubelet 집계 밖 | 예약값 설정. 파드 69개 뒤 실측이 **1783Mi**로 나와 1Gi에서 2Gi로 수정 |
+| 노드가 가진 메모리를 전부 파드 몫으로 신고 | k3s는 API 서버·etcd를 파드가 아닌 프로세스로 돌려 kubelet 집계 밖 | 예약값 설정. 워크로드를 다 올린 뒤 실측이 **1783Mi**로 나와 1Gi에서 2Gi로 수정 |
 | 클러스터 전체 무응답 — 링크는 정상인데 ARP 실패 | Intel e1000e NIC 세그멘테이션 오프로드 결함 · `Hardware Unit Hang` 34회 | 해당 오프로드 비활성화 |
 | 나흘 뒤 같은 증상 재발 | udev 규칙 조건을 NIC의 최종 이름으로 걸었는데, 장치 이벤트 시점에는 아직 `eth0` — 한 번도 실행되지 않음 | 인터페이스 기동 직후로 이동. 적용·재기동·재부팅을 각각 확인 |
+{:.hl-tbl}
+
+예약값과 재발 건은 원인이 같습니다 — **값을 추정으로 잡았고, 설정을 넣은 것과 그게 실제로 도는 것을 따로 확인하지 않았습니다.**
 
 <figure class="hl-shot" markdown="0">
   <div class="hl-shot-wait">cluster-allocatable.png — 예약 적용 후 Capacity와 Allocatable</div>
   <figcaption>설치 이후 줄곧 같던 두 숫자가 여기서 갈라집니다.</figcaption>
 </figure>
 
-첫 줄과 셋째 줄은 같은 원인입니다 — **값을 추정으로 잡았고, 설정을 넣은 것과 그게 실제로 도는 것을 따로 확인하지 않았습니다.**
-
 ## 남은 것
 
 - **외장 USB SSD 단일 장애점** — 물리 제약이라 없앨 수 없어, 끊길 수 있는 경로를 줄이는 데까지만 했습니다.
-- **관리 접근이 노드 한 대만 봅니다** — 제어면은 세 대인데 접속 설정이 한 노드를 가리킵니다.
+- **관리 접근이 노드 한 대만 봅니다** — kubeconfig가 노드 하나를 가리켜, 그 노드가 내려가면 제어면이 살아 있어도 명령이 안 나갑니다.
 - **예약값 2Gi가 저장소에만 반영돼 있습니다** — 노드에 걸린 값은 아직 1Gi이고, 반영하려면 노드를 비우고 재시작해야 합니다.
 
 ## 쓴 것
 
 Proxmox VE · KVM/QEMU · LVM-thin · Ubuntu Server · k3s · etcd · Calico · MetalLB · Traefik · Helm
-{:.note}
+{:.hl-more}
