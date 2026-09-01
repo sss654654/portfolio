@@ -408,6 +408,10 @@ ul.timeline > li:has(> small)::before {
   font-size: .78rem; color: var(--gray);
 }
 
+/* 사이트 전체 기본 크기. 테마는 화면용 html 크기를 따로 안 잡아 브라우저 기본 16px 을
+   쓰는데, 한글 본문에서 작게 읽힌다. 여기만 올리면 rem 으로 짜인 나머지가 함께 따라온다. */
+html { font-size: 17px; }
+
 /* 하위 페이지 표 — 본문보다 작게, 헤더도 본문과 같은 왼쪽 정렬로.
    keep-all 이 없으면 좁은 칸에서 한글이 단어 중간에서 끊긴다(링/크는, 적용·재/기동). */
 .hl-cmp, .hl-tbl { font-size: .88rem; word-break: keep-all; }
