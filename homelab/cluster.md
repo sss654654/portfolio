@@ -85,11 +85,6 @@ permalink: /homelab/cluster/
 <figcaption>부팅 디스크를 무엇으로 고르느냐가 이 노트북이 서버인지 아닌지를 가릅니다.</figcaption>
 </figure>
 
-<figure class="hl-shot" markdown="0">
-  <div class="hl-shot-wait">cluster-nodes.png — kubectl get nodes -L cgv.io/data</div>
-  <figcaption>세 노드가 control-plane 겸 etcd 멤버로 서고, 디스크 배치에 맞춘 라벨이 붙습니다.</figcaption>
-</figure>
-
 ## 기본값을 끄고 직접 고른 것
 
 <div class="hl-sub" markdown="0">노트북을 서버로 만드는 층</div>
@@ -121,11 +116,6 @@ permalink: /homelab/cluster/
 {:.hl-tbl}
 
 예약값과 재발 건은 원인이 같습니다 — **값을 추정으로 잡았고, 설정을 넣은 것과 그게 실제로 도는 것을 따로 확인하지 않았습니다.**
-
-<figure class="hl-shot" markdown="0">
-  <div class="hl-shot-wait">cluster-allocatable.png — 예약 적용 후 Capacity와 Allocatable</div>
-  <figcaption>설치 이후 줄곧 같던 두 숫자가 여기서 갈라집니다.</figcaption>
-</figure>
 
 ## 남은 것
 
