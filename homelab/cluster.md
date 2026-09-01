@@ -8,13 +8,13 @@ permalink: /homelab/cluster/
 
 <p class="hl-back" markdown="0"><a href="/homelab/">← 홈랩</a></p>
 
-물리 서버는 노트북 한 대이고, 내장 Windows는 지우지 않습니다.
-RAM 32GB를 세 노드가 나눠 써야 하므로, 무엇을 올릴지보다 **무엇에 자원을 안 뺏기느냐**가 먼저 정해졌습니다.
+내장 Windows는 지우지 않고, RAM 32GB를 세 노드가 나눠 씁니다.
+**기본값을 그대로 두면** 이 조건에서 감당이 안 되거나, 뒤에 필요한 것을 못 하게 됩니다.
 
 ## 서 있는 구조
 
 <!-- 층 그림 — 아래에서 위로: 물리 디스크 → Proxmox → VM 3대(각자의 데이터 디스크) → k3s.
-     네트워크 경로는 홈랩 배선도가 담당하므로 여기서는 vmbr0 한 줄로만 언급한다.
+     네트워크 경로는 홈랩 배선도가 담당하므로 여기서는 격리망(vmbr1) 한 줄로만 언급한다.
      무엇을 끄고 무엇으로 바꿨는지는 아래 대조표가 담당하므로 그림에서 반복하지 않는다. -->
 <figure class="hl-diagram hl-diagram-lg" markdown="0">
 <svg viewBox="0 0 760 390" role="img" aria-label="노트북 한 대 안에서 외장 USB SSD로 부팅한 Proxmox 위에 VM 세 대가 서고, 각 VM이 자기 데이터 디스크를 가진 채 k3s 클러스터를 이루는 층 구조">
