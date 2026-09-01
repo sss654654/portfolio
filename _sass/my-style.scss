@@ -212,6 +212,17 @@ ul.timeline > li:has(> small)::before {
 }
 .hlc-card::after { content: none !important; }
 
+/* 썸네일 — 실제 이미지가 들어온 카드 */
+.hlc-img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  margin-bottom: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: .6rem;
+}
+
 /* 썸네일 — 이미지가 들어오기 전에는 라벨이 있는 자리표시 블록 */
 .hlc-shot {
   display: flex;
