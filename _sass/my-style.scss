@@ -433,7 +433,8 @@ html { font-size: 17px; }
 
 /* 대조표는 첫 열이 항목 이름이라, 줄바꿈되면 단어가 두 줄로 쪼개져 읽기 나쁘다 */
 .hl-cmp td:first-child,
-.hl-cmp th:first-child { white-space: nowrap; color: var(--gray-text); }
+.hl-cmp th:first-child { white-space: nowrap; }
+.hl-cmp td:first-child { font-weight: 600; color: var(--body-color); }
 .hl-cmp td:nth-child(2) { color: var(--gray); }
 
 /* 표 바로 위에 붙는 소제목 */
