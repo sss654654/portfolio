@@ -183,6 +183,11 @@ ul.timeline > li:has(> small)::before {
 .hla-dot-v { fill: #2f6fdb; }
 .hla-dot-g { fill: #f08c2e; }
 
+/* 배포 카드 그림 — 경로가 둘이고 그 둘이 이 편의 논지라 선 색으로 가른다.
+   주황은 이미지가 가는 길, 파랑은 배포 정의가 가는 길. 배선도의 범례 색을 그대로 쓴다. */
+.hla-ln-img { stroke: #f08c2e; stroke-width: 1.6; opacity: .9; fill: none; }
+.hla-ln-def { stroke: #2f6fdb; stroke-width: 1.6; opacity: .9; fill: none; }
+
 .hla-g { opacity: 0; animation: hl-rise .5s ease forwards; }
 .hla-g1 { animation-delay: .1s; }
 .hla-g2 { animation-delay: .35s; }
@@ -450,11 +455,11 @@ html { font-size: 17px; }
 .hl-two th:nth-child(1) { width: 17%; }
 .hl-two th:nth-child(2) { width: 41.5%; }
 .hl-two th:nth-child(3) { width: 41.5%; }
-/* 결정표 — 근거 칸이 가장 길다 */
+/* 주체 · 동작 · 근거 표 — 첫 칸이 주어라 이름 하나가 들어갈 만큼만 */
 .hl-dec { table-layout: fixed; }
-.hl-dec th:nth-child(1) { width: 20%; }
-.hl-dec th:nth-child(2) { width: 28%; }
-.hl-dec th:nth-child(3) { width: 52%; }
+.hl-dec th:nth-child(1) { width: 22%; }
+.hl-dec th:nth-child(2) { width: 38%; }
+.hl-dec th:nth-child(3) { width: 40%; }
 
 /* 하위 페이지 층 그림 — 배선도보다 글자 수가 적어 한 단계 크게 실을 수 있다.
    배선도(hl-diagram)와 클래스를 공유하므로 전역으로 올리지 않고 여기서만 덮는다. */

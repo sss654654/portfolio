@@ -198,8 +198,8 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
 
   <a class="hlc-card" href="/homelab/deploy/">
     <span class="hlc-shot" data-label="ArgoCD · 자동 배포"></span>
-    <span class="hlc-tag">배포</span>
-    <span class="hlc-title">GitLab · ArgoCD로 GitOps 배포 구축</span>
+    <span class="hlc-tag">CI/CD</span>
+    <span class="hlc-title">GitLab · ArgoCD로 빌드·배포 파이프라인 구축</span>
     <span class="hlc-desc">Git 서버를 직접 세우고, 밖에서 미는 자격 없이 클러스터가 스스로 당겨가게 했습니다.</span>
   </a>
 
