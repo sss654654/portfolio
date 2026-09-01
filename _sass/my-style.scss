@@ -408,8 +408,9 @@ ul.timeline > li:has(> small)::before {
   font-size: .78rem; color: var(--gray);
 }
 
-/* 하위 페이지 표 — 본문보다 작게, 헤더도 본문과 같은 왼쪽 정렬로 */
-.hl-cmp, .hl-tbl { font-size: .88rem; }
+/* 하위 페이지 표 — 본문보다 작게, 헤더도 본문과 같은 왼쪽 정렬로.
+   keep-all 이 없으면 좁은 칸에서 한글이 단어 중간에서 끊긴다(링/크는, 적용·재/기동). */
+.hl-cmp, .hl-tbl { font-size: .88rem; word-break: keep-all; }
 .hl-cmp th, .hl-tbl th {
   text-align: left; vertical-align: bottom;
   font-size: .8rem; font-weight: 600; color: var(--gray);
@@ -423,6 +424,11 @@ ul.timeline > li:has(> small)::before {
 
 /* 표 바로 위에 붙는 소제목 */
 .hl-sub { margin: 1.6rem 0 .4rem; font-weight: 700; font-size: .94rem; }
+
+/* 하위 페이지 본문·캡션도 같은 규칙으로 — 한글 단어가 줄 끝에서 안 쪼개지게 */
+.hl-shot figcaption,
+.hl-diagram figcaption,
+.hl-cond li { word-break: keep-all; }
 
 /* 하위 페이지 — 조건 목록. 이 파트의 선택을 강제한 물리·환경 제약 */
 .hl-cond { margin: 1rem 0 0; padding: 0; list-style: none; }
