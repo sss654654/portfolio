@@ -11,12 +11,6 @@ permalink: /homelab/cluster/
 홈랩의 바닥층입니다. 여기서 정한 하이퍼바이저·디스크·클러스터 구성이 뒤의 배포·관측·부하 실측이 올라서는 전제가 됩니다.
 아래 선택은 전부 한 조건에서 나옵니다 — **물리 서버는 노트북 한 대이고, 내장 Windows는 지우지 않는다.**
 
-<dl class="hl-stats hl-stats-row" markdown="0">
-  <div><dt>3대</dt><dd>VM — 전부 control-plane 겸 워커</dd></div>
-  <div><dt>10장</dt><dd>워크로드마다 따로 자른 정적 PV</dd></div>
-  <div><dt>69개</dt><dd>토대까지 올라온 뒤의 파드</dd></div>
-</dl>
-
 ## 서 있는 구조
 
 <!-- 층 그림 — 아래에서 위로: 물리 디스크 → Proxmox → VM 3대(각자의 데이터 디스크) → k3s.
@@ -121,8 +115,7 @@ permalink: /homelab/cluster/
 | 스토리지 | local-path — 한 파일시스템에 폴더로 | **정적 PV 10장** | 워크로드별 사용량이 지표에서 갈림 |
 | 노드 예약 | 없음 — 가진 메모리를 전부 파드에게 준다고 신고 | **2Gi** | 메모리가 마르면 커널이 etcd를 안은 프로세스를 죽임 |
 
-디스크를 워크로드마다 자른 건 성능이 아니라 관측 때문입니다.
-사용량은 `statfs`가 **파일시스템 단위로만** 답해서, 한 파일시스템에 폴더로 담으면 "누가 채웠나"를 나중에 쿼리로 못 가립니다.
+디스크를 워크로드마다 자른 건 성능이 아니라 관측 때문입니다 — 사용량은 `statfs`가 **파일시스템 단위로만** 답해서, 폴더로 나눠 담으면 나중에 쿼리로 "누가 채웠나"를 못 가립니다.
 
 <figure class="hl-shot" markdown="0">
   <div class="hl-shot-wait">cluster-nodes.png — kubectl get nodes -L cgv.io/data</div>
@@ -137,12 +130,12 @@ permalink: /homelab/cluster/
 | 클러스터 전체 무응답 — 링크는 정상인데 ARP 실패 | Intel e1000e NIC 세그멘테이션 오프로드 결함 · `Hardware Unit Hang` 34회 | 해당 오프로드 비활성화 |
 | 나흘 뒤 같은 증상 재발 | udev 규칙 조건을 NIC의 최종 이름으로 걸었는데, 장치 이벤트 시점에는 아직 `eth0` — 한 번도 실행되지 않음 | 인터페이스 기동 직후로 이동. 적용·재기동·재부팅을 각각 확인 |
 
-첫 줄과 셋째 줄은 같은 원인입니다 — **값을 추정으로 잡았고, 설정을 넣은 것과 그게 실제로 도는 것을 따로 확인하지 않았습니다.**
-
 <figure class="hl-shot" markdown="0">
   <div class="hl-shot-wait">cluster-allocatable.png — 예약 적용 후 Capacity와 Allocatable</div>
   <figcaption>설치 이후 줄곧 같던 두 숫자가 여기서 갈라집니다.</figcaption>
 </figure>
+
+첫 줄과 셋째 줄은 같은 원인입니다 — **값을 추정으로 잡았고, 설정을 넣은 것과 그게 실제로 도는 것을 따로 확인하지 않았습니다.**
 
 ## 남은 것
 
