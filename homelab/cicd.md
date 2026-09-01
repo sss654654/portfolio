@@ -17,7 +17,7 @@ permalink: /homelab/cicd/
 |---|---|---|
 | 브랜치 | **`main` 하나** — ArgoCD가 보는 브랜치가 곧 배포된 상태인데 클러스터가 하나뿐임. 환경은 `environments/{dev,stg,prd}` 디렉터리가 가름 | **`dev` 기본 · `main`** — 이미지 태그의 앞부분이 브랜치 이름(`dev-15-…`). stg·prd가 생기면 여기서 갈림 |
 | 파이프라인 | 없음 — 빌드할 것이 없음 | **다섯 단 13 job.** 데스크탑 러너가 돌리고, 통과해야 머지 버튼이 열림 |
-| 쥐여 준 자격 | **ArgoCD에게** 저장소 읽기 하나 | **노드와 image-updater에게** 이미지 읽기 — 주체가 달라 따로 발급 |
+| 발급한 토큰 | 저장소 읽기 **하나** (`read_repository`) — ArgoCD가 씀 | 이미지 읽기 **둘** (`read_registry`) — 노드용·봇용을 따로 |
 | webhook | **있음** — push하면 GitLab이 ArgoCD를 부름 | **없음** — ArgoCD가 이 저장소를 안 읽음 |
 {:.hl-two}
 
