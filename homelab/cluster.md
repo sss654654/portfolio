@@ -2,11 +2,13 @@
 layout: page
 title: 클러스터
 description: >
-  자원이 모자라거나 뒤에 필요한 것을 못 하게 돼, 여덟 자리에서 기본값을 걷어냈습니다
+  하이퍼바이저부터 스토리지까지, 기본값 대신 직접 골랐습니다
 permalink: /homelab/cluster/
 ---
 
 <p class="hl-back" markdown="0"><a href="/homelab/">← 홈랩</a></p>
+
+노트북 한 대에 RAM 32GB. 내장 Windows를 지우지 않은 채 세 노드가 그것을 나눠 씁니다.
 
 ## 서 있는 구조
 
@@ -84,8 +86,6 @@ permalink: /homelab/cluster/
 </figure>
 
 ## 기본값을 끄고 직접 고른 것
-
-노트북 한 대에 RAM 32GB. 내장 Windows를 지우지 않은 채 세 노드가 그것을 나눠 씁니다.
 
 <div class="hl-sub" markdown="0">노트북을 서버로 만드는 층</div>
 
