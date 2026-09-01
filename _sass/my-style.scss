@@ -412,6 +412,28 @@ ul.timeline > li:has(> small)::before {
    쓰는데, 한글 본문에서 작게 읽힌다. 여기만 올리면 rem 으로 짜인 나머지가 함께 따라온다. */
 html { font-size: 17px; }
 
+/* 본문 폭이 약 560px 이라 4열 표와 층 그림에는 좁다. 넓은 화면에서만
+   본문 밖으로 조금 빼서 열이 접히는 것을 줄인다. 좁은 화면은 건드리지 않는다. */
+@media (min-width: 1080px) {
+  .hl-diagram, .hl-cmp, .hl-tbl {
+    margin-left: -2.5rem;
+    margin-right: -2.5rem;
+    width: calc(100% + 5rem);
+    max-width: none;
+  }
+}
+
+/* 열 폭을 지정하지 않으면 이유 칸이 좁게 배분돼 서너 줄로 접힌다 */
+.hl-cmp { table-layout: fixed; }
+.hl-cmp th:nth-child(1) { width: 16%; }
+.hl-cmp th:nth-child(2) { width: 24%; }
+.hl-cmp th:nth-child(3) { width: 21%; }
+.hl-cmp th:nth-child(4) { width: 39%; }
+.hl-tbl { table-layout: fixed; }
+.hl-tbl th:nth-child(1) { width: 29%; }
+.hl-tbl th:nth-child(2) { width: 44%; }
+.hl-tbl th:nth-child(3) { width: 27%; }
+
 /* 하위 페이지 층 그림 — 배선도보다 글자 수가 적어 한 단계 크게 실을 수 있다.
    배선도(hl-diagram)와 클래스를 공유하므로 전역으로 올리지 않고 여기서만 덮는다. */
 .hl-diagram-lg .hla-t { font-size: 14px; }
