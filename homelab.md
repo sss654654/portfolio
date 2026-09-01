@@ -196,7 +196,7 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
     <span class="hlc-desc">네트워크·로드밸런서·인그레스·스토리지를 k3s 기본 대신 Calico·MetalLB·Traefik·정적 PV로 세웠습니다.</span>
   </a>
 
-  <a class="hlc-card" href="/homelab/deploy/">
+  <a class="hlc-card" href="/homelab/cicd/">
     <span class="hlc-shot" data-label="ArgoCD · 자동 배포"></span>
     <span class="hlc-tag">CI/CD</span>
     <span class="hlc-title">GitLab · ArgoCD로 빌드·배포 파이프라인 구축</span>
