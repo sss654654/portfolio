@@ -2,7 +2,7 @@
 layout: page
 title: CI/CD
 description: >
-  Git 서버를 직접 세우고, 밖에서 미는 자격 없이 클러스터가 스스로 당겨가게 했습니다
+  머지하면 검증과 빌드를 거쳐 이미지가 되고, 클러스터가 그것을 가져가 파드를 교체합니다
 permalink: /homelab/cicd/
 ---
 
