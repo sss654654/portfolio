@@ -43,16 +43,16 @@ EKS라면 컨트롤플레인은 AWS 몫이고, 노드 아래의 리눅스와 네
 
   <!-- 인터넷 쪽: 사용자 · Cloudflare -->
   <g class="hla-g hla-g1">
-    <rect x="20" y="48" width="118" height="56" rx="9" class="hla-box"/>
-    <circle cx="36" cy="66" r="5" class="hla-glyph"/>
-    <path d="M26,83 C26,73 46,73 46,83" class="hla-glyph"/>
-    <text x="54" y="71" class="hla-t">사용자</text>
-    <text x="30" y="96" class="hla-a">ticket.subinhong.dev</text>
-    <line x1="138" y1="72" x2="156" y2="72" class="hla-ln" marker-end="url(#hla-arrow)"/>
-    <rect x="158" y="48" width="132" height="56" rx="9" class="hla-box"/>
-    <image href="/assets/img/icons/cloudflare.svg" x="166" y="61" width="26" height="26"/>
-    <text x="197" y="71" class="hla-t">Cloudflare</text>
-    <text x="197" y="90" class="hla-s">DNS · TLS · IP 은닉</text>
+    <rect x="20" y="46" width="136" height="60" rx="9" class="hla-box"/>
+    <circle cx="38" cy="68" r="5.5" class="hla-glyph"/>
+    <path d="M28,85 C28,74 48,74 48,85" class="hla-glyph"/>
+    <text x="58" y="70" class="hla-t">사용자</text>
+    <text x="58" y="88" class="hla-a">ticket.subinhong.dev</text>
+    <line x1="156" y1="72" x2="168" y2="72" class="hla-ln" marker-end="url(#hla-arrow)"/>
+    <rect x="170" y="46" width="132" height="60" rx="9" class="hla-box"/>
+    <image href="/assets/img/icons/cloudflare.svg" x="178" y="61" width="26" height="26"/>
+    <text x="209" y="70" class="hla-t">Cloudflare</text>
+    <text x="209" y="88" class="hla-s">DNS · TLS · IP 은닉</text>
   </g>
 
   <!-- 관리자 · 데스크탑 -->
@@ -60,7 +60,7 @@ EKS라면 컨트롤플레인은 AWS 몫이고, 노드 아래의 리눅스와 네
     <rect x="20" y="146" width="150" height="48" rx="9" class="hla-box"/>
     <image href="/assets/img/icons/wireguard.svg" x="28" y="157" width="24" height="24"/>
     <text x="57" y="166" class="hla-t">나 — 관리자</text>
-    <text x="57" y="181" class="hla-s">밖에서 폰으로 접속</text>
+    <text x="57" y="181" class="hla-s">VPN으로 접속</text>
     <rect x="20" y="244" width="150" height="52" rx="9" class="hla-box"/>
     <image href="/assets/img/icons/gitlab.svg" x="28" y="257" width="24" height="24"/>
     <text x="57" y="264" class="hla-t">데스크탑</text>
@@ -70,7 +70,7 @@ EKS라면 컨트롤플레인은 AWS 몫이고, 노드 아래의 리눅스와 네
   <!-- 집: 공유기 — 사용자 선과 VPN 선 중간. 위아래에서 들어와 오른쪽으로 함께 나간다.
        데스크탑은 같은 홈 LAN이라 포워딩을 거치지 않고 아래로 지난다 -->
   <g class="hla-g hla-g2">
-    <line x1="290" y1="72" x2="366" y2="72" class="hla-ln"/>
+    <line x1="302" y1="72" x2="366" y2="72" class="hla-ln"/>
     <line x1="366" y1="72" x2="366" y2="86" class="hla-ln" marker-end="url(#hla-arrow)"/>
     <line x1="176" y1="170" x2="366" y2="170" class="hla-ln hla-dash"/>
     <line x1="366" y1="170" x2="366" y2="156" class="hla-ln hla-dash" marker-end="url(#hla-arrow)"/>
@@ -90,50 +90,50 @@ EKS라면 컨트롤플레인은 AWS 몫이고, 노드 아래의 리눅스와 네
   <!-- 노트북 상자 -->
   <g class="hla-g hla-g3">
     <rect x="430" y="40" width="318" height="300" rx="12" class="hla-outer"/>
-    <image href="/assets/img/icons/proxmox.svg" x="443" y="52" width="20" height="20"/>
-    <text x="469" y="67" class="hla-t">노트북 1대 — Proxmox · 전부 VM</text>
+    <image href="/assets/img/icons/proxmox.svg" x="449" y="53" width="20" height="20"/>
+    <text x="476" y="68" class="hla-t">노트북 1대 — Proxmox · 전부 VM</text>
 
     <!-- OPNsense 세로 벽 — 세로쓰기 한 자씩, 이름은 아래 가로로 -->
-    <rect x="444" y="84" width="44" height="232" rx="8" class="hla-wall"/>
-    <rect x="444" y="84" width="44" height="232" rx="8" fill="url(#hla-bricks)" stroke="none"/>
-    <image href="/assets/img/icons/opnsense.svg" x="448" y="148" width="36" height="36"/>
-    <text x="466" y="212" text-anchor="middle" class="hla-wallc">방</text>
-    <text x="466" y="232" text-anchor="middle" class="hla-wallc">화</text>
-    <text x="466" y="252" text-anchor="middle" class="hla-wallc">벽</text>
+    <rect x="444" y="90" width="44" height="226" rx="8" class="hla-wall"/>
+    <rect x="444" y="90" width="44" height="226" rx="8" fill="url(#hla-bricks)" stroke="none"/>
+    <image href="/assets/img/icons/opnsense.svg" x="448" y="152" width="36" height="36"/>
+    <text x="466" y="216" text-anchor="middle" class="hla-wallc">방</text>
+    <text x="466" y="236" text-anchor="middle" class="hla-wallc">화</text>
+    <text x="466" y="256" text-anchor="middle" class="hla-wallc">벽</text>
     <text x="466" y="331" text-anchor="middle" class="hla-s">OPNsense VM</text>
 
     <!-- k3s 클러스터 -->
-    <rect x="504" y="84" width="234" height="172" rx="10" class="hla-inner"/>
-    <image href="/assets/img/icons/kubernetes.svg" x="513" y="94" width="20" height="20"/>
-    <text x="539" y="109" class="hla-t">k3s 클러스터 — VM 3대 · HA</text>
+    <rect x="504" y="90" width="234" height="176" rx="10" class="hla-inner"/>
+    <image href="/assets/img/icons/kubernetes.svg" x="513" y="100" width="20" height="20"/>
+    <text x="539" y="115" class="hla-t">k3s 클러스터 — VM 3대 · HA</text>
 
-    <line x1="490" y1="132" x2="510" y2="132" class="hla-ln" marker-end="url(#hla-arrow)"/>
-    <text x="500" y="126" class="hla-s2" text-anchor="middle">443</text>
-    <line x1="490" y1="154" x2="510" y2="154" class="hla-ln" marker-end="url(#hla-arrow)"/>
-    <text x="500" y="167" class="hla-s2" text-anchor="middle">80</text>
-    <rect x="512" y="118" width="84" height="46" rx="12" class="hla-box"/>
-    <image href="/assets/img/icons/traefikproxy.svg" x="518" y="132" width="18" height="18"/>
-    <text x="540" y="146" class="hla-c">Traefik</text>
-    <line x1="596" y1="132" x2="606" y2="132" class="hla-ln" marker-end="url(#hla-arrow)"/>
-    <line x1="554" y1="164" x2="554" y2="192" class="hla-ln" marker-end="url(#hla-arrow)"/>
-    <rect x="608" y="114" width="126" height="62" rx="10" class="hla-box"/>
-    <image href="/assets/img/icons/ticket.svg" x="616" y="124" width="22" height="22"/>
-    <text x="643" y="139" class="hla-c">대기열 서비스</text>
-    <text x="671" y="156" class="hla-s2" text-anchor="middle">frontend · queue · booking</text>
-    <text x="671" y="169" class="hla-s2" text-anchor="middle">Redis · MySQL · Kafka</text>
+    <line x1="490" y1="140" x2="510" y2="140" class="hla-ln" marker-end="url(#hla-arrow)"/>
+    <text x="500" y="134" class="hla-s2" text-anchor="middle">443</text>
+    <line x1="490" y1="162" x2="510" y2="162" class="hla-ln" marker-end="url(#hla-arrow)"/>
+    <text x="500" y="175" class="hla-s2" text-anchor="middle">80</text>
+    <rect x="512" y="126" width="84" height="46" rx="12" class="hla-box"/>
+    <image href="/assets/img/icons/traefikproxy.svg" x="518" y="140" width="18" height="18"/>
+    <text x="540" y="154" class="hla-c">Traefik</text>
+    <line x1="596" y1="140" x2="606" y2="140" class="hla-ln" marker-end="url(#hla-arrow)"/>
+    <line x1="554" y1="172" x2="554" y2="202" class="hla-ln" marker-end="url(#hla-arrow)"/>
+    <rect x="608" y="122" width="126" height="62" rx="10" class="hla-box"/>
+    <image href="/assets/img/icons/ticket.svg" x="616" y="132" width="22" height="22"/>
+    <text x="643" y="147" class="hla-c">대기열 서비스</text>
+    <text x="671" y="164" class="hla-s2" text-anchor="middle">frontend · queue · booking</text>
+    <text x="671" y="177" class="hla-s2" text-anchor="middle">Redis · MySQL · Kafka</text>
 
-    <rect x="514" y="196" width="216" height="44" rx="10" class="hla-box"/>
-    <image href="/assets/img/icons/argo.svg" x="523" y="208" width="20" height="20"/>
-    <image href="/assets/img/icons/grafana.svg" x="548" y="208" width="20" height="20"/>
-    <text x="572" y="215" class="hla-c">관리 UI — ArgoCD · Grafana</text>
-    <text x="572" y="230" class="hla-s">VPN으로만 접속</text>
-    <line x1="660" y1="194" x2="660" y2="178" class="hla-ln hla-dash" marker-end="url(#hla-arrow)"/>
-    <text x="668" y="190" class="hla-s2">배포</text>
+    <rect x="514" y="206" width="216" height="46" rx="10" class="hla-box"/>
+    <image href="/assets/img/icons/argo.svg" x="523" y="219" width="20" height="20"/>
+    <image href="/assets/img/icons/grafana.svg" x="548" y="219" width="20" height="20"/>
+    <text x="572" y="226" class="hla-c">관리 UI — ArgoCD · Grafana</text>
+    <text x="572" y="241" class="hla-s">VPN으로만 접속</text>
+    <line x1="660" y1="204" x2="660" y2="188" class="hla-ln hla-dash" marker-end="url(#hla-arrow)"/>
+    <text x="668" y="200" class="hla-s2">배포</text>
 
     <!-- 파드 배지 — 쿠버네티스 도상(육각형)을 각 상자 우상단에 -->
-    <path class="hla-pod" d="M598.5,127 L595.25,132.63 L588.75,132.63 L585.5,127 L588.75,121.37 L595.25,121.37 Z"/>
-    <path class="hla-pod" d="M736.5,116 L733.25,121.63 L726.75,121.63 L723.5,116 L726.75,110.37 L733.25,110.37 Z"/>
-    <path class="hla-pod" d="M732.5,197 L729.25,202.63 L722.75,202.63 L719.5,197 L722.75,191.37 L729.25,191.37 Z"/>
+    <path class="hla-pod" d="M598.5,135 L595.25,140.63 L588.75,140.63 L585.5,135 L588.75,129.37 L595.25,129.37 Z"/>
+    <path class="hla-pod" d="M736.5,124 L733.25,129.63 L726.75,129.63 L723.5,124 L726.75,118.37 L733.25,118.37 Z"/>
+    <path class="hla-pod" d="M732.5,207 L729.25,212.63 L722.75,212.63 L719.5,207 L722.75,201.37 L729.25,201.37 Z"/>
   </g>
 
   <!-- GitOps — 방향이 둘이라 양쪽 화살표: 당김(클러스터→데스크탑) · webhook(터널로) -->
@@ -148,21 +148,21 @@ EKS라면 컨트롤플레인은 AWS 몫이고, 노드 아래의 리눅스와 네
   <circle class="hla-dot hla-dot-u" r="4.5" opacity="0">
     <animateMotion dur="12s" begin="1.2s" repeatCount="indefinite" calcMode="linear"
       keyTimes="0;0.05;0.33;1" keyPoints="0;0;1;1"
-      path="M70,72 L221,72 L366,72 L366,110 L466,110 L466,132 L560,132 L634,132"/>
+      path="M70,72 L221,72 L366,72 L366,110 L466,110 L466,140 L560,140 L634,140"/>
     <animate attributeName="opacity" dur="12s" begin="1.2s" repeatCount="indefinite"
       keyTimes="0;0.05;0.07;0.31;0.33;1" values="0;0;1;1;0;0"/>
   </circle>
   <circle class="hla-dot hla-dot-v" r="4.5" opacity="0">
     <animateMotion dur="12s" begin="1.2s" repeatCount="indefinite" calcMode="linear"
       keyTimes="0;0.40;0.60;1" keyPoints="0;0;1;1"
-      path="M83,170 L366,170 L366,132 L466,132 L466,154 L554,154 L554,218"/>
+      path="M83,170 L366,170 L366,132 L466,132 L466,162 L554,162 L554,228"/>
     <animate attributeName="opacity" dur="12s" begin="1.2s" repeatCount="indefinite"
       keyTimes="0;0.40;0.42;0.58;0.60;1" values="0;0;1;1;0;0"/>
   </circle>
   <circle class="hla-dot hla-dot-g" r="4.5" opacity="0">
     <animateMotion dur="12s" begin="1.2s" repeatCount="indefinite" calcMode="linear"
       keyTimes="0;0.68;0.94;1" keyPoints="0;0;1;1"
-      path="M87,268 L496,268 L496,221 L660,221 L660,176"/>
+      path="M87,268 L496,268 L496,229 L660,229 L660,186"/>
     <animate attributeName="opacity" dur="12s" begin="1.2s" repeatCount="indefinite"
       keyTimes="0;0.68;0.70;0.92;0.94;1" values="0;0;1;1;0;0"/>
   </circle>
