@@ -10,13 +10,13 @@ permalink: /homelab/cicd/
 
 클러스터는 준비됐지만 앱은 뜨지 못했습니다 — **받아 올 이미지가 없었습니다.**
 
-## 두 저장소
+## GitLab의 두 저장소
 
 |  | cgv-infra · 배포 정의 | cgv-onprem · 앱 소스 |
 |---|---|---|
 | 브랜치 | **`main` 하나** — ArgoCD가 보는 브랜치가 곧 배포된 상태인데 클러스터가 하나뿐임. 환경은 `environments/{dev,stg,prd}` 디렉터리가 가름 | **`dev` 기본 · `main`** — 이미지 태그의 앞부분이 브랜치 이름(`dev-15-…`). stg·prd가 생기면 여기서 갈림 |
 | 파이프라인 | 없음 — 빌드할 것이 없음 | **다섯 단 13 job.** 데스크탑 러너가 돌리고, 통과해야 머지 버튼이 열림 |
-| 발급한 자격 | 저장소 자격 **하나** — ArgoCD가 읽고, argocd-image-updater가 그것으로 되씀 | deploy token **둘** (`read_registry`) — 노드용·봇용을 따로 |
+| 발급한 자격 | 저장소 자격 **하나** — ArgoCD가 매니페스트를 읽고, argocd-image-updater가 태그를 적는 데 같이 씀 | deploy token **둘** (`read_registry`) — 노드가 이미지 받을 것과 봇이 태그 볼 것을 따로 |
 | webhook | **있음** — push하면 GitLab이 ArgoCD를 부름 | **없음** |
 {:.hl-two}
 
