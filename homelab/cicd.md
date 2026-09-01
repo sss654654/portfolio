@@ -27,7 +27,7 @@ permalink: /homelab/cicd/
 | Git 서버와 러너를 **클러스터 밖 데스크탑**에 | GitHub은 인터넷에 있어 사설망 안의 ArgoCD를 부를 수 없고, 클러스터 안에 세우면 클러스터가 무너질 때 다시 세울 근거도 함께 사라짐. 러너까지 여기 둔 것은 노드 셋이 USB SSD 한 장을 나눠 쓰기 때문 — 빌드가 그 디스크를 쓰면 부하 실측 숫자가 흔들림 |
 | 이미지 빌드를 dind 대신 **데스크탑 도커 소켓**으로 | dind는 job마다 도커 데몬을 새로 띄워 메모리가 더 들고, 레이어 캐시가 job이 끝날 때 같이 사라짐. 대가는 job이 그 소켓으로 데스크탑 도커 전체를 부를 수 있게 되는 것 |
 | 검사가 실패하면 무조건 막되, **이미지 취약점만 예외** — 수정판이 나온 것만 막음 | 베이스 이미지에는 아직 패치가 안 나온 취약점이 수십 개 들어 있음. 그것까지 막으면 파이프라인이 늘 빨간불이라, 결국 게이트를 꺼 버리게 됨 |
-| 새 이미지 이름을 배포 정의에 적는 일을 **클러스터 안의 argocd-image-updater**에 | 그 줄이 바뀌어야 ArgoCD가 파드를 새 이미지로 교체함. 파이프라인이 적으면 러너가 배포 정의 저장소의 쓰기 권한을 갖는데, 러너는 이미 데스크탑 도커 소켓을 쥐고 있어 권한을 더 주지 않음 |
+| 새 이미지 이름을 `image.tag:`에 적는 주체를 CI가 아니라 **클러스터 안**에 | CI가 만든 이름이 그 줄에 적혀야 ArgoCD가 파드를 교체함. CI가 직접 적게 하면 러너에 배포 정의 저장소 쓰기 권한까지 줘야 하는데, 러너는 이미 도커 소켓을 쥔 자리 |
 {:.hl-why}
 
 ## CI/CD 구조
@@ -86,26 +86,27 @@ permalink: /homelab/cicd/
   <text class="hla-s2" x="444" y="282">image.tag: dev-15-17dcc495</text>
   <text class="hla-a" x="434" y="320">이 한 줄이 바뀌면 배포가 일어난다</text>
 
-  <!-- 연결부 — 위쪽 끝 y=338, 아래쪽 끝 y=438. 번호 원은 y=358 한 줄, 라벨은 y=390 한 줄 -->
-  <line class="hla-ln-img" x1="140" y1="438" x2="140" y2="338" marker-end="url(#hlm-i)" fill="none"/>
+  <!-- 연결부 — 위쪽 끝 y=338, 아래쪽 끝 y=444(상자 윗변). 번호 원 y=358, 라벨 y=392 한 줄.
+       6 번 라벨은 5 번 세로선(x=592)을 넘지 않도록 오른쪽 끝에 붙인다. -->
+  <line class="hla-ln-img" x1="140" y1="444" x2="140" y2="338" marker-end="url(#hlm-i)" fill="none"/>
   <circle class="hla-num" cx="140" cy="358" r="9"/><text class="hla-nt" x="140" y="362">7</text>
-  <text class="hla-a" x="150" y="390">이미지를 받는다</text>
+  <text class="hla-a" x="150" y="392">이미지를 받는다</text>
 
-  <line class="hla-ln-img" x1="330" y1="438" x2="330" y2="338" marker-end="url(#hlm-i)" fill="none"/>
+  <line class="hla-ln-img" x1="330" y1="444" x2="330" y2="338" marker-end="url(#hlm-i)" fill="none"/>
   <circle class="hla-num" cx="330" cy="358" r="9"/><text class="hla-nt" x="330" y="362">3</text>
-  <text class="hla-a" x="340" y="390">새 태그를 본다</text>
+  <text class="hla-a" x="340" y="392">새 태그를 본다</text>
 
-  <line class="hla-ln-def" x1="450" y1="438" x2="450" y2="338" marker-end="url(#hlm-d)" fill="none"/>
+  <line class="hla-ln-def" x1="450" y1="444" x2="450" y2="338" marker-end="url(#hlm-d)" fill="none"/>
   <circle class="hla-num" cx="450" cy="358" r="9"/><text class="hla-nt" x="450" y="362">4</text>
-  <text class="hla-a" x="460" y="390">tag 줄을 커밋한다</text>
+  <text class="hla-a" x="460" y="392">tag 줄을 커밋한다</text>
 
-  <line class="hla-ln" x1="592" y1="338" x2="592" y2="438" stroke-dasharray="4 4" marker-end="url(#hlm-n)" fill="none"/>
+  <line class="hla-ln" x1="592" y1="338" x2="592" y2="444" stroke-dasharray="4 4" marker-end="url(#hlm-n)" fill="none"/>
   <circle class="hla-num" cx="592" cy="358" r="9"/><text class="hla-nt" x="592" y="362">5</text>
-  <text class="hla-a" x="602" y="414">webhook — 3초</text>
+  <text class="hla-a" x="602" y="418">webhook — 3초</text>
 
-  <line class="hla-ln-def" x1="690" y1="438" x2="690" y2="338" marker-end="url(#hlm-d)" fill="none"/>
+  <line class="hla-ln-def" x1="690" y1="444" x2="690" y2="338" marker-end="url(#hlm-d)" fill="none"/>
   <circle class="hla-num" cx="690" cy="358" r="9"/><text class="hla-nt" x="690" y="362">6</text>
-  <text class="hla-a" x="682" y="390" text-anchor="end">배포 정의를 읽는다</text>
+  <text class="hla-a" x="726" y="392" text-anchor="end">배포 정의를 읽는다</text>
 
   <rect class="hla-box" x="18" y="412" width="724" height="104" rx="6"/>
   <text class="hla-zone" x="34" y="434">k3s 클러스터 · 격리망 안</text>
