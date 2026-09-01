@@ -391,3 +391,33 @@ ul.timeline > li:has(> small)::before {
 .hl-stats-row dt { flex: none; font-size: 1.1rem; }
 .hl-stats-row dd { font-size: .85rem; }
 .hl-more { font-size: .9rem; color: var(--gray); }
+
+/* 하위 페이지 — 화면 증거. 파일이 들어오기 전에는 자리표시가 대신 선다 */
+.hl-shot { margin: 1.5rem 0; }
+.hl-shot img {
+  display: block; width: 100%;
+  border: 1px solid var(--border-color); border-radius: .5rem;
+}
+.hl-shot figcaption { margin-top: .55rem; font-size: .82rem; color: var(--gray); }
+.hl-shot-wait {
+  display: flex; align-items: flex-end;
+  aspect-ratio: 16 / 5;
+  padding: .7rem .9rem;
+  border: 1px dashed var(--border-color); border-radius: .5rem;
+  background: repeating-linear-gradient(135deg, var(--gray-bg) 0 9px, transparent 9px 18px);
+  font-size: .78rem; color: var(--gray);
+}
+
+/* 하위 페이지 — 조건 목록. 이 파트의 선택을 강제한 물리·환경 제약 */
+.hl-cond { margin: 1rem 0 0; padding: 0; list-style: none; }
+.hl-cond li {
+  position: relative;
+  padding: .5rem 0 .5rem 1.1rem;
+  font-size: .92rem;
+  border-top: 1px solid var(--border-color);
+}
+.hl-cond li:last-child { border-bottom: 1px solid var(--border-color); }
+.hl-cond li::before {
+  content: ""; position: absolute; left: 0; top: 1.05em;
+  width: 5px; height: 5px; border-radius: 50%; background: var(--gray);
+}
