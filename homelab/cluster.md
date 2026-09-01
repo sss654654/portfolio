@@ -15,72 +15,72 @@ permalink: /homelab/cluster/
 <!-- 층 그림 — 아래에서 위로: 물리 디스크 → Proxmox → VM 3대(각자의 데이터 디스크) → k3s.
      네트워크 경로는 홈랩 배선도가 담당하므로 여기서는 vmbr0 한 줄로만 언급한다.
      무엇을 끄고 무엇으로 바꿨는지는 아래 대조표가 담당하므로 그림에서 반복하지 않는다. -->
-<figure class="hl-diagram" markdown="0">
-<svg viewBox="0 0 760 372" role="img" aria-label="노트북 한 대 안에서 외장 USB SSD로 부팅한 Proxmox 위에 VM 세 대가 서고, 각 VM이 자기 데이터 디스크를 가진 채 k3s 클러스터를 이루는 층 구조">
+<figure class="hl-diagram hl-diagram-lg" markdown="0">
+<svg viewBox="0 0 760 390" role="img" aria-label="노트북 한 대 안에서 외장 USB SSD로 부팅한 Proxmox 위에 VM 세 대가 서고, 각 VM이 자기 데이터 디스크를 가진 채 k3s 클러스터를 이루는 층 구조">
   <defs>
     <marker id="hlv-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto">
       <path d="M0,0 L8,4 L0,8 z" fill="currentColor" opacity=".45"/>
     </marker>
   </defs>
 
-  <rect class="hla-outer" x="14" y="14" width="732" height="344" rx="8"/>
-  <text class="hla-zone" x="30" y="34">노트북 1대 · Core Ultra 5 125H · RAM 32GB</text>
+  <rect class="hla-outer" x="14" y="14" width="732" height="362" rx="8"/>
+  <text class="hla-zone" x="30" y="34">노트북 1대 · Core Ultra 5 125H(18스레드) · RAM 32GB</text>
 
   <!-- k3s -->
-  <rect class="hla-box" x="30" y="44" width="700" height="46" rx="5"/>
-  <text class="hla-t" x="46" y="65">k3s — 세 대 모두 control-plane 겸 워커 · etcd 3멤버</text>
-  <text class="hla-s" x="46" y="81">Calico(파드 네트워크) · MetalLB(로드밸런서) · Traefik(인그레스) · 정적 PV(스토리지)</text>
+  <rect class="hla-box" x="30" y="44" width="700" height="48" rx="5"/>
+  <text class="hla-t" x="46" y="66">k3s — 세 대 모두 control-plane 겸 워커 · etcd 3멤버</text>
+  <text class="hla-s" x="46" y="83">Calico(파드 네트워크) · MetalLB(로드밸런서) · Traefik(인그레스) · 정적 PV(스토리지)</text>
 
   <!-- 세 노드 공통 스펙은 여기 한 번만. 박스마다 반복하면 면적의 절반을 같은 말이 차지한다 -->
-  <text class="hla-a" x="34" y="108">노드 셋 공통 — 4 vCPU · RAM 8GB 고정 · 부트 40G · 데이터 디스크는 역할별로 다르게</text>
+  <text class="hla-a" x="34" y="112">노드 셋 공통 — 4 vCPU · RAM 8GB 고정 · 부트 40G</text>
 
   <!-- VM 3대 — 이름·라벨·데이터 디스크만 -->
   <g>
-    <rect class="hla-box" x="34" y="118" width="224" height="112" rx="5"/>
-    <text class="hla-t" x="48" y="140">k3s-1 · 10.0.0.11</text>
-    <text class="hla-a" x="238" y="140" text-anchor="end">db</text>
-    <text class="hla-s2" x="48" y="166">mysqldata 20G</text>
-    <text class="hla-s2" x="48" y="184">kafkadata 30G</text>
-    <text class="hla-s2" x="48" y="202">ingesterwal 5G</text>
+    <rect class="hla-box" x="34" y="122" width="224" height="118" rx="5"/>
+    <text class="hla-t" x="48" y="146">k3s-1 · 10.0.0.11</text>
+    <text class="hla-a" x="238" y="146" text-anchor="end">db</text>
+    <text class="hla-s2" x="48" y="174">mysqldata 20G</text>
+    <text class="hla-s2" x="48" y="193">kafkadata 30G</text>
+    <text class="hla-s2" x="48" y="212">ingesterwal 5G</text>
   </g>
   <g>
-    <rect class="hla-box" x="270" y="118" width="224" height="112" rx="5"/>
-    <text class="hla-t" x="284" y="140">k3s-2 · 10.0.0.12</text>
-    <text class="hla-a" x="474" y="140" text-anchor="end">obs</text>
-    <text class="hla-s2" x="284" y="166">kafkadata 30G</text>
-    <text class="hla-s2" x="284" y="184">ingesterwal 5G</text>
-    <text class="hla-s2" x="284" y="202">lokiwal 5G</text>
-    <text class="hla-s2" x="284" y="220">tempowal 5G</text>
+    <rect class="hla-box" x="270" y="122" width="224" height="118" rx="5"/>
+    <text class="hla-t" x="284" y="146">k3s-2 · 10.0.0.12</text>
+    <text class="hla-a" x="474" y="146" text-anchor="end">obs</text>
+    <text class="hla-s2" x="284" y="174">kafkadata 30G</text>
+    <text class="hla-s2" x="284" y="193">ingesterwal 5G</text>
+    <text class="hla-s2" x="284" y="212">lokiwal 5G</text>
+    <text class="hla-s2" x="284" y="231">tempowal 5G</text>
   </g>
   <g>
-    <rect class="hla-box" x="506" y="118" width="224" height="112" rx="5"/>
-    <text class="hla-t" x="520" y="140">k3s-3 · 10.0.0.13</text>
-    <text class="hla-a" x="710" y="140" text-anchor="end">obj</text>
-    <text class="hla-s2" x="520" y="166">kafkadata 30G</text>
-    <text class="hla-s2" x="520" y="184">ingesterwal 5G</text>
-    <text class="hla-s2" x="520" y="202">miniodata 100G</text>
+    <rect class="hla-box" x="506" y="122" width="224" height="118" rx="5"/>
+    <text class="hla-t" x="520" y="146">k3s-3 · 10.0.0.13</text>
+    <text class="hla-a" x="710" y="146" text-anchor="end">obj</text>
+    <text class="hla-s2" x="520" y="174">kafkadata 30G</text>
+    <text class="hla-s2" x="520" y="193">ingesterwal 5G</text>
+    <text class="hla-s2" x="520" y="212">miniodata 100G</text>
   </g>
 
-  <line class="hla-ln" x1="146" y1="242" x2="146" y2="232" marker-end="url(#hlv-arrow)"/>
-  <line class="hla-ln" x1="382" y1="242" x2="382" y2="232" marker-end="url(#hlv-arrow)"/>
-  <line class="hla-ln" x1="618" y1="242" x2="618" y2="232" marker-end="url(#hlv-arrow)"/>
+  <line class="hla-ln" x1="146" y1="252" x2="146" y2="244" marker-end="url(#hlv-arrow)"/>
+  <line class="hla-ln" x1="382" y1="252" x2="382" y2="244" marker-end="url(#hlv-arrow)"/>
+  <line class="hla-ln" x1="618" y1="252" x2="618" y2="244" marker-end="url(#hlv-arrow)"/>
 
   <!-- Proxmox -->
-  <rect class="hla-box" x="30" y="244" width="700" height="46" rx="5"/>
-  <text class="hla-t" x="46" y="265">Proxmox VE — Type 1 하이퍼바이저 · KVM + QEMU</text>
-  <text class="hla-s" x="46" y="281">LVM-thin 풀에서 데이터 디스크 10장(235G)을 잘라 VM 에 붙임 · 노드 셋은 방화벽 VM 뒤 격리망(vmbr1)에</text>
+  <rect class="hla-box" x="30" y="254" width="700" height="48" rx="5"/>
+  <text class="hla-t" x="46" y="276">Proxmox VE — Type 1 하이퍼바이저 · KVM + QEMU</text>
+  <text class="hla-s" x="46" y="293">LVM-thin 풀에서 데이터 디스크 10장(235G)을 잘라 VM 에 붙임 · 노드 셋은 방화벽 VM 뒤 격리망(vmbr1)에</text>
 
-  <line class="hla-ln" x1="202" y1="302" x2="202" y2="292" marker-end="url(#hlv-arrow)"/>
-  <text class="hla-a" x="212" y="300">부팅</text>
+  <line class="hla-ln" x1="202" y1="316" x2="202" y2="306" marker-end="url(#hlv-arrow)"/>
+  <text class="hla-a" x="214" y="314">부팅</text>
 
   <!-- 물리 디스크 — 부팅 디스크를 무엇으로 고르느냐가 이 노트북의 역할을 가른다 -->
-  <rect class="hla-box" x="30" y="304" width="344" height="44" rx="5"/>
-  <text class="hla-c" x="46" y="323">외장 USB SSD 1TB</text>
-  <text class="hla-s2" x="46" y="338">이 디스크로 부팅하면 서버 — 빠지면 그대로 내려간다</text>
+  <rect class="hla-box" x="30" y="318" width="344" height="46" rx="5"/>
+  <text class="hla-c" x="46" y="338">외장 USB SSD 1TB</text>
+  <text class="hla-s2" x="46" y="355">이 디스크로 부팅하면 서버 — 빠지면 그대로 내려간다</text>
 
-  <rect class="hla-inner hla-dash" x="386" y="304" width="344" height="44" rx="5"/>
-  <text class="hla-c" x="402" y="323">내장 NVMe</text>
-  <text class="hla-s2" x="402" y="338">Windows — 지우지 않았다</text>
+  <rect class="hla-inner hla-dash" x="386" y="318" width="344" height="46" rx="5"/>
+  <text class="hla-c" x="402" y="338">내장 NVMe</text>
+  <text class="hla-s2" x="402" y="355">Windows — 지우지 않았다</text>
 </svg>
 <figcaption>부팅 디스크를 무엇으로 고르느냐가 이 노트북이 서버인지 아닌지를 가릅니다.</figcaption>
 </figure>
@@ -107,11 +107,9 @@ permalink: /homelab/cluster/
 |---|---|---|---|
 | 파드 네트워크 | Flannel — 트래픽만 나름 | **Calico** | 네임스페이스 사이를 정책으로 막으려면 그 정책을 집행할 주체가 있어야 함 |
 | 로드밸런서 | ServiceLB — 노드 IP를 빌림 | **MetalLB** `10.0.0.240-250` | 노드와 별개인 주소를 줘야 인그레스 앞에 세울 대표 주소가 생김 |
-| 인그레스 | k3s가 같이 깔아 주는 Traefik | **직접 올린 Traefik** | 공개 443과 관리 80을 엔트리포인트로 나눠 쓰는데, 같이 깔린 쪽은 그 값을 k3s가 쥐고 있어 업그레이드에 덮임 |
-| 스토리지 | local-path — 한 파일시스템에 폴더로 | **정적 PV 10장** — 위 그림의 디스크를 그대로 | 부하를 걸었을 때 무엇이 디스크를 채웠는지 보려면 워크로드별로 갈려야 함 |
+| 인그레스 | k3s가 같이 깔아 주는 Traefik | **직접 올린 Traefik** | 공개 443과 관리 80을 나눠 쓰려면 설정을 고쳐야 하는데, k3s가 깔아 준 쪽은 고쳐도 업그레이드 때 되돌아감 |
+| 스토리지 | local-path — 한 파일시스템에 폴더로 | **정적 PV 10장** — 위 그림의 디스크를 그대로 | 사용량 지표가 `statfs`를 통해 **파일시스템 단위로만** 나와서, 워크로드별로 자르지 않으면 부하 때 무엇이 채웠는지 못 가림 |
 {:.hl-cmp}
-
-디스크를 워크로드마다 자른 건 나중에 못 뒤집습니다 — 사용량 지표가 `statfs`를 통해 **파일시스템 단위로만** 나오기 때문입니다.
 
 ## 겪은 문제
 

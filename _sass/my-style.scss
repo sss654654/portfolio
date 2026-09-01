@@ -412,6 +412,16 @@ ul.timeline > li:has(> small)::before {
    쓰는데, 한글 본문에서 작게 읽힌다. 여기만 올리면 rem 으로 짜인 나머지가 함께 따라온다. */
 html { font-size: 17px; }
 
+/* 하위 페이지 층 그림 — 배선도보다 글자 수가 적어 한 단계 크게 실을 수 있다.
+   배선도(hl-diagram)와 클래스를 공유하므로 전역으로 올리지 않고 여기서만 덮는다. */
+.hl-diagram-lg .hla-t { font-size: 14px; }
+.hl-diagram-lg .hla-c { font-size: 12.5px; }
+.hl-diagram-lg .hla-s { font-size: 11.5px; }
+.hl-diagram-lg .hla-zone { font-size: 11.5px; }
+.hl-diagram-lg .hla-a { font-size: 10.5px; }
+/* 디스크 배치가 이 그림의 핵심인데 가장 흐렸다 */
+.hl-diagram-lg .hla-s2 { font-size: 11px; fill: var(--gray-text); }
+
 /* 하위 페이지 표 — 본문보다 작게, 헤더도 본문과 같은 왼쪽 정렬로.
    keep-all 이 없으면 좁은 칸에서 한글이 단어 중간에서 끊긴다(링/크는, 적용·재/기동). */
 .hl-cmp, .hl-tbl { font-size: .88rem; word-break: keep-all; }
