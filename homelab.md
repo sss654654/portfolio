@@ -17,7 +17,7 @@ EKS라면 컨트롤플레인은 AWS 몫이고, 노드 아래의 리눅스와 네
 이번에는 물리 디스크와 리눅스에서 시작해 클러스터·배포·관측·부하 실측·격리까지 직접 올렸고,
 그 결과가 지금 [ticket.subinhong.dev](https://ticket.subinhong.dev) 에서 돌고 있습니다.
 
-들어오는 길은 세 갈래입니다.
+밖에서 들어오는 길은 셋이고, 전부 같은 방화벽을 지납니다.
 
 <!-- 배선도 — 실제 토폴로지를 세 이야기로 압축:
      사용자 → Traefik → 대기열 서비스 / 관리자 → VPN → 관리 UI / GitLab → CI → ArgoCD → 배포.
@@ -179,8 +179,7 @@ EKS라면 컨트롤플레인은 AWS 몫이고, 노드 아래의 리눅스와 네
     <text x="261" y="368" class="hla-s">GitOps 배포</text>
   </g>
 </svg>
-<figcaption>ticket.subinhong.dev 로 들어오는 세 갈래 — 전부 한 방화벽을 지납니다.
-Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 응답하지 않습니다.</figcaption>
+<figcaption>Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 응답하지 않습니다.</figcaption>
 </figure>
 
 <!-- ② 다섯 갈래 — 물리에서 공개까지 순서대로 -->
