@@ -139,5 +139,6 @@ RAM 32GB를 세 노드가 나눠 써야 하므로, 무엇을 올릴지보다 **�
 Proxmox VE · KVM/QEMU · LVM-thin · Ubuntu Server · k3s · etcd · Calico · MetalLB · Traefik · Helm
 {:.hl-more}
 
-노드 OS는 Ubuntu Server LTS이고, 위 컴포넌트는 Helm 차트로 올렸습니다.
+노드 OS는 Ubuntu Server LTS입니다. Calico와 정적 PV는 클러스터를 세우는 스크립트가 매니페스트로 깔고,
+MetalLB·Traefik은 Helm 차트로 정의해 GitOps가 올립니다.
 {:.hl-more}
