@@ -10,7 +10,7 @@ permalink: /homelab/cluster/
 
 노트북 한 대에 RAM 32GB. 내장 Windows를 지우지 않은 채 세 노드가 그것을 나눠 씁니다.
 
-## 서 있는 구조
+## 클러스터 구조
 
 <!-- 층 그림 — 아래에서 위로: 물리 디스크 → Proxmox → VM 3대(각자의 데이터 디스크) → k3s.
      네트워크 경로는 홈랩 배선도가 담당하므로 여기서는 격리망(vmbr1) 한 줄로만 언급한다.
@@ -85,7 +85,7 @@ permalink: /homelab/cluster/
 <figcaption>부팅 디스크를 무엇으로 고르느냐가 이 노트북이 서버인지 아닌지를 가릅니다.</figcaption>
 </figure>
 
-## 기본값을 끄고 직접 고른 것
+## 정한 것
 
 <div class="hl-sub" markdown="0">노트북을 서버로 만드는 층</div>
 
