@@ -8,7 +8,8 @@ permalink: /homelab/cluster/
 
 <p class="hl-back" markdown="0"><a href="/homelab/">← 홈랩</a></p>
 
-물리 서버는 노트북 한 대이고, 내장 Windows는 지우지 않습니다. 아래 선택은 대부분 이 두 조건에서 나옵니다.
+물리 서버는 노트북 한 대이고, 내장 Windows는 지우지 않습니다.
+RAM 32GB를 세 노드가 나눠 써야 하므로, 무엇을 올릴지보다 **무엇에 자원을 안 뺏기느냐**가 먼저 정해졌습니다.
 
 ## 서 있는 구조
 
