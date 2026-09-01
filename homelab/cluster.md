@@ -29,13 +29,13 @@ permalink: /homelab/cluster/
 
   <!-- k3s -->
   <rect class="hla-box" x="30" y="44" width="700" height="46" rx="5"/>
-  <text class="hla-t" x="46" y="65">k3s v1.36.2 — 세 대 모두 control-plane 겸 워커 · etcd 3멤버</text>
+  <text class="hla-t" x="46" y="65">k3s — 세 대 모두 control-plane 겸 워커 · etcd 3멤버</text>
   <text class="hla-s" x="46" y="81">Calico(파드 네트워크) · MetalLB(로드밸런서) · Traefik(인그레스) · 정적 PV(스토리지)</text>
 
   <!-- VM 3대 -->
   <g>
     <rect class="hla-box" x="34" y="102" width="224" height="160" rx="5"/>
-    <text class="hla-t" x="48" y="124">k3s-1 · .201</text>
+    <text class="hla-t" x="48" y="124">k3s-1 · 10.0.0.11</text>
     <text class="hla-a" x="238" y="124" text-anchor="end">db</text>
     <text class="hla-s" x="48" y="142">4 vCPU · RAM 8GB 고정</text>
     <text class="hla-s" x="48" y="157">부트 40G</text>
@@ -47,7 +47,7 @@ permalink: /homelab/cluster/
   </g>
   <g>
     <rect class="hla-box" x="270" y="102" width="224" height="160" rx="5"/>
-    <text class="hla-t" x="284" y="124">k3s-2 · .202</text>
+    <text class="hla-t" x="284" y="124">k3s-2 · 10.0.0.12</text>
     <text class="hla-a" x="474" y="124" text-anchor="end">obs</text>
     <text class="hla-s" x="284" y="142">4 vCPU · RAM 8GB 고정</text>
     <text class="hla-s" x="284" y="157">부트 40G</text>
@@ -60,7 +60,7 @@ permalink: /homelab/cluster/
   </g>
   <g>
     <rect class="hla-box" x="506" y="102" width="224" height="160" rx="5"/>
-    <text class="hla-t" x="520" y="124">k3s-3 · .203</text>
+    <text class="hla-t" x="520" y="124">k3s-3 · 10.0.0.13</text>
     <text class="hla-a" x="710" y="124" text-anchor="end">obj</text>
     <text class="hla-s" x="520" y="142">4 vCPU · RAM 8GB 고정</text>
     <text class="hla-s" x="520" y="157">부트 40G</text>
@@ -78,7 +78,7 @@ permalink: /homelab/cluster/
   <!-- Proxmox -->
   <rect class="hla-box" x="30" y="274" width="700" height="46" rx="5"/>
   <text class="hla-t" x="46" y="295">Proxmox VE — Type 1 하이퍼바이저 · KVM + QEMU</text>
-  <text class="hla-s" x="46" y="311">LVM-thin 풀에서 데이터 디스크 10장(235G)을 잘라 VM 에 붙임 · vmbr0 가 유선 NIC 하나로 세 노드를 공유기에 등록</text>
+  <text class="hla-s" x="46" y="311">LVM-thin 풀에서 데이터 디스크 10장(235G)을 잘라 VM 에 붙임 · 노드 셋은 방화벽 VM 뒤 격리망(vmbr1)에</text>
 
   <line class="hla-ln" x1="202" y1="332" x2="202" y2="322" marker-end="url(#hlv-arrow)"/>
 
@@ -110,9 +110,9 @@ permalink: /homelab/cluster/
 | | 기본값 | 이 홈랩 | 그렇게 한 이유 |
 |---|---|---|---|
 | 파드 네트워크 | Flannel | **Calico** | Flannel은 NetworkPolicy를 집행하지 않음 |
-| 로드밸런서 | ServiceLB | **MetalLB** `.240-.250` | 공유기 DHCP와 안 겹치는 대역을 직접 지정 |
+| 로드밸런서 | ServiceLB | **MetalLB** `10.0.0.240-250` | 서비스에 줄 주소 대역을 직접 지정 |
 | 인그레스 | 번들 Traefik | **직접 올린 Traefik** | 번들은 설정을 바꿔도 k3s 업그레이드에 덮임 |
-| 노드 예약 | 없음 | **2Gi** | 메모리가 마르면 커널이 etcd를 안은 프로세스를 죽임 |
+| 노드 예약 | 없음 | **2Gi** — 노드당 allocatable 5081Mi | 메모리가 마르면 커널이 etcd를 안은 프로세스를 죽임 |
 | 스토리지 | local-path | **정적 PV 10장** | 워크로드별 사용량이 지표에서 갈림 |
 {:.hl-cmp}
 
@@ -128,7 +128,7 @@ permalink: /homelab/cluster/
 
 | 이슈 | 원인 | 조치 |
 |---|---|---|
-| 노드가 가진 메모리를 전부 파드 몫으로 신고 | k3s는 API 서버·etcd를 파드가 아닌 프로세스로 돌려 kubelet 집계 밖 | 예약값 설정. 워크로드를 다 올린 뒤 실측 **1783Mi**로 1Gi → 2Gi 수정 |
+| 노드가 가진 메모리를 전부 파드 몫으로 신고 | k3s는 API 서버·etcd를 파드가 아닌 프로세스로 돌려 kubelet 집계 밖 | 예약값 설정. 워크로드를 다 올린 뒤 실측 **1783Mi**로 1Gi → 2Gi 수정, 세 노드 반영 |
 | 클러스터 전체 무응답. 링크는 정상인데 ARP 실패 | Intel e1000e NIC 세그멘테이션 오프로드 결함 — `Hardware Unit Hang` 34회 | 해당 오프로드 비활성화 |
 | 나흘 뒤 같은 증상 재발 | udev 규칙 조건을 NIC의 최종 이름으로 걸었는데, 장치 이벤트 시점에는 아직 `eth0` — 한 번도 실행되지 않음 | 인터페이스 기동 직후로 이동. 적용·재기동·재부팅을 각각 확인 |
 {:.hl-tbl}
@@ -144,7 +144,6 @@ permalink: /homelab/cluster/
 
 - **외장 USB SSD 단일 장애점** — 물리 제약이라 없앨 수 없어, 끊길 수 있는 경로를 줄이는 데까지만 했습니다.
 - **관리 접근이 노드 한 대만 봅니다** — kubeconfig가 노드 하나를 가리켜, 그 노드가 내려가면 제어면이 살아 있어도 명령이 안 나갑니다.
-- **예약값 2Gi가 저장소에만 반영돼 있습니다** — 노드에 걸린 값은 아직 1Gi이고, 반영하려면 노드를 비우고 재시작해야 합니다.
 
 ## 쓴 것
 
