@@ -91,9 +91,9 @@ permalink: /homelab/cluster/
 
 | | 기본값 | 이 홈랩 | 그렇게 한 이유 |
 |---|---|---|---|
-| 하이퍼바이저 | 호스트 OS 위 Type 2 | **Proxmox** | Windows 재부팅에 VM 세 대가 함께 내려감 |
-| 게스트 메모리 | ballooning | **8GB 고정** | kubelet이 RAM 총량을 고정으로 전제하고 배치함 |
-| 절전 | 잠자기 · USB 자동절전 | **둘 다 차단** | 루트 디스크가 외장 USB — 재워지면 끊김 |
+| 하이퍼바이저 | Windows 위에 얹는 Type 2 | **Proxmox** (Type 1) | Windows가 재부팅되면 그 위의 VM 세 대가 함께 내려감 |
+| 게스트 메모리 | ballooning — 호스트가 회수 | **8GB 고정** | kubelet은 노드 RAM 총량이 고정이라는 전제로 배치와 퇴출을 판단함 |
+| 절전 | 뚜껑 닫으면 잠자기 · USB 자동절전 | **둘 다 차단** | 루트 디스크가 외장 USB — 재워지면 파일시스템이 끊김 |
 {:.hl-cmp}
 
 <div class="hl-sub" markdown="0">k3s가 안고 오는 층</div>
@@ -101,10 +101,10 @@ permalink: /homelab/cluster/
 | | 기본값 | 이 홈랩 | 그렇게 한 이유 |
 |---|---|---|---|
 | 파드 네트워크 | Flannel | **Calico** | Flannel은 NetworkPolicy를 집행하지 않음 |
-| 로드밸런서 | ServiceLB | **MetalLB** `10.0.0.240-250` | 서비스에 줄 주소 대역을 직접 지정 |
+| 로드밸런서 | ServiceLB — 노드 IP를 빌림 | **MetalLB** `10.0.0.240-250` | 서비스에 줄 주소 대역을 직접 정해야 함 |
 | 인그레스 | 번들 Traefik | **직접 올린 Traefik** | 번들은 설정을 바꿔도 k3s 업그레이드에 덮임 |
-| 노드 예약 | 없음 | **2Gi** — 노드당 allocatable 5081Mi | 메모리가 마르면 커널이 etcd를 안은 프로세스를 죽임 |
-| 스토리지 | local-path | **정적 PV 10장** | 워크로드별 사용량이 지표에서 갈림 |
+| 노드 예약 | 없음 — 전부 파드 몫으로 신고 | **2Gi** — 노드당 allocatable 5081Mi | 메모리가 마르면 커널이 etcd를 안은 프로세스를 죽임 |
+| 스토리지 | local-path — 한 파일시스템에 폴더로 | **정적 PV 10장** | 워크로드별 사용량이 지표에서 갈림 |
 {:.hl-cmp}
 
 디스크를 워크로드마다 자른 건 성능이 아니라 관측 때문입니다.
