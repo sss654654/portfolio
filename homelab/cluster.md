@@ -85,6 +85,11 @@ permalink: /homelab/cluster/
 <figcaption>부팅 디스크를 무엇으로 고르느냐가 이 노트북이 서버인지 아닌지를 가릅니다.</figcaption>
 </figure>
 
+<figure class="hl-shot" markdown="0">
+  <div class="hl-shot-wait">cluster-nodes.png — kubectl get nodes -L cgv.io/data</div>
+  <figcaption>세 노드가 control-plane 겸 etcd 멤버로 서고, 디스크 배치에 맞춘 라벨이 붙습니다.</figcaption>
+</figure>
+
 ## 기본값을 끄고 직접 고른 것
 
 <div class="hl-sub" markdown="0">노트북을 서버로 만드는 층</div>
@@ -92,7 +97,7 @@ permalink: /homelab/cluster/
 | | 기본값 | 이 홈랩 | 그렇게 한 이유 |
 |---|---|---|---|
 | 하이퍼바이저 | Windows 위에 얹는 Type&nbsp;2 | **Proxmox** — Type&nbsp;1 | 호스트 OS가 자원을 상시 차지하지 않아 노트북 몫을 전부 VM에 배분할 수 있음 |
-| VM 메모리 | ballooning — Proxmox가 부족하면 VM RAM을 도로 회수 | **노드마다 8GB 통째로 고정** | 노드 RAM 총량이 실행 중에 변하면 kubelet의 배치·퇴출 판단이 어긋남 |
+| VM 메모리 | ballooning — Proxmox가 부족하면 VM RAM을 도로 회수 | **노드마다 8GB 통째로 고정** | 쿠버네티스는 노드 RAM이 변하지 않는다고 보고 파드를 앉힘 |
 | 절전 | 뚜껑 닫으면 잠자기 · USB 자동절전 | **둘 다 차단** | 루트 디스크가 외장 USB — 재워지면 파일시스템이 끊김 |
 {:.hl-cmp}
 
@@ -100,19 +105,13 @@ permalink: /homelab/cluster/
 
 | | 기본값 | 이 홈랩 | 그렇게 한 이유 |
 |---|---|---|---|
-| 파드 네트워크 | Flannel | **Calico** | Flannel은 NetworkPolicy를 집행하지 않음 |
-| 로드밸런서 | ServiceLB — 노드 IP를 빌림 | **MetalLB** `10.0.0.240-250` | 서비스에 줄 주소 대역을 직접 정해야 함 |
-| 인그레스 | 번들 Traefik | **직접 올린 Traefik** | 번들은 설정을 바꿔도 k3s 업그레이드에 덮임 |
-| 스토리지 | local-path — 한 파일시스템에 폴더로 | **정적 PV 10장** | 워크로드별 사용량이 지표에서 갈림 |
+| 파드 네트워크 | Flannel — 트래픽만 나름 | **Calico** | 네임스페이스 사이를 정책으로 막으려면 그 정책을 집행할 주체가 있어야 함 |
+| 로드밸런서 | ServiceLB — 노드 IP를 빌림 | **MetalLB** `10.0.0.240-250` | 노드와 별개인 주소를 줘야 인그레스 앞에 세울 대표 주소가 생김 |
+| 인그레스 | k3s가 같이 깔아 주는 Traefik | **직접 올린 Traefik** | 공개 443과 관리 80을 엔트리포인트로 나눠 쓰는데, 같이 깔린 쪽은 그 값을 k3s가 쥐고 있어 업그레이드에 덮임 |
+| 스토리지 | local-path — 한 파일시스템에 폴더로 | **정적 PV 10장** — 위 그림의 디스크를 그대로 | 부하를 걸었을 때 무엇이 디스크를 채웠는지 보려면 워크로드별로 갈려야 함 |
 {:.hl-cmp}
 
-디스크를 워크로드마다 자른 건 성능이 아니라 관측 때문입니다.
-사용량은 `statfs`가 **파일시스템 단위로만** 답해서, 한 볼륨에 폴더로 나눠 담으면 나중에 쿼리로 "누가 채웠나"를 못 가립니다.
-
-<figure class="hl-shot" markdown="0">
-  <div class="hl-shot-wait">cluster-nodes.png — kubectl get nodes -L cgv.io/data</div>
-  <figcaption>세 노드가 control-plane 겸 etcd 멤버로 서고, 디스크 배치에 맞춘 라벨이 붙습니다.</figcaption>
-</figure>
+디스크를 워크로드마다 자른 건 나중에 못 뒤집습니다 — 사용량 지표가 `statfs`를 통해 **파일시스템 단위로만** 나오기 때문입니다.
 
 ## 겪은 문제
 
