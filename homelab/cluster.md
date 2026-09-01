@@ -2,14 +2,13 @@
 layout: page
 title: 클러스터
 description: >
-  노트북 한 대를 Proxmox로 나눠 VM 세 대에 k3s를 HA로 세우고, 기본 컴포넌트를 직접 고른 것으로 바꿨습니다
+  노트북 한 대를 Proxmox로 나눠 VM 세 대에 k3s를 HA로 세웠습니다
 permalink: /homelab/cluster/
 ---
 
 <p class="hl-back" markdown="0"><a href="/homelab/">← 홈랩</a></p>
 
-홈랩의 바닥층입니다. 여기서 정한 하이퍼바이저·디스크·클러스터 구성이 뒤의 배포·관측·부하 실측이 올라서는 전제가 됩니다.
-아래 선택은 전부 한 조건에서 나옵니다 — **물리 서버는 노트북 한 대이고, 내장 Windows는 지우지 않는다.**
+물리 서버는 노트북 한 대이고, 내장 Windows는 지우지 않습니다. 아래 선택은 대부분 이 두 조건에서 나옵니다.
 
 ## 서 있는 구조
 
