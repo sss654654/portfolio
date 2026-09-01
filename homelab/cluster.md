@@ -100,9 +100,9 @@ permalink: /homelab/cluster/
 
 | | 기본값 | 이 홈랩 | 그렇게 한 이유 |
 |---|---|---|---|
-| 하이퍼바이저 | 호스트 OS 위 Type 2 | **Proxmox** (Type 1) | Windows 업데이트와 재부팅에 VM 세 대가 함께 내려감 |
-| 게스트 메모리 | ballooning — 호스트가 회수 | **8GB 고정** | kubelet이 노드 RAM 총량을 고정으로 전제하고 배치함 |
-| 절전 | 뚜껑 닫으면 잠자기 · 유휴 USB 절전 | **둘 다 차단** | 루트 디스크가 외장 USB라, 재워지면 파일시스템이 끊김 |
+| 하이퍼바이저 | 호스트 OS 위 Type 2 | **Proxmox** | Windows 재부팅에 VM 세 대가 함께 내려감 |
+| 게스트 메모리 | ballooning | **8GB 고정** | kubelet이 RAM 총량을 고정으로 전제하고 배치함 |
+| 절전 | 잠자기 · USB 자동절전 | **둘 다 차단** | 루트 디스크가 외장 USB — 재워지면 끊김 |
 {:.hl-cmp}
 
 <div class="hl-sub" markdown="0">k3s가 안고 오는 층</div>
@@ -110,7 +110,7 @@ permalink: /homelab/cluster/
 | | 기본값 | 이 홈랩 | 그렇게 한 이유 |
 |---|---|---|---|
 | 파드 네트워크 | Flannel | **Calico** | Flannel은 NetworkPolicy를 집행하지 않음 |
-| 로드밸런서 | ServiceLB | **MetalLB** `.240-.250` | 노드 IP를 빌리는 대신, 공유기 DHCP와 안 겹치는 대역을 직접 지정 |
+| 로드밸런서 | ServiceLB | **MetalLB** `.240-.250` | 공유기 DHCP와 안 겹치는 대역을 직접 지정 |
 | 인그레스 | 번들 Traefik | **직접 올린 Traefik** | 번들은 설정을 바꿔도 k3s 업그레이드에 덮임 |
 | 노드 예약 | 없음 | **2Gi** | 메모리가 마르면 커널이 etcd를 안은 프로세스를 죽임 |
 | 스토리지 | local-path | **정적 PV 10장** | 워크로드별 사용량이 지표에서 갈림 |
@@ -128,8 +128,8 @@ permalink: /homelab/cluster/
 
 | 이슈 | 원인 | 조치 |
 |---|---|---|
-| 노드가 가진 메모리를 전부 파드 몫으로 신고 | k3s는 API 서버·etcd를 파드가 아닌 프로세스로 돌려 kubelet 집계 밖 | 예약값 설정. 워크로드를 다 올린 뒤 실측이 **1783Mi**로 나와 1Gi에서 2Gi로 수정 |
-| 클러스터 전체 무응답 — 링크는 정상인데 ARP 실패 | Intel e1000e NIC 세그멘테이션 오프로드 결함 · `Hardware Unit Hang` 34회 | 해당 오프로드 비활성화 |
+| 노드가 가진 메모리를 전부 파드 몫으로 신고 | k3s는 API 서버·etcd를 파드가 아닌 프로세스로 돌려 kubelet 집계 밖 | 예약값 설정. 워크로드를 다 올린 뒤 실측 **1783Mi**로 1Gi → 2Gi 수정 |
+| 클러스터 전체 무응답. 링크는 정상인데 ARP 실패 | Intel e1000e NIC 세그멘테이션 오프로드 결함 — `Hardware Unit Hang` 34회 | 해당 오프로드 비활성화 |
 | 나흘 뒤 같은 증상 재발 | udev 규칙 조건을 NIC의 최종 이름으로 걸었는데, 장치 이벤트 시점에는 아직 `eth0` — 한 번도 실행되지 않음 | 인터페이스 기동 직후로 이동. 적용·재기동·재부팅을 각각 확인 |
 {:.hl-tbl}
 
