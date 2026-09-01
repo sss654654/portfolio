@@ -121,12 +121,12 @@ RAM 32GB를 세 노드가 나눠 써야 하므로, 무엇을 올릴지보다 **�
 
 <dl class="hl-stats hl-stats-row" markdown="0">
   <div><dt>3대</dt><dd>VM — 전부 control-plane 겸 etcd 멤버</dd></div>
-  <div><dt>10장</dt><dd>정적 PV 전부 Bound</dd></div>
-  <div><dt>69개</dt><dd>그 위에 올라온 파드</dd></div>
+  <div><dt>10장</dt><dd>정적 PV 전부 Bound · 235G</dd></div>
+  <div><dt>5081Mi</dt><dd>노드당 파드에 내주는 몫</dd></div>
 </dl>
 
-위 예약을 반영해 노드당 파드에 내주는 몫이 **5081Mi**로 정해졌습니다 — 물리 7941Mi에서 k3s 2Gi, OS 512Mi, 퇴출 기준선 300Mi를 뺀 값입니다.
-한 대가 멈춰도 나머지 둘이 과반이라 클러스터는 유지됩니다.
+물리 7941Mi에서 k3s 2Gi, OS 512Mi, 퇴출 기준선 300Mi를 뺀 값입니다.
+이 바닥 위에 토대와 워크로드가 올라와 파드 69개가 돌고 있습니다.
 
 ## 남은 것
 
