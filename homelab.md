@@ -57,10 +57,10 @@ EKS라면 컨트롤플레인은 AWS 몫이고, 노드 아래의 리눅스와 네
 
   <!-- 관리자 · 데스크탑 -->
   <g class="hla-g hla-g1">
-    <rect x="20" y="146" width="126" height="48" rx="9" class="hla-box"/>
+    <rect x="20" y="146" width="150" height="48" rx="9" class="hla-box"/>
     <image href="/assets/img/icons/wireguard.svg" x="28" y="157" width="24" height="24"/>
     <text x="57" y="166" class="hla-t">나 — 관리자</text>
-    <text x="57" y="181" class="hla-s">밖에서 접속할 때</text>
+    <text x="57" y="181" class="hla-s">밖에서 폰으로 접속</text>
     <rect x="20" y="244" width="150" height="52" rx="9" class="hla-box"/>
     <image href="/assets/img/icons/gitlab.svg" x="28" y="257" width="24" height="24"/>
     <text x="57" y="264" class="hla-t">데스크탑</text>
@@ -72,9 +72,9 @@ EKS라면 컨트롤플레인은 AWS 몫이고, 노드 아래의 리눅스와 네
   <g class="hla-g hla-g2">
     <line x1="290" y1="72" x2="366" y2="72" class="hla-ln"/>
     <line x1="366" y1="72" x2="366" y2="86" class="hla-ln" marker-end="url(#hla-arrow)"/>
-    <line x1="146" y1="170" x2="366" y2="170" class="hla-ln hla-dash"/>
+    <line x1="176" y1="170" x2="366" y2="170" class="hla-ln hla-dash"/>
     <line x1="366" y1="170" x2="366" y2="156" class="hla-ln hla-dash" marker-end="url(#hla-arrow)"/>
-    <text x="256" y="162" class="hla-s" text-anchor="middle">WireGuard 51820/UDP</text>
+    <text x="271" y="162" class="hla-s" text-anchor="middle">WireGuard 51820/UDP</text>
 
     <rect x="310" y="90" width="112" height="62" rx="9" class="hla-box"/>
     <rect x="355" y="101" width="22" height="11" rx="2" class="hla-glyph"/>
