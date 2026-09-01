@@ -100,13 +100,13 @@ permalink: /homelab/cicd/
   <circle class="hla-num" cx="450" cy="358" r="9"/><text class="hla-nt" x="450" y="362">4</text>
   <text class="hla-a" x="460" y="392">tag 줄을 커밋한다</text>
 
-  <line class="hla-ln" x1="592" y1="338" x2="592" y2="444" stroke-dasharray="4 4" marker-end="url(#hlm-n)" fill="none"/>
-  <circle class="hla-num" cx="592" cy="358" r="9"/><text class="hla-nt" x="592" y="362">5</text>
-  <text class="hla-a" x="602" y="418">webhook — 3초</text>
+  <line class="hla-ln" x1="560" y1="338" x2="560" y2="444" stroke-dasharray="4 4" marker-end="url(#hlm-n)" fill="none"/>
+  <circle class="hla-num" cx="560" cy="358" r="9"/><text class="hla-nt" x="560" y="362">5</text>
+  <text class="hla-a" x="570" y="424">webhook — 3초</text>
 
-  <line class="hla-ln-def" x1="690" y1="444" x2="690" y2="338" marker-end="url(#hlm-d)" fill="none"/>
-  <circle class="hla-num" cx="690" cy="358" r="9"/><text class="hla-nt" x="690" y="362">6</text>
-  <text class="hla-a" x="726" y="392" text-anchor="end">배포 정의를 읽는다</text>
+  <line class="hla-ln-def" x1="700" y1="444" x2="700" y2="338" marker-end="url(#hlm-d)" fill="none"/>
+  <circle class="hla-num" cx="700" cy="358" r="9"/><text class="hla-nt" x="700" y="362">6</text>
+  <text class="hla-a" x="690" y="384" text-anchor="end">배포 정의를 읽는다</text>
 
   <rect class="hla-box" x="18" y="412" width="724" height="104" rx="6"/>
   <text class="hla-zone" x="34" y="434">k3s 클러스터 · 격리망 안</text>
