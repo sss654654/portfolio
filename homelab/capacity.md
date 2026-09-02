@@ -183,7 +183,7 @@ permalink: /homelab/capacity/
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/q-latency.png" alt="queue 대시보드 행3 — 폴링 셋의 지연 p99, 오픈 봉우리" loading="lazy">
-    <figcaption>합격선 셋(입장 1초 · 현황판 3초 · 정상 구간 0.5초)이 이 행에 걸립니다 —
+    <figcaption>합격선 둘이 이 행에 걸립니다 — 현황판 3초, 그리고 봉우리 밖 정상 구간 0.5초.
     오픈 봉우리가 솟았다 내려오면 처리한 것, 안 내려오면 못 받은 것입니다.</figcaption>
   </figure>
   <figure class="hl-shot">
