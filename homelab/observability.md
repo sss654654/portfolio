@@ -181,11 +181,16 @@ permalink: /homelab/observability/
     VM 저장고는 기본 지표에 안 나와, lvs를 읽는 수집기를 직접 붙였습니다.</figcaption>
   </figure>
   <figure class="hl-shot">
+    <img src="/assets/img/homelab/obs/host-phone.png" alt="충전선을 뽑은 순간 — 왼쪽 호스트 판의 전원이 배터리(빨강)로 바뀌고 전력 행의 하트가 깨졌으며, 오른쪽 폰 Discord에 발생 알림이 도착" loading="lazy">
+    <figcaption>충전선을 뽑아 본 실황입니다 — 판의 전원이 배터리(빨강)로 바뀌고, 알림이 걸린 패널의
+    하트가 깨지고(평소엔 초록), 같은 순간 폰에 알림이 닿습니다. 어디가 문제인지 판에서도
+    폰에서도 바로 보입니다.</figcaption>
+  </figure>
+  <figure class="hl-shot">
     <img src="/assets/img/homelab/obs/host-alert.png" alt="Discord로 온 실제 알림 — 왼쪽 발생(CPU 과열 103도), 오른쪽 5분 뒤 해소(77도)" loading="lazy">
     <figcaption>실제로 울렸던 알림입니다 — 왼쪽이 발생(103°C), 오른쪽이 해소(77°C). 지금 값과 할 일,
-    그 패널의 그림이 함께 옵니다. 알림은 전부 판의 패널에 걸려 있어 평소엔 패널의 하트가 초록이고,
-    발화하면 깨진 표시로 바뀝니다 — 화면을 열면 어디가 문제인지부터 보입니다.
-    고른 기준은 둘 — 오면 일어나서 할 일이 있나, 안 울리면 되돌릴 수 없나.</figcaption>
+    그 패널의 그림이 함께 옵니다. 고른 기준은 둘 — 오면 일어나서 할 일이 있나,
+    안 울리면 되돌릴 수 없나.</figcaption>
   </figure>
 </div>
 
