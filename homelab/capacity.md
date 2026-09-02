@@ -189,9 +189,9 @@ permalink: /homelab/capacity/
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/q-flow.png" alt="queue 대시보드 행4 — 정원의 입출: enter 호출·지연, 입장·회수·반환" loading="lazy">
-    <figcaption><b>(queue)</b> 왼쪽이 enter(줄서기 요청), 오른쪽이 그 결과의 수지입니다 — 들어옴은 admissions(입장),
-    나감은 bookings-completed(예매 완료)와 admissions-revoked(회수). 들어온 만큼 나가야 정상이고,
-    <b>회수가 입장을 앞지르는 역전</b>이 정원 200 판의 무너짐이었습니다.</figcaption>
+    <figcaption><b>(queue)</b> 정원에 드나드는 흐름입니다 — 줄서기 요청(enter)과 입장·회수·반환.
+    입장한 만큼 예매 완료나 회수로 나가야 정상이고, <b>회수가 입장보다 많아지는 순간</b>이
+    정원 200 판의 무너짐이었습니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/b-pod.png" alt="booking 대시보드 행1 — 메모리 limit, CPU·스로틀·GC, heap·nonheap" loading="lazy">
