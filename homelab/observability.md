@@ -121,8 +121,9 @@ permalink: /homelab/observability/
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/obs/cluster-row4.png" alt="행4 — Pending·비정상 파드·재시작 burst와 흔적 표" loading="lazy">
-    <figcaption>어느 파드가 문제인가 — 숫자 넷은 지금만 봅니다. 잠깐 죽었다 살아난 것은 옆의 흔적 표에만 남고,
-    파드 이름을 누르면 그 파드의 이벤트와 로그가 같은 시간 범위로 열립니다.</figcaption>
+    <figcaption>어느 파드가 문제인가 — 잠깐 죽었다 살아난 것은 흔적 표에 남고, 파드 이름을 누르면
+    그 파드의 이벤트와 로그가 같은 시간 범위로 열립니다. 누적 재시작은 절대값이 아니라 격차로 읽습니다 —
+    클러스터를 껐다 켠 횟수만큼 다 같이 오르기 때문입니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/obs/cluster-row5.png" alt="행5 — 파드 스펙 장부. 도는 컨테이너 전수의 request 대비 실사용 게이지" loading="lazy">
