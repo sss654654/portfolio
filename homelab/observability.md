@@ -9,7 +9,7 @@ permalink: /homelab/observability/
 <p class="hl-back" markdown="0"><a href="/homelab/">← 홈랩</a></p>
 
 클러스터도 배포 경로도 섰지만, 안에서 무슨 일이 벌어지는지 볼 방법이 없었습니다 —
-그리고 보는 장치는 **세워 놓는다고 도는 것이 아니었습니다.**
+보는 장치는 **세워 놓는다고 도는 것이 아니었습니다.**
 
 ## 관측 구조
 
@@ -97,16 +97,16 @@ permalink: /homelab/observability/
 
 | 무엇을 | 고른 것 | 그렇게 한 이유 |
 |---|---|---|
-| 지표 저장소 | **Mimir distributed** — ingester만 3대, 노드당 1 | 최근 2시간은 ingester 메모리에만 있음 — 죽으면 그 구간이 빔. 복제엔 파드·RAM이 배로 들어 셋 다는 못 하고, **알림과 판 전부가 서 있는 지표에만 그 비용을 냄** — 셋이 같은 값을 들어 한 대가 죽어도 남음 |
-| 로그·트레이스 | **Loki·Tempo는 단일** | 위험은 같지만 무게가 다름 — 둘은 원인을 파는 조사 도구(로그는 실패·경합만, 초당 16줄)라 **잠깐 비어도 판정이 무너지지 않음.** WAL로 재시작만 복구하고, 노드째 나갈 때의 유실은 감수 |
+| 지표 저장소 | **Mimir distributed** — ingester만 3대, 노드당 1 | 최근 2시간은 ingester 메모리에만 있음 — 죽으면 그 구간이 빔. 복제 비용(파드·RAM 배)은 셋 다 못 내니, **알림과 대시보드 전부가 서 있는 지표에만** 냄 |
+| 로그·트레이스 | **Loki·Tempo는 단일** | 위험은 같지만 무게가 다름 — 둘은 조사 도구(로그는 실패·경합만, 초당 16줄)라 **잠깐 비어도 판정이 안 무너짐.** WAL로 재시작만 복구, 노드째 유실은 감수 |
 | 저장 몸통 | **클러스터 안 MinIO** — S3 호환 | 셋 다 원본은 여기, 로컬엔 WAL만. 전용 계정이 세 버킷만 읽고 씀 — 루트 자격은 앱에 안 나감 |
-| Tempo 보유 한도 | **`max_traces_per_user` 5배** — 동시에 열려 있는 트레이스 1만 → 5만 | 전 요청을 남기기로 하자(표본 1.0), queue 폴링이 초당 수천 건이라 기본 한도를 넘음 — 넘친 트레이스는 버려져 그 구간은 열어 볼 것이 없음. Tempo 메모리 상한도 3배로 |
-| 알림에 패널 스크린샷 추가 | **Grafana Image Renderer** — 알림마다 그 지표의 패널을 그려 첨부 | 알림은 Discord로 옴 — 숫자만으론 얼마나 급한지 애매함. 그 지표 패널의 캡처가 붙으면 언제부터 얼마나 올랐는지가 바로 읽힘. 렌더러가 죽어도 알림은 텍스트로 계속 감 |
+| Tempo 보유 한도 | **`max_traces_per_user` 5배** — 동시에 열려 있는 트레이스 1만 → 5만 | 전 요청을 남기기로 하자(표본 1.0) 폴링이 초당 수천 건이라 기본 한도를 넘음 — 넘친 트레이스는 버려져 열어 볼 수 없음. 메모리 상한도 3배로 |
+| 알림에 패널 스크린샷 추가 | **Grafana Image Renderer** — 알림마다 그 지표의 패널을 그려 첨부 | Discord의 숫자만으론 얼마나 급한지 애매하고, 패널 캡처가 붙으면 언제부터 얼마나 올랐는지 바로 읽힘. 렌더러가 죽어도 알림은 텍스트로 감 |
 {:.hl-dec}
 
 ## 클러스터 대시보드
 
-판은 위에서 아래로 좁혀 내려갑니다 — 노드가 살아 있나에서 어느 파드가 문제인가까지.
+화면은 위에서 아래로 좁혀 내려갑니다 — 노드가 살아 있나에서 어느 파드가 문제인가까지.
 
 <div class="hl-shots" markdown="0" aria-label="클러스터 인프라 대시보드 — 화살표로 넘겨 봅니다">
   <figure class="hl-shot">
@@ -124,8 +124,7 @@ permalink: /homelab/observability/
   <figure class="hl-shot">
     <img src="/assets/img/homelab/obs/cluster-row2.png" alt="행2 — 노드 CPU. 선언·실사용 표와 노드별 추이" loading="lazy">
     <figcaption>같은 두 표인데 뜻이 다릅니다 — 메모리는 차면 죽지만 CPU는 잘릴 뿐입니다.
-    그래서 CPU limit은 후하게 걸어 합이 노드 총량을 넘어도 됩니다 — 모두가 동시에
-    최대로 쓰는 순간은 없고, 겹치면 나눠 쓰며 느려질 뿐입니다.</figcaption>
+    그래서 CPU limit은 후하게 — 합이 노드 총량을 넘어도, 겹치면 나눠 쓰며 느려질 뿐입니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/obs/cluster-row3.png" alt="행3 — 마운트별 용량과 inode" loading="lazy">
@@ -134,7 +133,7 @@ permalink: /homelab/observability/
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/obs/cluster-row4.png" alt="행4 — Pending·비정상 파드·재시작 burst와 흔적 표" loading="lazy">
-    <figcaption>위는 흔적 — 비정상이었던 파드(OOMKilled·Pending 따위)와 재시작이 잦아진 파드가 남습니다.
+    <figcaption>위는 흔적 — 비정상이었던 파드(OOMKilled·Pending 등)와 재시작이 잦아진 파드가 남습니다.
     아래는 임박 — 메모리가 limit의 80%를 넘은 컨테이너와, CPU가 5분 평균으로 limit에 닿아
     잘리는 컨테이너를 미리 잡습니다.</figcaption>
   </figure>
@@ -153,7 +152,7 @@ permalink: /homelab/observability/
 
 ## 호스트 대시보드와 알림
 
-클러스터 판이 보는 것은 VM 안까지입니다 — 그 아래 물리 노트북은 호스트 판이 보고,
+클러스터 대시보드는 VM 안까지 봅니다 — 그 아래 물리 노트북은 호스트 대시보드가,
 화면 밖의 시간은 **알림**이 맡습니다.
 
 <div class="hl-shots" markdown="0" aria-label="호스트 하드웨어 대시보드와 Discord 알림 — 화살표로 넘겨 봅니다">
@@ -182,8 +181,8 @@ permalink: /homelab/observability/
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/obs/host-phone.png" alt="충전선을 뽑은 순간 — 왼쪽 호스트 판의 전원이 배터리(빨강)로 바뀌고 전력 행의 하트가 깨졌으며, 오른쪽 폰 Discord에 발생 알림이 도착" loading="lazy">
-    <figcaption>충전선을 뽑아 본 실황입니다 — 판의 전원이 배터리(빨강)로 바뀌고, 알림이 걸린 패널의
-    하트가 깨지고(평소엔 초록), 같은 순간 폰에 알림이 닿습니다. 어디가 문제인지 판에서도
+    <figcaption>충전선을 뽑아 본 실황입니다 — 전원이 배터리(빨강)로 바뀌고, 알림이 걸린 패널의
+    하트가 깨지고(평소엔 초록), 같은 순간 폰에 알림이 닿습니다. 어디가 문제인지 화면에서도
     폰에서도 바로 보입니다.</figcaption>
   </figure>
   <figure class="hl-shot">
@@ -213,8 +212,8 @@ permalink: /homelab/observability/
 
 ## 남은 것
 
-- **관측 스택 자신을 보는 판이 필요합니다** — 토대를 구축하며 지표가 조용히 버려지거나 상한이 차오르는 일을 겪었는데, 그걸 시각적으로 판별할 화면이 아직 없습니다
-- **아직 설계한 request를 넘거나 limit에 다가선 파드들이 소량 있습니다** — 노드 메모리(8GB×3)의 한계 안에서 전부에게 넉넉히 줄 수는 없었고, 자원이 큰 클러스터로 옮길 때 이 판들로 잰 값을 근거로 스펙을 다시 설계합니다
+- **관측 스택 자신을 보는 화면이 없습니다** — 구축하며 지표가 조용히 버려지거나 상한이 차오르는 일을 겪었는데, 그걸 보여줄 화면이 아직 없습니다
+- **아직 설계한 request를 넘거나 limit에 다가선 파드들이 소량 있습니다** — 노드 메모리(8GB×3) 안에서 전부에게 넉넉히 줄 수는 없었고, 자원이 큰 클러스터로 옮길 때 이 화면들로 잰 값을 근거로 다시 설계합니다
 - **호스트가 통째로 꺼지면 알림도 함께 침묵합니다** — 알림이 그 호스트 위 클러스터에서 돌기 때문이고, 그 구간은 밖에서 보는 감시가 맡습니다
 
 ## 쓴 것
