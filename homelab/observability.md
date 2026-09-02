@@ -66,10 +66,8 @@ permalink: /homelab/observability/
   <rect class="hla-box" x="236" y="30" width="100" height="206" rx="6"/>
   <image href="/assets/img/icons/alloy.svg" x="275" y="42" width="22" height="22"/>
   <text class="hla-t" x="286" y="90" text-anchor="middle">Alloy</text>
-  <text class="hla-s2" x="286" y="114" text-anchor="middle">노드마다 하나, 셋</text>
-  <text class="hla-s2" x="286" y="132" text-anchor="middle">대상을 나눠 맡음</text>
-  <text class="hla-s2" x="286" y="150" text-anchor="middle">— 중복 수집 없음</text>
-  <text class="hla-a" x="286" y="256" text-anchor="middle">모아서 push</text>
+  <text class="hla-s2" x="286" y="118" text-anchor="middle">노드마다 하나, 셋</text>
+  <text class="hla-s2" x="286" y="136" text-anchor="middle">대상을 나눠 맡음</text>
 
   <!-- MinIO — 원본이 내려앉는 곳 -->
   <line class="hla-ln" x1="497" y1="238" x2="497" y2="254" marker-end="url(#hlo-n)" fill="none"/>
@@ -91,9 +89,8 @@ permalink: /homelab/observability/
   <text class="hla-s2" x="685" y="198" text-anchor="middle">앱 판 3장</text>
   <text class="hla-s2" x="685" y="216" text-anchor="middle">알림 5종</text>
 </svg>
-<figcaption>화살표는 데이터가 가는 방향입니다 — scrape·tail은 Alloy가 가지러 가는 것이고, push는
-보내는 쪽이 미는 것입니다. 각 저장소의 메모리와 WAL에는 최근 구간만 있고, 원본은 전부
-MinIO로 내려갑니다(Mimir는 2시간마다 블록으로).</figcaption>
+<figcaption>각 저장소의 메모리와 WAL에는 최근 구간만 있고, 원본은 전부 MinIO로 내려갑니다
+(Mimir는 2시간마다 블록으로).</figcaption>
 </figure>
 
 ## 정한 것
