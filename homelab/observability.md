@@ -116,17 +116,23 @@ permalink: /homelab/observability/
 
 판은 위에서 아래로 좁혀 내려갑니다 — 노드가 살아 있나에서 어느 파드가 문제인가까지.
 
-<!-- 캐러셀 A 자리 — 슬라이드·캡션 초안
-  1  행0 생존(Ready·k3s응답·etcd합의·사고흔적)
-     캡션: 노드 생존은 쿠버네티스 API를 거치지 않고 노드에 직접 물어 잽니다 — API 경유 값은
-     합의가 깨지면 갱신을 멈춘 채 마지막 상태로 굳어, 죽었는데 정상으로 남습니다.
-  2  행1 메모리(선언·실사용 두 표 + 추이)
-     캡션: 표가 둘입니다 — 스케줄러는 선언(requests)만 보고 커널은 실사용만 봅니다.
-     한 표에 섞으면 무엇이 무엇의 한계인지 흐려져, 뺄셈은 같은 기준 안에서만 합니다.
-  3  행4 파드(Pending·비정상·재시작 burst + 흔적 표)
-     캡션: 위 숫자들은 지금만 봅니다 — 잠깐 죽었다 살아난 것은 옆의 흔적 표에만 남고,
-     파드 이름을 누르면 그 파드의 이벤트와 로그가 같은 시간 범위로 열립니다.
--->
+<div class="hl-shots" markdown="0" aria-label="클러스터 인프라 대시보드 — 화살표로 넘겨 봅니다">
+  <figure class="hl-shot">
+    <img src="/assets/img/homelab/obs/cluster-row0.png" alt="행0 — 노드 Ready · k3s 응답 · etcd 합의 · eviction 임박, 그리고 사고 흔적 표">
+    <figcaption>노드가 살아 있나 — 생존은 쿠버네티스 API를 거치지 않고 노드에 직접 물어 잽니다.
+    API 경유 값은 합의가 깨지면 갱신을 멈춘 채 마지막 상태로 굳어, 죽었는데 정상으로 남습니다.</figcaption>
+  </figure>
+  <figure class="hl-shot">
+    <img src="/assets/img/homelab/obs/cluster-row1.png" alt="행1 — 노드 메모리. 선언 기준 표와 실사용 기준 표, 노드별 추이" loading="lazy">
+    <figcaption>노드 메모리는 표가 둘입니다 — 스케줄러는 선언(requests)만 보고 커널은 실사용만 봅니다.
+    한 표에 섞으면 무엇이 무엇의 한계인지 흐려져, 뺄셈은 같은 기준 안에서만 합니다.</figcaption>
+  </figure>
+  <figure class="hl-shot">
+    <img src="/assets/img/homelab/obs/cluster-row4.png" alt="행4 — Pending·비정상 파드·재시작 burst와 흔적 표" loading="lazy">
+    <figcaption>어느 파드가 문제인가 — 숫자 넷은 지금만 봅니다. 잠깐 죽었다 살아난 것은 옆의 흔적 표에만 남고,
+    파드 이름을 누르면 그 파드의 이벤트와 로그가 같은 시간 범위로 열립니다.</figcaption>
+  </figure>
+</div>
 
 ## 호스트 대시보드와 알림
 
@@ -142,22 +148,29 @@ permalink: /homelab/observability/
 | 감시 경로 끊김 | `up` 0, 5분 | **위 넷의 보증** — 넷은 호스트 수집 하나에 매달려 있어, 그게 끊기면 조용함이 정상으로 읽힘 |
 {:.hl-tbl}
 
-<!-- 캐러셀 B 자리 — 슬라이드·캡션 초안
-  1  행0 지금(응답·온도·전원·배터리·디스크 판정·부팅)
-     캡션: 물리 축 하나에 행 하나 — 열·전력·포화·저장. 평소에는 이 줄만 보고,
-     색이 바뀐 축의 행으로 내려갑니다.
-  2  행1 열(온도 추이 — 실측 계단)
-     캡션: 유휴 92°C를 변수 하나씩 — 팬은 섀시만 식혔고, 덮개를 여니 78, 거버너로 66°C.
-     알림 임계 90°C가 이 실측 위에 섭니다.
-  3  행4 저장(thin pool·마운트·주 디스크)
-     캡션: VM 디스크가 사는 thin pool은 마운트가 아니라 기본 지표에 안 나옵니다 —
-     lvs를 읽어 지표 파일로 내는 수집기를 직접 붙였습니다.
-  4  디스코드 알림 실물(값·조치·패널 그림)
-     캡션: 알림 기준은 둘 — 오면 일어나서 할 일이 있나, 안 울리면 되돌릴 수 없나.
-     걸러진 다섯은 전부 물리 층입니다. 값이 사라졌을 때 우는 것은 다섯째(감시 경로)뿐 —
-     넷을 다 울리게 두면 수집이 한 번 끊길 때 알림이 쏟아져 원인이 묻힙니다.
-     호스트가 통째로 꺼진 순간만은 밖에서 보는 감시의 몫입니다.
--->
+<div class="hl-shots" markdown="0" aria-label="호스트 하드웨어 대시보드와 Discord 알림 — 화살표로 넘겨 봅니다">
+  <figure class="hl-shot">
+    <img src="/assets/img/homelab/obs/host-row0.png" alt="행0 — 호스트 응답·CPU 온도·전원·배터리·주 디스크 판정·마지막 부팅">
+    <figcaption>물리 축 하나에 행 하나 — 열·전력·포화·저장. 평소에는 이 줄만 보고,
+    색이 바뀐 축의 행으로 내려갑니다.</figcaption>
+  </figure>
+  <figure class="hl-shot">
+    <img src="/assets/img/homelab/obs/host-row1.png" alt="행1 — CPU 온도와 클럭 추이" loading="lazy">
+    <figcaption>유휴 92°C를 변수 하나씩 좁혔습니다 — 팬은 섀시만 식혔고, 덮개를 여니 78,
+    거버너를 바꾸니 66°C. 알림 임계 90°C가 이 실측 위에 섭니다.</figcaption>
+  </figure>
+  <figure class="hl-shot">
+    <img src="/assets/img/homelab/obs/host-row4.png" alt="행4 — thin pool·마운트 용량·주 디스크 상태" loading="lazy">
+    <figcaption>VM 디스크가 사는 thin pool은 마운트가 아니라 기본 지표에 안 나옵니다 —
+    lvs를 읽어 지표 파일로 내는 수집기를 직접 붙였습니다.</figcaption>
+  </figure>
+  <figure class="hl-shot">
+    <img src="/assets/img/homelab/obs/host-alert.png" alt="Discord로 온 알림 — 제목·지금 값·조치·패널 그림" loading="lazy">
+    <figcaption>알림 기준은 둘 — 오면 일어나서 할 일이 있나, 안 울리면 되돌릴 수 없나.
+    걸러진 다섯은 전부 물리 층입니다. 값이 사라졌을 때 우는 것은 다섯째(감시 경로)뿐이고,
+    호스트가 통째로 꺼진 순간만은 밖에서 보는 감시의 몫입니다.</figcaption>
+  </figure>
+</div>
 
 ## 결과
 

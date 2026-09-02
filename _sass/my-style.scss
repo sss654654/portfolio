@@ -518,3 +518,34 @@ html { font-size: 17px; }
   content: ""; position: absolute; left: 0; top: 1.05em;
   width: 5px; height: 5px; border-radius: 50%; background: var(--gray);
 }
+
+/* 대시보드 캐러셀 — 실물 스크린샷을 한 장씩. JS 가 없으면 전 슬라이드가 세로로 그대로 보인다 */
+.hl-shots { margin: 1.5rem 0 2rem; }
+.hl-shots:focus { outline: 2px solid var(--border-color); outline-offset: 4px; }
+.hl-shot { margin: 0 0 1.4rem; }
+.hl-shot img {
+  width: 100%; height: auto; display: block;
+  border: 1px solid var(--border-color); border-radius: 6px;
+}
+.hl-shot figcaption {
+  margin-top: .6rem; font-size: .84rem; line-height: 1.6; color: var(--gray);
+}
+/* JS 가 붙으면(--ready) 한 장씩 */
+.hl-shots--ready .hl-shot { display: none; margin: 0; }
+.hl-shots--ready .hl-shot--on { display: block; }
+.hl-shots-nav {
+  display: flex; align-items: center; justify-content: center;
+  gap: 1rem; margin-top: .8rem;
+}
+.hl-shots-btn {
+  border: 1px solid var(--border-color); background: transparent; color: var(--body-color);
+  border-radius: 6px; font-size: 1.05rem; line-height: 1; padding: .3rem .95rem; cursor: pointer;
+}
+.hl-shots-btn:hover { background: var(--gray-bg); }
+.hl-shots-count {
+  font-size: .8rem; color: var(--gray);
+  font-variant-numeric: tabular-nums; min-width: 3.2em; text-align: center;
+}
+@media (min-width: 1080px) {
+  .hl-shots { margin-left: -2.5rem; margin-right: -2.5rem; }
+}

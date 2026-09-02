@@ -91,3 +91,51 @@ Example code for using Matamo as alternative analytics solution.
 </script>
 {% endif %}
 {% endcomment %}
+
+<!--
+대시보드 캐러셀(.hl-shots). 버튼·카운터는 JS 가 만든다 — JS 가 없으면 슬라이드가
+세로로 전부 보이는 것이 의도된 폴백이다. Hydejack 이 push-state 로 본문만 갈아 끼우므로
+첫 로드와 hy-push-state-after 양쪽에서 초기화한다(재초기화는 data-shots-init 로 차단).
+-->
+<script>
+  (function () {
+    function initShots() {
+      document.querySelectorAll('.hl-shots').forEach(function (root) {
+        if (root.dataset.shotsInit) return;
+        root.dataset.shotsInit = '1';
+        var slides = root.querySelectorAll('.hl-shot');
+        if (slides.length < 2) return;
+        var i = 0;
+        var nav = document.createElement('div');
+        nav.className = 'hl-shots-nav';
+        var prev = document.createElement('button');
+        prev.type = 'button'; prev.className = 'hl-shots-btn'; prev.textContent = '‹';
+        prev.setAttribute('aria-label', '이전 화면');
+        var count = document.createElement('span');
+        count.className = 'hl-shots-count';
+        var next = document.createElement('button');
+        next.type = 'button'; next.className = 'hl-shots-btn'; next.textContent = '›';
+        next.setAttribute('aria-label', '다음 화면');
+        nav.appendChild(prev); nav.appendChild(count); nav.appendChild(next);
+        root.appendChild(nav);
+        root.classList.add('hl-shots--ready');
+        root.tabIndex = 0;
+        function show(n) {
+          i = (n + slides.length) % slides.length;
+          slides.forEach(function (s, k) { s.classList.toggle('hl-shot--on', k === i); });
+          count.textContent = (i + 1) + ' / ' + slides.length;
+        }
+        prev.addEventListener('click', function () { show(i - 1); });
+        next.addEventListener('click', function () { show(i + 1); });
+        root.addEventListener('keydown', function (e) {
+          if (e.key === 'ArrowLeft') { show(i - 1); e.preventDefault(); }
+          if (e.key === 'ArrowRight') { show(i + 1); e.preventDefault(); }
+        });
+        show(0);
+      });
+    }
+    initShots();
+    var ps = document.getElementById('_pushState');
+    if (ps) ps.addEventListener('hy-push-state-after', initShots);
+  })();
+</script>
