@@ -169,6 +169,12 @@ permalink: /homelab/observability/
     스파이크는 알림의 5분 지속 조건이 거릅니다.</figcaption>
   </figure>
   <figure class="hl-shot">
+    <img src="/assets/img/homelab/obs/host-row2.png" alt="행2 — 전원 공급·배터리 잔량 추이와 비정상 종료 발생 수" loading="lazy">
+    <figcaption>노트북의 배터리는 내장 UPS입니다 — AC가 끊겨도 바로 죽지 않고 버티는 유예가 있고,
+    그 유예가 알림 둘(AC 끊김·배터리 잔량)의 근거입니다. 비정상 종료 0은 밤 예약 종료가
+    정상 동작한다는 증거입니다.</figcaption>
+  </figure>
+  <figure class="hl-shot">
     <img src="/assets/img/homelab/obs/host-row4.png" alt="행4 — thin pool·마운트 용량·주 디스크 상태" loading="lazy">
     <figcaption>VM 디스크가 사는 thin pool은 마운트가 아니라 기본 지표에 안 나옵니다 —
     lvs를 읽어 지표 파일로 내는 수집기를 직접 붙였습니다.</figcaption>
@@ -192,9 +198,10 @@ permalink: /homelab/observability/
 
 ## 결과
 
-- 세 신호가 각자의 저장소에 쌓입니다 — 지금 초당 샘플 2,990 · 보유 시리즈 9만 1천(상한의 30%) · 거절 0
-- 판과 알림과 배선이 전부 git에 있습니다 — 화면에서 고친 것은 재시작하면 사라지는 구조라, 바뀌는 길이 커밋 하나뿐입니다
-- 안 볼 때는 알림 다섯이 폰으로 옵니다 — 지금 값과 할 일, 그 패널의 그림과 함께
+- 관측의 토대가 섰습니다 — 세 신호가 각자의 저장소로. 지금 초당 샘플 2,990 · 보유 시리즈 9만 1천(상한의 30%) · 거절 0
+- 그 위에 판 둘이 완성됐습니다 — 클러스터 안을 보는 판과, 그 아래 물리 호스트(Proxmox)를 보는 판
+- 안 볼 때는 알림이 Discord로 옵니다 — 지금 값과 할 일, 그 패널의 그림과 함께
+- 판·알림·배선이 전부 git에 있습니다 — 화면에서 고친 것은 재시작하면 사라지는 구조라, 바뀌는 길이 커밋 하나뿐입니다
 
 ## 남은 것
 
