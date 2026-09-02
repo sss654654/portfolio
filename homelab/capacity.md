@@ -14,102 +14,152 @@ permalink: /homelab/capacity/
 
 ## 서비스 구조
 
-예매 오픈에 몰리는 사람을 **줄 세우는 쪽(queue)**과 **표를 파는 쪽(booking)**으로 나눴습니다.
-둘을 잇는 값이 하나 있습니다 — 동시에 몇 명을 들여보낼지, `정원`입니다.
-**예매 오픈을 눌러 보세요** — 한 판이 돕니다.
+예매 오픈에 몰리는 사람을 **줄 세우는 쪽(queue)**과 **표를 파는 쪽(booking)**으로 나눴고,
+두 서비스 사이의 통신은 **Kafka 비동기 메시지**가 맡습니다 — "입장했다"와 "자리가 빈다"가
+토픽을 건너 서로에게 전해집니다. 둘을 잇는 값이 `정원`(동시에 들여보낼 인원)입니다.
+**예매 오픈**을 눌러 보세요 — 한 판이 돕니다.
 
-<!-- 정적 구조도가 아니라 실제 코드의 순환을 재현하는 시뮬레이션.
-     뼈대(존·줄 트랙·정원 슬롯·Kafka 레인·좌석 격자)는 여기 마크업에 있고,
-     움직이는 점(사람·메시지)은 /assets/js/capacity-sim.js 가 그린다.
-     JS 가 없으면 뼈대가 정적 구조도로 남는 것이 폴백이다.
+<!-- 실제 코드의 순환을 재현하는 시뮬레이션. 뼈대(Redis 상자·줄·정원·토픽 레인·좌석)는
+     이 마크업에 있고, 움직이는 점(사람·메시지)은 /assets/js/capacity-sim.js 가 그린다.
+     JS 가 없으면 뼈대가 번호 붙은 정적 흐름도로 남는 것이 폴백이다.
      좌표는 JS 가 rect 속성에서 읽으므로 이 마크업이 단일 소스다. -->
 <figure class="hl-diagram hl-diagram-lg" markdown="0">
 <div class="cap-sim" id="cap-sim">
 <div class="cs-ctrl" id="cs-ctrl"><span class="cs-count" id="cs-count">관객 30 · 정원 6 · 좌석 24</span></div>
-<svg viewBox="0 0 760 500" role="img" aria-label="대기열 서비스의 한 판 — 관객이 줄에 서고, 승격 루프가 빈자리만큼 앞에서 꺼내 정원에 앉히고, 입장 사건이 Kafka를 건너 booking에 닿아야 좌석을 살 수 있으며, 예매가 끝나면 완료 사건이 되돌아와 자리가 비고 다음 사람이 들어온다">
+<svg viewBox="0 0 760 566" role="img" aria-label="대기열 서비스의 한 판 — 관객이 Redis의 줄에 서고, 승격이 빈자리만큼 앞에서 꺼내 정원에 앉히고, admissions 메시지가 Kafka 토픽에 적혔다가 소비돼 booking의 입장 인증이 되며, 좌석이 확정되면 bookings-completed 가 같은 길로 되돌아와 자리가 빈다">
   <defs>
     <marker id="cs-a" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor" opacity=".5"/></marker>
   </defs>
 
-  <!-- queue 존 -->
-  <rect class="hla-box" x="16" y="14" width="728" height="152" rx="6"/>
-  <text class="hla-c" x="30" y="38">queue — 줄을 세우고, 빈자리만큼만 들여보낸다</text>
-  <text class="hla-s2" x="30" y="64">줄 — 뒤에 서고, 앞에서 나간다</text>
-  <rect class="hla-inner" x="28" y="74" width="400" height="26" rx="13"/>
-  <line class="hla-ln" x1="432" y1="87" x2="462" y2="87" marker-end="url(#cs-a)"/>
-  <text class="hla-a" x="447" y="68" text-anchor="middle">승격</text>
-  <text class="hla-s2" x="468" y="64">정원 6 — 동시에 예매하는 인원</text>
-  <rect class="cs-slot hla-inner" x="468" y="70" width="36" height="36" rx="5"/>
-  <rect class="cs-slot hla-inner" x="512" y="70" width="36" height="36" rx="5"/>
-  <rect class="cs-slot hla-inner" x="556" y="70" width="36" height="36" rx="5"/>
-  <rect class="cs-slot hla-inner" x="600" y="70" width="36" height="36" rx="5"/>
-  <rect class="cs-slot hla-inner" x="644" y="70" width="36" height="36" rx="5"/>
-  <rect class="cs-slot hla-inner" x="688" y="70" width="36" height="36" rx="5"/>
-  <text class="hla-a" x="30" y="148">순번은 각자 폴링으로 묻는다 — 줄도 정원도 전부 Redis 안이라, 어느 queue 파드가 받아도 같은 답이 나온다</text>
+  <!-- ───────── queue ───────── -->
+  <rect class="hla-box" x="16" y="14" width="728" height="178" rx="6"/>
+  <image href="/assets/img/icons/go.svg" x="30" y="28" width="20" height="20"/>
+  <text class="hla-t" x="58" y="44">queue</text>
+  <text class="hla-a" x="122" y="44">Go — 대기열</text>
 
-  <!-- Kafka 존 -->
-  <rect class="hla-box" x="16" y="186" width="728" height="78" rx="6"/>
-  <text class="hla-c" x="30" y="210">Kafka — 두 서비스 사이를 건너는 사건. 서로를 직접 부르지 않는다</text>
-  <rect x="30" y="228" width="9" height="9" rx="2" fill="#f08c2e"/>
-  <text class="hla-s2" x="46" y="237">admissions ↓ — 이 사람이 입장했다. 도착해야 좌석을 살 수 있다</text>
-  <rect x="30" y="248" width="9" height="9" rx="2" fill="#2f6fdb"/>
-  <text class="hla-s2" x="46" y="257">bookings-completed ↑ — 예매가 끝났다. 자리가 빈다</text>
+  <!-- 줄도 정원도 Redis 안 — 파드가 아니라 여기 산다 -->
+  <rect class="hla-inner" x="28" y="58" width="704" height="100" rx="5"/>
+  <image href="/assets/img/icons/redis.svg" x="40" y="68" width="15" height="15"/>
+  <text class="hla-c" x="62" y="81">Redis</text>
+  <text class="hla-a" x="718" y="81" text-anchor="end">줄도 정원도 파드가 아니라 여기 있다</text>
+  <text class="hla-s2" x="44" y="104">waiting — 줄</text>
+  <rect class="hla-inner" x="44" y="110" width="340" height="26" rx="13"/>
+  <line class="hla-ln" x1="388" y1="123" x2="418" y2="123" marker-end="url(#cs-a)"/>
+  <circle class="hla-num" cx="403" cy="102" r="9"/><text class="hla-nt" x="403" y="106">2</text>
+  <text class="hla-s2" x="448" y="104">active — 정원 6</text>
+  <rect class="cs-slot hla-inner" x="448" y="106" width="36" height="36" rx="5"/>
+  <rect class="cs-slot hla-inner" x="492" y="106" width="36" height="36" rx="5"/>
+  <rect class="cs-slot hla-inner" x="536" y="106" width="36" height="36" rx="5"/>
+  <rect class="cs-slot hla-inner" x="580" y="106" width="36" height="36" rx="5"/>
+  <rect class="cs-slot hla-inner" x="624" y="106" width="36" height="36" rx="5"/>
+  <rect class="cs-slot hla-inner" x="668" y="106" width="36" height="36" rx="5"/>
+  <circle class="hla-num" cx="30" cy="123" r="9"/><text class="hla-nt" x="30" y="127">1</text>
 
-  <!-- booking 존 -->
-  <rect class="hla-box" x="16" y="284" width="728" height="198" rx="6"/>
-  <text class="hla-c" x="30" y="308">booking — 인증을 확인하고 좌석을 판다</text>
-  <text class="hla-s2" x="30" y="330">좌석 24</text>
-  <rect class="cs-seat hla-inner" x="30" y="338" width="26" height="20" rx="3"/>
-  <rect class="cs-seat hla-inner" x="62" y="338" width="26" height="20" rx="3"/>
-  <rect class="cs-seat hla-inner" x="94" y="338" width="26" height="20" rx="3"/>
-  <rect class="cs-seat hla-inner" x="126" y="338" width="26" height="20" rx="3"/>
-  <rect class="cs-seat hla-inner" x="158" y="338" width="26" height="20" rx="3"/>
-  <rect class="cs-seat hla-inner" x="190" y="338" width="26" height="20" rx="3"/>
-  <rect class="cs-seat hla-inner" x="30" y="364" width="26" height="20" rx="3"/>
-  <rect class="cs-seat hla-inner" x="62" y="364" width="26" height="20" rx="3"/>
-  <rect class="cs-seat hla-inner" x="94" y="364" width="26" height="20" rx="3"/>
-  <rect class="cs-seat hla-inner" x="126" y="364" width="26" height="20" rx="3"/>
-  <rect class="cs-seat hla-inner" x="158" y="364" width="26" height="20" rx="3"/>
-  <rect class="cs-seat hla-inner" x="190" y="364" width="26" height="20" rx="3"/>
-  <rect class="cs-seat hla-inner" x="30" y="390" width="26" height="20" rx="3"/>
-  <rect class="cs-seat hla-inner" x="62" y="390" width="26" height="20" rx="3"/>
-  <rect class="cs-seat hla-inner" x="94" y="390" width="26" height="20" rx="3"/>
-  <rect class="cs-seat hla-inner" x="126" y="390" width="26" height="20" rx="3"/>
-  <rect class="cs-seat hla-inner" x="158" y="390" width="26" height="20" rx="3"/>
-  <rect class="cs-seat hla-inner" x="190" y="390" width="26" height="20" rx="3"/>
-  <rect class="cs-seat hla-inner" x="30" y="416" width="26" height="20" rx="3"/>
-  <rect class="cs-seat hla-inner" x="62" y="416" width="26" height="20" rx="3"/>
-  <rect class="cs-seat hla-inner" x="94" y="416" width="26" height="20" rx="3"/>
-  <rect class="cs-seat hla-inner" x="126" y="416" width="26" height="20" rx="3"/>
-  <rect class="cs-seat hla-inner" x="158" y="416" width="26" height="20" rx="3"/>
-  <rect class="cs-seat hla-inner" x="190" y="416" width="26" height="20" rx="3"/>
-  <rect x="250" y="396" width="10" height="10" rx="2" fill="#e0a53c"/>
-  <text class="hla-a" x="266" y="405">선점 — 잠깐 쥔 것. 시간이 지나면 풀린다</text>
-  <rect x="250" y="416" width="10" height="10" rx="2" fill="#2f6fdb"/>
-  <text class="hla-a" x="266" y="425">확정 — MySQL에 적힘. 같은 좌석은 두 번 못 적는다</text>
+  <text class="hla-a" x="44" y="182">consumer — bookings-completed 를 받아 자리를 비운다</text>
+  <text class="hla-a" x="716" y="182" text-anchor="end">producer — admissions 를 발행한다</text>
 
-  <rect class="hla-inner" x="468" y="322" width="256" height="48" rx="5"/>
-  <text class="hla-s2" x="482" y="341">입장 인증 — Kafka로 온 사람만 ✓</text>
-  <text class="hla-a" x="482" y="359">인증이 오기 전의 좌석 요청은 403</text>
+  <circle class="hla-num" cx="58" cy="202" r="9"/><text class="hla-nt" x="58" y="206">7</text>
+  <circle class="hla-num" cx="560" cy="202" r="9"/><text class="hla-nt" x="560" y="206">3</text>
+
+  <!-- ───────── Kafka ───────── -->
+  <rect class="hla-box" x="16" y="212" width="728" height="150" rx="6"/>
+  <image href="/assets/img/icons/apachekafka.svg" x="30" y="226" width="18" height="18"/>
+  <text class="hla-t" x="56" y="241">Kafka</text>
+  <text class="hla-a" x="126" y="241">발행은 뒤(오른쪽)에 붙고, 소비는 앞(왼쪽)에서부터 가져간다</text>
+
+  <text class="hla-s2" x="44" y="264">admissions</text>
+  <text class="hla-a" x="146" y="264">queue → booking · 입장했다</text>
+  <rect class="hla-inner" x="44" y="270" width="460" height="24" rx="4"/>
+  <line class="hla-ln hla-dash" x1="136" y1="272" x2="136" y2="292" opacity=".25"/>
+  <line class="hla-ln hla-dash" x1="228" y1="272" x2="228" y2="292" opacity=".25"/>
+  <line class="hla-ln hla-dash" x1="320" y1="272" x2="320" y2="292" opacity=".25"/>
+  <line class="hla-ln hla-dash" x1="412" y1="272" x2="412" y2="292" opacity=".25"/>
+
+  <text class="hla-s2" x="44" y="318">bookings-completed</text>
+  <text class="hla-a" x="196" y="318">booking → queue · 자리가 빈다</text>
+  <rect class="hla-inner" x="44" y="324" width="460" height="24" rx="4"/>
+  <line class="hla-ln hla-dash" x1="136" y1="326" x2="136" y2="346" opacity=".25"/>
+  <line class="hla-ln hla-dash" x1="228" y1="326" x2="228" y2="346" opacity=".25"/>
+  <line class="hla-ln hla-dash" x1="320" y1="326" x2="320" y2="346" opacity=".25"/>
+  <line class="hla-ln hla-dash" x1="412" y1="326" x2="412" y2="346" opacity=".25"/>
+
+  <text class="hla-a" x="522" y="272">메시지 — JSON {requestId, movieId}</text>
+  <text class="hla-a" x="522" y="290">키 = requestId — 같은 사람의 사건은</text>
+  <text class="hla-a" x="522" y="306">발행 순서대로 처리된다</text>
+  <text class="hla-a" x="522" y="336">받는 쪽이 죽어도 메시지는 남는다</text>
+
+  <circle class="hla-num" cx="58" cy="372" r="9"/><text class="hla-nt" x="58" y="376">4</text>
+  <circle class="hla-num" cx="500" cy="372" r="9"/><text class="hla-nt" x="500" y="376">6</text>
+
+  <!-- ───────── booking ───────── -->
+  <rect class="hla-box" x="16" y="382" width="728" height="172" rx="6"/>
+  <image href="/assets/img/icons/spring.svg" x="30" y="396" width="20" height="20"/>
+  <text class="hla-t" x="58" y="412">booking</text>
+  <text class="hla-a" x="140" y="412">Java Spring — 인증을 확인하고 좌석을 판다</text>
+
+  <!-- 입장 인증도 Redis — queue 와 같은 인스턴스를 본다 -->
+  <rect class="hla-inner" x="28" y="426" width="310" height="66" rx="5"/>
+  <image href="/assets/img/icons/redis.svg" x="40" y="436" width="14" height="14"/>
+  <text class="hla-s2" x="60" y="448">admitted — 입장 인증 (시간이 지나면 만료)</text>
+  <text class="hla-a" x="40" y="478">여기 적혀야 좌석 요청이 통과한다 — 없으면 403</text>
+
+  <circle class="hla-num" cx="386" cy="430" r="9"/><text class="hla-nt" x="386" y="434">5</text>
+  <text class="hla-s2" x="400" y="420">좌석 24</text>
+  <rect class="cs-seat hla-inner" x="400" y="426" width="26" height="20" rx="3"/>
+  <rect class="cs-seat hla-inner" x="432" y="426" width="26" height="20" rx="3"/>
+  <rect class="cs-seat hla-inner" x="464" y="426" width="26" height="20" rx="3"/>
+  <rect class="cs-seat hla-inner" x="496" y="426" width="26" height="20" rx="3"/>
+  <rect class="cs-seat hla-inner" x="528" y="426" width="26" height="20" rx="3"/>
+  <rect class="cs-seat hla-inner" x="560" y="426" width="26" height="20" rx="3"/>
+  <rect class="cs-seat hla-inner" x="400" y="452" width="26" height="20" rx="3"/>
+  <rect class="cs-seat hla-inner" x="432" y="452" width="26" height="20" rx="3"/>
+  <rect class="cs-seat hla-inner" x="464" y="452" width="26" height="20" rx="3"/>
+  <rect class="cs-seat hla-inner" x="496" y="452" width="26" height="20" rx="3"/>
+  <rect class="cs-seat hla-inner" x="528" y="452" width="26" height="20" rx="3"/>
+  <rect class="cs-seat hla-inner" x="560" y="452" width="26" height="20" rx="3"/>
+  <rect class="cs-seat hla-inner" x="400" y="478" width="26" height="20" rx="3"/>
+  <rect class="cs-seat hla-inner" x="432" y="478" width="26" height="20" rx="3"/>
+  <rect class="cs-seat hla-inner" x="464" y="478" width="26" height="20" rx="3"/>
+  <rect class="cs-seat hla-inner" x="496" y="478" width="26" height="20" rx="3"/>
+  <rect class="cs-seat hla-inner" x="528" y="478" width="26" height="20" rx="3"/>
+  <rect class="cs-seat hla-inner" x="560" y="478" width="26" height="20" rx="3"/>
+  <rect class="cs-seat hla-inner" x="400" y="504" width="26" height="20" rx="3"/>
+  <rect class="cs-seat hla-inner" x="432" y="504" width="26" height="20" rx="3"/>
+  <rect class="cs-seat hla-inner" x="464" y="504" width="26" height="20" rx="3"/>
+  <rect class="cs-seat hla-inner" x="496" y="504" width="26" height="20" rx="3"/>
+  <rect class="cs-seat hla-inner" x="528" y="504" width="26" height="20" rx="3"/>
+  <rect class="cs-seat hla-inner" x="560" y="504" width="26" height="20" rx="3"/>
+
+  <image href="/assets/img/icons/mysql.svg" x="612" y="430" width="16" height="16"/>
+  <text class="hla-s2" x="634" y="443">MySQL</text>
+  <text class="hla-a" x="612" y="466">확정이 여기 적힌다</text>
+  <text class="hla-a" x="612" y="482">같은 좌석 두 번 = 거절</text>
+
+  <rect x="400" y="532" width="10" height="10" rx="2" fill="#e0a53c"/>
+  <text class="hla-a" x="416" y="541">선점 — 시간이 지나면 풀린다</text>
+  <rect x="560" y="532" width="10" height="10" rx="2" fill="#2f6fdb"/>
+  <text class="hla-a" x="576" y="541">확정</text>
 
   <!-- 움직이는 레이어 — JS 가 채운다 -->
   <g id="cs-people"></g>
   <g id="cs-msgs"></g>
 </svg>
-<div class="cs-log" id="cs-log">위 그림은 멈춰 있는 구조도이자, 재생하면 한 판이 도는 흐름도입니다.</div>
+<div class="cs-log" id="cs-log">멈춰 있으면 구조도, 재생하면 한 판이 도는 흐름도입니다.</div>
 </div>
-<figcaption>관객 30 · 정원 6 · 좌석 24는 흐름을 보기 위한 축소값입니다 — 실측으로 정한 값은
-아래 결과에 있습니다. 움직임은 전부 실제 코드의 동작입니다: 승격은 빈자리만큼 묶어서 나가고,
-인증은 Kafka를 건너오는 동안 늦고, 자리는 완료 사건이 되돌아와야 빕니다.</figcaption>
+<figcaption>1 입장 · 2 승격(빈자리만큼 앞에서) · 3 발행 · 4 소비 — 인증 · 5 좌석 선점·확정 ·
+6 발행 · 7 소비 — 자리 반환. 관객 30 · 정원 6 · 좌석 24는 흐름을 보기 위한 축소값이고,
+실측으로 정한 값은 아래 결과에 있습니다. 인증은 토픽을 건너오는 동안 늦고,
+자리는 완료 사건이 되돌아와야 빕니다.</figcaption>
 </figure>
 
 ## 정한 것
 
 | 무엇을 | 고른 것 | 그렇게 한 이유 |
 |---|---|---|
-| 서비스 경계 | **줄(queue)과 판매(booking) 둘로** — 서로 직접 부르지 않고 Kafka로만 알림 | booking은 DB를 들고 있어 무겁고 죽을 수 있음 — 죽어도 줄 전체를 쥔 queue는 살아야 함. 동기 호출이면 booking이 죽는 순간 queue의 호출이 같이 막혀 격리가 깨짐. Kafka는 발행하고 끝 — 못 받은 것은 남아 있다가 booking이 되살아난 뒤 따라잡음 |
+| queue | **Go · 4대** — 늘려서 나누는 쪽 | 요청이 짧고 많음 — Redis 왕복 한두 번, 1ms에 끝나 부하가 횟수(CPU)로 옴. 상태를 파드에 안 두니 파드를 늘리면 다음 요청부터 나뉨. Go는 빌드 때 이미 기계어라 **예열이 없음** — 배포 직후에도 첫 요청부터 같은 속도라, 초당 수천 폴링을 받는 자리에 맞음 |
+| booking | **Java Spring · 한 대** — 한 대가 어디서 깨지나를 재는 쪽 | 요청이 길고 적음 — MySQL의 커밋·잠금을 기다리는 동안 요청이 메모리를 쥐고, 수는 정원으로 묶임. 돈·좌석은 여러 테이블 쓰기가 **전부 성공하거나 전부 되돌아야** 해서, 그 경계를 선언(`@Transactional`) 하나로 거는 쪽을 택함 — 대가는 시작부터 큰 메모리 |
+| 서비스 경계 | **Kafka로만 알림** — 서로 직접 부르지 않음 | booking은 DB를 들고 있어 무겁고 죽을 수 있음 — 죽어도 줄 전체를 쥔 queue는 살아야 함. 동기 호출이면 booking이 죽는 순간 queue의 호출이 같이 막혀 격리가 깨짐. Kafka는 발행하고 끝 — 못 받은 것은 토픽에 남아 booking이 되살아난 뒤 따라잡음 |
 | 순번 전달 | **클라이언트가 묻는다(폴링)** — 서버가 밀어 주는 방식(SSE)을 버림 | 밀어 주려면 서버가 연결을 세션 내내 붙들어야 하고, 쿠버네티스는 연결 단위로 파드를 배정 — 사람이 파드 하나에 묶여 파드를 늘려도 부하가 안 나뉨. 폴링은 요청마다 끝나 어느 파드가 받아도 같음. 대가: 부하 축이 유지 연결 수(메모리)에서 초당 요청 수(CPU)로 바뀜 |
-| booking 대수 | **한 대** | 대기열이 정원만큼만 흘려보내 인원이 아니라 정원이 booking의 부하를 정함. 그래서 판의 질문도 "몇 대가 필요한가"가 아니라 **"한 대가 어디서 깨지나"**가 됨 |
 {:.hl-dec}
 
 ## 앱 대시보드

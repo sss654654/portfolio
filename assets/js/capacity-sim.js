@@ -1,17 +1,19 @@
 // 카드4(서비스와 용량) 서비스 흐름 시뮬레이션.
-// 실제 코드의 순환 — enter(즉시 입장 or 줄) → 승격 루프(빈자리만큼 앞에서) → admissions가
-// Kafka를 건너 인증 발급 → 좌석 선점 → 확정 → bookings-completed가 되돌아와 자리 반환 —
-// 을 축소값(관객 30 · 정원 6 · 좌석 24)으로 재현한다. 수치는 흐름 관찰용이지 실측 스펙이 아니다.
-// 뼈대 SVG는 페이지 마크업에 있고(폴백 = 정적 구조도), 여기서는 움직이는 점만 그린다.
+// 실제 코드의 순환 — enter(즉시 입장 or 줄) → 승격(빈자리만큼 앞에서) → admissions 발행 →
+// 토픽에 적혔다가(append) 앞에서 소비 → 입장 인증(Redis) → 좌석 선점 → 확정 →
+// bookings-completed 가 같은 길로 되돌아와 자리 반환 — 을 축소값(관객 30 · 정원 6 · 좌석 24)으로
+// 재현한다. 수치는 흐름 관찰용이지 실측 스펙이 아니다.
+// 메시지 점은 토픽 레인의 뒤(오른쪽)에 붙었다가 잠깐 머문 뒤 앞(왼쪽)으로 흘러 나간다 —
+// 로그에 적히고 컨슈머가 가져가는 동작이 그대로 보이게.
+// 뼈대 SVG는 페이지 마크업에 있고(폴백 = 번호 붙은 정적 흐름도), 여기서는 움직이는 점만 그린다.
 // Hydejack이 push-state로 본문을 갈아 끼우므로 첫 로드와 hy-push-state-after 양쪽에서
 // 초기화한다(재초기화는 data-simInit로 차단).
 (function () {
   'use strict';
   var NS = 'http://www.w3.org/2000/svg';
-  var PEOPLE = 30;      // 총 관객
-  var BATCH = 2;        // 승격 한 번의 상한 — 실제의 PROCESSING_BATCH_SIZE 자리
-  var TICK = 1400;      // 승격 루프 주기(ms) — 눈으로 따라갈 수 있게 실제(0.5초)보다 느리게
-  var TRAVEL = 950;     // Kafka를 건너는 시간(ms) — 인증이 늦는 구간이 보이게
+  var PEOPLE = 30;   // 총 관객
+  var BATCH = 2;     // 승격 한 번의 상한 — 실제의 PROCESSING_BATCH_SIZE 자리
+  var TICK = 2200;   // 승격 루프 주기(ms) — 눈으로 따라갈 수 있게 실제(0.5초)보다 느리게
 
   function centers(svg, sel, dx, dy) {
     return Array.prototype.map.call(svg.querySelectorAll(sel), function (r) {
@@ -46,7 +48,10 @@
       countEl.textContent = '대기 ' + waiting.length + ' · 입장 ' + activeN + '/' + slots.length
         + ' · 확정 ' + confirmed + '/' + seats.length;
     }
-    function move(el, x, y) { el.style.transform = 'translate(' + x + 'px,' + y + 'px)'; }
+    function move(el, x, y, dur) {
+      if (dur != null) el.style.transitionDuration = dur + 'ms';
+      el.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+    }
 
     function person() {
       var c = document.createElementNS(NS, 'circle');
@@ -54,32 +59,47 @@
       gPeople.appendChild(c);
       return c;
     }
-    function msg(color) {
-      var r = document.createElementNS(NS, 'rect');
-      r.setAttribute('width', '9'); r.setAttribute('height', '9'); r.setAttribute('rx', '2');
-      r.setAttribute('fill', color); r.setAttribute('class', 'cs-m');
-      gMsgs.appendChild(r);
-      return r;
+
+    // 메시지 점 하나가 경로(steps)를 따라간다. 각 단계 = {x, y, dur, hold}.
+    // hold = 그 자리에 머무는 시간 — 토픽에 적혀 있는 구간을 보여준다.
+    function travel(color, from, steps, onArrive) {
+      var m = document.createElementNS(NS, 'rect');
+      m.setAttribute('width', '9'); m.setAttribute('height', '9'); m.setAttribute('rx', '2');
+      m.setAttribute('fill', color); m.setAttribute('class', 'cs-m');
+      gMsgs.appendChild(m);
+      move(m, from.x, from.y, 0);
+      var i = 0;
+      function step() {
+        if (i >= steps.length) {
+          if (m.parentNode) gMsgs.removeChild(m);
+          onArrive();
+          return;
+        }
+        var s = steps[i]; i++;
+        move(m, s.x, s.y, s.dur);
+        later(step, s.dur + (s.hold || 40));
+      }
+      later(step, 30);
     }
 
     // 줄 — 앞(1번째)이 오른쪽. 승격으로 앞이 빠지면 전원이 한 칸씩 당겨진다.
-    function queuePos(i) { return { x: 414 - i * 16, y: 87 }; }
+    function queuePos(i) { return { x: 372 - i * 14, y: 123 }; }
     function relayout() {
       waiting.forEach(function (p, i) { var q = queuePos(i); move(p.el, q.x, q.y); });
     }
 
-    // admissions — 입장 사건이 Kafka를 건너 booking에 닿아야 인증이 생긴다.
-    // 건너는 동안 그 사람의 좌석 요청은 403이고, 도착해야 좌석을 살 수 있다.
+    // 3→4 — admissions: 정원 칸에서 토픽 뒤(오른쪽)에 붙고, 머물다가, 앞(왼쪽)으로 흘러
+    // booking의 인증(Redis)으로 내려간다. 도착 전까지 그 사람의 좌석 요청은 403이다.
     function sendAdmission(p) {
-      var m = msg('#f08c2e');
-      move(m, p.slot.x - 4, p.slot.y - 4);
-      later(function () { move(m, 592, 340); }, 30);
-      later(function () {
-        if (m.parentNode) gMsgs.removeChild(m);
+      travel('#f08c2e', { x: p.slot.x - 4, y: p.slot.y - 4 }, [
+        { x: 484, y: 278, dur: 600, hold: 450 },   // append — 토픽에 적힌다
+        { x: 50, y: 278, dur: 1150, hold: 250 },   // 앞으로 흘러간다
+        { x: 62, y: 452, dur: 600 }                // 소비 — 인증이 된다
+      ], function () {
         p.el.classList.add('cs-p--auth');
         log('인증 도착 — 이제 좌석을 살 수 있다 (건너오는 동안의 좌석 요청은 403)');
-        later(function () { pickSeat(p); }, 400 + Math.random() * 700);
-      }, 30 + TRAVEL);
+        later(function () { pickSeat(p); }, 600 + Math.random() * 900);
+      });
     }
 
     function admit(p, how) {
@@ -99,34 +119,36 @@
       var s = free[Math.floor(Math.random() * free.length)];
       s.state = 'lock'; s.el.style.fill = '#e0a53c';
       log('좌석 선점 — 잠깐 쥔 것. 시간이 지나면 저절로 풀린다');
-      later(function () { confirmSeat(p, s); }, 1200 + Math.random() * 1300);
+      later(function () { confirmSeat(p, s); }, 1800 + Math.random() * 1600);
     }
 
+    // 5→6→7 — 확정이 MySQL에 적히면 bookings-completed 가 같은 길(토픽)로 되돌아가고,
+    // queue 가 그것을 소비해야 자리가 빈다.
     function confirmSeat(p, s) {
       if (done) return;
       s.state = 'sold'; s.el.style.fill = '#2f6fdb';
       confirmed++; count();
       log('확정 — MySQL에 적히고 bookings-completed 발행');
-      var m = msg('#2f6fdb');
-      move(m, s.x - 4, s.y - 4);
-      later(function () { move(m, p.slot.x - 4, p.slot.y - 4); }, 30);
-      later(function () {
-        if (m.parentNode) gMsgs.removeChild(m);
+      travel('#2f6fdb', { x: s.x - 4, y: s.y - 4 }, [
+        { x: 484, y: 332, dur: 600, hold: 450 },
+        { x: 50, y: 332, dur: 1150, hold: 250 },
+        { x: 56, y: 134, dur: 600 }
+      ], function () {
         p.slot.used = false; activeN--;
         p.el.style.opacity = '0';
         later(function () { if (p.el.parentNode) gPeople.removeChild(p.el); }, 600);
         log('자리 반환 — 다음 승격이 줄 앞에서 채운다'); count();
         if (confirmed >= seats.length) finish();
-      }, 30 + TRAVEL);
+      });
     }
 
-    // 오픈 — 관객이 시차를 두고 도착한다(같은 밀리초에 다 누르지는 않는다).
+    // 1 — 오픈. 관객이 시차를 두고 도착한다(같은 밀리초에 다 누르지는 않는다).
     // 정원에 자리가 있고 줄이 비어 있으면 즉시 입장, 아니면 줄 꼬리.
     function spawn() {
       if (done || spawned >= PEOPLE) return;
       spawned++;
       var p = { el: person() };
-      move(p.el, 20, 87);
+      move(p.el, 24, 123);
       later(function () {
         if (activeN < slots.length && !waiting.length) {
           admit(p, '정원에 자리가 있어 즉시 입장 — admissions 발행');
@@ -135,10 +157,10 @@
           if (waiting.length === 1) log('정원이 찼다 — 줄에 선다. 순번은 각자 폴링으로 묻는다');
         }
       }, 40);
-      later(spawn, 180 + Math.random() * 180);
+      later(spawn, 350 + Math.random() * 250);
     }
 
-    // 승격 루프 — 주기마다 빈자리(정원 − 입장 인원)를 재고, 줄 앞에서 배치 상한까지 꺼낸다.
+    // 2 — 승격 루프. 주기마다 빈자리(정원 − 입장 인원)를 재고, 줄 앞에서 배치 상한까지 꺼낸다.
     function tick() {
       if (done) return;
       if (!document.body.contains(root)) { stopAll(); return; }   // SPA로 페이지를 떠났다
