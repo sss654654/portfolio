@@ -96,7 +96,7 @@ permalink: /homelab/capacity/
 
   <!-- 입장 인증도 Redis — queue 와 같은 인스턴스를 본다. ZSet 이 아니라 키+TTL 이라,
        인증이 오면 칸이 켜지고(SET) 확정하면 소진돼 꺼진다(DEL). 시간이 지나도 저절로 꺼진다 -->
-  <rect class="hla-inner" x="28" y="416" width="310" height="72" rx="5"/>
+  <rect class="hla-inner" x="28" y="416" width="310" height="84" rx="5"/>
   <image href="/assets/img/icons/redis.svg" x="40" y="426" width="14" height="14"/>
   <text class="hla-c" x="60" y="438">Redis</text>
   <text class="hla-s2" x="44" y="458">admitted:{사람} — 입장 인증 (String · TTL 600초)</text>
@@ -106,7 +106,7 @@ permalink: /homelab/capacity/
   <rect class="cs-adm hla-inner" x="134" y="464" width="22" height="14" rx="3"/>
   <rect class="cs-adm hla-inner" x="164" y="464" width="22" height="14" rx="3"/>
   <rect class="cs-adm hla-inner" x="194" y="464" width="22" height="14" rx="3"/>
-  <text class="hla-a" x="230" y="475">없으면 좌석 요청 403</text>
+  <text class="hla-a" x="44" y="493">Kafka로 인증이 온 사람만 좌석 요청이 통과한다</text>
 
   <circle class="hla-num" cx="386" cy="426" r="9"/><text class="hla-nt" x="386" y="430">5</text>
   <text class="hla-s2" x="400" y="430">좌석 24 — 선점 → 확정</text>

@@ -134,8 +134,9 @@
       if (done) return;
       s.state = 'sold'; s.el.style.fill = '#2f6fdb';
       confirmed++; count();
-      if (p.adm) { p.adm.used = false; p.adm.el.style.fill = ''; p.adm = null; }   // 인증 소진(DEL)
       log('확정 — MySQL에 적히고 bookings-completed 발행 · 인증은 소진');
+      // 후처리 순서는 코드 그대로 — completed 발행이 먼저, admitted 소진(DEL)이 그다음.
+      // 서로를 기다리지 않는 독립 뒷정리라 화면에서는 사실상 동시다.
       travel('#2f6fdb', { x: s.x - 4, y: s.y - 4 }, [
         { x: 64, y: 316, dur: 600, hold: 450 },    // append — 토픽 뒤에 적힌다
         { x: 492, y: 316, dur: 1150, hold: 150 },  // 흘러간다 — 이 레인은 소비가 오른쪽(순환이 시계방향이 되게)
@@ -148,6 +149,7 @@
         log('자리 반환 — 다음 승격이 줄 앞에서 채운다'); count();
         if (confirmed >= seats.length) finish();
       });
+      if (p.adm) { p.adm.used = false; p.adm.el.style.fill = ''; p.adm = null; }   // 인증 소진(DEL) — 발행 다음
     }
 
     // 1 — 오픈. 관객이 시차를 두고 도착한다(같은 밀리초에 다 누르지는 않는다).
