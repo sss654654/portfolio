@@ -233,7 +233,8 @@ p99가 튄 자리의 exemplar 점을 누르면 그 요청 하나가 열립니다
   <img src="/assets/img/homelab/cap/trace.png" alt="Tempo 트레이스 — 예매 확정 한 건: booking의 게이트 확인·MySQL 쓰기·완료 발행에서 Kafka를 건너 queue의 자리 반환까지 한 트레이스" loading="lazy">
   <figcaption>확정 → 반환(bookings-completed) p99의 exemplar로 연 요청 하나 —
   게이트 확인(Redis) · MySQL 쓰기 · 완료 발행, 그리고 <b>Kafka를 건너 queue가 자리를
-  비우기까지 한 트레이스</b>입니다(서비스 둘 · 23 span).</figcaption>
+  비우기까지 한 트레이스</b>입니다(서비스 둘 · 23 span). 오른쪽은 같은 trace_id로 연
+  이 요청의 로그 — queue의 "예매완료 수신 → active 제거"까지, 세 신호가 한 요청으로 이어집니다.</figcaption>
 </figure>
 
 ## 부하테스트
