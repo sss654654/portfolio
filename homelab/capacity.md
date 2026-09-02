@@ -218,13 +218,17 @@ permalink: /homelab/capacity/
     <figcaption>records_lag이 0이어도 인증은 늦었습니다 — 그래서 <b>전달을 건너는 시간 자체</b>를 재는
     히스토그램을 직접 만들었습니다. 판마다 이 봉우리를 통과선 2초(빨강)와 대조했습니다.</figcaption>
   </figure>
-  <figure class="hl-shot">
-    <img src="/assets/img/homelab/cap/trace.png" alt="Tempo 트레이스 — 예매 확정 한 건: booking의 게이트 확인·MySQL 쓰기·완료 발행에서 Kafka를 건너 queue의 자리 반환까지 한 트레이스" loading="lazy">
-    <figcaption>예매 확정 한 건의 전부입니다 — 게이트 확인(Redis), MySQL 쓰기, 완료 발행,
-    그리고 <b>Kafka를 건너 queue가 자리를 비우는 것까지 한 트레이스</b>(서비스 둘 · 23 span).
-    위 흐름도의 5→6→7이 실물로 이렇게 남습니다.</figcaption>
-  </figure>
 </div>
+
+대시보드는 "무엇이 · 얼마나"까지 말합니다 — **"어디서"는 트레이스가** 답합니다.
+p99가 튄 자리의 exemplar 점을 누르면 그 요청 하나가 열립니다.
+
+<figure class="hl-shot" markdown="0">
+  <img src="/assets/img/homelab/cap/trace.png" alt="Tempo 트레이스 — 예매 확정 한 건: booking의 게이트 확인·MySQL 쓰기·완료 발행에서 Kafka를 건너 queue의 자리 반환까지 한 트레이스" loading="lazy">
+  <figcaption>예매 확정 한 건의 전부입니다 — 게이트 확인(Redis), MySQL 쓰기, 완료 발행,
+  그리고 <b>Kafka를 건너 queue가 자리를 비우는 것까지 한 트레이스</b>(서비스 둘 · 23 span).
+  위 흐름도의 5→6→7이 실물로 이렇게 남습니다.</figcaption>
+</figure>
 
 ## 부하테스트
 
