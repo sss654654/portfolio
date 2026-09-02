@@ -168,10 +168,54 @@ permalink: /homelab/capacity/
 절반이 **지표가 없었습니다.** 배선을 앱에 심고 대시보드 세 장을 세웠습니다 —
 행 순서는 지표 종류가 아니라 판정 순서입니다.
 
-<!-- 캐러셀 자리 — queue(traefik) · booking · Redis/Kafka 대시보드 8장 + 트레이스 1장(9장).
-     각 장이 아래 부하테스트 표의 행 하나를 증거한다. 트레이스 장 = N+1이 잡힌 화면(요청 하나에
-     같은 span 20개) 또는 승격→Kafka→인증이 한 트레이스로 이어진 화면 — 표 7·8행의 "트레이스가
-     지목"의 실물. 촬영 전에 패널 제목 정리(시간의 사건들 · 커널의 선 · 다리 완결 등)부터. -->
+<!-- 슬라이드 9장 — 각 장이 아래 부하테스트 표의 행 하나를 증거한다.
+     시간 범위는 실제 부하 판 구간(연출 금지). 파일은 assets/img/homelab/cap/ 에 예약된 이름으로. -->
+<div class="hl-shots" markdown="0" aria-label="앱 대시보드 — 화살표로 넘겨 봅니다">
+  <figure class="hl-shot">
+    <img src="/assets/img/homelab/cap/q-traefik.png" alt="queue 대시보드 행1 — traefik 메모리·CPU·클라이언트 연결과 고루틴">
+    <figcaption>연결이 사람 수만큼 여기 열립니다 — 연결→고루틴→메모리가 한 사슬이라 세 패널을
+    나란히 뒀고, 이 기울기가 <b>사람당 계수</b>(132KiB)입니다.</figcaption>
+  </figure>
+  <figure class="hl-shot">
+    <img src="/assets/img/homelab/cap/q-queue.png" alt="queue 대시보드 행2 — queue 메모리·CPU·스로틀·소켓과 고루틴" loading="lazy">
+    <figcaption>사용률이 아니라 <b>스로틀</b>을 봅니다 — limit은 총량이 아니라 100ms마다의 배급이라,
+    평균이 절반이어도 잘릴 수 있습니다. 10,000명 판의 스로틀 83%가 여기서 잡혔습니다.</figcaption>
+  </figure>
+  <figure class="hl-shot">
+    <img src="/assets/img/homelab/cap/q-flow.png" alt="queue 대시보드 행4 — 정원의 입출: enter 호출·지연, 입장·회수·반환" loading="lazy">
+    <figcaption><b>이 행 자체가 정원 200 판 때문에 생겼습니다</b> — 자원이 전부 초록일 때 무너짐을
+    잡은 건 회수가 승격보다 빨라지는 역전이었습니다.</figcaption>
+  </figure>
+  <figure class="hl-shot">
+    <img src="/assets/img/homelab/cap/b-pod.png" alt="booking 대시보드 행1 — 메모리 limit, CPU·스로틀·GC, heap·nonheap" loading="lazy">
+    <figcaption>booking의 상한은 둘입니다 — 커널이 죽이는 선(limit 1,536Mi)과 JVM이 지키는 선(힙 768Mi).
+    힙+비힙 990Mi가 limit에 닿던 <b>OOMKill</b>이 여기서 보였습니다.</figcaption>
+  </figure>
+  <figure class="hl-shot">
+    <img src="/assets/img/homelab/cap/b-mysql.png" alt="booking 대시보드 행2 — 커넥션 풀과 MySQL CPU" loading="lazy">
+    <figcaption>풀 대기 397건인 순간 MySQL은 CPU 12% — <b>상한은 DB가 아니라 커넥션 풀이었다</b>는 게
+    두 패널을 나란히 보면 나옵니다.</figcaption>
+  </figure>
+  <figure class="hl-shot">
+    <img src="/assets/img/homelab/cap/b-journey.png" alt="booking 대시보드 행3 — 여정 단계별 통과 수와 지연" loading="lazy">
+    <figcaption>입장한 사람이 어느 단계에서 떨어지는지 한 화면 — <b>전원 완주</b>의 판정이 이 행입니다.</figcaption>
+  </figure>
+  <figure class="hl-shot">
+    <img src="/assets/img/homelab/cap/rk-redis.png" alt="Redis·Kafka 대시보드 행1 — master CPU 상한 1코어, 명령별 호출" loading="lazy">
+    <figcaption>유일하게 자원으로 못 푸는 축 — 명령 처리가 <b>단일 스레드</b>라 상한 표기가
+    limit이 아니라 1코어입니다.</figcaption>
+  </figure>
+  <figure class="hl-shot">
+    <img src="/assets/img/homelab/cap/rk-kafka.png" alt="Redis·Kafka 대시보드 행2 — 전달 지연 p99와 전달 완결(발행 vs 소비)" loading="lazy">
+    <figcaption>records_lag이 0이어도 인증은 늦었습니다 — 그래서 <b>전달을 건너는 시간 자체</b>를 재는
+    히스토그램을 직접 만들었습니다. 29.7초→0.81초가 이 패널의 이력입니다.</figcaption>
+  </figure>
+  <figure class="hl-shot">
+    <img src="/assets/img/homelab/cap/trace.png" alt="트레이스 화면 — 요청 하나에 같은 Redis 왕복 스무 개가 잡힌 N+1" loading="lazy">
+    <figcaption>요청 하나에 같은 Redis 왕복이 <b>스무 번</b> — 지표는 "느리다"까지였고,
+    어디를 고칠지는 이 화면이 답했습니다.</figcaption>
+  </figure>
+</div>
 
 ## 부하테스트
 
