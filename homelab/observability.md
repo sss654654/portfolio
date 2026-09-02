@@ -175,9 +175,10 @@ permalink: /homelab/observability/
     정상 동작한다는 증거입니다.</figcaption>
   </figure>
   <figure class="hl-shot">
-    <img src="/assets/img/homelab/obs/host-row4.png" alt="행4 — thin pool·마운트 용량·주 디스크 상태" loading="lazy">
-    <figcaption>VM 디스크가 사는 thin pool은 마운트가 아니라 기본 지표에 안 나옵니다 —
-    lvs를 읽어 지표 파일로 내는 수집기를 직접 붙였습니다.</figcaption>
+    <img src="/assets/img/homelab/obs/host-row4.png" alt="행4 — local(Proxmox 영역)·local-lvm(VM 디스크 저장고)·주 디스크 온도·SMART" loading="lazy">
+    <figcaption>홈랩 전체가 사는 외장 SSD 한 장을 세 각도로 봅니다 — Proxmox 몫(local),
+    VM들 몫(local-lvm — VM별 사용량과 한도 점선), 그리고 그 한 장의 물리 건강(온도·읽기 오류).
+    VM 저장고는 기본 지표에 안 나와, lvs를 읽는 수집기를 직접 붙였습니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/obs/host-alert.png" alt="Discord로 온 실제 알림 — 왼쪽 발생(CPU 과열 103도), 오른쪽 5분 뒤 해소(77도)" loading="lazy">
