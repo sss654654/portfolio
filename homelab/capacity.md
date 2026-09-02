@@ -190,8 +190,7 @@ permalink: /homelab/capacity/
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/q-flow.png" alt="queue 대시보드 행4 — 정원의 입출: enter 호출·지연, 입장·회수·반환" loading="lazy">
     <figcaption><b>(queue)</b> enter · 입장 · 회수 · 반환의 수를 세고, enter와 발행의 지연 p99를
-    잽니다. <b>입장 = 예매 완료 + 회수</b>여야 정상 — 회수가 입장을 넘은 것이
-    정원 200 판의 무너짐이었습니다.</figcaption>
+    잽니다. <b>입장 = 예매 완료 + 회수</b>여야 정상입니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/b-pod.png" alt="booking 대시보드 행1 — 메모리 limit, CPU·스로틀·GC, heap·nonheap" loading="lazy">
