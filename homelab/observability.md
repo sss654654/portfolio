@@ -146,7 +146,8 @@ permalink: /homelab/observability/
   <figure class="hl-shot">
     <img src="/assets/img/homelab/obs/cluster-row5.png" alt="행5 — 파드 스펙 장부. 도는 컨테이너 전수의 request 대비 실사용 게이지" loading="lazy">
     <figcaption>스펙 장부 — 도는 컨테이너 전수의 선언 대 실사용입니다. 빨강은 request를 넘겨 쓰는 것(노드가
-    몰리면 먼저 쫓겨남), 파랑은 선언만 하고 안 쓰는 것. 여기서 후보를 세우고 확정은 부하 때 값으로 합니다.</figcaption>
+    몰리면 먼저 쫓겨남), 파랑은 선언만 하고 안 쓰는 것. 스펙 설계가 맞는지 여기를 제일 먼저 보고,
+    각 파드의 스펙을 재설계했습니다.</figcaption>
   </figure>
 </div>
 
