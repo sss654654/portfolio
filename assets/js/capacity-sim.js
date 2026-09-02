@@ -37,7 +37,7 @@
 
     // 재생 버튼은 JS가 만든다 — JS가 없으면 눌리지 않는 버튼을 남기지 않기 위해서다.
     var btn = document.createElement('button');
-    btn.type = 'button'; btn.className = 'cs-btn'; btn.textContent = '예매 오픈';
+    btn.type = 'button'; btn.className = 'cs-btn'; btn.textContent = '시연해보기';
     root.querySelector('#cs-ctrl').insertBefore(btn, countEl);
 
     var timers = [], interval = null;
@@ -205,7 +205,7 @@
 
     btn.addEventListener('click', function () {
       reset();
-      btn.textContent = '처음부터';
+      btn.textContent = '다시 시연';
       log('오픈 — 관객이 시차를 두고 들어온다');
       spawn();
       interval = setInterval(tick, TICK);
