@@ -168,8 +168,8 @@ permalink: /homelab/capacity/
 절반이 **지표가 없었습니다.** 배선을 앱에 심고 대시보드 세 장을 세웠습니다 —
 행 순서는 지표 종류가 아니라 판정 순서입니다.
 
-<!-- 슬라이드 9장 — 각 장이 아래 부하테스트 표의 행 하나를 증거한다.
-     시간 범위는 실제 부하 판 구간(연출 금지). 파일은 assets/img/homelab/cap/ 에 예약된 이름으로. -->
+<!-- 슬라이드 10장 — 각 장이 아래 부하테스트 표의 행 하나를 증거한다.
+     시간 범위는 실제 부하 판 구간(연출 금지). 캡션은 그 화면에 실제로 보이는 것만 말한다. -->
 <div class="hl-shots" markdown="0" aria-label="앱 대시보드 — 화살표로 넘겨 봅니다">
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/q-traefik.png" alt="queue 대시보드 행1 — traefik 메모리·CPU·클라이언트 연결과 고루틴">
@@ -179,7 +179,7 @@ permalink: /homelab/capacity/
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/q-queue.png" alt="queue 대시보드 행2 — queue 메모리·CPU·스로틀·소켓과 고루틴" loading="lazy">
     <figcaption>사용률이 아니라 <b>스로틀</b>을 봅니다 — limit은 총량이 아니라 100ms마다의 배급이라,
-    평균이 절반이어도 잘릴 수 있습니다. 10,000명 판의 스로틀 83%가 여기서 잡혔습니다.</figcaption>
+    평균이 절반이어도 잘릴 수 있습니다. 판정은 이 행의 스로틀 선(빨강)으로 합니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/q-latency.png" alt="queue 대시보드 행3 — 폴링 셋의 지연 p99, 오픈 봉우리" loading="lazy">
@@ -193,8 +193,9 @@ permalink: /homelab/capacity/
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/b-pod.png" alt="booking 대시보드 행1 — 메모리 limit, CPU·스로틀·GC, heap·nonheap" loading="lazy">
-    <figcaption>booking의 상한은 둘입니다 — 커널이 죽이는 선(limit 1,536Mi)과 JVM이 지키는 선(힙 768Mi).
-    힙+비힙 990Mi가 limit에 닿던 <b>OOMKill</b>이 여기서 보였습니다.</figcaption>
+    <figcaption>booking의 상한은 둘입니다 — 커널이 죽이는 선(limit)과 JVM이 지키는 선(힙 768Mi).
+    limit이 1Gi일 땐 힙+비힙 990Mi가 그 선에 닿아 죽었고 — 지금 <b>1,536Mi에 71.8%</b>가
+    그래서 나온 값입니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/b-mysql.png" alt="booking 대시보드 행2 — 커넥션 풀과 MySQL CPU" loading="lazy">
@@ -213,7 +214,7 @@ permalink: /homelab/capacity/
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/rk-kafka.png" alt="Redis·Kafka 대시보드 행2 — 전달 지연 p99와 전달 완결(발행 vs 소비)" loading="lazy">
     <figcaption>records_lag이 0이어도 인증은 늦었습니다 — 그래서 <b>전달을 건너는 시간 자체</b>를 재는
-    히스토그램을 직접 만들었습니다. 29.7초→0.81초가 이 패널의 이력입니다.</figcaption>
+    히스토그램을 직접 만들었습니다. 판마다 이 봉우리를 통과선 2초(빨강)와 대조했습니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/trace.png" alt="Tempo 트레이스 — 예매 확정 한 건: booking의 게이트 확인·MySQL 쓰기·완료 발행에서 Kafka를 건너 queue의 자리 반환까지 한 트레이스" loading="lazy">
