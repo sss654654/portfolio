@@ -27,7 +27,7 @@ permalink: /homelab/cicd/
 | Git 서버 자리 | **클러스터 밖 데스크탑** — 러너도 같이 | GitHub은 사설망 안 ArgoCD를 못 부르고, 클러스터 안은 클러스터와 함께 무너짐. 러너도 같이 — 빌드 I/O가 노드 디스크에 섞이면 부하 실측이 흔들림 |
 | 취약점 게이트(scan) | **수정판이 나온 취약점만** 머지를 막음 | 이미지 스캔에 잡히는 CVE 중 패치가 안 나온 것이 수십 개 — 그것까지 막으면 늘 빨간불이라 결국 게이트를 끄게 됨 |
 | 배포 방식 | **CI와 CD를 분리** — 파이프라인은 이미지까지, 배포는 클러스터 안 ArgoCD가 | 파이프라인이 배포까지 하려면 클러스터 전권 자격을 들어야 함. 갈라 두면 그 자격이 클러스터 밖으로 안 나감 |
-| 배포 권한 | **AppProject**로 배포 단위(`Application`)마다 읽을 저장소·쓸 네임스페이스·만들 리소스를 제한 | ArgoCD는 클러스터 관리자 권한으로 돎 — 제한이 없으면 `Application` 하나가 잘못돼도 뭐든 만들 수 있음. 자격 배달용은 `SealedSecret`만 만들게 묶음 |
+| 배포 권한 | **AppProject**로 배포 단위(`Application`)마다 읽을 저장소·쓸 네임스페이스·만들 리소스를 제한 | ArgoCD는 클러스터 관리자 권한으로 돎 — 제한이 없으면 `Application` 하나가 잘못돼도 뭐든 만들 수 있음 |
 {:.hl-dec}
 
 ## CI/CD 구조
@@ -164,7 +164,4 @@ GitLab CE · GitLab Runner · Docker · Trivy · gitleaks · SpotBugs · ArgoCD 
 배포된 것이 실제로 어떻게 도는지는 관측이 답합니다.
 {:.hl-more}
 
-<nav class="hl-nav" markdown="0">
-  <a href="/homelab/cluster/">← 클러스터</a>
-  <a href="/homelab/observability/">다음 — 관측 →</a>
-</nav>
+{% include hl-nav.html %}

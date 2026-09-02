@@ -225,7 +225,4 @@ Mimir · Loki · Tempo · Grafana · Alloy · MinIO · kube-state-metrics · nod
 이 화면들 위에서 부하를 걸어 서비스의 용량을 쟀습니다.
 {:.hl-more}
 
-<nav class="hl-nav" markdown="0">
-  <a href="/homelab/cicd/">← CI/CD</a>
-  <a href="/homelab/capacity/">다음 — 서비스와 용량 →</a>
-</nav>
+{% include hl-nav.html %}
