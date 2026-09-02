@@ -111,9 +111,9 @@ permalink: /homelab/observability/
 <div class="hl-shots" markdown="0" aria-label="클러스터 인프라 대시보드 — 화살표로 넘겨 봅니다">
   <figure class="hl-shot">
     <img src="/assets/img/homelab/obs/cluster-row0.png" alt="행0 — 노드 Ready · k3s 응답 · etcd 합의 · eviction 임박, 그리고 사고 흔적 표">
-    <figcaption>k3s는 API 서버·스케줄러·kubelet이 노드마다 <b>한 프로세스</b>로 돕니다. 그래서 왼쪽부터 —
-    노드가 Ready인가, 그 프로세스가 응답하는가(k3s 응답), etcd가 합의 중인가 순으로 봅니다.
-    etcd는 같은 프로세스에 품겨 있어도 지표 목록을 따로 가진 별개 프로그램이라 따로 긁습니다.</figcaption>
+    <figcaption>k3s는 API 서버·스케줄러·kubelet이 노드마다 <b>한 프로세스</b>로 돕니다.
+    왼쪽부터 노드 Ready → 그 프로세스의 응답 → etcd 합의 순으로 보고,
+    etcd는 지표 장부가 따로라 따로 긁습니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/obs/cluster-row1.png" alt="행1 — 노드 메모리. 선언 기준 표와 실사용 기준 표, 노드별 추이" loading="lazy">
@@ -123,8 +123,9 @@ permalink: /homelab/observability/
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/obs/cluster-row2.png" alt="행2 — 노드 CPU. 선언·실사용 표와 노드별 추이" loading="lazy">
-    <figcaption>같은 두 표인데 읽는 뜻이 다릅니다 — 메모리는 차면 죽지만 CPU는 잘릴 뿐입니다.
-    그래서 limit 합이 노드 상한의 세 배를 넘는 오버커밋이, CPU에서는 사고가 아니라 전제입니다.</figcaption>
+    <figcaption>같은 두 표인데 뜻이 다릅니다 — 메모리는 차면 죽지만 CPU는 잘릴 뿐입니다.
+    그래서 CPU limit은 후하게 걸어 합이 노드 총량을 넘어도 됩니다 — 다들 동시에
+    최대로 쓰는 순간은 없고, 겹치면 나눠 쓰며 느려질 뿐입니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/obs/cluster-row3.png" alt="행3 — 마운트별 용량과 inode" loading="lazy">
@@ -133,9 +134,9 @@ permalink: /homelab/observability/
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/obs/cluster-row4.png" alt="행4 — Pending·비정상 파드·재시작 burst와 흔적 표" loading="lazy">
-    <figcaption>어느 파드가 문제인가 — 잠깐 죽었다 살아난 것은 흔적 표에 남고, 파드 이름을 누르면
-    그 파드의 이벤트와 로그가 같은 시간 범위로 열립니다. 누적 재시작은 절대값이 아니라 격차로 읽습니다 —
-    클러스터를 껐다 켠 횟수만큼 다 같이 오르기 때문입니다.</figcaption>
+    <figcaption>위는 흔적 — 비정상이었던 파드(OOMKilled·Pending 따위)와 재시작이 잦아진 파드가 남습니다.
+    아래는 임박 — 메모리가 limit의 80%를 넘은 컨테이너와, CPU가 5분 평균으로 limit에 닿아
+    잘리는 컨테이너를 미리 잡습니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/obs/kubeevent-container.png" alt="흔적 표에서 booking 파드를 눌러 열린 쿠버네티스 이벤트와 컨테이너 로그 화면" loading="lazy">
