@@ -99,7 +99,7 @@ permalink: /homelab/capacity/
   <rect class="hla-inner" x="28" y="416" width="310" height="72" rx="5"/>
   <image href="/assets/img/icons/redis.svg" x="40" y="426" width="14" height="14"/>
   <text class="hla-c" x="60" y="438">Redis</text>
-  <text class="hla-s2" x="44" y="458">admitted — 입장 인증 (사람마다 String 키 · TTL 만료)</text>
+  <text class="hla-s2" x="44" y="458">admitted:{사람} — 입장 인증 (String · TTL 600초)</text>
   <rect class="cs-adm hla-inner" x="44" y="464" width="22" height="14" rx="3"/>
   <rect class="cs-adm hla-inner" x="74" y="464" width="22" height="14" rx="3"/>
   <rect class="cs-adm hla-inner" x="104" y="464" width="22" height="14" rx="3"/>
