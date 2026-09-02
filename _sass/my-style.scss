@@ -435,7 +435,7 @@ html { font-size: 17px; }
 /* 본문 폭이 약 560px 이라 4열 표와 층 그림에는 좁다. 넓은 화면에서만
    본문 밖으로 조금 빼서 열이 접히는 것을 줄인다. 좁은 화면은 건드리지 않는다. */
 @media (min-width: 1080px) {
-  .hl-diagram, .hl-cmp, .hl-tbl, .hl-two, .hl-dec, .hl-why {
+  .hl-diagram, .hl-cmp, .hl-tbl, .hl-two, .hl-dec, .hl-why, .hl-run {
     margin-left: -2.5rem;
     margin-right: -2.5rem;
     width: calc(100% + 5rem);
@@ -453,6 +453,13 @@ html { font-size: 17px; }
 .hl-tbl th:nth-child(1) { width: 29%; }
 .hl-tbl th:nth-child(2) { width: 44%; }
 .hl-tbl th:nth-child(3) { width: 27%; }
+/* 부하 판 표 — 값·증상·원인·조치·결과 다섯 열. 원인 칸이 제일 길다 */
+.hl-run { table-layout: fixed; }
+.hl-run th:nth-child(1) { width: 16%; }
+.hl-run th:nth-child(2) { width: 22%; }
+.hl-run th:nth-child(3) { width: 27%; }
+.hl-run th:nth-child(4) { width: 19%; }
+.hl-run th:nth-child(5) { width: 16%; }
 /* 저장소 둘을 마주 놓는 표 — 첫 열은 항목 이름이라 좁고, 두 열이 같은 무게여야 대조가 선다 */
 .hl-two { table-layout: fixed; }
 .hl-two th:nth-child(1) { width: 17%; }
@@ -480,12 +487,12 @@ html { font-size: 17px; }
 
 /* 하위 페이지 표 — 본문보다 작게, 헤더도 본문과 같은 왼쪽 정렬로.
    keep-all 이 없으면 좁은 칸에서 한글이 단어 중간에서 끊긴다(링/크는, 적용·재/기동). */
-.hl-cmp, .hl-tbl, .hl-two, .hl-dec, .hl-why { font-size: .88rem; word-break: keep-all; }
-.hl-cmp th, .hl-tbl th, .hl-two th, .hl-dec th, .hl-why th {
+.hl-cmp, .hl-tbl, .hl-two, .hl-dec, .hl-why, .hl-run { font-size: .88rem; word-break: keep-all; }
+.hl-cmp th, .hl-tbl th, .hl-two th, .hl-dec th, .hl-why th, .hl-run th {
   text-align: left; vertical-align: bottom;
   font-size: .8rem; font-weight: 600; color: var(--gray);
 }
-.hl-cmp td, .hl-tbl td, .hl-two td, .hl-dec td, .hl-why td { vertical-align: top; line-height: 1.6; }
+.hl-cmp td, .hl-tbl td, .hl-two td, .hl-dec td, .hl-why td, .hl-run td { vertical-align: top; line-height: 1.6; }
 
 /* 대조표는 첫 열이 항목 이름이라, 줄바꿈되면 단어가 두 줄로 쪼개져 읽기 나쁘다 */
 .hl-cmp td:first-child,
@@ -495,7 +502,8 @@ html { font-size: 17px; }
 /* 저장소 표·결정표도 첫 열이 항목 이름이다. 다만 라벨이 길어 nowrap 은 걸지 않는다 */
 .hl-two td:first-child,
 .hl-dec td:first-child,
-.hl-why td:first-child { font-weight: 600; color: var(--body-color); }
+.hl-why td:first-child,
+.hl-run td:first-child { font-weight: 600; color: var(--body-color); }
 
 /* 표 바로 위에 붙는 소제목 */
 .hl-sub { margin: 1.6rem 0 .4rem; font-weight: 700; font-size: .94rem; }
