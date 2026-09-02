@@ -178,8 +178,8 @@ permalink: /homelab/capacity/
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/q-queue.png" alt="queue 대시보드 행2 — queue 메모리·CPU·스로틀·소켓과 고루틴" loading="lazy">
-    <figcaption>사용률이 아니라 <b>스로틀</b>을 봅니다 — limit은 총량이 아니라 100ms마다의 배급이라,
-    평균이 절반이어도 잘릴 수 있습니다. 판정은 이 행의 스로틀 선(빨강)으로 합니다.</figcaption>
+    <figcaption>사용률이 아니라 <b>스로틀</b>을 봅니다 — 판정은 이 행의 스로틀 선(빨강)으로 합니다.
+    스로틀은 limit 몫을 다 쓴 순간부터 CPU를 회수당해 멈춰 있는 시간 — 잘린 만큼 그대로 느려집니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/q-latency.png" alt="queue 대시보드 행3 — 폴링 셋의 지연 p99, 오픈 봉우리" loading="lazy">
