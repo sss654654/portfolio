@@ -570,3 +570,14 @@ html { font-size: 17px; }
 .cs-p--auth { stroke: #2f6fdb; stroke-width: 2.5px; fill-opacity: .58; }
 .cs-m { transition: transform .95s linear; }
 @media (prefers-reduced-motion: reduce) { .cs-p, .cs-m { transition: none; } }
+
+/* 카드 하단 내비 — 다섯 카드 전체, 현재 카드는 굵게 */
+.hl-nav {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: .4rem 1.5rem;
+  margin-top: 3rem; padding-top: 1.2rem; border-top: 1px solid var(--border-color);
+  font-size: .88rem;
+}
+.hl-nav a { text-decoration: none; color: var(--gray-text); }
+.hl-nav a:hover { color: var(--body-color); }
+.hl-nav b { color: var(--body-color); }
+.hl-nav .off { color: var(--gray); opacity: .6; }

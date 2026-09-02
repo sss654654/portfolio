@@ -1,0 +1,9 @@
+<!-- 홈랩 카드 하단 내비 — 현재 카드는 굵게(링크 없음), 아직 없는 카드는 회색.
+     카드5 페이지가 생기면 아래 off 스팬을 링크로 바꾼다. -->
+<nav class="hl-nav" markdown="0">
+  {% if page.url == "/homelab/cluster/" %}<b>1 클러스터</b>{% else %}<a href="/homelab/cluster/">1 클러스터</a>{% endif %}
+  {% if page.url == "/homelab/cicd/" %}<b>2 CI/CD</b>{% else %}<a href="/homelab/cicd/">2 CI/CD</a>{% endif %}
+  {% if page.url == "/homelab/observability/" %}<b>3 관측</b>{% else %}<a href="/homelab/observability/">3 관측</a>{% endif %}
+  {% if page.url == "/homelab/capacity/" %}<b>4 서비스와 용량</b>{% else %}<a href="/homelab/capacity/">4 서비스와 용량</a>{% endif %}
+  <span class="off">5 격리와 공개</span>
+</nav>

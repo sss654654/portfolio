@@ -231,3 +231,8 @@ k6 · Go · Spring Boot · Redis · Kafka(Strimzi) · MySQL · Traefik · OpenTe
 
 이 용량의 서비스를 인터넷에 여는 일은 다른 문제였습니다.
 {:.hl-more}
+
+<nav class="hl-nav" markdown="0">
+  <a href="/homelab/observability/">← 관측</a>
+  <span></span>
+</nav>

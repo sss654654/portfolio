@@ -139,3 +139,8 @@ Proxmox VE · KVM/QEMU · LVM-thin · Ubuntu Server · k3s · etcd · Calico · 
 노드 OS는 Ubuntu Server LTS입니다. 클러스터가 서기 전에 있어야 하는 것은 스크립트로 올리고,
 그 뒤의 것은 Helm 차트로 정의해 GitOps로 올립니다.
 {:.hl-more}
+
+<nav class="hl-nav" markdown="0">
+  <span></span>
+  <a href="/homelab/cicd/">다음 — CI/CD →</a>
+</nav>
