@@ -89,12 +89,14 @@
     }
 
     // 3→4 — admissions: 정원 칸에서 토픽 뒤(오른쪽)에 붙고, 머물다가, 앞(왼쪽)으로 흘러
-    // booking의 인증(Redis)으로 내려간다. 도착 전까지 그 사람의 좌석 요청은 403이다.
+    // booking의 인증(admitted)에 적힌다. 도착 전까지 그 사람의 좌석 요청은 403이다.
     function sendAdmission(p) {
       travel('#f08c2e', { x: p.slot.x - 4, y: p.slot.y - 4 }, [
-        { x: 484, y: 278, dur: 600, hold: 450 },   // append — 토픽에 적힌다
-        { x: 50, y: 278, dur: 1150, hold: 250 },   // 앞으로 흘러간다
-        { x: 62, y: 452, dur: 600 }                // 소비 — 인증이 된다
+        { x: 484, y: 262, dur: 600, hold: 450 },   // append — 토픽 뒤에 적힌다
+        { x: 50, y: 262, dur: 1150, hold: 150 },   // 앞으로 흘러간다
+        { x: 26, y: 262, dur: 250 },               // 소비 — 4번 길을 따라
+        { x: 26, y: 442, dur: 650 },
+        { x: 56, y: 442, dur: 300 }                // admitted 에 적힌다
       ], function () {
         p.el.classList.add('cs-p--auth');
         log('인증 도착 — 이제 좌석을 살 수 있다 (건너오는 동안의 좌석 요청은 403)');
@@ -130,9 +132,10 @@
       confirmed++; count();
       log('확정 — MySQL에 적히고 bookings-completed 발행');
       travel('#2f6fdb', { x: s.x - 4, y: s.y - 4 }, [
-        { x: 484, y: 332, dur: 600, hold: 450 },
-        { x: 50, y: 332, dur: 1150, hold: 250 },
-        { x: 56, y: 134, dur: 600 }
+        { x: 64, y: 316, dur: 600, hold: 450 },    // append — 토픽 뒤에 적힌다
+        { x: 492, y: 316, dur: 1150, hold: 150 },  // 흘러간다 — 이 레인은 소비가 오른쪽(순환이 시계방향이 되게)
+        { x: 710, y: 316, dur: 250 },              // 소비 — 7번 길을 따라
+        { x: 710, y: 156, dur: 650 }               // active 에서 뺀다
       ], function () {
         p.slot.used = false; activeN--;
         p.el.style.opacity = '0';
