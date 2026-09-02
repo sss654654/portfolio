@@ -2,7 +2,7 @@
 layout: page
 title: 관측
 description: >
-  지표·로그·트레이스를 수집기 하나로 모으고, 대시보드와 알림을 그 위에 세웠습니다
+  지표·로그·트레이스를 수집기 하나로 모으고, 클러스터와 서버 호스트의 대시보드·알림을 그 위에 세웠습니다
 permalink: /homelab/observability/
 ---
 
@@ -100,7 +100,7 @@ permalink: /homelab/observability/
 | 지표 저장소 | **Mimir distributed** — ingester만 3대, 노드당 1 | 최근 2시간은 ingester 메모리에만 있음 — 죽으면 그 구간이 빔. 복제엔 파드·RAM이 배로 들어 셋 다는 못 하고, **알림과 판 전부가 서 있는 지표에만 그 비용을 냄** — 셋이 같은 값을 들어 한 대가 죽어도 남음 |
 | 로그·트레이스 | **Loki·Tempo는 단일** | 위험은 같지만 무게가 다름 — 둘은 원인을 파는 조사 도구(로그는 실패·경합만, 초당 16줄)라 **잠깐 비어도 판정이 무너지지 않음.** WAL로 재시작만 복구하고, 노드째 나갈 때의 유실은 감수 |
 | 저장 몸통 | **클러스터 안 MinIO** — S3 호환 | 셋 다 원본은 여기, 로컬엔 WAL만. 전용 계정이 세 버킷만 읽고 씀 — 루트 자격은 앱에 안 나감 |
-| Tempo 보유 한도 | **`max_traces_per_user` 5배** — 동시에 열려 있는 트레이스 1만 → 5만 | 전 요청을 남기기로 하자(표본 1.0) queue 폴링이 초당 수천 건이라 기본 한도를 넘음 — 넘친 트레이스는 버려져 그 구간은 열어 볼 것이 없음. Tempo 메모리 상한도 3배로 |
+| Tempo 보유 한도 | **`max_traces_per_user` 5배** — 동시에 열려 있는 트레이스 1만 → 5만 | 전 요청을 남기기로 하자(표본 1.0), queue 폴링이 초당 수천 건이라 기본 한도를 넘음 — 넘친 트레이스는 버려져 그 구간은 열어 볼 것이 없음. Tempo 메모리 상한도 3배로 |
 | 알림에 패널 스크린샷 추가 | **Grafana Image Renderer** — 알림마다 그 지표의 패널을 그려 첨부 | 알림은 Discord로 옴 — 숫자만으론 얼마나 급한지 애매함. 그 지표 패널의 캡처가 붙으면 언제부터 얼마나 올랐는지가 바로 읽힘. 렌더러가 죽어도 알림은 텍스트로 계속 감 |
 {:.hl-dec}
 
@@ -124,7 +124,7 @@ permalink: /homelab/observability/
   <figure class="hl-shot">
     <img src="/assets/img/homelab/obs/cluster-row2.png" alt="행2 — 노드 CPU. 선언·실사용 표와 노드별 추이" loading="lazy">
     <figcaption>같은 두 표인데 뜻이 다릅니다 — 메모리는 차면 죽지만 CPU는 잘릴 뿐입니다.
-    그래서 CPU limit은 후하게 걸어 합이 노드 총량을 넘어도 됩니다 — 다들 동시에
+    그래서 CPU limit은 후하게 걸어 합이 노드 총량을 넘어도 됩니다 — 모두가 동시에
     최대로 쓰는 순간은 없고, 겹치면 나눠 쓰며 느려질 뿐입니다.</figcaption>
   </figure>
   <figure class="hl-shot">
@@ -154,7 +154,7 @@ permalink: /homelab/observability/
 ## 호스트 대시보드와 알림
 
 클러스터 판이 보는 것은 VM 안까지입니다 — 그 아래 물리 노트북은 호스트 판이 보고,
-안 볼 때는 **알림**이 폰으로 옵니다.
+화면 밖의 시간은 **알림**이 맡습니다.
 
 <div class="hl-shots" markdown="0" aria-label="호스트 하드웨어 대시보드와 Discord 알림 — 화살표로 넘겨 봅니다">
   <figure class="hl-shot">
@@ -205,7 +205,7 @@ permalink: /homelab/observability/
 
 ## 결과
 
-- **관측의 토대(LGTM 스택)**가 섰습니다 — metric·log·trace, 세 신호가 각자의 저장소로 저장됩니다
+- **관측의 토대(LGTM 스택)**가 섰습니다 — 지표·로그·트레이스, 세 신호가 각자의 저장소로 저장됩니다
 - 그 토대 위에 **대시보드 둘**을 구축했습니다
   - **클러스터 상태** — 노드가 살아 있나부터 어느 파드가 문제인가까지
   - **호스트 하드웨어(Proxmox) 상태** — 열·전력·저장. 이쪽에만 **알림을 연동**했습니다

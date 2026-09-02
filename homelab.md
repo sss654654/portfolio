@@ -204,10 +204,10 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
   </a>
 
   <a class="hlc-card" href="/homelab/observability/">
-    <img class="hlc-img" src="/assets/img/homelab/observability-thumb.jpg" alt="Discord로 온 CPU 과열 알림 — 발생 배지와 온도 그래프">
+    <img class="hlc-img" src="/assets/img/homelab/observability-thumb.jpg" alt="알림이 발화한 순간의 호스트 대시보드와, 같은 알림이 도착한 폰 Discord 화면">
     <span class="hlc-tag">관측</span>
     <span class="hlc-title">LGTM 스택으로 관측 구축</span>
-    <span class="hlc-desc">지표·로그·트레이스를 수집기 하나로 모으고, 대시보드와 알림을 그 위에 세웠습니다.</span>
+    <span class="hlc-desc">지표·로그·트레이스를 수집기 하나로 모으고, 클러스터와 서버 호스트의 대시보드·알림을 그 위에 세웠습니다.</span>
   </a>
 
   <a class="hlc-card" href="/homelab/capacity/">
