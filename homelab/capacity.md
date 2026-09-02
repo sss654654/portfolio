@@ -174,48 +174,48 @@ permalink: /homelab/capacity/
 <div class="hl-shots" markdown="0" aria-label="앱 대시보드 — 화살표로 넘겨 봅니다">
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/q-traefik.png" alt="queue 대시보드 행1 — traefik 메모리·CPU·클라이언트 연결과 고루틴">
-    <figcaption>연결이 사람 수만큼 여기 열립니다 — 연결→고루틴→메모리가 한 사슬이라 세 패널을
+    <figcaption><b>(queue)</b> 연결이 사람 수만큼 여기 열립니다 — 연결→고루틴→메모리가 한 사슬이라 세 패널을
     나란히 뒀고, <b>사람당 계수</b>(132KiB)를 이 사슬에서 뽑았습니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/q-queue.png" alt="queue 대시보드 행2 — queue 메모리·CPU·스로틀·소켓과 고루틴" loading="lazy">
-    <figcaption>사용률이 아니라 <b>스로틀</b>을 봅니다 — 판정은 이 행의 스로틀 선(빨강)으로 합니다.
+    <figcaption><b>(queue)</b> 사용률이 아니라 <b>스로틀</b>을 봅니다 — 판정은 이 행의 스로틀 선(빨강)으로 합니다.
     스로틀은 limit 몫을 다 쓴 순간부터 CPU를 회수당해 멈춰 있는 시간 — 잘린 만큼 그대로 느려집니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/q-latency.png" alt="queue 대시보드 행3 — 폴링 셋의 지연 p99, 오픈 봉우리" loading="lazy">
-    <figcaption>합격선 둘이 이 행에 걸립니다 — 현황판 3초, 그리고 봉우리 밖 정상 구간 0.5초.
+    <figcaption><b>(queue)</b> 합격선 둘이 이 행에 걸립니다 — 현황판 3초, 그리고 봉우리 밖 정상 구간 0.5초.
     오픈 봉우리가 솟았다 내려오면 처리한 것, 안 내려오면 못 받은 것입니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/q-flow.png" alt="queue 대시보드 행4 — 정원의 입출: enter 호출·지연, 입장·회수·반환" loading="lazy">
-    <figcaption>왼쪽이 enter(줄서기 요청), 오른쪽이 그 결과의 수지입니다 — 들어옴은 admissions(입장),
+    <figcaption><b>(queue)</b> 왼쪽이 enter(줄서기 요청), 오른쪽이 그 결과의 수지입니다 — 들어옴은 admissions(입장),
     나감은 bookings-completed(예매 완료)와 admissions-revoked(회수). 들어온 만큼 나가야 정상이고,
     <b>회수가 입장을 앞지르는 역전</b>이 정원 200 판의 무너짐이었습니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/b-pod.png" alt="booking 대시보드 행1 — 메모리 limit, CPU·스로틀·GC, heap·nonheap" loading="lazy">
-    <figcaption>booking의 상한은 둘입니다 — 커널이 죽이는 선(limit)과 JVM이 지키는 선(힙 768Mi).
+    <figcaption><b>(booking)</b> 상한은 둘입니다 — 커널이 죽이는 선(limit)과 JVM이 지키는 선(힙 768Mi).
     limit이 1Gi일 땐 힙+비힙 990Mi가 그 선에 닿아 죽었고 — 지금 <b>1,536Mi에 71.8%</b>가
     그래서 나온 값입니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/b-mysql.png" alt="booking 대시보드 행2 — 커넥션 풀과 MySQL CPU" loading="lazy">
-    <figcaption>풀 대기 397건인 순간 MySQL은 CPU 12% — <b>상한은 DB가 아니라 커넥션 풀이었다</b>는 게
+    <figcaption><b>(booking)</b> 풀 대기 397건인 순간 MySQL은 CPU 12% — <b>상한은 DB가 아니라 커넥션 풀이었다</b>는 게
     두 패널을 나란히 보면 나옵니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/b-journey.png" alt="booking 대시보드 행3 — 여정 단계별 통과 수와 지연" loading="lazy">
-    <figcaption>입장한 사람이 어느 단계에서 떨어지는지 한 화면 — <b>전원 완주</b>의 판정이 이 행입니다.</figcaption>
+    <figcaption><b>(booking)</b> 입장한 사람이 어느 단계에서 떨어지는지 한 화면 — <b>전원 완주</b>의 판정이 이 행입니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/rk-redis.png" alt="Redis·Kafka 대시보드 행1 — master CPU 상한 1코어, 명령별 호출" loading="lazy">
-    <figcaption>유일하게 자원으로 못 푸는 축 — 명령 처리가 <b>단일 스레드</b>라 상한 표기가
+    <figcaption><b>(Redis)</b> 유일하게 자원으로 못 푸는 축 — 명령 처리가 <b>단일 스레드</b>라 상한 표기가
     limit이 아니라 1코어입니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/rk-kafka.png" alt="Redis·Kafka 대시보드 행2 — 전달 지연 p99와 전달 완결(발행 vs 소비)" loading="lazy">
-    <figcaption>records_lag이 0이어도 인증은 늦었습니다 — 그래서 <b>전달을 건너는 시간 자체</b>를 재는
+    <figcaption><b>(Kafka)</b> records_lag이 0이어도 인증은 늦었습니다 — 그래서 <b>전달을 건너는 시간 자체</b>를 재는
     히스토그램을 직접 만들었습니다. 판마다 이 봉우리를 통과선 2초(빨강)와 대조했습니다.</figcaption>
   </figure>
 </div>
