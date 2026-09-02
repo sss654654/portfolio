@@ -2,7 +2,7 @@
 layout: page
 title: 관측
 description: >
-  지표·로그·트레이스가 세 저장소에 쌓이고, 그래프의 점을 누르면 그 요청과 로그가 열립니다
+  지표·로그·트레이스를 수집기 하나로 모으고, 대시보드와 알림을 그 위에 세웠습니다
 permalink: /homelab/observability/
 ---
 
@@ -124,6 +124,11 @@ permalink: /homelab/observability/
     <figcaption>어느 파드가 문제인가 — 숫자 넷은 지금만 봅니다. 잠깐 죽었다 살아난 것은 옆의 흔적 표에만 남고,
     파드 이름을 누르면 그 파드의 이벤트와 로그가 같은 시간 범위로 열립니다.</figcaption>
   </figure>
+  <figure class="hl-shot">
+    <img src="/assets/img/homelab/obs/cluster-row5.png" alt="행5 — 파드 스펙 장부. 도는 컨테이너 전수의 request 대비 실사용 게이지" loading="lazy">
+    <figcaption>스펙 장부 — 도는 컨테이너 전수의 선언 대 실사용입니다. 빨강은 request를 넘겨 쓰는 것(노드가
+    몰리면 먼저 쫓겨남), 파랑은 선언만 하고 안 쓰는 것. 여기서 후보를 세우고 확정은 부하 때 값으로 합니다.</figcaption>
+  </figure>
 </div>
 
 ## 호스트 대시보드와 알림
@@ -172,7 +177,7 @@ permalink: /homelab/observability/
 
 ## 남은 것
 
-- **관측 파이프라인을 보는 판에는 알림이 없습니다** — 지표가 조용히 버려지는 일을 겪고 만든 판인데, 그 판 자체는 열어야 압니다
+- **지표가 조용히 버려지는 일을 알리는 장치가 아직 없습니다** — 트러블슈팅 첫 행의 그 거절이 다시 생기면, 화면을 열어야 압니다
 - **Grafana 상주 메모리가 limit의 82%입니다** — 판이 늘 때마다 따라 올라, 판을 더하기 전에 상한부터 올려야 합니다
 
 ## 쓴 것
