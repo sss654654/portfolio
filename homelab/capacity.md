@@ -1,6 +1,6 @@
 ---
 layout: page
-title: 서비스와 용량
+title: 서비스와 부하테스트
 description: >
   대기열과 예매를 두 서비스로 나눠 세우고, 부하를 걸어 정원·자원 스펙을 실측으로 정했습니다
 permalink: /homelab/capacity/

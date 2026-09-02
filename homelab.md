@@ -212,7 +212,7 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
 
   <a class="hlc-card" href="/homelab/capacity/">
     <span class="hlc-shot" data-label="부하 판 · 트레이스"></span>
-    <span class="hlc-tag">서비스와 용량</span>
+    <span class="hlc-tag">서비스와 부하테스트</span>
     <span class="hlc-title">정원은 정한 게 아니라 잰 값이다</span>
     <span class="hlc-desc">동시 입장 정원을 몇으로 둘지가 이 서비스의 전부인데, 처음엔 근거 없이 적어 둔 숫자였습니다. 판을 거듭하며 막히는 자리를 따라갔습니다.</span>
     <span class="hlc-num">판 34회 · 동시 입장 1,000명 · 76만 요청에 5xx 0건</span>
