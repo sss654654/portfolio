@@ -164,8 +164,9 @@ permalink: /homelab/observability/
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/obs/host-row1.png" alt="행1 — CPU 온도와 클럭 추이" loading="lazy">
-    <figcaption>유휴 92°C를 변수 하나씩 좁혔습니다 — 팬은 섀시만 식혔고, 덮개를 여니 78,
-    거버너를 바꾸니 66°C. 알림 임계 90°C가 이 실측 위에 섭니다.</figcaption>
+    <figcaption>왼쪽이 증상(온도), 가운데가 원인 축(클럭 — powersave로 평시를 낮추되 최고 코어
+    4.3GHz는 유지), 오른쪽이 범위(NVMe — 섀시까지 뜨거운가)입니다. 잠깐 90°C를 넘는
+    스파이크는 알림의 5분 지속 조건이 거릅니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/obs/host-row4.png" alt="행4 — thin pool·마운트 용량·주 디스크 상태" loading="lazy">
