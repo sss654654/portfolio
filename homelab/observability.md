@@ -117,8 +117,9 @@ permalink: /homelab/observability/
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/obs/cluster-row1.png" alt="행1 — 노드 메모리. 선언 기준 표와 실사용 기준 표, 노드별 추이" loading="lazy">
-    <figcaption>노드 메모리는 표가 둘입니다 — 스케줄러는 선언(requests)만 보고 커널은 실사용만 봅니다.
-    한 표에 섞으면 무엇이 무엇의 한계인지 흐려져, 뺄셈은 같은 기준 안에서만 합니다.</figcaption>
+    <figcaption>왼쪽 표는 스케줄러 기준 — 선언(requests)만 더해 새 파드가 앉을 자리를 셉니다.
+    오른쪽 표는 커널 기준 — 실제로 쓰고 남은 양입니다. 기준이 달라 표를 갈랐고,
+    뺄셈은 같은 기준 안에서만 합니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/obs/cluster-row4.png" alt="행4 — Pending·비정상 파드·재시작 burst와 흔적 표" loading="lazy">
