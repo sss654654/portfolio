@@ -76,17 +76,16 @@ permalink: /homelab/capacity/
   <text class="hla-a" x="522" y="256">메시지 {requestId, movieId}</text>
   <text class="hla-a" x="522" y="274">키 = requestId — 사람별 순서 보장</text>
 
-  <!-- 순환 화살표 — 토픽과 저장소를 직접 잇는다. 메시지 점이 이 길을 그대로 따라간다 -->
-  <line class="hla-ln" x1="568" y1="146" x2="488" y2="250" marker-end="url(#cs-a)"/>
+  <!-- 이동 경로는 메시지 점이 그린다 — 번호와 라벨만 경로 요지에 두고,
+       도착지가 먼 소비 둘(4·7)만 가는 점선으로 남긴다 -->
   <circle class="hla-num" cx="540" cy="184" r="9"/><text class="hla-nt" x="540" y="188">3</text>
   <text class="hla-a" x="554" y="188">발행 — 토픽 뒤에 붙는다</text>
-  <polyline class="hla-ln" points="44,266 30,266 30,446 40,446" fill="none" marker-end="url(#cs-a)"/>
+  <line class="hla-ln hla-dash" x1="30" y1="270" x2="30" y2="410" opacity=".4" marker-end="url(#cs-a)"/>
   <circle class="hla-num" cx="30" cy="356" r="9"/><text class="hla-nt" x="30" y="360">4</text>
   <text class="hla-a" x="44" y="360">소비 — 인증이 적힌다</text>
-  <line class="hla-ln" x1="440" y1="432" x2="70" y2="338" marker-end="url(#cs-a)"/>
   <circle class="hla-num" cx="224" cy="380" r="9"/><text class="hla-nt" x="224" y="384">6</text>
   <text class="hla-a" x="238" y="384">발행 — 확정을 알린다</text>
-  <polyline class="hla-ln" points="508,320 714,320 714,164" fill="none" marker-end="url(#cs-a)"/>
+  <line class="hla-ln hla-dash" x1="714" y1="312" x2="714" y2="168" opacity=".4" marker-end="url(#cs-a)"/>
   <circle class="hla-num" cx="714" cy="240" r="9"/><text class="hla-nt" x="714" y="244">7</text>
   <text class="hla-a" x="702" y="244" text-anchor="end">소비 — active에서 뺀다</text>
 
@@ -95,12 +94,19 @@ permalink: /homelab/capacity/
   <image href="/assets/img/icons/spring.svg" x="30" y="380" width="20" height="20"/>
   <text class="hla-t" x="58" y="396">booking</text>
 
-  <!-- 입장 인증도 Redis — queue 와 같은 인스턴스를 본다 -->
-  <rect class="hla-inner" x="28" y="416" width="310" height="64" rx="5"/>
+  <!-- 입장 인증도 Redis — queue 와 같은 인스턴스를 본다. ZSet 이 아니라 키+TTL 이라,
+       인증이 오면 칸이 켜지고(SET) 확정하면 소진돼 꺼진다(DEL). 시간이 지나도 저절로 꺼진다 -->
+  <rect class="hla-inner" x="28" y="416" width="310" height="72" rx="5"/>
   <image href="/assets/img/icons/redis.svg" x="40" y="426" width="14" height="14"/>
   <text class="hla-c" x="60" y="438">Redis</text>
-  <text class="hla-s2" x="44" y="458">admitted — 입장 인증 (TTL)</text>
-  <text class="hla-a" x="44" y="474">여기 적혀야 좌석 요청 통과 — 없으면 403</text>
+  <text class="hla-s2" x="44" y="458">admitted — 입장 인증 · TTL로 저절로 만료</text>
+  <rect class="cs-adm hla-inner" x="44" y="464" width="22" height="14" rx="3"/>
+  <rect class="cs-adm hla-inner" x="74" y="464" width="22" height="14" rx="3"/>
+  <rect class="cs-adm hla-inner" x="104" y="464" width="22" height="14" rx="3"/>
+  <rect class="cs-adm hla-inner" x="134" y="464" width="22" height="14" rx="3"/>
+  <rect class="cs-adm hla-inner" x="164" y="464" width="22" height="14" rx="3"/>
+  <rect class="cs-adm hla-inner" x="194" y="464" width="22" height="14" rx="3"/>
+  <text class="hla-a" x="230" y="475">없으면 좌석 요청 403</text>
 
   <circle class="hla-num" cx="386" cy="426" r="9"/><text class="hla-nt" x="386" y="430">5</text>
   <text class="hla-s2" x="400" y="430">좌석 24 — 선점 → 확정</text>

@@ -33,6 +33,7 @@
     var countEl = root.querySelector('#cs-count');
     var slots = centers(svg, '.cs-slot', 18, 18);   // 정원 칸의 중심
     var seats = centers(svg, '.cs-seat', 13, 10);   // 좌석 칸의 중심
+    var adms = centers(svg, '.cs-adm', 11, 7);      // 입장 인증 칸 — SET으로 켜지고 소진(DEL)으로 꺼진다
 
     // 재생 버튼은 JS가 만든다 — JS가 없으면 눌리지 않는 버튼을 남기지 않기 위해서다.
     var btn = document.createElement('button');
@@ -96,9 +97,12 @@
         { x: 50, y: 262, dur: 1150, hold: 150 },   // 앞으로 흘러간다
         { x: 26, y: 262, dur: 250 },               // 소비 — 4번 길을 따라
         { x: 26, y: 442, dur: 650 },
-        { x: 56, y: 442, dur: 300 }                // admitted 에 적힌다
+        { x: 50, y: 464, dur: 300 }                // admitted 에 적힌다
       ], function () {
         p.el.classList.add('cs-p--auth');
+        for (var i = 0; i < adms.length; i++) {
+          if (!adms[i].used) { adms[i].used = true; adms[i].el.style.fill = '#f08c2e'; p.adm = adms[i]; break; }
+        }
         log('인증 도착 — 이제 좌석을 살 수 있다 (건너오는 동안의 좌석 요청은 403)');
         later(function () { pickSeat(p); }, 600 + Math.random() * 900);
       });
@@ -130,7 +134,8 @@
       if (done) return;
       s.state = 'sold'; s.el.style.fill = '#2f6fdb';
       confirmed++; count();
-      log('확정 — MySQL에 적히고 bookings-completed 발행');
+      if (p.adm) { p.adm.used = false; p.adm.el.style.fill = ''; p.adm = null; }   // 인증 소진(DEL)
+      log('확정 — MySQL에 적히고 bookings-completed 발행 · 인증은 소진');
       travel('#2f6fdb', { x: s.x - 4, y: s.y - 4 }, [
         { x: 64, y: 316, dur: 600, hold: 450 },    // append — 토픽 뒤에 적힌다
         { x: 492, y: 316, dur: 1150, hold: 150 },  // 흘러간다 — 이 레인은 소비가 오른쪽(순환이 시계방향이 되게)
@@ -191,6 +196,7 @@
       while (gMsgs.firstChild) gMsgs.removeChild(gMsgs.firstChild);
       slots.forEach(function (s) { s.used = false; });
       seats.forEach(function (s) { s.state = null; s.el.style.fill = ''; });
+      adms.forEach(function (s) { s.used = false; s.el.style.fill = ''; });
       waiting = []; activeN = 0; confirmed = 0; spawned = 0; done = false;
       count();
     }
