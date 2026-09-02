@@ -126,6 +126,11 @@ permalink: /homelab/observability/
     클러스터를 껐다 켠 횟수만큼 다 같이 오르기 때문입니다.</figcaption>
   </figure>
   <figure class="hl-shot">
+    <img src="/assets/img/homelab/obs/kubeevent-container.png" alt="흔적 표에서 booking 파드를 눌러 열린 쿠버네티스 이벤트와 컨테이너 로그 화면" loading="lazy">
+    <figcaption>앞 장에서 booking을 눌러 열린 두 화면 — 왼쪽은 그 파드의 쿠버네티스 이벤트(기동 프로브 실패 경고),
+    오른쪽은 컨테이너 로그입니다. 흔적에서 원인까지 클릭 두 번입니다.</figcaption>
+  </figure>
+  <figure class="hl-shot">
     <img src="/assets/img/homelab/obs/cluster-row5.png" alt="행5 — 파드 스펙 장부. 도는 컨테이너 전수의 request 대비 실사용 게이지" loading="lazy">
     <figcaption>스펙 장부 — 도는 컨테이너 전수의 선언 대 실사용입니다. 빨강은 request를 넘겨 쓰는 것(노드가
     몰리면 먼저 쫓겨남), 파랑은 선언만 하고 안 쓰는 것. 여기서 후보를 세우고 확정은 부하 때 값으로 합니다.</figcaption>
