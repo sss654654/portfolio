@@ -210,8 +210,9 @@ permalink: /homelab/capacity/
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/rk-redis.png" alt="Redis·Kafka 대시보드 행1 — master CPU 상한 1코어, 명령별 호출" loading="lazy">
-    <figcaption><b>(Redis)</b> 유일하게 자원으로 못 푸는 축 — 명령 처리가 <b>단일 스레드</b>라 상한 표기가
-    limit이 아니라 1코어입니다.</figcaption>
+    <figcaption><b>(Redis)</b> 명령 처리가 <b>단일 스레드</b> — limit을 몇 코어로 올려도 명령은
+    코어 하나만 씁니다. 그래서 이 패널만 분모가 limit이 아니라 1코어이고,
+    유일하게 자원으로 못 푸는 축입니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/rk-kafka.png" alt="Redis·Kafka 대시보드 행2 — 전달 지연 p99와 전달 완결(발행 vs 소비)" loading="lazy">
