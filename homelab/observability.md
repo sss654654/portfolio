@@ -28,7 +28,7 @@ permalink: /homelab/observability/
   <text class="hla-t" x="38" y="64">지표</text>
   <text class="hla-s2" x="38" y="84">앱 · 미들웨어 · 노드</text>
   <line class="hla-ln" x1="144" y1="68" x2="234" y2="68" marker-end="url(#hlo-n)" fill="none"/>
-  <text class="hla-a" x="189" y="60" text-anchor="middle">긁어 감</text>
+  <text class="hla-a" x="189" y="60" text-anchor="middle">scrape</text>
   <text class="hla-a" x="189" y="84" text-anchor="middle">15초·60초 주기</text>
   <line class="hla-ln" x1="336" y1="68" x2="414" y2="68" marker-end="url(#hlo-n)" fill="none"/>
   <rect class="hla-box" x="418" y="40" width="158" height="56" rx="5"/>
@@ -41,7 +41,7 @@ permalink: /homelab/observability/
   <text class="hla-t" x="38" y="134">로그</text>
   <text class="hla-s2" x="38" y="154">stdout · 이벤트</text>
   <line class="hla-ln" x1="144" y1="138" x2="234" y2="138" marker-end="url(#hlo-n)" fill="none"/>
-  <text class="hla-a" x="189" y="130" text-anchor="middle">읽어 감</text>
+  <text class="hla-a" x="189" y="130" text-anchor="middle">tail</text>
   <text class="hla-a" x="189" y="154" text-anchor="middle">생기는 대로</text>
   <line class="hla-ln" x1="336" y1="138" x2="414" y2="138" marker-end="url(#hlo-n)" fill="none"/>
   <rect class="hla-box" x="418" y="110" width="158" height="56" rx="5"/>
@@ -54,7 +54,7 @@ permalink: /homelab/observability/
   <text class="hla-t" x="38" y="204">트레이스</text>
   <text class="hla-s2" x="38" y="224">queue · booking</text>
   <line class="hla-ln" x1="144" y1="208" x2="234" y2="208" marker-end="url(#hlo-n)" fill="none"/>
-  <text class="hla-a" x="189" y="200" text-anchor="middle">받음 — OTLP</text>
+  <text class="hla-a" x="189" y="200" text-anchor="middle">push — OTLP</text>
   <text class="hla-a" x="189" y="224" text-anchor="middle">앱이 보냄</text>
   <line class="hla-ln" x1="336" y1="208" x2="414" y2="208" marker-end="url(#hlo-n)" fill="none"/>
   <rect class="hla-box" x="418" y="180" width="158" height="56" rx="5"/>
@@ -66,10 +66,10 @@ permalink: /homelab/observability/
   <rect class="hla-box" x="236" y="30" width="100" height="206" rx="6"/>
   <image href="/assets/img/icons/alloy.svg" x="275" y="42" width="22" height="22"/>
   <text class="hla-t" x="286" y="90" text-anchor="middle">Alloy</text>
-  <text class="hla-s2" x="286" y="118" text-anchor="middle">노드마다 1</text>
-  <text class="hla-s2" x="286" y="136" text-anchor="middle">대상을 나눠 가짐</text>
-  <text class="hla-a" x="286" y="256" text-anchor="middle">받은 것을 모아</text>
-  <text class="hla-a" x="286" y="272" text-anchor="middle">저장소로 밀어냄</text>
+  <text class="hla-s2" x="286" y="114" text-anchor="middle">노드마다 하나, 셋</text>
+  <text class="hla-s2" x="286" y="132" text-anchor="middle">대상을 나눠 맡음</text>
+  <text class="hla-s2" x="286" y="150" text-anchor="middle">— 중복 수집 없음</text>
+  <text class="hla-a" x="286" y="256" text-anchor="middle">모아서 push</text>
 
   <!-- MinIO — 원본이 내려앉는 곳 -->
   <line class="hla-ln" x1="497" y1="238" x2="497" y2="254" marker-end="url(#hlo-n)" fill="none"/>
@@ -87,10 +87,13 @@ permalink: /homelab/observability/
   <image href="/assets/img/icons/grafana.svg" x="676" y="44" width="20" height="20"/>
   <text class="hla-t" x="685" y="90" text-anchor="middle">Grafana</text>
   <text class="hla-s" x="685" y="118" text-anchor="middle">셋을 읽음</text>
-  <text class="hla-s2" x="685" y="204" text-anchor="middle">판 7장 · 알림 5종</text>
+  <text class="hla-s2" x="685" y="180" text-anchor="middle">인프라 판 2장</text>
+  <text class="hla-s2" x="685" y="198" text-anchor="middle">앱 판 3장</text>
+  <text class="hla-s2" x="685" y="216" text-anchor="middle">알림 5종</text>
 </svg>
-<figcaption>화살표는 데이터가 가는 방향입니다. 각 저장소의 메모리와 WAL에는 최근 구간만 있고,
-원본은 전부 MinIO로 내려갑니다 — Mimir는 2시간마다 블록으로.</figcaption>
+<figcaption>화살표는 데이터가 가는 방향입니다 — scrape·tail은 Alloy가 가지러 가는 것이고, push는
+보내는 쪽이 미는 것입니다. 각 저장소의 메모리와 WAL에는 최근 구간만 있고, 원본은 전부
+MinIO로 내려갑니다(Mimir는 2시간마다 블록으로).</figcaption>
 </figure>
 
 ## 정한 것
