@@ -15,15 +15,83 @@ permalink: /homelab/observability/
 
 수집기 하나가 세 신호를 다 모읍니다 — **Alloy**가 노드마다 하나씩 돌고, 셋이 대상을 나눠 가집니다.
 
-| 신호 | 모으는 법 | 저장소 · 보존 |
-|---|---|---|
-| 지표 | Alloy가 15초마다 긁어 감 | **Mimir** · 15일 |
-| 로그 | Alloy가 파드 stdout을 읽음 | **Loki** · 7일 |
-| 트레이스 | 앱이 Alloy로 보냄 | **Tempo** · 24시간 |
-{:.hl-tbl}
+<!-- 신호 셋이 각자 레인으로 나란히 흐르고 Alloy 기둥 하나가 셋을 관통하는 구조 —
+     수집기 하나가 세 신호를 다 다룬다는 사실이 기둥으로 보이게. 화살표 = 데이터 방향. -->
+<figure class="hl-diagram hl-diagram-lg" markdown="0">
+<svg viewBox="0 0 760 312" role="img" aria-label="지표·로그·트레이스 세 레인이 나란히 흐르고, 노드마다 도는 Alloy 기둥 하나가 셋을 모아 Mimir·Loki·Tempo로 밀어낸다. 세 저장소의 원본은 MinIO에 앉고 Grafana가 셋을 읽는다">
+  <defs>
+    <marker id="hlo-n" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor" opacity=".5"/></marker>
+  </defs>
 
-원본은 셋 다 클러스터 안 **MinIO**(S3 · 100G)에 앉고, 각자의 메모리와 WAL에는 최근 구간만
-있습니다. **Grafana**가 셋을 읽고 — 판 7장과 알림이 그 위에 섭니다.
+  <!-- 레인 1 — 지표 -->
+  <rect class="hla-inner" x="24" y="40" width="120" height="56" rx="5"/>
+  <text class="hla-t" x="38" y="64">지표</text>
+  <text class="hla-s2" x="38" y="84">앱 · 미들웨어 · 노드</text>
+  <line class="hla-ln" x1="144" y1="68" x2="234" y2="68" marker-end="url(#hlo-n)" fill="none"/>
+  <text class="hla-a" x="189" y="60" text-anchor="middle">긁어 감</text>
+  <text class="hla-a" x="189" y="84" text-anchor="middle">15초·60초 주기</text>
+  <line class="hla-ln" x1="336" y1="68" x2="414" y2="68" marker-end="url(#hlo-n)" fill="none"/>
+  <rect class="hla-box" x="418" y="40" width="158" height="56" rx="5"/>
+  <image href="/assets/img/icons/mimir.svg" x="432" y="51" width="20" height="20"/>
+  <text class="hla-t" x="460" y="67">Mimir</text>
+  <text class="hla-s" x="432" y="86">지표 · 보존 15일</text>
+
+  <!-- 레인 2 — 로그 -->
+  <rect class="hla-inner" x="24" y="110" width="120" height="56" rx="5"/>
+  <text class="hla-t" x="38" y="134">로그</text>
+  <text class="hla-s2" x="38" y="154">stdout · 이벤트</text>
+  <line class="hla-ln" x1="144" y1="138" x2="234" y2="138" marker-end="url(#hlo-n)" fill="none"/>
+  <text class="hla-a" x="189" y="130" text-anchor="middle">읽어 감</text>
+  <text class="hla-a" x="189" y="154" text-anchor="middle">생기는 대로</text>
+  <line class="hla-ln" x1="336" y1="138" x2="414" y2="138" marker-end="url(#hlo-n)" fill="none"/>
+  <rect class="hla-box" x="418" y="110" width="158" height="56" rx="5"/>
+  <image href="/assets/img/icons/loki.svg" x="432" y="121" width="20" height="20"/>
+  <text class="hla-t" x="460" y="137">Loki</text>
+  <text class="hla-s" x="432" y="156">로그 · 7일</text>
+
+  <!-- 레인 3 — 트레이스 -->
+  <rect class="hla-inner" x="24" y="180" width="120" height="56" rx="5"/>
+  <text class="hla-t" x="38" y="204">트레이스</text>
+  <text class="hla-s2" x="38" y="224">queue · booking</text>
+  <line class="hla-ln" x1="144" y1="208" x2="234" y2="208" marker-end="url(#hlo-n)" fill="none"/>
+  <text class="hla-a" x="189" y="200" text-anchor="middle">받음 — OTLP</text>
+  <text class="hla-a" x="189" y="224" text-anchor="middle">앱이 보냄</text>
+  <line class="hla-ln" x1="336" y1="208" x2="414" y2="208" marker-end="url(#hlo-n)" fill="none"/>
+  <rect class="hla-box" x="418" y="180" width="158" height="56" rx="5"/>
+  <image href="/assets/img/icons/tempo.svg" x="432" y="191" width="20" height="20"/>
+  <text class="hla-t" x="460" y="207">Tempo</text>
+  <text class="hla-s" x="432" y="226">트레이스 · 24시간</text>
+
+  <!-- Alloy 기둥 — 세 레인을 관통 -->
+  <rect class="hla-box" x="236" y="30" width="100" height="206" rx="6"/>
+  <image href="/assets/img/icons/alloy.svg" x="275" y="42" width="22" height="22"/>
+  <text class="hla-t" x="286" y="90" text-anchor="middle">Alloy</text>
+  <text class="hla-s2" x="286" y="118" text-anchor="middle">노드마다 1</text>
+  <text class="hla-s2" x="286" y="136" text-anchor="middle">대상을 나눠 가짐</text>
+  <text class="hla-a" x="286" y="256" text-anchor="middle">받은 것을 모아</text>
+  <text class="hla-a" x="286" y="272" text-anchor="middle">저장소로 밀어냄</text>
+
+  <!-- MinIO — 원본이 내려앉는 곳 -->
+  <line class="hla-ln" x1="497" y1="238" x2="497" y2="254" marker-end="url(#hlo-n)" fill="none"/>
+  <text class="hla-a" x="507" y="251">원본 저장</text>
+  <rect class="hla-box" x="418" y="258" width="158" height="44" rx="5"/>
+  <image href="/assets/img/icons/minio.svg" x="432" y="266" width="18" height="18"/>
+  <text class="hla-t" x="458" y="281">MinIO</text>
+  <text class="hla-s2" x="500" y="281">S3 · 100G</text>
+
+  <!-- Grafana — 셋을 읽는 쪽 -->
+  <line class="hla-ln" x1="576" y1="68" x2="630" y2="68" marker-end="url(#hlo-n)" fill="none"/>
+  <line class="hla-ln" x1="576" y1="138" x2="630" y2="138" marker-end="url(#hlo-n)" fill="none"/>
+  <line class="hla-ln" x1="576" y1="208" x2="630" y2="208" marker-end="url(#hlo-n)" fill="none"/>
+  <rect class="hla-inner" x="634" y="30" width="102" height="206" rx="6"/>
+  <image href="/assets/img/icons/grafana.svg" x="676" y="44" width="20" height="20"/>
+  <text class="hla-t" x="685" y="90" text-anchor="middle">Grafana</text>
+  <text class="hla-s" x="685" y="118" text-anchor="middle">셋을 읽음</text>
+  <text class="hla-s2" x="685" y="204" text-anchor="middle">판 7장 · 알림 5종</text>
+</svg>
+<figcaption>화살표는 데이터가 가는 방향입니다. 각 저장소의 메모리와 WAL에는 최근 구간만 있고,
+원본은 전부 MinIO로 내려갑니다 — Mimir는 2시간마다 블록으로.</figcaption>
+</figure>
 
 ## 정한 것
 
