@@ -180,10 +180,11 @@ permalink: /homelab/observability/
     lvs를 읽어 지표 파일로 내는 수집기를 직접 붙였습니다.</figcaption>
   </figure>
   <figure class="hl-shot">
-    <img src="/assets/img/homelab/obs/host-alert.png" alt="Discord로 온 알림 — 제목·지금 값·조치·패널 그림" loading="lazy">
-    <figcaption>알림 기준은 둘 — 오면 일어나서 할 일이 있나, 안 울리면 되돌릴 수 없나.
-    값이 사라졌을 때 우는 것은 감시 경로 끊김 하나뿐입니다 — 나머지가 그 수집 하나에 매달려
-    있어, 다 울리게 두면 원인이 묻힙니다. 호스트가 통째로 꺼진 순간만은 밖에서 보는 감시의 몫입니다.</figcaption>
+    <img src="/assets/img/homelab/obs/host-alert.png" alt="Discord로 온 실제 알림 — 왼쪽 발생(CPU 과열 103도), 오른쪽 5분 뒤 해소(77도)" loading="lazy">
+    <figcaption>실제로 울렸던 알림입니다 — 왼쪽이 발생(103°C), 오른쪽이 해소(77°C). 지금 값과 할 일,
+    그 패널의 그림이 함께 옵니다. 알림은 전부 판의 패널에 걸려 있어 평소엔 패널의 하트가 초록이고,
+    발화하면 깨진 표시로 바뀝니다 — 화면을 열면 어디가 문제인지부터 보입니다.
+    고른 기준은 둘 — 오면 일어나서 할 일이 있나, 안 울리면 되돌릴 수 없나.</figcaption>
   </figure>
 </div>
 
@@ -207,6 +208,7 @@ permalink: /homelab/observability/
 
 - **지표가 조용히 버려지는 일을 알리는 장치가 아직 없습니다** — 트러블슈팅 첫 행의 그 거절이 다시 생기면, 화면을 열어야 압니다
 - **Grafana 상주 메모리가 limit의 82%입니다** — 판이 늘 때마다 따라 올라, 판을 더하기 전에 상한부터 올려야 합니다
+- **호스트가 통째로 꺼지면 알림도 함께 침묵합니다** — 알림이 그 호스트 위 클러스터에서 돌기 때문이고, 그 구간은 밖에서 보는 감시가 맡습니다
 
 ## 쓴 것
 
