@@ -111,9 +111,9 @@ permalink: /homelab/observability/
 <div class="hl-shots" markdown="0" aria-label="클러스터 인프라 대시보드 — 화살표로 넘겨 봅니다">
   <figure class="hl-shot">
     <img src="/assets/img/homelab/obs/cluster-row0.png" alt="행0 — 노드 Ready · k3s 응답 · etcd 합의 · eviction 임박, 그리고 사고 흔적 표">
-    <figcaption>노드가 살아 있나 — k3s는 API 서버·etcd·kubelet이 노드마다 <b>한 프로세스</b>로 돕니다.
-    그래서 생존은 그 프로세스에 직접 물어(k3s 응답) 잽니다 — API를 거쳐 오는 값은 합의가 깨지면
-    갱신을 멈춘 채 마지막 상태로 굳어, 죽었는데 정상으로 남습니다.</figcaption>
+    <figcaption>k3s는 API 서버·스케줄러·kubelet이 노드마다 <b>한 프로세스</b>로 돕니다. 그래서 왼쪽부터 —
+    노드가 Ready인가, 그 프로세스가 응답하는가(k3s 응답), etcd가 합의 중인가 순으로 봅니다.
+    etcd는 같은 프로세스에 품겨 있어도 지표 목록을 따로 가진 별개 프로그램이라 따로 긁습니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/obs/cluster-row1.png" alt="행1 — 노드 메모리. 선언 기준 표와 실사용 기준 표, 노드별 추이" loading="lazy">
