@@ -204,11 +204,10 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
   </a>
 
   <a class="hlc-card" href="/homelab/observability/">
-    <span class="hlc-shot" data-label="Grafana · LGTM"></span>
+    <img class="hlc-img" src="/assets/img/homelab/observability-thumb.jpg" alt="Discord로 온 CPU 과열 알림 — 발생 배지와 온도 그래프">
     <span class="hlc-tag">관측</span>
-    <span class="hlc-title">재기 전에 볼 눈부터 만들었다</span>
-    <span class="hlc-desc">부하를 걸기 전에 지표·로그·트레이스를 먼저 세웠습니다. 볼 눈이 없으면 "느렸다"까지만 알고 어디서 느렸는지는 못 잡습니다.</span>
-    <span class="hlc-num">중복 수집 제거 후 지표 거절 0건</span>
+    <span class="hlc-title">LGTM 스택으로 관측 구축</span>
+    <span class="hlc-desc">지표·로그·트레이스를 수집기 하나로 모으고, 대시보드와 알림을 그 위에 세웠습니다.</span>
   </a>
 
   <a class="hlc-card" href="/homelab/capacity/">
