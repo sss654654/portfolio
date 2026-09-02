@@ -87,7 +87,7 @@ permalink: /homelab/observability/
   <text class="hla-s" x="685" y="118" text-anchor="middle">셋을 읽음</text>
   <text class="hla-s2" x="685" y="180" text-anchor="middle">인프라 판 2장</text>
   <text class="hla-s2" x="685" y="198" text-anchor="middle">앱 판 3장</text>
-  <text class="hla-s2" x="685" y="216" text-anchor="middle">알림 5종</text>
+  <text class="hla-s2" x="685" y="216" text-anchor="middle">알림 5종 — Discord</text>
 </svg>
 <figcaption>각 저장소의 메모리와 WAL에는 최근 구간만 있고, 원본은 전부 MinIO로 내려갑니다
 (Mimir는 2시간마다 블록으로).</figcaption>
