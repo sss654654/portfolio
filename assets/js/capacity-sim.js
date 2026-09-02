@@ -103,7 +103,7 @@
         for (var i = 0; i < adms.length; i++) {
           if (!adms[i].used) { adms[i].used = true; adms[i].el.style.fill = '#f08c2e'; p.adm = adms[i]; break; }
         }
-        log('인증 도착 — 이제 좌석을 살 수 있다 (건너오는 동안의 좌석 요청은 403)');
+        log('4 소비 — 인증 도착. 이제 좌석을 살 수 있다 (그 전 요청은 403)');
         later(function () { pickSeat(p); }, 600 + Math.random() * 900);
       });
     }
@@ -124,7 +124,7 @@
       if (!free.length) return;   // 남은 좌석이 없다 — 이 사람은 표를 못 산다
       var s = free[Math.floor(Math.random() * free.length)];
       s.state = 'lock'; s.el.style.fill = '#e0a53c';
-      log('좌석 선점 — 잠깐 쥔 것. 시간이 지나면 저절로 풀린다');
+      log('5 좌석 선점 — 잠깐 쥔 것. 시간이 지나면 저절로 풀린다');
       later(function () { confirmSeat(p, s); }, 1800 + Math.random() * 1600);
     }
 
@@ -134,7 +134,7 @@
       if (done) return;
       s.state = 'sold'; s.el.style.fill = '#2f6fdb';
       confirmed++; count();
-      log('확정 — MySQL에 적히고 bookings-completed 발행 · 인증은 소진');
+      log('5→6 확정 — MySQL에 적히고 bookings-completed 발행 · 인증 소진');
       // 후처리 순서는 코드 그대로 — completed 발행이 먼저, admitted 소진(DEL)이 그다음.
       // 서로를 기다리지 않는 독립 뒷정리라 화면에서는 사실상 동시다.
       travel('#2f6fdb', { x: s.x - 4, y: s.y - 4 }, [
@@ -146,7 +146,7 @@
         p.slot.used = false; activeN--;
         p.el.style.opacity = '0';
         later(function () { if (p.el.parentNode) gPeople.removeChild(p.el); }, 600);
-        log('자리 반환 — 다음 승격이 줄 앞에서 채운다'); count();
+        log('7 소비 — 자리 반환. 다음 승격이 줄 앞에서 채운다'); count();
         if (confirmed >= seats.length) finish();
       });
       if (p.adm) { p.adm.used = false; p.adm.el.style.fill = ''; p.adm = null; }   // 인증 소진(DEL) — 발행 다음
@@ -161,10 +161,10 @@
       move(p.el, 24, 123);
       later(function () {
         if (activeN < slots.length && !waiting.length) {
-          admit(p, '정원에 자리가 있어 즉시 입장 — admissions 발행');
+          admit(p, '1→3 즉시 입장 — 자리가 있어 바로 앉고, admissions 발행');
         } else {
           waiting.push(p); relayout(); count();
-          if (waiting.length === 1) log('정원이 찼다 — 줄에 선다. 순번은 각자 폴링으로 묻는다');
+          if (waiting.length === 1) log('1 입장 요청 — 정원이 차서 줄에 선다. 순번은 폴링으로');
         }
       }, 40);
       later(spawn, 350 + Math.random() * 250);
@@ -178,7 +178,7 @@
       if (n <= 0) return;
       var batch = waiting.splice(0, n);
       relayout();
-      batch.forEach(function (p) { admit(p, '승격 ' + n + '명 — 줄 앞에서 · admissions 발행'); });
+      batch.forEach(function (p) { admit(p, '2→3 승격 ' + n + '명 — 줄 앞에서 · admissions 발행'); });
     }
 
     function finish() {
