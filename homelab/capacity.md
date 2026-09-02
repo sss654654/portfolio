@@ -242,7 +242,7 @@ permalink: /homelab/capacity/
 | 회전 | **0보다 큼** | 지연이 멀쩡해도 아무도 못 들어가면 실패 | Redis — 승격 누적 카운터의 증가 |
 | 메모리 | **limit의 80%** | 수집이 15초 간격 — 그 사이 봉우리 몫 20% | 컨테이너 working_set ÷ limit |
 | CPU | 합격선 없음 | 차면 죽는 게 아니라 느려질 뿐 — 느려짐은 위의 지연 선이 잡음 | — |
-{:.hl-dec}
+{:.hl-dec.hl-slo}
 
 <div class="hl-sub" markdown="0">판의 진행</div>
 

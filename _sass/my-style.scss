@@ -583,3 +583,10 @@ html { font-size: 17px; }
 .hl-nav a:hover { color: var(--body-color); }
 .hl-nav b { color: var(--body-color); }
 .hl-nav .off { color: var(--gray); opacity: .6; }
+
+/* 카드4 SLO 표 — 4열 폭 고정: 마지막 열이 콘텐츠 자동 배분에 눌리지 않게 */
+.hl-slo { table-layout: fixed; }
+.hl-slo th:nth-child(1) { width: 13%; }
+.hl-slo th:nth-child(2) { width: 12%; }
+.hl-slo th:nth-child(3) { width: 45%; }
+.hl-slo th:nth-child(4) { width: 30%; }
