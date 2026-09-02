@@ -122,6 +122,16 @@ permalink: /homelab/observability/
     뺄셈은 같은 기준 안에서만 합니다.</figcaption>
   </figure>
   <figure class="hl-shot">
+    <img src="/assets/img/homelab/obs/cluster-row2.png" alt="행2 — 노드 CPU. 선언·실사용 표와 노드별 추이" loading="lazy">
+    <figcaption>같은 두 표인데 읽는 뜻이 다릅니다 — 메모리는 차면 죽지만 CPU는 잘릴 뿐입니다.
+    그래서 limit 합이 노드 상한의 세 배를 넘는 오버커밋이, CPU에서는 사고가 아니라 전제입니다.</figcaption>
+  </figure>
+  <figure class="hl-shot">
+    <img src="/assets/img/homelab/obs/cluster-row3.png" alt="행3 — 마운트별 용량과 inode" loading="lazy">
+    <figcaption>디스크 하나가 파일시스템 하나, PV 하나입니다 — 용도별로 갈라 둬야 무엇이 채웠는지가
+    지표로 갈립니다. 오른쪽 inode는 바이트가 남아도 파일 수가 차면 쓰기가 멈추는 축이라 따로 봅니다.</figcaption>
+  </figure>
+  <figure class="hl-shot">
     <img src="/assets/img/homelab/obs/cluster-row4.png" alt="행4 — Pending·비정상 파드·재시작 burst와 흔적 표" loading="lazy">
     <figcaption>어느 파드가 문제인가 — 잠깐 죽었다 살아난 것은 흔적 표에 남고, 파드 이름을 누르면
     그 파드의 이벤트와 로그가 같은 시간 범위로 열립니다. 누적 재시작은 절대값이 아니라 격차로 읽습니다 —
