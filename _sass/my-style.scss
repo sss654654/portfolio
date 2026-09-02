@@ -549,3 +549,24 @@ html { font-size: 17px; }
 @media (min-width: 1080px) {
   .hl-shots { margin-left: -2.5rem; margin-right: -2.5rem; }
 }
+
+/* 카드4 서비스 흐름 시뮬레이션(#cap-sim) — 뼈대 SVG는 페이지에, 움직임은 capacity-sim.js가.
+   버튼은 JS가 만든다(없으면 정적 구조도가 폴백). 점 이동은 transform 전환으로만. */
+.cs-ctrl { display: flex; align-items: center; gap: .9rem; margin: 0 0 .55rem; }
+.cs-btn {
+  border: 1px solid var(--border-color); background: var(--gray-bg); color: var(--body-color);
+  border-radius: 6px; font-size: .85rem; padding: .32rem .95rem; cursor: pointer;
+}
+.cs-btn:hover { border-color: var(--gray-text); }
+.cs-count { font-size: .82rem; color: var(--gray); font-variant-numeric: tabular-nums; }
+.cs-log {
+  margin-top: .5rem; min-height: 1.5em;
+  font-size: .82rem; color: var(--gray-text); font-variant-numeric: tabular-nums;
+}
+.cs-p {
+  fill: currentColor; fill-opacity: .42;
+  transition: transform .55s ease, opacity .5s;
+}
+.cs-p--auth { stroke: #2f6fdb; stroke-width: 2.5px; fill-opacity: .58; }
+.cs-m { transition: transform .95s linear; }
+@media (prefers-reduced-motion: reduce) { .cs-p, .cs-m { transition: none; } }
