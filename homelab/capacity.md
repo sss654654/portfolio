@@ -175,7 +175,7 @@ permalink: /homelab/capacity/
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/q-traefik.png" alt="queue 대시보드 행1 — traefik 메모리·CPU·클라이언트 연결과 고루틴">
     <figcaption><b>(queue)</b> 연결이 사람 수만큼 여기 열립니다 — 연결→고루틴→메모리가 한 사슬이라 세 패널을
-    나란히 뒀고, <b>사람당 메모리 계수</b>(132KiB)를 이 사슬에서 뽑았습니다.</figcaption>
+    나란히 뒀고, <b>사람 한 명당 traefik 메모리 132KiB</b>라는 기울기를 이 사슬에서 뽑았습니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/q-queue.png" alt="queue 대시보드 행2 — queue 메모리·CPU·스로틀·소켓과 고루틴" loading="lazy">
