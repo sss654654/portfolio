@@ -182,6 +182,11 @@ permalink: /homelab/capacity/
     평균이 절반이어도 잘릴 수 있습니다. 10,000명 판의 스로틀 83%가 여기서 잡혔습니다.</figcaption>
   </figure>
   <figure class="hl-shot">
+    <img src="/assets/img/homelab/cap/q-latency.png" alt="queue 대시보드 행3 — 폴링 셋의 지연 p99, 오픈 봉우리" loading="lazy">
+    <figcaption>합격선 셋(입장 1초 · 현황판 3초 · 정상 구간 0.5초)이 이 행에 걸립니다 —
+    오픈 봉우리가 솟았다 내려오면 처리한 것, 안 내려오면 못 받은 것입니다.</figcaption>
+  </figure>
+  <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/q-flow.png" alt="queue 대시보드 행4 — 정원의 입출: enter 호출·지연, 입장·회수·반환" loading="lazy">
     <figcaption><b>이 행 자체가 정원 200 판 때문에 생겼습니다</b> — 자원이 전부 초록일 때 무너짐을
     잡은 건 회수가 승격보다 빨라지는 역전이었습니다.</figcaption>
