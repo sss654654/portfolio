@@ -87,7 +87,7 @@ permalink: /homelab/observability/
   <text class="hla-s" x="685" y="118" text-anchor="middle">셋을 읽음</text>
   <text class="hla-s2" x="685" y="180" text-anchor="middle">인프라 판 2장</text>
   <text class="hla-s2" x="685" y="198" text-anchor="middle">앱 판 3장</text>
-  <text class="hla-s2" x="685" y="216" text-anchor="middle">알림 5종 — Discord</text>
+  <text class="hla-s2" x="685" y="216" text-anchor="middle">알림 — Discord</text>
 </svg>
 <figcaption>각 저장소의 메모리와 WAL에는 최근 구간만 있고, 원본은 전부 MinIO로 내려갑니다
 (Mimir는 2시간마다 블록으로).</figcaption>
@@ -154,7 +154,7 @@ permalink: /homelab/observability/
 ## 호스트 대시보드와 알림
 
 클러스터 판이 보는 것은 VM 안까지입니다 — 그 아래 물리 노트북은 호스트 판이 보고,
-안 볼 때는 **알림 다섯**이 폰으로 옵니다.
+안 볼 때는 **알림**이 폰으로 옵니다.
 
 <div class="hl-shots" markdown="0" aria-label="호스트 하드웨어 대시보드와 Discord 알림 — 화살표로 넘겨 봅니다">
   <figure class="hl-shot">
@@ -175,8 +175,8 @@ permalink: /homelab/observability/
   <figure class="hl-shot">
     <img src="/assets/img/homelab/obs/host-alert.png" alt="Discord로 온 알림 — 제목·지금 값·조치·패널 그림" loading="lazy">
     <figcaption>알림 기준은 둘 — 오면 일어나서 할 일이 있나, 안 울리면 되돌릴 수 없나.
-    걸러진 다섯은 전부 물리 층입니다. 값이 사라졌을 때 우는 것은 다섯째(감시 경로)뿐이고,
-    호스트가 통째로 꺼진 순간만은 밖에서 보는 감시의 몫입니다.</figcaption>
+    값이 사라졌을 때 우는 것은 감시 경로 끊김 하나뿐입니다 — 나머지가 그 수집 하나에 매달려
+    있어, 다 울리게 두면 원인이 묻힙니다. 호스트가 통째로 꺼진 순간만은 밖에서 보는 감시의 몫입니다.</figcaption>
   </figure>
 </div>
 
@@ -185,7 +185,7 @@ permalink: /homelab/observability/
 | 증상 | 원인 | 조치 |
 |---|---|---|
 | 시리즈 상한 15만이 차서 늦게 온 지표가 거절됨 — 화면엔 에러 없이 **값만 없음** | `:6443`은 API 서버, `:10250`은 kubelet이 듣는 포트 — 표준 k8s에선 서로 다른 프로세스라 둘 다 긁는 게 정석. **k3s는 그 컴포넌트들이 한 프로세스**라 지표 목록도 하나 — 어느 포트로 물어도 같은 전체가 옴. 둘 다 긁어 같은 내용이 이름만 다른 두 벌로 저장 — 15만의 85% | `:6443` 수집을 지우고 상한을 30만으로. 거절 **0** |
-| 유휴인데 CPU 패키지 **92°C** — 예고 없이 꺼진 적이 있는데 그때 온도 기록이 없음 | 수집 경로 자체가 없었음 — 온도·전원은 물리 호스트에만 있는 지표라 VM 안 어디서도 안 잡힘 | 호스트에 node-exporter를 얹음 — 그 위에 **호스트 하드웨어 판과 알림 다섯**이 섬 |
+| 유휴인데 CPU 패키지 **92°C** — 예고 없이 꺼진 적이 있는데 그때 온도 기록이 없음 | 수집 경로 자체가 없었음 — 온도·전원은 물리 호스트에만 있는 지표라 VM 안 어디서도 안 잡힘 | 호스트에 node-exporter를 얹음 — 그 위에 **호스트 하드웨어 판과 알림**이 섬 |
 | 클러스터 판의 **스펙 장부**에 선언과 실사용의 어긋남이 줄줄이 뜸 — 실사용이 request를 넘는 파드, peak가 limit의 80%를 넘는 파드 | 그 값들이 전부 **실측 없이 넣은 값**이었음 — request를 넘겨 쓰는 파드는 노드가 몰릴 때 먼저 쫓겨나고, limit에 임박한 파드는 스파이크 한 번에 죽음 | 어긋난 파드들의 request·limit을 실사용 기준으로 재조정. 이후 스펙 조정은 전부 이 장부에서 시작함 |
 {:.hl-tbl}
 
