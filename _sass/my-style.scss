@@ -552,7 +552,8 @@ html { font-size: 17px; }
 
 /* 카드4 서비스 흐름 시뮬레이션(#cap-sim) — 뼈대 SVG는 페이지에, 움직임은 capacity-sim.js가.
    버튼은 JS가 만든다(없으면 정적 구조도가 폴백). 점 이동은 transform 전환으로만. */
-.cs-ctrl { display: flex; align-items: center; gap: .9rem; margin: 0 0 .55rem; }
+/* 좌우 2.1% = SVG 안 존 상자의 시작(16/760) — 버튼·카운터가 상자 변과 줄을 맞춘다 */
+.cs-ctrl { display: flex; align-items: center; gap: .9rem; margin: 0 2.1% .55rem; }
 .cs-btn {
   border: 1px solid #2f6fdb; background: #2f6fdb; color: #fff;
   border-radius: 6px; font-size: .92rem; font-weight: 700;
