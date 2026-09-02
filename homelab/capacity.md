@@ -216,9 +216,10 @@ permalink: /homelab/capacity/
     히스토그램을 직접 만들었습니다. 29.7초→0.81초가 이 패널의 이력입니다.</figcaption>
   </figure>
   <figure class="hl-shot">
-    <img src="/assets/img/homelab/cap/trace.png" alt="트레이스 화면 — 요청 하나에 같은 Redis 왕복 스무 개가 잡힌 N+1" loading="lazy">
-    <figcaption>요청 하나에 같은 Redis 왕복이 <b>스무 번</b> — 지표는 "느리다"까지였고,
-    어디를 고칠지는 이 화면이 답했습니다.</figcaption>
+    <img src="/assets/img/homelab/cap/trace.png" alt="Tempo 트레이스 — 예매 확정 한 건: booking의 게이트 확인·MySQL 쓰기·완료 발행에서 Kafka를 건너 queue의 자리 반환까지 한 트레이스" loading="lazy">
+    <figcaption>예매 확정 한 건의 전부입니다 — 게이트 확인(Redis), MySQL 쓰기, 완료 발행,
+    그리고 <b>Kafka를 건너 queue가 자리를 비우는 것까지 한 트레이스</b>(서비스 둘 · 23 span).
+    위 흐름도의 5→6→7이 실물로 이렇게 남습니다.</figcaption>
   </figure>
 </div>
 
