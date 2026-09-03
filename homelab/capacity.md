@@ -90,7 +90,7 @@ permalink: /homelab/capacity/
 
 <div class="hl-sub" markdown="0">Redis · Kafka 대시보드 및 트레이스</div>
 
-<div class="hl-shots" markdown="0" aria-label="Redis·Kafka 대시보드 — 화살표로 넘겨 봅니다">
+<div class="hl-shots" markdown="0" aria-label="Redis·Kafka 대시보드와 트레이스 — 화살표로 넘겨 봅니다">
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/9.png" alt="Redis·Kafka 대시보드 행1 — Redis master CPU와 명령별 호출">
     <figcaption><b>(행1 · Redis)</b> 읽기·쓰기가 <b>master 한 대</b>로 가고, 명령 처리가
@@ -126,8 +126,8 @@ permalink: /homelab/capacity/
 
 ## 부하테스트(클라우드)
 
-Terraform으로 띄운 인스턴스(8vCPU · 16GB)에서 같은 스크립트를 쐈습니다 — 인원 10,000 · 정원 1,000.
-30,000 부하를 준 결과는 트러블슈팅에 정리했습니다.
+Terraform으로 띄운 인스턴스(8vCPU · 16GB)에서 같은 스크립트를 돌렸습니다 — 인원 10,000 · 정원 1,000.
+30,000 부하를 준 결과는 아래 남은 것에 정리했습니다.
 
 | 합격선 | 실측 | 판정 |
 |---|---|---|
