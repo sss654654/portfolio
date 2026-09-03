@@ -40,11 +40,10 @@ permalink: /homelab/capacity/
 <div class="hl-shots" markdown="0" aria-label="queue 대시보드 — 화살표로 넘겨 봅니다">
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/1.png" alt="queue 대시보드 행1 — traefik 메모리·CPU·연결과 고루틴">
-    <figcaption><b>(행1 · traefik)</b> 직결로 받던 시절, 연결이 사람 수만큼 열려
-    <b>사람당 메모리 부하</b>가 쌓였습니다 — 고루틴·연결 수와 메모리가 같이 오르고,
-    CPU 스로틀은 없음.<br>
-    → 메모리를 2대 × 768Mi에서 <b>3대 × 2Gi</b>로 올렸고, 공개 때 앞에 선 <b>엣지가
-    방문자 연결을 대신 받게</b> 됐습니다.<br>
+    <figcaption><b>(행1 · traefik)</b> 직결 시절엔 연결이 사람 수만큼 열려
+    <b>메모리가 인원을 따라 올랐습니다</b>(CPU 스로틀은 없음).<br>
+    → 2대 × 768Mi → <b>3대 × 2Gi</b> · 공개 때 앞에 선 <b>엣지가 방문자 연결을
+    대신 받게</b> 됐습니다.<br>
     → 이 판: <b>메모리 파드 최대 12%</b> · CPU 변화 없음 · <b>연결 최대 327</b> —
     대다수의 연결이 엣지에서 끝납니다.</figcaption>
   </figure>
