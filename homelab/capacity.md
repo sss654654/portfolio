@@ -107,6 +107,14 @@ permalink: /homelab/capacity/
     → 승격: 100명/2초 → <b>25명/0.5초</b> — 초당 상한(50명)은 그대로, 묶음만 4분의 1.<br>
     → 이 판: 승격→인증 <b>1초 아래</b> · 확정→반환 0.1초.</figcaption>
   </figure>
+  <figure class="hl-shot">
+    <img src="/assets/img/homelab/cap/11.png" alt="Tempo trace — 확정 요청 하나가 booking·Kafka·queue를 지나는 span 21개와 같은 trace_id의 queue 로그" loading="lazy">
+    <figcaption><b>(trace · 확정→반환)</b> 대시보드는 전달 지연의 합만 보여줍니다 — 어느 구간이
+    얼마인지는 앱에 넣은 trace로 봅니다.<br>
+    → 확정 요청 하나(<code>POST /api/bookings</code> 397ms · span 21 · 서비스 2): booking 안 Redis 호출
+    <b>182ms</b> · Kafka 발행 <b>96ms</b> · queue 소비 <b>14ms</b>.<br>
+    → 오른쪽: 같은 trace_id로 찾은 queue 로그 — "예매완료 수신 → active 제거".</figcaption>
+  </figure>
 </div>
 
 ## 데스크탑의 한계 — 생성기를 클라우드로
