@@ -24,11 +24,15 @@ permalink: /homelab/security/
     </marker>
   </defs>
 
-  <text class="hla-zone" x="380" y="16" text-anchor="middle">인터넷</text>
-  <line class="hla-ln" x1="380" y1="22" x2="380" y2="30"/>
-  <line class="hla-ln" x1="224" y1="30" x2="536" y2="30"/>
-  <line class="hla-ln" x1="224" y1="30" x2="224" y2="42" marker-end="url(#hlx-arrow)"/>
-  <line class="hla-ln" x1="536" y1="30" x2="536" y2="42" marker-end="url(#hlx-arrow)"/>
+  <!-- 인터넷 — 제품이 아니라 층이라 로고 대신 직접 그린다 -->
+  <circle class="hla-glyph" cx="356" cy="15" r="6.5"/>
+  <ellipse class="hla-glyph" cx="356" cy="15" rx="2.7" ry="6.5"/>
+  <line class="hla-glyph" x1="349.5" y1="15" x2="362.5" y2="15"/>
+  <text class="hla-zone" x="369" y="19">인터넷</text>
+  <line class="hla-ln" x1="380" y1="26" x2="380" y2="33"/>
+  <line class="hla-ln" x1="224" y1="33" x2="536" y2="33"/>
+  <line class="hla-ln" x1="224" y1="33" x2="224" y2="42" marker-end="url(#hlx-arrow)"/>
+  <line class="hla-ln" x1="536" y1="33" x2="536" y2="42" marker-end="url(#hlx-arrow)"/>
 
   <!-- 두 문 — 성격이 정반대인 것이 첫 줄에서 보이게 -->
   <rect class="hla-box" x="84" y="44" width="280" height="48" rx="5"/>
@@ -52,7 +56,8 @@ permalink: /homelab/security/
 
   <!-- 공유기 — 두 문이 함께 지난다 -->
   <rect class="hla-box" x="84" y="168" width="592" height="46" rx="5"/>
-  <text class="hla-t" x="98" y="190">공유기 — 포워딩 2개</text>
+  <image href="/assets/img/icons/tplink.svg" x="98" y="176" width="18" height="18"/>
+  <text class="hla-t" x="122" y="190">공유기 — 포워딩 2개</text>
   <text class="hla-x" x="98" y="206">✕ 그 밖의 포트는 버린다 — 밖에서 20개를 훑어 확인</text>
 
   <line class="hla-ln" x1="224" y1="214" x2="224" y2="224" marker-end="url(#hlx-arrow)"/>
