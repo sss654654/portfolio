@@ -98,15 +98,19 @@ permalink: /homelab/capacity/
 <div class="hl-shots" markdown="0" aria-label="Redis·Kafka 대시보드 — 화살표로 넘겨 봅니다">
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/9.png" alt="Redis·Kafka 대시보드 행1 — Redis master CPU와 명령별 호출">
-    <figcaption><b>(행1 · Redis)</b> 판정 행 — 이 판: master 32%. 명령 처리가 단일 스레드라
-    분모는 limit이 아니라 1코어이고, 선(80%) 안입니다.</figcaption>
+    <figcaption><b>(행1 · Redis)</b> 읽기·쓰기가 <b>master 한 대</b>로 가고, 명령 처리가
+    <b>단일 스레드</b>라 코어를 더 줘도 하나만 씁니다 — CPU의 분모는 limit이 아니라
+    <b>1코어</b>입니다.<br>
+    → 이 판: master <b>32%</b> · 명령 초당 호출은 오픈 봉우리에서만 튀고 · 메모리 여유 —
+    전부 선 안입니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/10.png" alt="Redis·Kafka 대시보드 행2 — 승격→인증·확정→반환 전달 지연" loading="lazy">
-    <figcaption><b>(행2 · 전달)</b> 승격 100명/2초 → <b>25명/0.5초</b>(초당 상한 50은 그대로) —
-    이 판: 승격→인증 p99 최대 0.94초(기준선 2초 안) · 확정→반환 0.1초.<br>
-    100명 묶음 시절엔 정원 1,000의 오픈 직후 인증 지연이 4.97초 — 한 묶음이 한꺼번에
-    도착해 booking의 소비가 밀린 것입니다.</figcaption>
+    <figcaption><b>(행2 · 전달)</b> 두 서비스는 Kafka로만 잇습니다 — 승격→인증(queue → booking) ·
+    확정→반환(booking → queue)의 전달 지연을 봅니다. 승격이 <b>100명 묶음</b>으로 나가면
+    묶음 맨 뒤는 앞 99명을 기다려, 오픈 직후 인증 지연이 <b>4.97초</b>였습니다.<br>
+    → 승격: 100명/2초 → <b>25명/0.5초</b> — 초당 상한(50명)은 그대로, 묶음만 4분의 1.<br>
+    → 이 판: 승격→인증 p99 최대 <b>0.94초</b>(기준선 2초 안) · 확정→반환 0.1초.</figcaption>
   </figure>
 </div>
 
