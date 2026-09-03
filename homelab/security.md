@@ -13,88 +13,96 @@ permalink: /homelab/security/
 
 ## 격리와 공개 구조
 
-<!-- 이 그림이 답하는 질문 = 무엇이 어디서 버려지나. 통과 경로는 홈랩 오버뷰 배선도가 이미 그리므로
-     여기서는 심사대마다 통과 조건과 차단 대상을 나란히 둔다. 왼쪽 열이 누구나 오는 문(443),
-     오른쪽이 키를 가진 기기만 오는 문(51820). 둘의 심사 기준이 다른 것이 이 카드의 논지다. -->
+<!-- 층을 실제 배선 그대로 쌓는다 — 인터넷 → 공유기 → 사설 평면(데스크탑 · vmbr0) → OPNsense → 격리망(vmbr1 · k3s).
+     OPNsense 가 두 브리지에 걸친 유일한 기계라는 것이 격리의 실체라 그 상자를 두 브리지 띠 사이에 둔다.
+     칸마다 역할 · 통과 조건 · 버리는 것(✕)을 나란히 적어, 그림만 보고 흐름과 심사가 읽히게 한다. -->
 <figure class="hl-diagram hl-diagram-lg" markdown="0">
-<svg viewBox="0 0 760 446" role="img" aria-label="인터넷에서 들어오는 문이 둘이고, 왼쪽 443은 Cloudflare와 공유기와 OPNsense와 Traefik을 차례로 지나며 출발지 대역과 Host 헤더로 걸러지고, 오른쪽 51820은 공유기를 지나 WireGuard의 키 검문에서 걸러진다. 둘 다 물리 NIC이 없는 격리망으로 들어가고 그 안은 통로 16줄로 좁혀져 있다">
+<svg viewBox="0 0 760 540" role="img" aria-label="인터넷에서 온 443은 Cloudflare를 거쳐, 51820은 직접 공유기에 닿고, 공유기는 둘만 노트북 안 OPNsense VM으로 넘긴다. OPNsense는 물리 NIC이 있는 vmbr0과 없는 vmbr1 두 브리지에 걸친 유일한 기계로, 443은 출발지가 Cloudflare 대역일 때만 격리망의 Traefik으로, 51820은 등록된 키일 때만 터널로 통과시키고, 노드가 옛 평면으로 나가는 것은 배포와 감시 두 곳을 빼고 차단한다. 격리망 안 k3s 3대의 Traefik은 443에 예매 화면만 두고, 파드 사이는 NetworkPolicy 16줄로 좁혀져 있다">
   <defs>
     <marker id="hlx-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto">
       <path d="M0,0 L8,4 L0,8 z" fill="currentColor" opacity=".45"/>
     </marker>
   </defs>
 
-  <!-- 인터넷 — 제품이 아니라 층이라 로고 대신 직접 그린다 -->
-  <circle class="hla-glyph" cx="356" cy="15" r="6.5"/>
-  <ellipse class="hla-glyph" cx="356" cy="15" rx="2.7" ry="6.5"/>
-  <line class="hla-glyph" x1="349.5" y1="15" x2="362.5" y2="15"/>
-  <text class="hla-zone" x="369" y="19">인터넷</text>
-  <line class="hla-ln" x1="380" y1="26" x2="380" y2="33"/>
-  <line class="hla-ln" x1="224" y1="33" x2="536" y2="33"/>
-  <line class="hla-ln" x1="224" y1="33" x2="224" y2="42" marker-end="url(#hlx-arrow)"/>
-  <line class="hla-ln" x1="536" y1="33" x2="536" y2="42" marker-end="url(#hlx-arrow)"/>
+  <!-- 층 1 · 인터넷 — 같은 도메인의 두 이름이 서로 다른 주소로 풀린다 -->
+  <text class="hla-zone" x="20" y="20">인터넷</text>
 
-  <!-- 두 문 — 성격이 정반대인 것이 첫 줄에서 보이게 -->
-  <rect class="hla-box" x="84" y="44" width="280" height="48" rx="5"/>
-  <text class="hla-t" x="98" y="66">443/TCP — 서비스</text>
-  <text class="hla-s2" x="98" y="83">누구나 들어온다. 그것이 목적이다</text>
+  <rect class="hla-box" x="20" y="30" width="350" height="48" rx="5"/>
+  <image href="/assets/img/icons/cloudflare.svg" x="32" y="40" width="20" height="20"/>
+  <text class="hla-t" x="58" y="47">Cloudflare 프록시 — ticket.subinhong.dev</text>
+  <text class="hla-s2" x="32" y="68">이름이 Cloudflare 주소로 풀린다 · 집 IP 은닉 · TLS 종료 · /api 캐시 제외</text>
 
-  <rect class="hla-box" x="396" y="44" width="280" height="48" rx="5"/>
-  <text class="hla-t" x="410" y="66">51820/UDP — 관리</text>
-  <text class="hla-s2" x="410" y="83">등록된 키를 가진 기기 둘</text>
+  <rect class="hla-box" x="390" y="30" width="350" height="48" rx="5"/>
+  <text class="hla-t" x="402" y="47">DNS only — vpn.subinhong.dev</text>
+  <text class="hla-s2" x="402" y="68">이름이 집 공인 IP 로 풀린다 · DDNS 가 추적 · UDP 라 프록시를 못 켠다</text>
 
-  <line class="hla-ln" x1="224" y1="92" x2="224" y2="102" marker-end="url(#hlx-arrow)"/>
-  <line class="hla-ln" x1="536" y1="92" x2="536" y2="166" marker-end="url(#hlx-arrow)"/>
+  <line class="hla-ln" x1="195" y1="78" x2="195" y2="96" marker-end="url(#hlx-arrow)"/>
+  <text class="hla-a" x="203" y="91">443/TCP</text>
+  <line class="hla-ln" x1="565" y1="78" x2="565" y2="96" marker-end="url(#hlx-arrow)"/>
+  <text class="hla-a" x="573" y="91">51820/UDP</text>
 
-  <!-- 엣지 — 왼쪽 문에만 붙는다 -->
-  <rect class="hla-box" x="84" y="104" width="280" height="52" rx="5"/>
-  <image href="/assets/img/icons/cloudflare.svg" x="98" y="116" width="20" height="20"/>
-  <text class="hla-t" x="124" y="131">Cloudflare</text>
-  <text class="hla-s2" x="98" y="148">집 공인 IP 은닉 · TLS 종료 · /api 는 캐시에서 제외</text>
+  <!-- 층 2 · 공유기 — 인터넷과 집의 경계. 포워딩 2개가 이 집이 밖에 연 전부 -->
+  <rect class="hla-box" x="20" y="98" width="720" height="44" rx="5"/>
+  <image href="/assets/img/icons/tplink.svg" x="32" y="107" width="18" height="18"/>
+  <text class="hla-t" x="56" y="115">공유기 — 인터넷과 집의 경계</text>
+  <text class="hla-s2" x="56" y="132">포워딩 2개 → 192.168.0.210 (OPNsense WAN) · 443/TCP · 51820/UDP</text>
+  <text class="hla-x" x="470" y="132">✕ 그 밖의 포트 — 버린다. 밖에서 20개를 훑어 응답 0</text>
 
-  <line class="hla-ln" x1="224" y1="156" x2="224" y2="166" marker-end="url(#hlx-arrow)"/>
+  <line class="hla-ln" x1="95" y1="142" x2="95" y2="250"/>
+  <line class="hla-ln" x1="465" y1="142" x2="465" y2="190" marker-end="url(#hlx-arrow)"/>
+  <text class="hla-a" x="473" y="170">443 · 51820 → .210</text>
 
-  <!-- 공유기 — 두 문이 함께 지난다 -->
-  <rect class="hla-box" x="84" y="168" width="592" height="46" rx="5"/>
-  <image href="/assets/img/icons/tplink.svg" x="98" y="176" width="18" height="18"/>
-  <text class="hla-t" x="122" y="190">공유기 — 포워딩 2개</text>
-  <text class="hla-x" x="98" y="206">✕ 그 밖의 포트는 버린다 — 밖에서 20개를 훑어 확인</text>
+  <!-- 층 3 · 사설 평면 192.168.0.x — 데스크탑은 공유기에 직접, 노트북은 vmbr0 로 -->
+  <rect class="hla-box" x="20" y="250" width="152" height="88" rx="5"/>
+  <text class="hla-t" x="32" y="270">데스크탑 .167</text>
+  <text class="hla-s2" x="32" y="287">GitLab · 레지스트리</text>
+  <text class="hla-s2" x="32" y="301">kubeconfig · 봉인 키</text>
+  <text class="hla-a" x="32" y="318">노드가 올 수 있는 포트는</text>
+  <text class="hla-a" x="32" y="331">8929 · 5050 둘뿐</text>
 
-  <line class="hla-ln" x1="224" y1="214" x2="224" y2="224" marker-end="url(#hlx-arrow)"/>
-  <line class="hla-ln" x1="536" y1="214" x2="536" y2="224" marker-end="url(#hlx-arrow)"/>
+  <rect class="hla-outer" x="190" y="160" width="550" height="372" rx="8"/>
+  <image href="/assets/img/icons/proxmox.svg" x="200" y="168" width="16" height="16"/>
+  <text class="hla-zone" x="222" y="180">노트북 1대 · Proxmox — 전부 VM</text>
 
-  <!-- 심사대 — 왼쪽은 대역, 오른쪽은 서명 -->
-  <rect class="hla-box" x="84" y="226" width="280" height="62" rx="5"/>
-  <image href="/assets/img/icons/opnsense.svg" x="98" y="238" width="18" height="18"/>
-  <text class="hla-t" x="122" y="252">OPNsense</text>
-  <text class="hla-s2" x="98" y="269">출발지가 Cloudflare 대역인 것만</text>
-  <text class="hla-x" x="98" y="283">✕ 공인 IP 로 직접 443 — 타임아웃</text>
+  <rect class="hla-inner" x="204" y="190" width="522" height="36" rx="4"/>
+  <text class="hla-c" x="216" y="206">vmbr0 · 192.168.0.x — 물리 NIC 이 꽂혀 있다</text>
+  <text class="hla-s2" x="216" y="220">공유기·데스크탑과 같은 평면 · pve 호스트 .200 · OPNsense WAN .210</text>
 
-  <rect class="hla-box" x="396" y="226" width="280" height="62" rx="5"/>
-  <image href="/assets/img/icons/wireguard.svg" x="410" y="238" width="18" height="18"/>
-  <text class="hla-t" x="434" y="252">WireGuard</text>
-  <text class="hla-s2" x="410" y="269">등록된 키로 서명이 풀리는 것만</text>
-  <text class="hla-x" x="410" y="283">✕ 등록 안 된 키 — 응답하지 않는다</text>
+  <line class="hla-ln" x1="465" y1="226" x2="465" y2="238" marker-end="url(#hlx-arrow)"/>
 
-  <line class="hla-ln" x1="224" y1="288" x2="224" y2="298" marker-end="url(#hlx-arrow)"/>
-  <line class="hla-ln" x1="536" y1="288" x2="536" y2="372" marker-end="url(#hlx-arrow)"/>
+  <!-- 층 4 · OPNsense — 두 브리지에 다 꽂힌 유일한 기계. 세 줄이 규칙 여섯 줄의 전부 -->
+  <rect class="hla-wall" x="204" y="238" width="522" height="100" rx="6"/>
+  <image href="/assets/img/icons/opnsense.svg" x="216" y="248" width="18" height="18"/>
+  <text class="hla-t" x="240" y="262">OPNsense VM — 두 브리지에 다 꽂힌 유일한 기계</text>
+  <text class="hla-s2" x="216" y="284">들어오는 443   출발지가 Cloudflare 대역이면 → 10.0.0.240</text>
+  <text class="hla-x" x="490" y="284">✕ 공인 IP 로 직접 온 443 — 버린다</text>
+  <text class="hla-s2" x="216" y="304">들어오는 51820   WireGuard — 등록된 키로 풀리면 → 10.0.0.x</text>
+  <text class="hla-x" x="490" y="304">✕ 등록 안 된 키 — 응답 없음</text>
+  <text class="hla-s2" x="216" y="324">나가는 노드   배포 .167 · 감시 .200 · 인터넷만 허용</text>
+  <text class="hla-x" x="490" y="324">✕ 옛 평면의 나머지 — 차단 + 로그</text>
 
-  <rect class="hla-box" x="84" y="300" width="280" height="62" rx="5"/>
-  <image href="/assets/img/icons/traefikproxy.svg" x="98" y="312" width="18" height="18"/>
-  <text class="hla-t" x="122" y="326">Traefik</text>
-  <text class="hla-s2" x="98" y="343">443 라우터는 예매 화면 하나 · 정식 인증서</text>
-  <text class="hla-x" x="98" y="357">✕ Host 헤더를 관리 UI 이름으로</text>
+  <line class="hla-ln" x1="204" y1="322" x2="174" y2="322" marker-end="url(#hlx-arrow)"/>
+  <line class="hla-ln" x1="465" y1="338" x2="465" y2="350" marker-end="url(#hlx-arrow)"/>
 
-  <line class="hla-ln" x1="224" y1="362" x2="224" y2="372" marker-end="url(#hlx-arrow)"/>
+  <!-- 층 5 · 격리망 vmbr1 — 물리 NIC 이 없다는 사실이 격리의 실체 -->
+  <rect class="hla-inner" x="204" y="350" width="522" height="36" rx="4"/>
+  <text class="hla-c" x="216" y="366">vmbr1 · 10.0.0.x — 물리 NIC 이 없다</text>
+  <text class="hla-s2" x="216" y="380">여기 꽂힌 것이 밖으로 가는 길은 위의 VM 하나 · OPNsense LAN 10.0.0.1</text>
 
-  <!-- 격리망 — 물리 포트가 없다는 것이 이 망의 정의다 -->
-  <rect class="hla-outer" x="84" y="374" width="592" height="56" rx="6"/>
-  <image href="/assets/img/icons/kubernetes.svg" x="98" y="386" width="18" height="18"/>
-  <text class="hla-t" x="122" y="400">격리망 — 물리 NIC 이 없는 브리지 · k3s 3대</text>
-  <text class="hla-s2" x="98" y="419">파드 사이 통로 16줄 — 적히지 않은 조합은 차단</text>
+  <line class="hla-ln" x1="465" y1="386" x2="465" y2="398" marker-end="url(#hlx-arrow)"/>
+
+  <rect class="hla-box" x="204" y="398" width="522" height="118" rx="5"/>
+  <image href="/assets/img/icons/kubernetes.svg" x="216" y="408" width="18" height="18"/>
+  <text class="hla-t" x="240" y="422">k3s — k3s-1 .11 · k3s-2 .12 · k3s-3 .13</text>
+  <text class="hla-s2" x="216" y="442">MetalLB 10.0.0.240 → Traefik</text>
+  <text class="hla-s2" x="232" y="460">443   예매 화면 하나 · Let's Encrypt 인증서</text>
+  <text class="hla-x" x="490" y="460">✕ Host 헤더를 관리 UI 이름으로 — 라우터 없음</text>
+  <text class="hla-s2" x="232" y="478">80    Grafana · ArgoCD — 터널을 켠 기기만</text>
+  <text class="hla-s2" x="216" y="500">파드 사이   NetworkPolicy 16줄</text>
+  <text class="hla-x" x="490" y="500">✕ 적히지 않은 조합 — 차단</text>
 </svg>
-<figcaption>밖에서 들어올 수 있는 지점은 두 곳이고, 심사 기준이 서로 다릅니다 —
-왼쪽은 엣지를 지났는지, 오른쪽은 키가 등록됐는지.</figcaption>
+<figcaption>격리는 규칙보다 배선에서 나옵니다 — vmbr1 에는 물리 NIC 이 없어, 노드가 밖으로 가는 길은
+두 브리지에 다 꽂힌 방화벽 VM 하나뿐입니다.</figcaption>
 </figure>
 
 ## 정한 것
