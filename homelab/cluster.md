@@ -68,7 +68,7 @@ permalink: /homelab/cluster/
   <!-- Proxmox -->
   <rect class="hla-box" x="30" y="254" width="700" height="48" rx="5"/>
   <text class="hla-t" x="46" y="276">Proxmox VE — Type 1 하이퍼바이저 · KVM + QEMU</text>
-  <text class="hla-s" x="46" y="293">LVM-thin 풀에서 데이터 디스크 10장(235G)을 잘라 VM 에 붙임 · 노드 셋은 방화벽 VM 뒤 격리망(vmbr1)에</text>
+  <text class="hla-s" x="46" y="293">LVM-thin 풀에서 데이터 디스크 10장(235G)을 잘라 VM 에 붙임 · 노드 셋은 방화벽 뒤 격리망(vmbr1)에</text>
 
   <line class="hla-ln" x1="202" y1="316" x2="202" y2="306" marker-end="url(#hlv-arrow)"/>
   <text class="hla-a" x="214" y="314">부팅</text>
@@ -76,7 +76,7 @@ permalink: /homelab/cluster/
   <!-- 물리 디스크 — 부팅 디스크를 무엇으로 고르느냐가 이 노트북의 역할을 가른다 -->
   <rect class="hla-box" x="30" y="318" width="344" height="46" rx="5"/>
   <text class="hla-c" x="46" y="338">외장 USB SSD 1TB</text>
-  <text class="hla-s2" x="46" y="355">이 디스크로 부팅하면 서버 — 빠지면 그대로 내려간다</text>
+  <text class="hla-s2" x="46" y="355">이 디스크로 부팅하면 서버 — 빠지면 내려간다</text>
 
   <rect class="hla-inner hla-dash" x="386" y="318" width="344" height="46" rx="5"/>
   <text class="hla-c" x="402" y="338">내장 NVMe</text>
