@@ -2,7 +2,7 @@
 layout: page
 title: CI/CD
 description: >
-  머지하면 검증과 빌드를 거쳐 이미지가 되고, 클러스터가 그것을 가져가 파드를 교체합니다
+  머지하면 검증과 빌드를 거쳐 이미지가 되고, 클러스터가 가져가 파드를 교체합니다
 permalink: /homelab/cicd/
 ---
 
@@ -112,7 +112,7 @@ permalink: /homelab/cicd/
   <text class="hla-a" x="136" y="540">배포 정의</text>
   <text class="hla-a" x="232" y="540">점선 — 알림만. 배포 내용은 안 실린다</text>
 </svg>
-<figcaption>번호가 커밋에서 파드까지의 순서입니다. 왼쪽 열이 이미지가 만들어지는 길, 오른쪽이 배포 정의가 도는 길이고, 실선은 전부 클러스터가 밖으로 나가 가져오는 것입니다.</figcaption>
+<figcaption>번호가 커밋에서 파드까지의 순서입니다. 실선은 전부 클러스터가 밖으로 나가 가져오는 것입니다.</figcaption>
 </figure>
 
 ## GitLab의 두 저장소
@@ -162,7 +162,7 @@ permalink: /homelab/cicd/
 GitLab CE · GitLab Runner · Docker · Trivy · gitleaks · SpotBugs · ArgoCD · argocd-image-updater
 {:.hl-more}
 
-배포된 것이 실제로 어떻게 도는지는 관측이 답합니다.
+배포된 것이 어떻게 도는지는 관측이 답합니다.
 {:.hl-more}
 
 {% include hl-nav.html %}
