@@ -88,7 +88,7 @@ permalink: /homelab/capacity/
   </figure>
 </div>
 
-<div class="hl-sub" markdown="0">Redis · Kafka 대시보드</div>
+<div class="hl-sub" markdown="0">Redis · Kafka 대시보드 및 트레이스</div>
 
 <div class="hl-shots" markdown="0" aria-label="Redis·Kafka 대시보드 — 화살표로 넘겨 봅니다">
   <figure class="hl-shot">
