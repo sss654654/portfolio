@@ -106,18 +106,18 @@ permalink: /homelab/observability/
 
 ## 클러스터 대시보드
 
-화면은 위에서 아래로 좁혀 내려갑니다 — 노드가 살아 있나에서 어느 파드가 문제인가까지.
+화면이 위에서 아래로 좁혀집니다 — 노드가 살아 있나에서 어느 파드가 문제인가까지.
 
 <div class="hl-shots" markdown="0" aria-label="클러스터 인프라 대시보드 — 화살표로 넘겨 봅니다">
   <figure class="hl-shot">
     <img src="/assets/img/homelab/obs/cluster-row0.png" alt="행0 — 노드 Ready · k3s 응답 · etcd 합의 · eviction 임박, 그리고 사고 흔적 표">
     <figcaption>k3s는 API 서버·스케줄러·kubelet이 노드마다 <b>한 프로세스</b>로 돕니다.
-    왼쪽부터 노드 Ready → 그 프로세스의 응답 → etcd 합의 순으로 보고,
-    etcd는 지표 장부가 별도라 따로 긁습니다.</figcaption>
+    왼쪽부터 노드 Ready → 그 프로세스의 응답 → etcd 합의 순이고,
+    etcd만 지표 장부가 별도라 따로 긁습니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/obs/cluster-row1.png" alt="행1 — 노드 메모리. 선언 기준 표와 실사용 기준 표, 노드별 추이" loading="lazy">
-    <figcaption>왼쪽 표는 스케줄러 기준 — 선언(requests)만 더해 새 파드가 앉을 자리를 셉니다.
+    <figcaption>왼쪽은 스케줄러 기준 — 선언(requests)만 더해 새 파드가 앉을 자리를 셉니다.
     오른쪽은 커널 기준 — 실제로 쓰고 남은 양입니다. 축이 달라 표를 갈랐고,
     뺄셈은 한쪽 안에서만 합니다.</figcaption>
   </figure>
@@ -146,7 +146,7 @@ permalink: /homelab/observability/
     <img src="/assets/img/homelab/obs/cluster-row5.png" alt="행5 — 파드 스펙 장부. 도는 컨테이너 전수의 request 대비 실사용 게이지" loading="lazy">
     <figcaption>스펙 장부 — 도는 컨테이너 전수의 선언 대 실사용입니다. 빨강은 request를 넘겨 쓰는 것(노드가
     몰리면 먼저 쫓겨남), 파랑은 선언만 하고 안 쓰는 것. 설계가 맞는지 여기를 제일 먼저 보고
-    파드마다 다시 잡았습니다.</figcaption>
+    파드마다 다시 정했습니다.</figcaption>
   </figure>
 </div>
 
@@ -159,7 +159,7 @@ permalink: /homelab/observability/
   <figure class="hl-shot">
     <img src="/assets/img/homelab/obs/host-row0.png" alt="행0 — 호스트 응답·CPU 온도·전원·배터리·주 디스크 판정·마지막 부팅">
     <figcaption>물리 축 하나에 행 하나 — 열·전력·포화·저장. 평소에는 이 줄만 보고,
-    색이 바뀐 축의 행으로 내려갑니다.</figcaption>
+    색이 바뀐 쪽으로 내려갑니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/obs/host-row1.png" alt="행1 — CPU 온도와 클럭 추이" loading="lazy">
@@ -169,14 +169,14 @@ permalink: /homelab/observability/
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/obs/host-row2.png" alt="행2 — 전원 공급·배터리 잔량 추이와 비정상 종료 발생 수" loading="lazy">
-    <figcaption>노트북의 배터리는 내장 UPS입니다 — AC가 끊겨도 바로 죽지 않고 버티는 유예가 있고,
+    <figcaption>노트북의 배터리는 내장 UPS입니다 — 전원이 끊겨도 바로 죽지 않고 버티는 유예가 있고,
     그것이 알림 둘(AC 끊김·배터리 잔량)의 근거입니다. 비정상 종료 0은 밤 예약 종료가
     정상 동작한다는 증거입니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/obs/host-row4.png" alt="행4 — local(Proxmox 영역)·local-lvm(VM 디스크 저장고)·주 디스크 온도·SMART" loading="lazy">
     <figcaption>홈랩 전체가 사는 외장 SSD 한 장을 세 각도로 봅니다 — Proxmox 몫(local),
-    VM 몫(local-lvm — VM별 사용량과 한도 점선), 그리고 물리 건강(온도·읽기 오류).
+    VM 몫(local-lvm — 각각의 사용량과 한도 점선), 그리고 물리 건강(온도·읽기 오류).
     VM 저장고는 기본 지표에 안 나와 lvs를 읽는 수집기를 직접 붙였습니다.</figcaption>
   </figure>
   <figure class="hl-shot">
