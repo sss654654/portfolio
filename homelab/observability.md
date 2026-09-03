@@ -221,7 +221,7 @@ permalink: /homelab/observability/
 Mimir · Loki · Tempo · Grafana · Alloy · MinIO · kube-state-metrics · node-exporter
 {:.hl-more}
 
-이 화면들 위에서 부하를 걸어 서비스의 용량을 쟀습니다.
+이 화면들이 지켜보는 서비스가 다음입니다.
 {:.hl-more}
 
 {% include hl-nav.html %}

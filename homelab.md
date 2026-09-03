@@ -182,10 +182,10 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
 
 <!-- ② 다섯 갈래 — 물리에서 공개까지 순서대로 -->
 
-## 다섯 갈래
+## 여섯 갈래
 
-클러스터를 세우고, 배포 경로를 만들고, 관측을 붙이고, 서비스의 용량을 재고, 격리한 뒤 공개하기까지 —
-각 갈래에서 무엇을 골랐고, **그 근거가 무엇이었는지**를 담았습니다.
+클러스터를 세우고, 배포 경로를 만들고, 관측을 붙이고, 서비스를 올리고, 격리한 뒤 공개하고,
+그 경로에서 부하로 스펙을 재기까지 — 각 갈래에서 무엇을 골랐고, **그 근거가 무엇이었는지**를 담았습니다.
 
 <div class="hlc-grid" markdown="0">
 
@@ -210,12 +210,12 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
     <span class="hlc-desc">지표·로그·트레이스를 수집기 하나로 모으고, 클러스터와 서버 호스트의 대시보드·알림을 그 위에 세웠습니다.</span>
   </a>
 
-  <a class="hlc-card" href="/homelab/capacity/">
-    <span class="hlc-shot" data-label="부하 판 · 트레이스"></span>
-    <span class="hlc-tag">서비스와 부하테스트</span>
-    <span class="hlc-title">정원은 정한 게 아니라 잰 값이다</span>
-    <span class="hlc-desc">동시 입장 정원을 몇으로 둘지가 이 서비스의 전부인데, 처음엔 근거 없이 적어 둔 숫자였습니다. 판을 거듭하며 막히는 자리를 따라갔습니다.</span>
-    <span class="hlc-num">판 34회 · 동시 입장 1,000명 · 76만 요청에 5xx 0건</span>
+  <a class="hlc-card" href="/homelab/service/">
+    <span class="hlc-shot" data-label="대기열 시뮬레이션 · 트레이스"></span>
+    <span class="hlc-tag">서비스</span>
+    <span class="hlc-title">대기열과 예매, 두 서비스로 나눴다</span>
+    <span class="hlc-desc">예매가 열리는 순간 전원이 몰리는 티케팅입니다. 몰리는 사람을 줄 세우는 queue(Go)와 표를 파는 booking(Spring)을 나누고, 둘 사이는 Kafka가 잇습니다.</span>
+    <span class="hlc-num">Go 대기열 4대 · Spring 예매 1대 · 좌석 4,000석</span>
   </a>
 
   <a class="hlc-card" href="/homelab/security/">
@@ -224,6 +224,14 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
     <span class="hlc-title">열되, 열린 자리를 세어 두었다</span>
     <span class="hlc-desc">공개하기 전에 클러스터를 방화벽 뒤 격리망으로 옮겼습니다. 관리 통로는 VPN 하나만 남기고, 안쪽도 통로를 지정해 잠갔습니다.</span>
     <span class="hlc-num">인터넷에 열린 포트 2개 · 파드 간 통로 16줄</span>
+  </a>
+
+  <a class="hlc-card" href="/homelab/capacity/">
+    <span class="hlc-shot" data-label="부하 판 · 대시보드"></span>
+    <span class="hlc-tag">부하테스트</span>
+    <span class="hlc-title">정원은 정한 게 아니라 잰 값이다</span>
+    <span class="hlc-desc">동시 입장 정원을 몇으로 둘지가 이 서비스의 전부인데, 처음엔 근거 없이 적어 둔 숫자였습니다. 판을 거듭하며 막히는 자리를 따라갔습니다.</span>
+    <span class="hlc-num">동시 입장 1,000명 · 76만 요청에 5xx 0건 · 매진 440초</span>
   </a>
 
 </div>
