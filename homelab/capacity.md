@@ -76,7 +76,7 @@ permalink: /homelab/capacity/
     <figcaption><b>(행1 · booking 파드)</b> 힙(768Mi) 밖의 비힙 222Mi까지 합이 limit 1Gi에
     닿아 <b>OOMKill 2회</b>, Kafka 소비 스레드 넷이 한 코어에 몰려 <b>스로틀 99.7%</b>.<br>
     → 메모리: 1Gi → <b>1,536Mi</b>(힙 768Mi 고정) · CPU: 1코어 → <b>2코어</b>.<br>
-    → 이 판: 워킹셋 55% · <b>스로틀 0</b>.</figcaption>
+    → 이 판: 메모리 55% · <b>스로틀 0</b>.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/7.png" alt="booking 대시보드 행2 — 커넥션 풀과 MySQL" loading="lazy">
