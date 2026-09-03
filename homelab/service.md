@@ -164,21 +164,6 @@ permalink: /homelab/service/
 | 관측 | **코드에 계측을 심음** — 메트릭 · 로그 · 트레이스 | **기본 지표만으론 "어디서"가 안 보임**<br>파드 CPU·메모리는 양만 답함. 요청 수·지연 히스토그램은 메트릭으로, 요청 한 건의 구간별 흐름은 트레이스로, 사건은 로그로 — 로그와 트레이스에 같은 trace_id를 실어 서로 연결 |
 {:.hl-dec}
 
-## 트레이스
-
-계측이 만드는 화면입니다. 요청 한 건이 지나는 구간이 전부 span으로 남아 — **서비스 간
-흐름이 그려지고, 구간마다 지연이 붙고, 에러가 난 span은 표시됩니다.** 지연이 높으면
-어느 구간이 문제인지 여기서 가르고, 로그에 같은 trace_id가 실려 있어 그 요청의 로그로
-바로 건너갑니다. 아래는 시뮬레이션의 1→7 흐름이 실물에서 돈 한 건입니다.
-
-<figure class="hl-shot" markdown="0">
-  <img src="/assets/img/homelab/cap/trace.png" alt="Tempo 트레이스 — 예매 확정 한 건: booking의 게이트 확인·MySQL 쓰기·완료 발행에서 Kafka를 건너 queue의 자리 반환까지 한 트레이스" loading="lazy">
-  <figcaption>예매 확정 요청 하나의 트레이스 — 게이트 확인(Redis) · MySQL 쓰기 · 완료 발행,
-  그리고 <b>Kafka를 건너 queue가 자리를 비우기까지</b>입니다(서비스 둘 · 23 span).
-  오른쪽은 같은 trace_id로 연 이 요청의 로그 — queue의 "예매완료 수신 → active 제거"까지,
-  세 신호가 한 요청으로 이어집니다.</figcaption>
-</figure>
-
 ## 결과
 
 - **서비스 둘과 프론트가 클러스터에서 돕니다** — queue 4대 · booking 1대 · frontend 2대. 배포는 MR 머지가 전부입니다
