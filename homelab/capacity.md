@@ -17,63 +17,6 @@ permalink: /homelab/capacity/
 절반이 **지표가 없었습니다.** 계측을 앱에 심고 대시보드 세 장을 세웠습니다 —
 행 순서는 지표 종류가 아니라 판정 순서입니다.
 
-<!-- 슬라이드 — 각 장이 아래 부하테스트 표의 행 하나를 증거한다.
-     시간 범위는 실제 부하 판 구간(연출 금지). 캡션은 그 화면에 실제로 보이는 것만 말한다. -->
-<div class="hl-shots" markdown="0" aria-label="앱 대시보드 — 화살표로 넘겨 봅니다">
-  <figure class="hl-shot">
-    <img src="/assets/img/homelab/cap/q-traefik.png" alt="queue 대시보드 행1 — traefik 메모리·CPU·클라이언트 연결과 고루틴">
-    <figcaption><b>(queue)</b> traefik의 메모리 · CPU·스로틀 · 클라이언트 연결과 고루틴입니다.
-    브라우저 연결이 사람 수만큼 여기 열리고 고루틴·버퍼가 딸려 — <b>메모리가 인원을
-    따라갑니다</b>(사람당 132KiB).</figcaption>
-  </figure>
-  <figure class="hl-shot">
-    <img src="/assets/img/homelab/cap/q-queue.png" alt="queue 대시보드 행2 — queue 메모리·CPU·스로틀·소켓과 고루틴" loading="lazy">
-    <figcaption><b>(queue)</b> queue의 메모리 · CPU·스로틀 · 소켓과 고루틴입니다.
-    폴링은 요청마다 끝나 메모리는 인원과 무관하고, 부하는 CPU로 옵니다 — 판정은
-    <b>스로틀 선(빨강)</b>: limit 몫을 다 써 CPU를 회수당한 시간, 잘린 만큼 느려집니다.</figcaption>
-  </figure>
-  <figure class="hl-shot">
-    <img src="/assets/img/homelab/cap/q-latency.png" alt="queue 대시보드 행3 — 폴링 셋의 지연 p99, 오픈 봉우리" loading="lazy">
-    <figcaption><b>(queue)</b> 폴링 셋(순번·실황·전체 현황)의 지연 p99를 앱 구간과 traefik 전 구간으로
-    나눠 봅니다. 합격선 둘(입장 1초 — 순번 조회 · 정상 구간 0.5초)이 여기 걸리고 — 오픈 봉우리가
-    솟았다 내려오면 처리한 것입니다.</figcaption>
-  </figure>
-  <figure class="hl-shot">
-    <img src="/assets/img/homelab/cap/q-flow.png" alt="queue 대시보드 행4 — 정원의 입출: enter 호출·지연, 입장·회수·반환" loading="lazy">
-    <figcaption><b>(queue)</b> enter · 입장 · 회수 · 반환의 수를 세고, enter와 발행의 지연 p99를
-    잽니다. <b>입장 = 예매 완료 + 회수</b>여야 정상입니다.</figcaption>
-  </figure>
-  <figure class="hl-shot">
-    <img src="/assets/img/homelab/cap/b-pod.png" alt="booking 대시보드 행1 — 메모리 limit, CPU·스로틀·GC, heap·nonheap" loading="lazy">
-    <figcaption><b>(booking)</b> booking의 메모리 · CPU·스로틀·GC 정지 · JVM heap입니다.
-    지키는 선이 둘 — 컨테이너 limit(넘으면 커널이 OOMKill)과 <b>힙 상한 768Mi</b>(JVM이
-    그 안에서 GC로 버팀)입니다.</figcaption>
-  </figure>
-  <figure class="hl-shot">
-    <img src="/assets/img/homelab/cap/b-mysql.png" alt="booking 대시보드 행2 — 커넥션 풀과 MySQL CPU" loading="lazy">
-    <figcaption><b>(booking)</b> 커넥션 풀(사용·대기)과 MySQL CPU를 나란히 봅니다 —
-    <b>풀이 차는데 MySQL이 놀면, 상한은 DB가 아니라 풀입니다.</b> 화면의 대기 397 스파이크가
-    그 순간입니다(MySQL은 12%).</figcaption>
-  </figure>
-  <figure class="hl-shot">
-    <img src="/assets/img/homelab/cap/b-journey.png" alt="booking 대시보드 행3 — 여정 단계별 통과 수와 지연" loading="lazy">
-    <figcaption><b>(booking)</b> 여정의 단계별 통과 수와 지연 p99입니다 — 입장한 사람이
-    어느 단계에서 떨어지는지, <b>전원이 완주했는지</b>가 여기서 판정됩니다.</figcaption>
-  </figure>
-  <figure class="hl-shot">
-    <img src="/assets/img/homelab/cap/rk-redis.png" alt="Redis·Kafka 대시보드 행1 — master CPU 상한 1코어, 명령별 호출" loading="lazy">
-    <figcaption><b>(Redis)</b> 명령이 얼마나 오는지(명령별 초당 호출) · 처리하는 master CPU가
-    얼마나 찼는지 · 메모리가 어디까지 왔는지 — 셋으로 포화를 판정합니다.
-    명령 처리가 <b>단일 스레드</b>라 CPU의 분모는 limit이 아니라 1코어입니다.</figcaption>
-  </figure>
-  <figure class="hl-shot">
-    <img src="/assets/img/homelab/cap/rk-kafka.png" alt="Redis·Kafka 대시보드 행2 — 전달 지연 p99와 전달 완결(발행 vs 소비)" loading="lazy">
-    <figcaption><b>(Kafka)</b> 두 서비스를 잇는 전달 둘 — <b>승격→인증, 확정→반환</b> — 이
-    얼마나 걸리는지(p99 · 패널 기준선 2초)와, 발행·소비가 초당 몇 건씩 쌍으로 맞는지를 봅니다.
-    쌍이 어긋나면 어느 쪽이 못 따라가는 것입니다.</figcaption>
-  </figure>
-</div>
-
 ## 합격선(SLO)
 
 | 무엇 | 합격선 | 왜 이 값 | 어디서 재나 |
