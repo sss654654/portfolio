@@ -28,7 +28,7 @@ permalink: /homelab/security/
        위 띠 = 사설 평면 192.168.0.x (공유기 아래부터 vmbr0 까지, 노트북 상자를 가로지른다)
        아래 띠 = 격리망 10.0.0.x (vmbr1 부터 k3s 까지, 노트북 안에만 있다)
        두 띠 사이 빈 자리에 OPNsense 가 선다 -->
-  <rect x="84" y="166" width="392" height="28" rx="6" fill="currentColor" opacity=".05"/>
+  <rect x="10" y="166" width="740" height="28" rx="6" fill="currentColor" opacity=".05"/>
 
   <!-- 층 1 · 인터넷 -->
   <text class="hla-zone" x="20" y="16">인터넷</text>
@@ -39,7 +39,8 @@ permalink: /homelab/security/
   <text class="hla-s2" x="32" y="61">집 IP 은닉 · TLS 종료 · 방문자 연결은 여기서 끝난다</text>
 
   <rect class="hla-box" x="390" y="24" width="350" height="46" rx="5"/>
-  <text class="hla-t" x="402" y="41">DNS only — vpn.subinhong.dev</text>
+  <image href="/assets/img/icons/wireguard.svg" x="402" y="33" width="20" height="20"/>
+  <text class="hla-t" x="428" y="41">DNS only — vpn.subinhong.dev</text>
   <text class="hla-s2" x="402" y="61">집 공인 IP 그대로 · DDNS 가 추적</text>
 
   <line class="hla-ln" x1="195" y1="70" x2="195" y2="104" marker-end="url(#hlx-arrow)"/>
@@ -78,12 +79,10 @@ permalink: /homelab/security/
   <rect class="hla-wall" x="204" y="284" width="522" height="80" rx="6"/>
   <image href="/assets/img/icons/opnsense.svg" x="216" y="294" width="18" height="18"/>
   <text class="hla-t" x="240" y="308">OPNsense VM — 브리지 둘에 다 꽂힌 유일한 기계</text>
-  <image href="/assets/img/icons/cloudflare.svg" x="216" y="321" width="14" height="14"/>
-  <text class="hla-c" x="238" y="332">443/TCP</text>
-  <text class="hla-s2" x="308" y="332">출발지가 Cloudflare 대역이면 목적지를 10.0.0.240 으로 바꿔 넘김 · 아니면 버림</text>
-  <image href="/assets/img/icons/wireguard.svg" x="216" y="341" width="14" height="14"/>
-  <text class="hla-c" x="238" y="352">51820/UDP</text>
-  <text class="hla-s2" x="308" y="352">WireGuard 가 키로 풂 → 안쪽 패킷이 10.0.0.x 행이면 넘김 · 안 풀리면 무응답</text>
+  <text class="hla-c" x="216" y="332">443/TCP</text>
+  <text class="hla-s2" x="290" y="332">출발지가 Cloudflare 대역이면 목적지를 10.0.0.240 으로 바꿔 넘김 · 아니면 버림</text>
+  <text class="hla-c" x="216" y="352">51820/UDP</text>
+  <text class="hla-s2" x="290" y="352">WireGuard 가 키로 풂 → 안쪽 패킷이 10.0.0.x 행이면 넘김 · 안 풀리면 무응답</text>
 
   <line class="hla-ln" x1="465" y1="364" x2="465" y2="400" marker-end="url(#hlx-arrow)"/>
 
