@@ -193,35 +193,35 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
     <img class="hlc-img" src="/assets/img/homelab/cluster-thumb.jpg" alt="뚜껑을 연 노트북과 오른쪽에 케이블로 연결된 외장 SSD">
     <span class="hlc-tag">클러스터</span>
     <span class="hlc-title">Proxmox로 k3s HA 클러스터 구축</span>
-    <span class="hlc-desc">네트워크·로드밸런서·인그레스·스토리지를 k3s 기본 대신 Calico·MetalLB·Traefik·정적 PV로 구성.</span>
+    <span class="hlc-desc">네트워크·로드밸런서·인그레스·스토리지를 k3s 기본 대신 Calico·MetalLB·Traefik·정적 PV로 세웠습니다.</span>
   </a>
 
   <a class="hlc-card" href="/homelab/cicd/">
     <img class="hlc-img" src="/assets/img/homelab/cicd-thumb.jpg" alt="파이프라인이 통과한 GitLab 머지 리퀘스트 화면과 앱이 전부 Synced 인 ArgoCD 화면">
     <span class="hlc-tag">CI/CD</span>
     <span class="hlc-title">GitLab · ArgoCD로 빌드·배포 파이프라인 구축</span>
-    <span class="hlc-desc">머지하면 검증과 빌드를 거쳐 이미지가 되고, 클러스터가 그것을 가져가 파드를 교체.</span>
+    <span class="hlc-desc">머지하면 검증과 빌드를 거쳐 이미지가 되고, 클러스터가 그것을 가져가 파드를 교체합니다.</span>
   </a>
 
   <a class="hlc-card" href="/homelab/observability/">
     <img class="hlc-img" src="/assets/img/homelab/observability-thumb.jpg" alt="알림이 발화한 순간의 호스트 대시보드와, 같은 알림이 도착한 폰 Discord 화면">
     <span class="hlc-tag">관측</span>
     <span class="hlc-title">LGTM 스택으로 관측 구축</span>
-    <span class="hlc-desc">지표·로그·트레이스를 수집기 하나로 모으고, 그 위에 클러스터와 서버 호스트의 대시보드·알림 구성.</span>
+    <span class="hlc-desc">지표·로그·트레이스를 수집기 하나로 모으고, 클러스터와 서버 호스트의 대시보드·알림을 그 위에 세웠습니다.</span>
   </a>
 
   <a class="hlc-card" href="/homelab/service/">
     <img class="hlc-img" src="/assets/img/homelab/service-thumb.png" alt="왼쪽에 좌석 현황판과 예매 카드가 뜬 화면, 오른쪽에 대기 순번 2647번이 뜬 대기 화면">
     <span class="hlc-tag">서비스</span>
     <span class="hlc-title">대기열과 예매, 두 서비스</span>
-    <span class="hlc-desc">예매가 열리는 시각에 인원이 한꺼번에 몰리는 티케팅. 줄 세우는 queue(Go)와 표를 파는 booking(Spring)을 나누고, 둘을 Kafka로 연결.</span>
+    <span class="hlc-desc">예매가 열리는 시각에 인원이 한꺼번에 몰리는 티케팅입니다. 줄 세우는 queue(Go)와 표를 파는 booking(Spring)을 나누고, 둘을 Kafka로 이었습니다.</span>
   </a>
 
   <a class="hlc-card" href="/homelab/security/">
     <span class="hlc-shot" data-label="OPNsense · 방화벽 규칙"></span>
     <span class="hlc-tag">격리와 공개</span>
     <span class="hlc-title">열되, 열린 자리를 세어 두었다</span>
-    <span class="hlc-desc">공개 전에 클러스터를 방화벽 뒤 격리망으로 이전. 관리 통로는 VPN 하나만 남기고, 안쪽 통로도 지정한 것만 허용.</span>
+    <span class="hlc-desc">공개하기 전에 클러스터를 방화벽 뒤 격리망으로 옮겼습니다. 관리 통로는 VPN 하나만 남기고, 안쪽도 통로를 지정해 잠갔습니다.</span>
     <span class="hlc-num">인터넷에 열린 포트 2개 · 파드 간 통로 16줄</span>
   </a>
 
@@ -229,7 +229,7 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
     <img class="hlc-img" src="/assets/img/homelab/capacity-thumb.png" alt="k6 실행이 끝난 터미널 — 요청 시간 구간별 지연과 여정 지연, 요청 25,004건 요약">
     <span class="hlc-tag">부하테스트</span>
     <span class="hlc-title">k6 부하테스트로 정원·자원 스펙 확정</span>
-    <span class="hlc-desc">SLO를 먼저 정하고, 실사용자와 같은 공개 경로로 실제 여정 그대로 부하 생성. 판마다 막히는 자리를 대시보드에서 찾아 정원·메모리·CPU·커넥션 풀 조정.</span>
+    <span class="hlc-desc">SLO를 먼저 정하고, 공개된 경로에 실제 여정 그대로 부하를 걸었습니다. 판마다 막히는 자리를 대시보드에서 찾아 정원·메모리·CPU·커넥션 풀을 고쳤습니다.</span>
   </a>
 
 </div>
