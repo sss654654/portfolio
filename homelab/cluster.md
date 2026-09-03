@@ -68,7 +68,7 @@ permalink: /homelab/cluster/
   <!-- Proxmox -->
   <rect class="hla-box" x="30" y="254" width="700" height="48" rx="5"/>
   <text class="hla-t" x="46" y="276">Proxmox VE — Type 1 하이퍼바이저 · KVM + QEMU</text>
-  <text class="hla-s" x="46" y="293">LVM-thin 풀에서 데이터 디스크 10장(235G)을 잘라 VM 에 붙임 · 노드 셋은 방화벽 뒤 격리망(vmbr1)에</text>
+  <text class="hla-s" x="46" y="293">LVM-thin 풀에서 데이터 디스크 10장(235G)을 잘라 VM에 붙임 · 노드 셋은 방화벽 뒤 격리망(vmbr1)에</text>
 
   <line class="hla-ln" x1="202" y1="316" x2="202" y2="306" marker-end="url(#hlv-arrow)"/>
   <text class="hla-a" x="214" y="314">부팅</text>
@@ -91,8 +91,8 @@ permalink: /homelab/cluster/
 
 | | 기본값 | 이 홈랩 | 그렇게 한 이유 |
 |---|---|---|---|
-| 하이퍼바이저 | Windows 위에 얹는 Type&nbsp;2 | **Proxmox** — Type&nbsp;1 | 호스트 OS 몫 없이 메모리·CPU 전부를 VM에 배분 |
-| VM 메모리 | ballooning — 부족하면 VM RAM을 도로 회수 | **노드마다 8GB 통째로 고정** | 쿠버네티스가 RAM을 고정으로 보고 파드를 배치 |
+| 하이퍼바이저 | Windows 위에 얹는 Type&nbsp;2 | **Proxmox** — Type&nbsp;1 | 호스트 OS 몫 없이 메모리·CPU를 VM에 배분 |
+| VM 메모리 | ballooning — 부족하면 VM RAM을 회수 | **노드마다 8GB 통째로 고정** | 쿠버네티스가 RAM을 고정으로 보고 파드를 배치 |
 | 절전 | 덮개를 닫으면 잠자기 · USB 자동절전 | **둘 다 차단** | 잠들면 서버도 정지. 루트 디스크가 외장 USB라 절전되면 단절 |
 {:.hl-cmp}
 
@@ -101,9 +101,9 @@ permalink: /homelab/cluster/
 | | 기본값 | 이 홈랩 | 그렇게 한 이유 |
 |---|---|---|---|
 | 배포판 | 표준 k8s — 컴포넌트를 따로 세움 | **k3s** — 단일 바이너리 | 컨트롤플레인이 가벼워야 8GB 노드에 서비스 몫이 남음. 대가는 넷이 함께 죽는 것 |
-| 파드 네트워크 | Flannel — 전달만 | **Calico** | 기본은 파드끼리 전부 통신 가능 — 막는 NetworkPolicy가 Flannel에선 무효 |
-| 로드밸런서 | ServiceLB — 노드 IP를 빌림 | **MetalLB** `10.0.0.240-250` | 노드 IP를 빌리면 그 노드와 함께 주소도 사라짐 — 주소는 노드와 분리되어야 함 |
-| 인그레스 | k3s가 같이 깔아 주는 Traefik | **직접 올린 Traefik** | 공개 443과 관리 80을 나누려면 설정을 고쳐야 하는데, k3s 것은 재기동마다 원복 |
+| 파드 네트워크 | Flannel — 전달만 | **Calico** | 기본은 파드끼리 통신 가능 — 막는 NetworkPolicy가 Flannel에선 무효 |
+| 로드밸런서 | ServiceLB — 노드 IP를 빌림 | **MetalLB** `10.0.0.240-250` | 빌린 노드가 멈추면 주소도 사라짐 — 주소는 노드와 분리되어야 함 |
+| 인그레스 | k3s가 같이 깔아 주는 Traefik | **직접 올린 Traefik** | 공개 443과 관리 80을 나누려면 설정을 고쳐야 하는데, 재기동마다 원복 |
 | 스토리지 | local-path — 한 파일시스템에 폴더로 | **정적 PV 10장** — 노드에 붙인 디스크 그대로 | 지표가 **파일시스템 단위**라 안 자르면 무엇이 채웠는지 못 가림. 대가는 파드가 노드에 묶임 |
 {:.hl-cmp}
 
@@ -111,7 +111,7 @@ permalink: /homelab/cluster/
 
 | 증상 | 원인 | 조치 |
 |---|---|---|
-| 데스크탑에서 `kubectl`·SSH·Proxmox 웹UI가 전부 무응답 | Intel e1000e NIC의 오프로드 결함. 링크는 살아 있는데 ARP만 실패, `Hardware Unit Hang` **34회** | 오프로드를 끄고 CPU 처리로 |
+| 데스크탑에서 `kubectl`·SSH·Proxmox 웹UI가 무응답 | Intel e1000e NIC 오프로드 결함. 링크는 살아 있는데 ARP만 실패, `Hardware Unit Hang` **34회** | 오프로드를 끄고 CPU 처리로 |
 | 노드가 신고한 파드 몫이 실제 여유보다 큼 | 컨트롤플레인이 파드가 아닌 프로세스라 kubelet 집계에서 빠짐 — **1783Mi** | 신고에서 미리 뺌 — k3s **2Gi** · OS **512Mi** |
 {:.hl-tbl}
 

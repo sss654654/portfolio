@@ -8,7 +8,7 @@ permalink: /homelab/capacity/
 
 <p class="hl-back" markdown="0"><a href="/homelab/">← 홈랩</a></p>
 
-앱 저장소(`cgv-onprem`)의 MR을 머지하면 클러스터에 자동 배포됩니다 — 다만 그 파드에
+앱 저장소(`cgv-onprem`)의 MR을 머지하면 클러스터에 자동 배포됩니다 — 다만 파드에
 적어 둔 정원·커넥션 풀·메모리 상한은 **재 보지 않은 값이었습니다.**
 
 ## 합격선(SLO)
@@ -16,16 +16,16 @@ permalink: /homelab/capacity/
 | 무엇 | 합격선 | 왜 이 값 | 어디서 재나 |
 |---|---|---|---|
 | 5xx | **0건** | 대기열은 기다리게 하는 서비스지 실패시키는 것이 아님 | traefik과 앱 양쪽 — 프록시가 만든 5xx는 앱 지표에 미기록 |
-| 입장 경로 p99 | **1초** | 멈추면 눌린 건지 몰라 다시 누름 — 그 재시도가 추가 부하 | queue — enter 지연 (오픈 순간 몰림이 봉우리) |
-| 폴링 p99 | **3초** | 프론트 폴링이 3초 주기 — 그보다 늦으면 다음 폴이 먼저 도착 | queue(순번·실황) · booking(좌석 현황판) — 폴링 응답 지연 |
-| 정상 구간 p99 | **0.5초** | 체감선이 아니라 회귀를 잡는 선 — 평시가 이전 판보다 나빠졌나 | 같은 지연 지표들 — 오픈 몰림을 지난 시간대만 |
-| 메모리 | **limit의 80%** | 수집이 15초 간격 — 그 사이 봉우리는 안 찍히니 찍힌 값에 20% 여유 | 각 대시보드의 메모리 패널 (working_set / limit) |
-| CPU | 합격선 없음 | 차면 죽는 게 아니라 느려질 뿐 — 느려짐은 위의 지연 선이 판정 | 각 대시보드의 CPU·스로틀 패널 — 판정이 아니라 진단용 |
+| 입장 경로 p99 | **1초** | 멈추면 눌린 건지 몰라 다시 누름 — 재시도가 추가 부하 | queue — enter 지연 (오픈 순간 몰림이 봉우리) |
+| 폴링 p99 | **3초** | 프론트 폴링이 3초 주기 — 늦으면 다음 폴이 먼저 도착 | queue(순번·실황) · booking(좌석 현황판) — 폴링 응답 지연 |
+| 정상 구간 p99 | **0.5초** | 체감선이 아니라 회귀를 잡는 선 — 평시가 이전 판보다 나빠졌나 | 같은 지연 지표 — 오픈 몰림을 지난 시간대만 |
+| 메모리 | **limit의 80%** | 수집이 15초 간격 — 그 사이 봉우리는 안 찍히니 찍힌 값에 20% 여유 | 대시보드의 메모리 패널 (working_set / limit) |
+| CPU | 합격선 없음 | 차면 죽는 게 아니라 느려질 뿐 — 느려짐은 지연 선이 판정 | 대시보드의 CPU·스로틀 패널 — 판정이 아니라 진단용 |
 {:.hl-dec.hl-slo}
 
 ## 부하테스트(데스크탑)
 
-- **한도가 먼저 있습니다** — 노드 스펙(8GB · 4vCPU × 3대)이 파드 스펙을, 데스크탑(WSL) 메모리가 생성기 상한 10,000명을 정합니다
+- **한도가 먼저 있습니다** — 노드(8GB · 4vCPU × 3대)가 파드 스펙을, 데스크탑(WSL) 메모리가 생성기 상한 10,000명을 정합니다
 - **부하는 k6가 실제 여정 그대로 만듭니다** — 입장 → 대기 → 좌석 → 확정
 - **점진 부하** — 인원과 정원을 계단으로 올립니다
   - **인원 1,000 → 10,000** · **정원**(`MAX_SESSIONS` — queue가 동시에 입장시키는 인원) **2 → 1,000**
@@ -35,7 +35,7 @@ permalink: /homelab/capacity/
 <div class="hl-shots" markdown="0" aria-label="queue 대시보드 — 화살표로 넘겨 봅니다">
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/1.png" alt="queue 대시보드 행1 — traefik 메모리·CPU·연결과 고루틴">
-    <figcaption><b>(행1 · traefik)</b> CF 공개 이전에는 연결이 사람 수만큼 열려
+    <figcaption><b>(행1 · traefik)</b> CF 공개 전에는 연결이 사람 수만큼 열려
     <b>메모리가 인원을 따라 올랐습니다</b>(CPU 스로틀은 없음).<br>
     → 메모리: 2대 × 768Mi → <b>3대 × 2Gi</b> · 공개 때 앞에 선 <b>엣지가 방문자 연결을
     대신 받게</b> 됐습니다.<br>
@@ -56,7 +56,7 @@ permalink: /homelab/capacity/
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/4.png" alt="queue 대시보드 행4 — enter 호출 수와 지연" loading="lazy">
-    <figcaption><b>(행4 · enter)</b> "예매하기"를 누른 사람 수와 그 응답 지연입니다 —
+    <figcaption><b>(행4 · enter)</b> "예매하기"를 누른 사람 수와 응답 지연입니다 —
     <b>입장 경로 합격선 1초</b>가 여기 걸립니다.<br>
     → 이 판: p99 최대 0.34초 — 오픈 몰림 봉우리를 포함해 선 안입니다.</figcaption>
   </figure>
@@ -82,7 +82,7 @@ permalink: /homelab/capacity/
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/8.png" alt="booking 대시보드 행3 — 여정 단계별 통과와 지연" loading="lazy">
     <figcaption><b>(행3 · 여정)</b> 입장한 사람이 회차 → 좌석 → 선점 → 확정을 지나는
-    단계별 통과 수와 지연입니다 — 어디서 떨어지는지가 여기서 보입니다.<br>
+    통과 수와 지연입니다 — 어디서 떨어지는지가 보입니다.<br>
     → 이 판: <b>10,000명 전원 완주</b> · 5xx 0 · 단계별 p99 최대 0.25초, 전부 선 안입니다.</figcaption>
   </figure>
 </div>
@@ -95,7 +95,7 @@ permalink: /homelab/capacity/
     <figcaption><b>(행1 · Redis)</b> 읽기·쓰기가 <b>master 한 대</b>로 가고, 명령 처리가
     <b>단일 스레드</b>라 코어를 더 줘도 하나만 씁니다 — CPU의 분모는 limit이 아니라
     <b>1코어</b>입니다.<br>
-    → 이 판: master <b>32%</b> · 명령 초당 호출은 오픈 봉우리에서만 증가 · 메모리 여유 —
+    → 이 판: master <b>32%</b> · 초당 호출은 오픈 봉우리에서만 증가 · 메모리 여유 —
     전부 선 안입니다.</figcaption>
   </figure>
   <figure class="hl-shot">
@@ -120,7 +120,7 @@ permalink: /homelab/capacity/
 
 | 남은 문제 | 왜 데스크탑에선 못 푸나 | 클라우드로 옮기면 |
 |---|---|---|
-| **인원 상한 10,000** | WSL에 준 메모리가 여기서 참 — 그 위로는 VU를 더 못 만듦 | [**초기 목표**](/homelab/service/)에 도달하기 위해 10,000 다음 단계를 만들려면 상한이 **인스턴스 스펙**이 되어야 함 |
+| **인원 상한 10,000** | WSL에 준 메모리가 여기서 참 — 위로는 VU를 더 못 만듦 | [**초기 목표**](/homelab/service/)에 도달하기 위해 10,000 다음 단계를 만들려면 상한이 **인스턴스 스펙**이 되어야 함 |
 {:.hl-dec}
 
 ## 부하테스트(클라우드)
@@ -141,7 +141,7 @@ Terraform으로 띄운 인스턴스(8vCPU · 16GB)에서 같은 스크립트를 
 
 | 증상 | 원인 | 조치 |
 |---|---|---|
-| **오픈 순간 booking 경로가 선 밖**<br>`/api/screenings` **4.80초**<br>`/api/screenings/board` **2.38초** | **코드가 컴파일되기 전에 부하 도착**<br>자바는 실행하면서 컴파일 — booking이 93분 유휴라 아직 그 전 상태<br>오픈에 1만 명이 오자 컴파일러가 CPU **111초** 점유 | **측정 절차에 웜업 판 추가**<br>`/api/screenings` 4.80 → **0.94초**<br>`/api/screenings/board` 2.38 → **0.10초** |
+| **오픈 순간 booking 경로가 선 밖**<br>`/api/screenings` **4.80초**<br>`/api/screenings/board` **2.38초** | **코드가 컴파일되기 전에 부하 도착**<br>자바는 실행하면서 컴파일 — booking이 93분 유휴라 그 전 상태<br>오픈에 1만 명이 오자 컴파일러가 CPU **111초** 점유 | **측정 절차에 웜업 판 추가**<br>`/api/screenings` 4.80 → **0.94초**<br>`/api/screenings/board` 2.38 → **0.10초** |
 | **데워진 판에서 queue 경로가 선 밖**<br>`/api/admission/position` **4.05초**<br>`/api/admission/events` **4.30초**<br>`/api/admission/enter` **2.49초** | **queue의 Redis 커넥션 풀이 파드당 10**<br>오픈에 동시 요청이 파드당 540 — 연결 10개를 기다림<br>대기 **24,158건 · 10,952초** | **풀 50**<br>대기 10,952 → **785초**<br>`position` 4.05 → **0.94초**<br>`events` 4.30 → **0.86초**<br>`enter` 2.49 → **0.93초** |
 {:.hl-tbl}
 
