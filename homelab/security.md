@@ -78,10 +78,12 @@ permalink: /homelab/security/
   <rect class="hla-wall" x="204" y="284" width="522" height="80" rx="6"/>
   <image href="/assets/img/icons/opnsense.svg" x="216" y="294" width="18" height="18"/>
   <text class="hla-t" x="240" y="308">OPNsense VM — 브리지 둘에 다 꽂힌 유일한 기계</text>
-  <text class="hla-c" x="216" y="332">443/TCP</text>
-  <text class="hla-s2" x="290" y="332">출발지가 Cloudflare 대역이면 목적지를 10.0.0.240 으로 바꿔 넘김 · 아니면 버림</text>
-  <text class="hla-c" x="216" y="352">51820/UDP</text>
-  <text class="hla-s2" x="290" y="352">WireGuard 가 키로 풂 → 안쪽 패킷이 10.0.0.x 행이면 넘김 · 안 풀리면 무응답</text>
+  <image href="/assets/img/icons/cloudflare.svg" x="216" y="321" width="14" height="14"/>
+  <text class="hla-c" x="238" y="332">443/TCP</text>
+  <text class="hla-s2" x="308" y="332">출발지가 Cloudflare 대역이면 목적지를 10.0.0.240 으로 바꿔 넘김 · 아니면 버림</text>
+  <image href="/assets/img/icons/wireguard.svg" x="216" y="341" width="14" height="14"/>
+  <text class="hla-c" x="238" y="352">51820/UDP</text>
+  <text class="hla-s2" x="308" y="352">WireGuard 가 키로 풂 → 안쪽 패킷이 10.0.0.x 행이면 넘김 · 안 풀리면 무응답</text>
 
   <line class="hla-ln" x1="465" y1="364" x2="465" y2="400" marker-end="url(#hlx-arrow)"/>
 
@@ -107,7 +109,7 @@ permalink: /homelab/security/
   <text class="hla-t" x="564" y="523">k3s-3</text>
   <text class="hla-s2" x="564" y="540">10.0.0.13</text>
 
-  <text class="hla-s2" x="228" y="576">파드 사이 — NetworkPolicy 로 통로 16줄만 허용 · 나머지 차단</text>
+  <text class="hla-s2" x="228" y="576">파드 사이 — NetworkPolicy 로 적어 둔 통로만 허용 · 나머지 차단</text>
 </svg>
 <figcaption>바탕이 깔린 띠가 평면 둘입니다 — 위가 사설 평면, 아래가 격리망. 그 사이에 선 VM 하나가
 브리지 둘을 잇고, vmbr1 에 물리 NIC 이 없어 노드가 밖으로 가는 길은 그것뿐입니다.</figcaption>
