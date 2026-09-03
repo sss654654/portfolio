@@ -66,7 +66,7 @@ permalink: /homelab/security/
 
   <rect class="hla-outer" x="190" y="200" width="550" height="376" rx="8"/>
   <image href="/assets/img/icons/proxmox.svg" x="200" y="208" width="16" height="16"/>
-  <text class="hla-c" x="222" y="220">노트북 1대 · Proxmox — 아래는 전부 VM</text>
+  <text class="hla-c" x="222" y="220">노트북 1대 · Proxmox .200 — 아래는 전부 VM</text>
 
   <rect class="hla-inner" x="204" y="228" width="522" height="40" rx="4"/>
   <text class="hla-t" x="216" y="245">vmbr0</text>
