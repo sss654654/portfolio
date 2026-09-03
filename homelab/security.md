@@ -59,11 +59,10 @@ permalink: /homelab/security/
   <!-- 층 3 · 사설 평면 — 데스크탑은 공유기에 직접, 노트북은 vmbr0 로 -->
   <text class="hla-zone" x="280" y="182" text-anchor="middle">사설 평면 192.168.0.x</text>
 
-  <rect class="hla-box" x="20" y="200" width="152" height="70" rx="5"/>
+  <rect class="hla-box" x="20" y="200" width="152" height="58" rx="5"/>
   <text class="hla-t" x="32" y="220">데스크탑 .167</text>
   <text class="hla-s2" x="32" y="237">GitLab · 레지스트리</text>
-  <text class="hla-s2" x="32" y="251">kubeconfig · 봉인 키</text>
-  <text class="hla-a" x="32" y="265">노드가 닿는 포트는 둘뿐</text>
+  <text class="hla-s2" x="32" y="251">kubeconfig</text>
 
   <rect class="hla-outer" x="190" y="200" width="550" height="376" rx="8"/>
   <image href="/assets/img/icons/proxmox.svg" x="200" y="208" width="16" height="16"/>
