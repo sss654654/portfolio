@@ -165,8 +165,8 @@ permalink: /homelab/service/
 
 ## 트레이스
 
-위 사슬이 실물에서 도는 것은 트레이스가 보여줍니다 — 예매 확정 하나가 booking에서
-Kafka를 건너 queue의 자리 반환까지 **한 요청으로** 이어집니다.
+시뮬레이션의 1→7 흐름이 실물에서 도는 것은 트레이스가 보여줍니다 — 예매 확정 하나가
+booking에서 Kafka를 건너 queue의 자리 반환까지 **한 요청으로** 이어집니다.
 
 <figure class="hl-shot" markdown="0">
   <img src="/assets/img/homelab/cap/trace.png" alt="Tempo 트레이스 — 예매 확정 한 건: booking의 게이트 확인·MySQL 쓰기·완료 발행에서 Kafka를 건너 queue의 자리 반환까지 한 트레이스" loading="lazy">
