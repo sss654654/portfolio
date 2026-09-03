@@ -35,7 +35,7 @@ permalink: /homelab/capacity/
 <div class="hl-shots" markdown="0" aria-label="queue 대시보드 — 화살표로 넘겨 봅니다">
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/1.png" alt="queue 대시보드 행1 — traefik 메모리·CPU·연결과 고루틴">
-    <figcaption><b>(행1 · traefik)</b> 직결 시절엔 연결이 사람 수만큼 열려
+    <figcaption><b>(행1 · traefik)</b> CF 공개 이전에는 연결이 사람 수만큼 열려
     <b>메모리가 인원을 따라 올랐습니다</b>(CPU 스로틀은 없음).<br>
     → 메모리: 2대 × 768Mi → <b>3대 × 2Gi</b> · 공개 때 앞에 선 <b>엣지가 방문자 연결을
     대신 받게</b> 됐습니다.<br>
