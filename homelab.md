@@ -197,7 +197,7 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
     <img class="hlc-img" src="/assets/img/homelab/cicd-thumb.jpg" alt="파이프라인이 통과한 GitLab 머지 리퀘스트 화면과 앱이 전부 Synced 인 ArgoCD 화면">
     <span class="hlc-tag">CI/CD</span>
     <span class="hlc-title">GitLab · ArgoCD로 빌드·배포 파이프라인 구축</span>
-    <span class="hlc-desc">머지하면 검증과 빌드를 거쳐 이미지가 되고, 클러스터가 그것을 가져가 파드를 교체합니다.</span>
+    <span class="hlc-desc">머지하면 검증과 빌드를 거쳐 이미지가 되고, 클러스터가 가져가 파드를 교체합니다. 커밋에서 반영까지 3초입니다.</span>
   </a>
 
   <a class="hlc-card" href="/homelab/observability/">
@@ -218,22 +218,24 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
     <img class="hlc-img" src="/assets/img/homelab/security-thumb.png" alt="OPNsense 방화벽 규칙 목록과, 터널을 켠 폰에서 열린 Grafana 및 WireGuard 연결 화면">
     <span class="hlc-tag">격리와 공개</span>
     <span class="hlc-title">방화벽 뒤로 격리하고 엣지로 공개</span>
-    <span class="hlc-desc">노드를 방화벽 뒤 격리망으로 옮겼습니다. 관리는 키를 등록한 터널로만, 서비스는 엣지를 거친 것만 통과시킵니다.</span>
+    <span class="hlc-desc">노드를 방화벽 뒤 격리망으로 옮겼습니다. 관리는 키를 등록한 터널로, 서비스는 엣지를 거친 것만 들어옵니다 — 인터넷에 열린 포트는 그 둘입니다.</span>
   </a>
 
   <a class="hlc-card" href="/homelab/capacity/">
     <img class="hlc-img" src="/assets/img/homelab/capacity-thumb.png" alt="k6 실행이 끝난 터미널 — 요청 시간 구간별 지연과 여정 지연, 요청 25,004건 요약">
     <span class="hlc-tag">부하테스트</span>
     <span class="hlc-title">k6 부하테스트로 정원·자원 스펙 확정</span>
-    <span class="hlc-desc">SLO를 먼저 정하고 공개된 경로에 실제 여정 그대로 부하를 걸었습니다. 막히는 자리를 대시보드에서 찾아 정원·메모리·CPU·커넥션 풀을 고쳤습니다.</span>
+    <span class="hlc-desc">SLO를 먼저 정하고 공개된 경로에 실제 여정 그대로 부하를 걸었습니다. 막히는 자리를 대시보드에서 찾아 고친 끝에 10,000명이 5xx 없이 완주했습니다.</span>
   </a>
 
 </div>
 
-<!-- 기록 -->
+<!-- 기록과 코드 -->
 
-## 기록
+## 기록과 코드
 
 시작한 날부터 편별로 블로그에 남겼습니다. 명령과 결과만이 아니라 막힌 곳과 틀린 판단까지 그대로 적었습니다.
 
 * [HomeLab 시리즈](https://zed6740.tistory.com/category/HomeLab) — 왜 온프렘인지부터 인터넷 공개까지
+* [cgv-infra](https://github.com/sss654654/cgv-infra) — 클러스터와 배포 정의. 이 페이지의 설정은 전부 여기 있습니다
+* [cgv-onprem](https://github.com/sss654654/cgv-onprem) — 앱 소스. queue(Go) · booking(Spring) · frontend
