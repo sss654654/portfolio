@@ -211,10 +211,10 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
   </a>
 
   <a class="hlc-card" href="/homelab/service/">
-    <span class="hlc-shot" data-label="대기열 시뮬레이션 · 트레이스"></span>
+    <span class="hlc-shot" data-label="대기 화면 · 좌석 선택 화면"></span>
     <span class="hlc-tag">서비스</span>
-    <span class="hlc-title">대기열과 예매, 두 서비스로 나눴다</span>
-    <span class="hlc-desc">예매가 열리는 순간 전원이 몰리는 티케팅입니다. 몰리는 사람을 줄 세우는 queue(Go)와 표를 파는 booking(Spring)을 나누고, 둘 사이는 Kafka가 잇습니다.</span>
+    <span class="hlc-title">대기열과 예매, 두 서비스</span>
+    <span class="hlc-desc">전원이 한꺼번에 몰리는 티케팅입니다. 줄 세우는 queue(Go)와 표를 파는 booking(Spring)을 나누고, 둘을 Kafka로 이었습니다.</span>
     <span class="hlc-num">Go 대기열 4대 · Spring 예매 1대 · 좌석 4,000석</span>
   </a>
 
