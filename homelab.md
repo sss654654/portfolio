@@ -6,7 +6,7 @@ description: >
 permalink: /homelab/
 ---
 
-<!-- ① 오버뷰 — 왜(동기) → 무엇을 올렸나 → 어디까지가 범위인가 → 그 구성이 아래 그림.
+<!-- 오버뷰 — 왜(동기) → 무엇을 올렸나 → 어디까지가 범위인가 → 그 구성이 아래 그림.
      홈의 "## 홈랩" 절과 겹치지 않도록 "무엇을 만들었나"는 여기서 반복하지 않는다. -->
 
 관리형 쿠버네티스는 컨트롤플레인·네트워크·로드밸런서·볼륨을 선언만 하면 만들어 줍니다.
@@ -37,7 +37,7 @@ permalink: /homelab/
   <!-- 구역 라벨 -->
   <g class="hla-g hla-g1">
     <text x="150" y="30" class="hla-zone" text-anchor="middle">인터넷</text>
-    <text x="500" y="30" class="hla-zone" text-anchor="middle">우리 집</text>
+    <text x="500" y="30" class="hla-zone" text-anchor="middle">집</text>
   </g>
 
   <!-- 인터넷 쪽: 사용자 · Cloudflare -->
@@ -180,7 +180,7 @@ permalink: /homelab/
 Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 응답하지 않습니다.</figcaption>
 </figure>
 
-<!-- ② 다섯 갈래 — 물리에서 공개까지 순서대로 -->
+<!-- 여섯 갈래 — 물리에서 공개까지 순서대로 -->
 
 ## 여섯 갈래
 
@@ -213,26 +213,26 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
     <img class="hlc-img" src="/assets/img/homelab/service-thumb.png" alt="왼쪽에 좌석 현황판과 예매 카드가 뜬 화면, 오른쪽에 대기 순번 2647번이 뜬 대기 화면">
     <span class="hlc-tag">서비스</span>
     <span class="hlc-title">대기열과 예매, 두 서비스</span>
-    <span class="hlc-desc">예매가 열리는 시각에 인원이 한꺼번에 몰리는 티케팅입니다. 줄 세우는 queue(Go)와 표를 파는 booking(Spring)을 나누고, 둘을 Kafka로 이었습니다.</span>
+    <span class="hlc-desc">열리는 시각에 인원이 몰리는 티케팅입니다. 줄 세우는 queue(Go)와 표를 파는 booking(Spring)을 나눠 Kafka로 이었습니다.</span>
   </a>
 
   <a class="hlc-card" href="/homelab/security/">
     <img class="hlc-img" src="/assets/img/homelab/security-thumb.png" alt="OPNsense 방화벽 규칙 목록과, 터널을 켠 폰에서 열린 Grafana 및 WireGuard 연결 화면">
     <span class="hlc-tag">격리와 공개</span>
     <span class="hlc-title">방화벽 뒤로 격리하고 엣지로 공개</span>
-    <span class="hlc-desc">노드를 방화벽 뒤 격리망으로 옮겼습니다. 관리는 키로 심사하는 터널 하나로만 들어오고, 서비스는 엣지를 거친 것만 통과시킵니다.</span>
+    <span class="hlc-desc">노드를 방화벽 뒤 격리망으로 옮겼습니다. 관리는 키를 등록한 터널로만, 서비스는 엣지를 거친 것만 통과시킵니다.</span>
   </a>
 
   <a class="hlc-card" href="/homelab/capacity/">
     <img class="hlc-img" src="/assets/img/homelab/capacity-thumb.png" alt="k6 실행이 끝난 터미널 — 요청 시간 구간별 지연과 여정 지연, 요청 25,004건 요약">
     <span class="hlc-tag">부하테스트</span>
     <span class="hlc-title">k6 부하테스트로 정원·자원 스펙 확정</span>
-    <span class="hlc-desc">SLO를 먼저 정하고, 공개된 경로에 실제 여정 그대로 부하를 걸었습니다. 판마다 막히는 자리를 대시보드에서 찾아 정원·메모리·CPU·커넥션 풀을 고쳤습니다.</span>
+    <span class="hlc-desc">SLO를 먼저 정하고 공개된 경로에 실제 여정 그대로 부하를 걸었습니다. 막히는 자리를 대시보드에서 찾아 정원·메모리·CPU·커넥션 풀을 고쳤습니다.</span>
   </a>
 
 </div>
 
-<!-- ③ 기록 -->
+<!-- 기록 -->
 
 ## 기록
 
