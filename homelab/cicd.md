@@ -56,14 +56,14 @@ permalink: /homelab/cicd/
     <rect x="0" y="4" width="11" height="9"/><rect x="4" y="0" width="11" height="9"/>
   </g>
   <text class="hla-t" x="84" y="306">레지스트리</text>
-  <text class="hla-s2" x="58" y="324">dev-15-17dcc495 — 커밋마다 다른 이름</text>
+  <text class="hla-s2" x="58" y="324"><tspan font-weight="700">dev-15-17dcc495</tspan> — 커밋마다 다른 이름</text>
 
   <rect class="hla-inner" x="420" y="210" width="292" height="122" rx="3"/>
   <text class="hla-t" x="434" y="232">cgv-infra</text>
   <text class="hla-s2" x="520" y="232">배포 정의</text>
   <rect class="hla-inner" x="432" y="244" width="268" height="54" rx="3"/>
   <text class="hla-s2" x="444" y="262">environments/dev/values-queue.yaml</text>
-  <text class="hla-s2" x="444" y="282">image.tag: dev-15-17dcc495</text>
+  <text class="hla-s2" x="444" y="282">image.tag: <tspan font-weight="700">dev-15-17dcc495</tspan></text>
   <text class="hla-a" x="434" y="320">이 한 줄이 바뀌면 배포가 일어난다</text>
 
   <!-- 연결부 — 위쪽 끝 y=338, 아래쪽 끝 y=444(상자 윗변). 번호 원 y=358, 라벨 y=392 한 줄.
