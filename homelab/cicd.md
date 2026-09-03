@@ -56,7 +56,7 @@ permalink: /homelab/cicd/
     <rect x="0" y="4" width="11" height="9"/><rect x="4" y="0" width="11" height="9"/>
   </g>
   <text class="hla-t" x="84" y="306">레지스트리</text>
-  <text class="hla-s2" x="58" y="324"><tspan font-weight="700">dev-15-17dcc495</tspan> — 태그</text>
+  <text class="hla-s2" x="58" y="324"><tspan font-weight="700">dev-15-17dcc495</tspan> — 커밋마다 다른 태그</text>
 
   <rect class="hla-inner" x="420" y="210" width="292" height="122" rx="3"/>
   <text class="hla-t" x="434" y="232">cgv-infra</text>
@@ -130,7 +130,7 @@ permalink: /homelab/cicd/
 | 무엇을 | 고른 것 | 그렇게 한 이유 |
 |---|---|---|
 | Git 서버 자리 | **클러스터 밖 데스크탑** — 러너도 같이 | GitHub은 사설망 안 ArgoCD를 못 부르고, 안에 두면 클러스터와 함께 무너짐. 러너도 밖 — 빌드 I/O가 부하 실측을 흔듦 |
-| 파이프라인 단위 | **바뀐 서비스의 job만 생성** — `rules: changes` | 저장소 하나에 서비스 셋이라 조건이 없으면 한 줄만 고쳐도 셋이 다 돎. 안 바뀐 것은 건너뛰는 게 아니라 job 자체가 안 생김 |
+| 파이프라인 단위 | **바뀐 서비스의 job만 생성** — `rules: changes` | 저장소 하나에 서비스가 셋이라 조건이 없으면 한 줄만 고쳐도 전부 돎. 안 바뀐 것은 건너뛰는 게 아니라 job 자체가 안 생김 |
 | 취약점 게이트(scan) | **수정판이 나온 취약점만** 머지 차단 | 패치가 안 나온 CVE가 수십 개 — 그것까지 막으면 늘 빨간불이라 게이트 자체가 무력해짐 |
 | 배포 방식 | **CI와 CD를 분리** — 파이프라인은 이미지까지, 배포는 클러스터 안 ArgoCD가 | 파이프라인이 배포까지 하려면 전권 자격이 필요 — 갈라 두면 그 자격이 클러스터 안에만 남음 |
 | 배포 권한 | **AppProject** — 배포 단위마다 읽을 저장소·쓸 네임스페이스·만들 리소스를 제한 | ArgoCD는 클러스터 관리자 권한으로 동작 — 제한이 없으면 `Application` 하나의 실수로 무엇이든 생김 |
