@@ -211,7 +211,7 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
   </a>
 
   <a class="hlc-card" href="/homelab/service/">
-    <span class="hlc-shot" data-label="대기 화면 · 좌석 선택 화면"></span>
+    <img class="hlc-img" src="/assets/img/homelab/service-thumb.png" alt="왼쪽에 좌석 현황판과 예매 카드가 뜬 화면, 오른쪽에 대기 순번 2647번이 뜬 대기 화면">
     <span class="hlc-tag">서비스</span>
     <span class="hlc-title">대기열과 예매, 두 서비스</span>
     <span class="hlc-desc">전원이 한꺼번에 몰리는 티케팅입니다. 줄 세우는 queue(Go)와 표를 파는 booking(Spring)을 나누고, 둘을 Kafka로 이었습니다.</span>
