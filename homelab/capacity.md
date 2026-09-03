@@ -41,7 +41,7 @@ permalink: /homelab/capacity/
     <b>메모리가 인원을 따라 올랐습니다</b>(CPU 스로틀은 없음).<br>
     → 메모리: 2대 × 768Mi → <b>3대 × 2Gi</b> · 공개 때 앞에 선 <b>엣지가 방문자 연결을
     대신 받게</b> 됐습니다.<br>
-    → 이 판: <b>메모리 파드 최대 12%</b> · CPU 변화 없음 · <b>연결 최대 327</b> —
+    → 이 판: <b>메모리 파드 최대 12%</b> · <b>연결 최대 327</b> —
     대다수의 연결이 엣지에서 끝납니다.</figcaption>
   </figure>
   <figure class="hl-shot">
@@ -70,7 +70,7 @@ permalink: /homelab/capacity/
 <div class="hl-shots" markdown="0" aria-label="booking 대시보드 — 화살표로 넘겨 봅니다">
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/6.png" alt="booking 대시보드 행1 — 메모리·CPU·힙">
-    <figcaption><b>(행1 · booking 파드)</b> 힙(768Mi) 밖의 비힙 222Mi까지 합이 limit 1Gi에
+    <figcaption><b>(행1 · booking 파드)</b> 힙 768Mi에 비힙 222Mi가 더해져 limit 1Gi에
     닿아 <b>OOMKill 2회</b>, Kafka 소비 스레드 넷이 한 코어에 몰려 <b>스로틀 99.7%</b>.<br>
     → 메모리: 1Gi → <b>1,536Mi</b>(힙 768Mi 고정) · CPU: 1코어 → <b>2코어</b>.<br>
     → 이 판: 메모리 55% · <b>스로틀 0</b>.</figcaption>
@@ -78,7 +78,7 @@ permalink: /homelab/capacity/
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/7.png" alt="booking 대시보드 행2 — 커넥션 풀과 MySQL" loading="lazy">
     <figcaption><b>(행2 · 커넥션 풀 · MySQL)</b> 풀 대기가 <b>397건</b>인데 같은 시각
-    MySQL은 12% 유휴 — 병목은 DB가 아니라 <b>풀 10</b>이었습니다.<br>
+    MySQL CPU는 12% — 병목은 DB가 아니라 <b>풀 10</b>이었습니다.<br>
     → 풀: 10 → <b>30</b>.<br>
     → 이 판: 사용 최대 3 · <b>대기 0</b> · MySQL CPU 20%.</figcaption>
   </figure>
@@ -98,7 +98,7 @@ permalink: /homelab/capacity/
     <figcaption><b>(행1 · Redis)</b> 읽기·쓰기가 <b>master 한 대</b>로 가고, 명령 처리가
     <b>단일 스레드</b>라 코어를 더 줘도 하나만 씁니다 — CPU의 분모는 limit이 아니라
     <b>1코어</b>입니다.<br>
-    → 이 판: master <b>32%</b> · 명령 초당 호출은 오픈 봉우리에서만 튀고 · 메모리 여유 —
+    → 이 판: master <b>32%</b> · 명령 초당 호출은 오픈 봉우리에서만 증가 · 메모리 여유 —
     전부 선 안입니다.</figcaption>
   </figure>
   <figure class="hl-shot">
