@@ -29,7 +29,7 @@ permalink: /homelab/capacity/
 | CPU | 합격선 없음 | 차면 죽는 게 아니라 느려질 뿐 — 느려짐은 위의 지연 선이 잡음 | 각 대시보드의 CPU·스로틀 패널 — 판정이 아니라 진단용 |
 {:.hl-dec.hl-slo}
 
-## 데스크탑 부하테스트
+## 부하테스트(데스크탑)
 
 - **한도가 먼저 있습니다** — 파드 스펙은 노드 스펙(8GB · 4vCPU × 3대) 안에서만 올릴 수 있고, 생성기(데스크탑 WSL)는 10,000명이 상한입니다(1만 VU에 약 4코어·4GB)
 - **부하는 k6가 실제 여정 그대로 만듭니다** — 입장 → 대기 → 좌석 → 확정
@@ -37,25 +37,30 @@ permalink: /homelab/capacity/
   - **인원 1,000 → 10,000** (정원 2 고정) — k6가 여정을 도는 사람 수. 앞단(traefik · queue · Redis)이 여기 반응합니다
   - **정원 2 → 1,000** — 좌석 화면에 동시에 들여보내는 인원. `MAX_SESSIONS` 설정값을 바꿔 올리며, 뒷단(booking · MySQL)이 여기 반응합니다
 
-확정 스펙으로 같은 10,000명 판을 다시 돌린 화면입니다 — 행마다 **판 전 값 → 바꾼 값 →
-이 판의 실측**을 적고, 그 아래에 그때 부하가 드러낸 것을 한 줄로 남깁니다.
+부하를 10,000명까지 올리며 **합격선을 벗어난 자리만** 스펙을 올렸습니다. 아래는 그
+확정 스펙으로 돌린 판 — **인원 10,000 · 정원 1,000** — 의 화면이고, 캡션은
+문제 → 조치 → 이 판의 결과 순서입니다.
 
 <div class="hl-sub" markdown="0">queue(traefik) 대시보드</div>
 
 <div class="hl-shots" markdown="0" aria-label="queue 대시보드 — 화살표로 넘겨 봅니다">
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/1.png" alt="queue 대시보드 행1 — traefik 메모리·CPU·연결과 고루틴">
-    <figcaption><b>(행1 · traefik)</b> 2대 × 768Mi → <b>3대 × 2Gi</b> — 이 판: 연결 최대 327 ·
-    메모리 파드 최대 12% · 스로틀 0.<br>
-    엣지를 붙이기 전(직결)엔 연결이 사람 수만큼 열려 5,000명에 워킹셋이 limit의 86% —
-    메모리가 인원을 따라갔습니다. 지금은 그 연결을 엣지가 받습니다.</figcaption>
+    <figcaption><b>(행1 · traefik)</b> 직결로 받던 시절, 연결이 사람 수만큼 열려
+    <b>사람당 메모리 부하</b>가 쌓였습니다 — 고루틴·연결 수와 메모리가 같이 오르고,
+    CPU 스로틀은 없음.<br>
+    → 메모리를 2대 × 768Mi에서 <b>3대 × 2Gi</b>로 올렸고, 공개 때 앞에 선 <b>엣지가
+    방문자 연결을 대신 받게</b> 됐습니다.<br>
+    → 이 판: <b>메모리 파드 최대 12%</b> · CPU 변화 없음 · <b>연결 최대 327</b> —
+    10,000명의 연결이 엣지에서 끝납니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/2.png" alt="queue 대시보드 행2 — queue 메모리·CPU·스로틀" loading="lazy">
-    <figcaption><b>(행2 · queue)</b> CPU 500m → <b>1코어</b> — 이 판: 스로틀 0 · CPU 최대 28% ·
-    메모리 14%.<br>
-    500m에선 10,000명에서 스로틀 83% · Redis 연결 포기 초당 59건 — CPU가 잘리는 동안
-    빌린 연결을 못 돌려줘, 뒤따라온 요청이 포기했습니다.</figcaption>
+    <figcaption><b>(행2 · queue)</b> 연결·메모리 부담은 앞단(traefik·엣지)이 지고,
+    queue에는 <b>사람당 폴링 요청</b>이 옵니다 — 10,000명에서 CPU 몫을 다 써
+    <b>스로틀 83%</b>.<br>
+    → CPU 500m을 <b>1코어</b>로.<br>
+    → 이 판: <b>스로틀 0</b> · CPU 최대 28% · 메모리·고루틴은 인원과 무관하게 평평합니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/3.png" alt="queue 대시보드 행3 — 폴링 셋 지연 p99와 5xx" loading="lazy">
@@ -128,7 +133,7 @@ permalink: /homelab/capacity/
 둘의 답이 같았습니다 — **부하 생성기를 클라우드에 두는 것.** 서비스는 격리와 공개
 작업으로 이미 인터넷에 열려 있어, 옮기면 실사용자와 같은 경로에서 쏘게 됩니다.
 
-## 클라우드 부하테스트
+## 부하테스트(클라우드)
 
 Terraform으로 띄운 인스턴스(8vCPU · 16GB)에서 같은 스크립트를 쐈습니다 — 인원 10,000 ·
 정원 1,000 · 좌석 4,000. 판정부터:
