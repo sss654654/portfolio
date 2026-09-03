@@ -116,7 +116,7 @@ permalink: /homelab/security/
 
 ## 정한 것
 
-<div class="hl-sub" markdown="0">경계를 세우는 층</div>
+<div class="hl-sub" markdown="0">클러스터 밖 — 경계와 공개 경로</div>
 
 | 무엇을 | 고른 것 | 그렇게 한 이유 |
 |---|---|---|
@@ -126,15 +126,12 @@ permalink: /homelab/security/
 | 이름 | 한 도메인, **`ticket` 은 프록시 켬 · `vpn` 은 끔** | **프록시가 중계하는 것은 HTTP·HTTPS 뿐**<br>WireGuard 는 UDP 라 켜면 봉투가 엣지에서 버려진다. 같은 도메인에서 한쪽만 가려진다 |
 {:.hl-dec}
 
-<div class="hl-sub" markdown="0">그 안과 그 위</div>
+<div class="hl-sub" markdown="0">클러스터 안 — 통신과 인증서</div>
 
 | 무엇을 | 고른 것 | 그렇게 한 이유 |
 |---|---|---|
 | 파드 사이 | **NetworkPolicy 16줄** — 인그레스 6 · 이그레스 9 · 관측 | **경계를 세워도 안은 평평**<br>정책은 허용만 적을 수 있어 통로를 전수로 세야 한다. 데이터 계층만 잠갔던 앞선 판단이 앱 자신을 놓쳤다 — booking 에 닿는 쪽은 booking 을 거쳐 그 DB 자격을 쓴다 |
 | 인증서 | **Let's Encrypt · DNS-01 방식** | **포트를 열기 전에 받을 수 있다**<br>소유 확인 문자열을 DNS 에 올리는 방식. HTTP-01 은 80 을 먼저 열어야 해서, 인증서가 없는 상태로 문이 열려 있는 구간이 생긴다 |
-| 출발지 제한 자리 | **방화벽** — 인그레스가 아니라 | **인그레스가 볼 때는 이미 원래 주소가 아니다**<br>Traefik 의 Service 가 `externalTrafficPolicy: Cluster` 라, 요청이 다른 노드의 파드로 넘어가며 출발지가 노드 주소로 바뀐다 |
-| 데이터 계정 | **booking 을 root 에서 `cgv` 전용 계정으로** | **허용된 통로 끝에서 무엇을 할 수 있나**<br>정책이 booking → MySQL 을 열어 두므로 booking 이 잡히면 그 접속은 그대로 간다. root 는 `SHUTDOWN`·`FILE`·`CREATE USER` 를 포함한 40여 권한을 모든 DB 에 갖는데, 실제로 쓰는 것은 테이블 5개다 |
-| 남용 방지 | **앱 rate limit 안 넣음** | **몰리라고 만든 서비스**<br>요청 수로 보면 정상(1만 명이 한 번씩)·부하(한 대에서 1만 번)·남용이 같은 모양이다. 재는 축이 달라 값을 어떻게 잡아도 안 맞고, 엣지 뒤에서는 출발지가 엣지 주소로 뭉친다 — 좌석 오염은 주기 초기화가, 대량 트래픽은 엣지가 받는다 |
 {:.hl-dec}
 
 ## 트러블슈팅
