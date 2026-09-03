@@ -217,11 +217,10 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
   </a>
 
   <a class="hlc-card" href="/homelab/security/">
-    <span class="hlc-shot" data-label="OPNsense · 방화벽 규칙"></span>
+    <img class="hlc-img" src="/assets/img/homelab/security-thumb.png" alt="OPNsense 방화벽 규칙 목록과, 터널을 켠 폰에서 열린 Grafana 및 WireGuard 연결 화면">
     <span class="hlc-tag">격리와 공개</span>
-    <span class="hlc-title">열되, 열린 자리를 세어 두었다</span>
-    <span class="hlc-desc">공개하기 전에 클러스터를 방화벽 뒤 격리망으로 옮겼습니다. 관리 통로는 VPN 하나만 남기고, 안쪽도 통로를 지정해 잠갔습니다.</span>
-    <span class="hlc-num">인터넷에 열린 포트 2개 · 파드 간 통로 16줄</span>
+    <span class="hlc-title">방화벽 뒤로 격리하고 엣지로 공개</span>
+    <span class="hlc-desc">노드를 방화벽 뒤 격리망으로 옮겼습니다. 관리는 키로 심사하는 터널 하나로만 들어오고, 서비스는 엣지를 거친 것만 통과시킵니다.</span>
   </a>
 
   <a class="hlc-card" href="/homelab/capacity/">
