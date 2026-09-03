@@ -46,7 +46,7 @@ permalink: /homelab/capacity/
     → 메모리를 2대 × 768Mi에서 <b>3대 × 2Gi</b>로 올렸고, 공개 때 앞에 선 <b>엣지가
     방문자 연결을 대신 받게</b> 됐습니다.<br>
     → 이 판: <b>메모리 파드 최대 12%</b> · CPU 변화 없음 · <b>연결 최대 327</b> —
-    10,000명의 연결이 엣지에서 끝납니다.</figcaption>
+    대다수의 연결이 엣지에서 끝납니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/2.png" alt="queue 대시보드 행2 — queue 메모리·CPU·스로틀" loading="lazy">
