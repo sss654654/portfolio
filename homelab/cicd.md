@@ -56,7 +56,7 @@ permalink: /homelab/cicd/
     <rect x="0" y="4" width="11" height="9"/><rect x="4" y="0" width="11" height="9"/>
   </g>
   <text class="hla-t" x="84" y="306">레지스트리</text>
-  <text class="hla-s2" x="58" y="324"><tspan font-weight="700">dev-15-17dcc495</tspan> — 커밋마다 다른 이름</text>
+  <text class="hla-s2" x="58" y="324"><tspan font-weight="700">dev-15-17dcc495</tspan> — 태그</text>
 
   <rect class="hla-inner" x="420" y="210" width="292" height="122" rx="3"/>
   <text class="hla-t" x="434" y="232">cgv-infra</text>

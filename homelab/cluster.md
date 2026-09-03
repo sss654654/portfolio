@@ -8,7 +8,7 @@ permalink: /homelab/cluster/
 
 <p class="hl-back" markdown="0"><a href="/homelab/">← 홈랩</a></p>
 
-노트북 한 대에 RAM 32GB. 내장 Windows를 지우지 않은 채 세 노드가 그것을 나눠 씁니다.
+노트북 한 대에 RAM 32GB. 내장 Windows를 지우지 않은 채 세 노드가 나눠 씁니다.
 
 ## 클러스터 구조
 
@@ -82,7 +82,7 @@ permalink: /homelab/cluster/
   <text class="hla-c" x="402" y="338">내장 NVMe</text>
   <text class="hla-s2" x="402" y="355">Windows — 지우지 않았다</text>
 </svg>
-<figcaption>부팅 디스크를 무엇으로 고르느냐가 이 노트북이 서버인지 아닌지를 가릅니다.</figcaption>
+<figcaption>부팅 디스크를 무엇으로 고르느냐가 이 노트북이 서버인지를 가릅니다.</figcaption>
 </figure>
 
 ## 정한 것
