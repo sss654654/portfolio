@@ -28,7 +28,7 @@ permalink: /homelab/security/
        위 띠 = 사설 평면 192.168.0.x (공유기 아래부터 vmbr0 까지, 노트북 상자를 가로지른다)
        아래 띠 = 격리망 10.0.0.x (vmbr1 부터 k3s 까지, 노트북 안에만 있다)
        두 띠 사이 빈 자리에 OPNsense 가 선다 -->
-  <rect x="100" y="166" width="360" height="28" rx="6" fill="currentColor" opacity=".05"/>
+  <rect x="84" y="166" width="392" height="28" rx="6" fill="currentColor" opacity=".05"/>
 
   <!-- 층 1 · 인터넷 -->
   <text class="hla-zone" x="20" y="16">인터넷</text>
