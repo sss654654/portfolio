@@ -191,6 +191,10 @@ ul.timeline > li:has(> small)::before {
 .hla-num { fill: var(--gray-bg); stroke: var(--border-color); stroke-width: 1; }
 .hla-nt { font-size: 10px; font-weight: 700; fill: var(--body-color); text-anchor: middle; }
 
+/* 격리 카드 그림 — 통과 경로와 차단 경로를 같은 굵기로 그린다.
+   무엇이 어디서 버려지는지가 그 카드의 논지라 차단만 색으로 가른다. */
+.hla-x { font-size: 9.5px; fill: #e03131; }
+
 .hla-g { opacity: 0; animation: hl-rise .5s ease forwards; }
 .hla-g1 { animation-delay: .1s; }
 .hla-g2 { animation-delay: .35s; }
