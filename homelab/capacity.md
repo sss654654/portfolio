@@ -29,9 +29,6 @@ permalink: /homelab/capacity/
 - **부하는 k6가 실제 여정 그대로 만듭니다** — 입장 → 대기 → 좌석 → 확정
 - **점진 부하** — 인원 1,000 → 10,000, 정원(`MAX_SESSIONS` — queue가 동시에 입장시키는 인원) 2 → 1,000을 계단으로 올려, 최종은 **인원 10,000 · 정원 1,000**입니다
 
-판정은 대시보드 세 장(queue · booking · Redis/Kafka)을 행 단위로 넘기며 봅니다 —
-행 순서가 지표 종류가 아니라 **판정 순서**입니다.
-
 <div class="hl-sub" markdown="0">queue(traefik) 대시보드</div>
 
 <div class="hl-shots" markdown="0" aria-label="queue 대시보드 — 화살표로 넘겨 봅니다">
