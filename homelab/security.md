@@ -77,7 +77,7 @@ permalink: /homelab/security/
   <!-- 층 4 · OPNsense — 두 망의 경계선 y=330 위에 걸친다 -->
   <rect class="hla-wall" x="204" y="284" width="522" height="100" rx="6"/>
   <image href="/assets/img/icons/opnsense.svg" x="216" y="294" width="18" height="18"/>
-  <text class="hla-t" x="240" y="308">OPNsense VM — 두 망에 다 꽂힌 유일한 기계</text>
+  <text class="hla-t" x="240" y="308">OPNsense VM .210 — 두 망에 다 꽂힌 유일한 기계</text>
   <text class="hla-s2" x="216" y="330">443   Cloudflare 대역에서 온 것만 → .240</text>
   <text class="hla-x" x="470" y="330">✕ 공인 IP 로 직접 온 443 — 버린다</text>
   <text class="hla-s2" x="216" y="350">51820   등록된 키로 풀리는 것만 → 터널</text>
