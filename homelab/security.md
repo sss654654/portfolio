@@ -48,14 +48,13 @@ permalink: /homelab/security/
   <text class="hla-a" x="573" y="91">51820/UDP</text>
 
   <!-- 층 2 · 공유기 — 집의 경계 -->
-  <rect class="hla-box" x="20" y="106" width="720" height="54" rx="5"/>
-  <image href="/assets/img/icons/tplink.svg" x="32" y="116" width="18" height="18"/>
-  <text class="hla-t" x="56" y="124">공유기 — 집의 경계. 밖에 연 것은 포워딩 둘이 전부</text>
-  <text class="hla-s2" x="56" y="140">443/TCP · 51820/UDP → 192.168.0.210 (OPNsense)</text>
-  <text class="hla-x" x="56" y="154">✕ 그 밖의 포트는 버린다 — 밖에서 20개를 훑어 응답 0</text>
+  <rect class="hla-box" x="20" y="106" width="720" height="46" rx="5"/>
+  <image href="/assets/img/icons/tplink.svg" x="32" y="115" width="18" height="18"/>
+  <text class="hla-t" x="56" y="123">공유기 — 집의 경계. 밖에 연 것은 포워딩 둘이 전부</text>
+  <text class="hla-s2" x="56" y="143">443/TCP · 51820/UDP → 192.168.0.210 (OPNsense)</text>
 
-  <line class="hla-ln" x1="95" y1="160" x2="95" y2="200"/>
-  <line class="hla-ln" x1="465" y1="160" x2="465" y2="226" marker-end="url(#hlx-arrow)"/>
+  <line class="hla-ln" x1="95" y1="152" x2="95" y2="200"/>
+  <line class="hla-ln" x1="465" y1="152" x2="465" y2="226" marker-end="url(#hlx-arrow)"/>
 
   <!-- 층 3 · 사설 평면 — 데스크탑은 공유기에 직접, 노트북은 vmbr0 로 -->
   <text class="hla-zone" x="20" y="186">사설 평면 192.168.0.x</text>
