@@ -44,27 +44,32 @@ permalink: /homelab/capacity/
 
 <div class="hl-shots" markdown="0" aria-label="queue 대시보드 — 화살표로 넘겨 봅니다">
   <figure class="hl-shot">
-    <img src="/assets/img/homelab/cap/q-traefik.png" alt="queue 대시보드 행1 — traefik 메모리·CPU·연결과 고루틴">
+    <img src="/assets/img/homelab/cap/1.png" alt="queue 대시보드 행1 — traefik 메모리·CPU·연결과 고루틴">
     <figcaption><b>(행1 · traefik)</b> 2대 × 768Mi → <b>3대 × 2Gi</b> — 이 판: 연결 최대 327 ·
     메모리 파드 최대 12% · 스로틀 0.<br>
     엣지를 붙이기 전(직결)엔 연결이 사람 수만큼 열려 5,000명에 워킹셋이 limit의 86% —
     메모리가 인원을 따라갔습니다. 지금은 그 연결을 엣지가 받습니다.</figcaption>
   </figure>
   <figure class="hl-shot">
-    <img src="/assets/img/homelab/cap/q-queue.png" alt="queue 대시보드 행2 — queue 메모리·CPU·스로틀" loading="lazy">
+    <img src="/assets/img/homelab/cap/2.png" alt="queue 대시보드 행2 — queue 메모리·CPU·스로틀" loading="lazy">
     <figcaption><b>(행2 · queue)</b> CPU 500m → <b>1코어</b> — 이 판: 스로틀 0 · CPU 최대 28% ·
     메모리 14%.<br>
     500m에선 10,000명에서 스로틀 83% · Redis 연결 포기 초당 59건 — CPU가 잘리는 동안
     빌린 연결을 못 돌려줘, 뒤따라온 요청이 포기했습니다.</figcaption>
   </figure>
   <figure class="hl-shot">
-    <img src="/assets/img/homelab/cap/q-latency.png" alt="queue 대시보드 행3 — 폴링 셋 지연 p99와 5xx" loading="lazy">
+    <img src="/assets/img/homelab/cap/3.png" alt="queue 대시보드 행3 — 폴링 셋 지연 p99와 5xx" loading="lazy">
     <figcaption><b>(행3 · 지연)</b> 판정 행 — 이 판: 순번 조회 p99 0.04초 · enter 0.34초 ·
     5xx 0건. 합격선(입장 1초 · 정상 구간 0.5초) 안입니다.</figcaption>
   </figure>
   <figure class="hl-shot">
-    <img src="/assets/img/homelab/cap/q-flow.png" alt="queue 대시보드 행4 — 정원의 입출: 입장·회수·반환" loading="lazy">
-    <figcaption><b>(행4 · 정원의 입출)</b> 정원 2 → <b>1,000</b> — 이 판: 좌석 4,000 매진,
+    <img src="/assets/img/homelab/cap/4.png" alt="queue 대시보드 행4 — enter 호출 수와 지연" loading="lazy">
+    <figcaption><b>(행4 · enter)</b> 판정 행 — 이 판: 줄서기 요청(enter)의 p99 최대 0.34초,
+    통과선 1초 안입니다. 오픈 순간의 몰림이 봉우리로 보입니다.</figcaption>
+  </figure>
+  <figure class="hl-shot">
+    <img src="/assets/img/homelab/cap/5.png" alt="queue 대시보드 행5 — 정원의 입출: 입장·회수·반환과 발행 지연" loading="lazy">
+    <figcaption><b>(행5 · 정원의 입출)</b> 정원 2 → <b>1,000</b> — 이 판: 좌석 4,000 매진,
     입장 = 예매 완료 + 회수가 맞아떨어집니다.<br>
     정원 2로는 뒷단이 놀아 잴 수 없었고(뒷단 부하 = 확정/초 = 정원 ÷ 체류), 500에서도
     자원이 절반 아래라 1,000으로 — 마지막 구매자 대기가 7분 17초 → 3분 7초로 줄었습니다.</figcaption>
@@ -75,20 +80,20 @@ permalink: /homelab/capacity/
 
 <div class="hl-shots" markdown="0" aria-label="booking 대시보드 — 화살표로 넘겨 봅니다">
   <figure class="hl-shot">
-    <img src="/assets/img/homelab/cap/b-pod.png" alt="booking 대시보드 행1 — 메모리·CPU·힙">
+    <img src="/assets/img/homelab/cap/6.png" alt="booking 대시보드 행1 — 메모리·CPU·힙">
     <figcaption><b>(행1 · booking 파드)</b> 메모리 1Gi → <b>1,536Mi</b>(힙 768Mi 고정) ·
     CPU 1 → <b>2코어</b> — 이 판: 워킹셋 55% · 스로틀 0.<br>
     1Gi에선 힙+비힙 990Mi가 limit에 닿아 OOMKill 2회, 1코어에선 Kafka 소비 스레드 넷이
     몰려 스로틀 99.7%였습니다.</figcaption>
   </figure>
   <figure class="hl-shot">
-    <img src="/assets/img/homelab/cap/b-mysql.png" alt="booking 대시보드 행2 — 커넥션 풀과 MySQL" loading="lazy">
+    <img src="/assets/img/homelab/cap/7.png" alt="booking 대시보드 행2 — 커넥션 풀과 MySQL" loading="lazy">
     <figcaption><b>(행2 · 풀과 MySQL)</b> 풀 10 → <b>30</b> — 이 판: 사용 최대 3 · 대기 0 ·
     MySQL CPU 20%.<br>
     풀 10에선 대기 397건 — 같은 시각 MySQL은 12% 유휴. 병목은 DB가 아니라 풀이었습니다.</figcaption>
   </figure>
   <figure class="hl-shot">
-    <img src="/assets/img/homelab/cap/b-journey.png" alt="booking 대시보드 행3 — 여정 단계별 통과와 지연" loading="lazy">
+    <img src="/assets/img/homelab/cap/8.png" alt="booking 대시보드 행3 — 여정 단계별 통과와 지연" loading="lazy">
     <figcaption><b>(행3 · 여정)</b> 판정 행 — 이 판: 10,000명 전원 완주 · 5xx 0 ·
     단계별 p99 전부 선 안입니다.</figcaption>
   </figure>
@@ -98,12 +103,12 @@ permalink: /homelab/capacity/
 
 <div class="hl-shots" markdown="0" aria-label="Redis·Kafka 대시보드 — 화살표로 넘겨 봅니다">
   <figure class="hl-shot">
-    <img src="/assets/img/homelab/cap/rk-redis.png" alt="Redis·Kafka 대시보드 행1 — Redis master CPU와 명령별 호출">
+    <img src="/assets/img/homelab/cap/9.png" alt="Redis·Kafka 대시보드 행1 — Redis master CPU와 명령별 호출">
     <figcaption><b>(행1 · Redis)</b> 판정 행 — 이 판: master 32%. 명령 처리가 단일 스레드라
     분모는 limit이 아니라 1코어이고, 선(80%) 안입니다.</figcaption>
   </figure>
   <figure class="hl-shot">
-    <img src="/assets/img/homelab/cap/rk-kafka.png" alt="Redis·Kafka 대시보드 행2 — 승격→인증·확정→반환 전달 지연" loading="lazy">
+    <img src="/assets/img/homelab/cap/10.png" alt="Redis·Kafka 대시보드 행2 — 승격→인증·확정→반환 전달 지연" loading="lazy">
     <figcaption><b>(행2 · 전달)</b> 승격 100명/2초 → <b>25명/0.5초</b>(초당 상한 50은 그대로) —
     이 판: 승격→인증 p99 최대 0.94초(기준선 2초 안) · 확정→반환 0.1초.<br>
     100명 묶음 시절엔 정원 1,000의 오픈 직후 인증 지연이 4.97초 — 한 묶음이 한꺼번에
