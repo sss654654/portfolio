@@ -57,7 +57,7 @@ permalink: /homelab/security/
   <line class="hla-ln" x1="465" y1="152" x2="465" y2="226" marker-end="url(#hlx-arrow)"/>
 
   <!-- 층 3 · 사설 평면 — 데스크탑은 공유기에 직접, 노트북은 vmbr0 로 -->
-  <text class="hla-zone" x="20" y="186">사설 평면 192.168.0.x</text>
+  <text class="hla-zone" x="280" y="182" text-anchor="middle">사설 평면 192.168.0.x</text>
 
   <rect class="hla-box" x="20" y="200" width="152" height="70" rx="5"/>
   <text class="hla-t" x="32" y="220">데스크탑 .167</text>
