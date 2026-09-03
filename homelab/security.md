@@ -17,7 +17,7 @@ permalink: /homelab/security/
      격리망(vmbr1 부터)에만 바탕을 깔아 안팎이 글자 전에 갈리게 한다. OPNsense 는 그 바탕 바로 위 —
      두 망에 걸친 유일한 기계. 칸마다 글은 두 줄 — 통과 조건 한 줄, 버리는 것(✕) 한 줄. 떠 있는 라벨은 두지 않는다. -->
 <figure class="hl-diagram hl-diagram-lg" markdown="0">
-<svg viewBox="0 0 760 624" role="img" aria-label="인터넷에서 온 443은 Cloudflare를 거쳐, 51820은 직접 공유기에 닿고, 공유기는 그 둘만 노트북 안 OPNsense VM으로 넘긴다. OPNsense는 물리 NIC이 있는 vmbr0과 없는 vmbr1 두 브리지에 다 꽂힌 유일한 기계로, WAN으로 받은 443은 출발지가 Cloudflare 대역일 때만 목적지를 10.0.0.240으로 바꿔 LAN으로 넘기고, 51820은 WireGuard가 등록된 키로 풀었을 때만 넘긴다. 노드가 나가는 길은 배포와 감시와 인터넷만 허용하고 옛 평면의 나머지는 차단한다. 그 아래 바탕이 깔린 격리망에 k3s 3대가 있고, Traefik은 443에 예매 화면만 두며 파드 사이는 NetworkPolicy 16줄로 좁혀져 있다">
+<svg viewBox="0 0 760 628" role="img" aria-label="인터넷에서 온 443은 Cloudflare를 거쳐, 51820은 직접 공유기에 닿고, 공유기는 그 둘만 노트북 안 OPNsense VM으로 넘긴다. OPNsense는 물리 NIC이 있는 vmbr0과 없는 vmbr1 두 브리지에 다 꽂힌 유일한 기계로, WAN으로 받은 443은 출발지가 Cloudflare 대역일 때만 목적지를 10.0.0.240으로 바꿔 LAN으로 넘기고, 51820은 WireGuard가 등록된 키로 풀었을 때만 넘긴다. 노드가 나가는 길은 배포와 감시와 인터넷만 허용하고 옛 평면의 나머지는 차단한다. 그 아래 바탕이 깔린 격리망에 k3s 3대가 있고, Traefik은 443에 예매 화면만 두며 파드 사이는 NetworkPolicy 16줄로 좁혀져 있다">
   <defs>
     <marker id="hlx-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto">
       <path d="M0,0 L8,4 L0,8 z" fill="currentColor" opacity=".45"/>
@@ -29,8 +29,6 @@ permalink: /homelab/security/
        아래 띠 = 격리망 10.0.0.x (vmbr1 부터 k3s 까지, 노트북 안에만 있다)
        두 띠 사이 빈 자리에 OPNsense 가 선다 -->
   <rect x="100" y="166" width="360" height="28" rx="6" fill="currentColor" opacity=".05"/>
-  <rect x="196" y="370" width="538" height="232" rx="6" fill="currentColor" opacity=".05"/>
-  <text class="hla-zone" x="210" y="386">격리망 10.0.0.x — 물리 NIC 이 없다 · 노드만 산다</text>
 
   <!-- 층 1 · 인터넷 -->
   <text class="hla-zone" x="20" y="16">인터넷</text>
@@ -59,14 +57,14 @@ permalink: /homelab/security/
   <line class="hla-ln" x1="465" y1="152" x2="465" y2="226" marker-end="url(#hlx-arrow)"/>
 
   <!-- 층 3 · 사설 평면 — 데스크탑은 공유기에 직접, 노트북은 vmbr0 로 -->
-  <text class="hla-zone" x="280" y="182" text-anchor="middle">사설 평면 192.168.0.x — 데스크탑 · 호스트 · OPNsense WAN 이 한 평면</text>
+  <text class="hla-zone" x="280" y="182" text-anchor="middle">사설 평면 192.168.0.x</text>
 
   <rect class="hla-box" x="20" y="200" width="152" height="58" rx="5"/>
   <text class="hla-t" x="32" y="220">데스크탑 .167</text>
   <text class="hla-s2" x="32" y="237">GitLab · 레지스트리</text>
   <text class="hla-s2" x="32" y="251">kubeconfig</text>
 
-  <rect class="hla-outer" x="190" y="200" width="550" height="408" rx="8"/>
+  <rect class="hla-outer" x="190" y="200" width="550" height="412" rx="8"/>
   <image href="/assets/img/icons/proxmox.svg" x="200" y="208" width="16" height="16"/>
   <text class="hla-c" x="222" y="220">노트북 1대 · <tspan font-weight="700">Proxmox .200</tspan> — 아래는 전부 VM</text>
 
@@ -85,32 +83,31 @@ permalink: /homelab/security/
   <text class="hla-c" x="216" y="352">51820/UDP</text>
   <text class="hla-s2" x="290" y="352">WireGuard 가 키로 풂 → 안쪽 패킷이 10.0.0.x 행이면 넘김 · 안 풀리면 무응답</text>
 
-  <line class="hla-ln" x1="465" y1="364" x2="465" y2="394" marker-end="url(#hlx-arrow)"/>
+  <line class="hla-ln" x1="465" y1="364" x2="465" y2="400" marker-end="url(#hlx-arrow)"/>
 
-  <!-- 층 5 · 격리망 -->
-  <rect class="hla-inner" x="204" y="396" width="522" height="40" rx="4"/>
-  <text class="hla-t" x="216" y="413">vmbr1</text>
-  <text class="hla-s2" x="216" y="429">물리 NIC 이 없다 — 밖으로 가는 길은 위의 VM 뿐 · <tspan font-weight="700">OPNsense LAN 10.0.0.1</tspan></text>
-
-  <line class="hla-ln" x1="465" y1="436" x2="465" y2="450" marker-end="url(#hlx-arrow)"/>
+  <!-- 층 5 · 격리망 = vmbr1. 브리지 자체가 격리망이라 바탕을 깔고 클러스터를 그 안에 넣는다 -->
+  <rect x="204" y="402" width="522" height="200" rx="6" fill="currentColor" opacity=".05"/>
+  <rect class="hla-inner" x="204" y="402" width="522" height="200" rx="6"/>
+  <text class="hla-t" x="216" y="421">vmbr1 — 격리망 10.0.0.x</text>
+  <text class="hla-s2" x="216" y="437">물리 NIC 이 없다 — 밖으로 가는 길은 위의 VM 뿐 · <tspan font-weight="700">OPNsense LAN 10.0.0.1</tspan></text>
 
   <!-- k3s 클러스터 — 노드 셋을 감싼다. 카드1의 층 그림과 같은 꼴 -->
-  <rect class="hla-box" x="204" y="452" width="522" height="144" rx="5"/>
-  <image href="/assets/img/icons/kubernetes.svg" x="216" y="462" width="18" height="18"/>
-  <text class="hla-t" x="240" y="476">k3s 클러스터 — 셋 다 control-plane 겸 워커</text>
-  <text class="hla-s2" x="216" y="496"><tspan font-weight="700">MetalLB 10.0.0.240</tspan> → Traefik — 443 은 예매 화면 하나 · 80 은 터널 안에서만</text>
+  <rect class="hla-box" x="216" y="448" width="498" height="144" rx="5"/>
+  <image href="/assets/img/icons/kubernetes.svg" x="228" y="458" width="18" height="18"/>
+  <text class="hla-t" x="252" y="472">k3s 클러스터 — 셋 다 control-plane 겸 워커</text>
+  <text class="hla-s2" x="228" y="492"><tspan font-weight="700">MetalLB 10.0.0.240</tspan> → Traefik — 443 은 예매 화면 하나 · 80 은 터널 안에서만</text>
 
-  <rect class="hla-inner" x="216" y="508" width="160" height="44" rx="4"/>
-  <text class="hla-t" x="228" y="527">k3s-1</text>
-  <text class="hla-s2" x="228" y="544">10.0.0.11</text>
-  <rect class="hla-inner" x="386" y="508" width="160" height="44" rx="4"/>
-  <text class="hla-t" x="398" y="527">k3s-2</text>
-  <text class="hla-s2" x="398" y="544">10.0.0.12</text>
-  <rect class="hla-inner" x="556" y="508" width="160" height="44" rx="4"/>
-  <text class="hla-t" x="568" y="527">k3s-3</text>
-  <text class="hla-s2" x="568" y="544">10.0.0.13</text>
+  <rect class="hla-inner" x="228" y="504" width="150" height="44" rx="4"/>
+  <text class="hla-t" x="240" y="523">k3s-1</text>
+  <text class="hla-s2" x="240" y="540">10.0.0.11</text>
+  <rect class="hla-inner" x="390" y="504" width="150" height="44" rx="4"/>
+  <text class="hla-t" x="402" y="523">k3s-2</text>
+  <text class="hla-s2" x="402" y="540">10.0.0.12</text>
+  <rect class="hla-inner" x="552" y="504" width="150" height="44" rx="4"/>
+  <text class="hla-t" x="564" y="523">k3s-3</text>
+  <text class="hla-s2" x="564" y="540">10.0.0.13</text>
 
-  <text class="hla-s2" x="216" y="580">파드 사이   NetworkPolicy 16줄 · 적히지 않은 조합은 차단</text>
+  <text class="hla-s2" x="228" y="576">파드 사이 — NetworkPolicy 로 통로 16줄만 허용 · 나머지 차단</text>
 </svg>
 <figcaption>바탕이 깔린 띠가 평면 둘입니다 — 위가 사설 평면, 아래가 격리망. 그 사이에 선 VM 하나가
 브리지 둘을 잇고, vmbr1 에 물리 NIC 이 없어 노드가 밖으로 가는 길은 그것뿐입니다.</figcaption>
