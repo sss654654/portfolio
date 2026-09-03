@@ -49,10 +49,9 @@ permalink: /homelab/capacity/
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/2.png" alt="queue 대시보드 행2 — queue 메모리·CPU·스로틀" loading="lazy">
-    <figcaption><b>(행2 · queue)</b> 연결·메모리 부담은 앞단(traefik·엣지)이 지고,
-    queue에는 <b>사람당 폴링 요청</b>이 옵니다 — 10,000명에서 CPU 몫을 다 써
-    <b>스로틀 83%</b>.<br>
-    → CPU 500m을 <b>1코어</b>로.<br>
+    <figcaption><b>(행2 · queue)</b> queue에는 <b>사람당 폴링 요청</b>이 옵니다 —
+    10,000명에서 CPU 몫을 다 써 <b>스로틀 83%</b>.<br>
+    → CPU: 500m → <b>1코어</b>.<br>
     → 이 판: <b>스로틀 0</b> · CPU 최대 28% · 메모리·고루틴은 인원과 무관하게 평평합니다.</figcaption>
   </figure>
   <figure class="hl-shot">
