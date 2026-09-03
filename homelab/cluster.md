@@ -76,7 +76,7 @@ permalink: /homelab/cluster/
   <!-- 물리 디스크 — 부팅 디스크를 무엇으로 고르느냐가 이 노트북의 역할을 가른다 -->
   <rect class="hla-box" x="30" y="318" width="344" height="46" rx="5"/>
   <text class="hla-c" x="46" y="338">외장 USB SSD 1TB</text>
-  <text class="hla-s2" x="46" y="355">이 디스크로 부팅하면 서버 — 빠지면 내려간다</text>
+  <text class="hla-s2" x="46" y="355">부팅 디스크 — 빠지면 서버가 내려간다</text>
 
   <rect class="hla-inner hla-dash" x="386" y="318" width="344" height="46" rx="5"/>
   <text class="hla-c" x="402" y="338">내장 NVMe</text>
@@ -100,7 +100,7 @@ permalink: /homelab/cluster/
 
 | | 기본값 | 이 홈랩 | 그렇게 한 이유 |
 |---|---|---|---|
-| 배포판 | 표준 k8s — 컴포넌트를 따로 세움 | **k3s** — 단일 바이너리 | 컨트롤플레인이 가벼워야 8GB 노드에 서비스 몫이 남음. 대가는 넷이 함께 죽는 것 |
+| 배포판 | 표준 k8s — 컴포넌트를 따로 세움 | **k3s** — 단일 바이너리 | 컨트롤플레인이 가벼워야 8GB 노드에 서비스 몫이 남음. 대가는 한 프로세스라 함께 죽는 것 |
 | 파드 네트워크 | Flannel — 전달만 | **Calico** | 기본은 파드끼리 통신 가능 — 막는 NetworkPolicy가 Flannel에선 무효 |
 | 로드밸런서 | ServiceLB — 노드 IP를 빌림 | **MetalLB** `10.0.0.240-250` | 빌린 노드가 멈추면 주소도 사라짐 — 주소는 노드와 분리되어야 함 |
 | 인그레스 | k3s가 같이 깔아 주는 Traefik | **직접 올린 Traefik** | 공개 443과 관리 80을 나누려면 설정을 고쳐야 하는데, 재기동마다 원복 |
