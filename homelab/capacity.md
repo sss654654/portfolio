@@ -8,24 +8,24 @@ permalink: /homelab/capacity/
 
 <p class="hl-back" markdown="0"><a href="/homelab/">← 홈랩</a></p>
 
-앱 저장소(`cgv-onprem`)의 MR을 머지하면 클러스터에 파드로 자동 배포됩니다 — 다만 그 파드에
+앱 저장소(`cgv-onprem`)의 MR을 머지하면 클러스터에 자동 배포됩니다 — 다만 그 파드에
 적어 둔 정원·커넥션 풀·메모리 상한은 **재 보지 않은 값이었습니다.**
 
 ## 합격선(SLO)
 
 | 무엇 | 합격선 | 왜 이 값 | 어디서 재나 |
 |---|---|---|---|
-| 5xx | **0건** | 대기열은 기다리게 하는 서비스지, 실패시키는 서비스가 아님 | traefik과 앱 양쪽 — 프록시가 만든 5xx는 앱 지표에 미기록 |
-| 입장 경로 p99 | **1초** | 멈추면 눌린 건지 몰라 다시 누름 — 그 재시도가 그대로 추가 부하 | queue — enter 지연 (오픈 순간 몰림이 봉우리) |
+| 5xx | **0건** | 대기열은 기다리게 하는 서비스지 실패시키는 것이 아님 | traefik과 앱 양쪽 — 프록시가 만든 5xx는 앱 지표에 미기록 |
+| 입장 경로 p99 | **1초** | 멈추면 눌린 건지 몰라 다시 누름 — 그 재시도가 추가 부하 | queue — enter 지연 (오픈 순간 몰림이 봉우리) |
 | 폴링 p99 | **3초** | 프론트 폴링이 3초 주기 — 그보다 늦으면 다음 폴이 먼저 도착 | queue(순번·실황) · booking(좌석 현황판) — 폴링 응답 지연 |
 | 정상 구간 p99 | **0.5초** | 체감선이 아니라 회귀를 잡는 선 — 평시가 이전 판보다 나빠졌나 | 같은 지연 지표들 — 오픈 몰림을 지난 시간대만 |
-| 메모리 | **limit의 80%** | 수집이 15초 간격 — 그 사이에 튄 봉우리는 지표에 안 찍히니, 찍힌 값에 20% 여유를 둠 | 각 대시보드의 메모리 패널 (working_set / limit) |
+| 메모리 | **limit의 80%** | 수집이 15초 간격 — 그 사이에 튄 봉우리는 지표에 안 찍히니 찍힌 값에 20% 여유를 둠 | 각 대시보드의 메모리 패널 (working_set / limit) |
 | CPU | 합격선 없음 | 차면 죽는 게 아니라 느려질 뿐 — 느려짐은 위의 지연 선이 판정 | 각 대시보드의 CPU·스로틀 패널 — 판정이 아니라 진단용 |
 {:.hl-dec.hl-slo}
 
 ## 부하테스트(데스크탑)
 
-- **한도가 먼저 있습니다** — 노드 스펙(8GB · 4vCPU × 3대)에 따른 파드 스펙 제한, 데스크탑(WSL) 메모리에 따른 생성기 상한 10,000명
+- **한도가 먼저 있습니다** — 노드 스펙(8GB · 4vCPU × 3대)이 파드 스펙을, 데스크탑(WSL) 메모리가 생성기 상한 10,000명을 정합니다
 - **부하는 k6가 실제 여정 그대로 만듭니다** — 입장 → 대기 → 좌석 → 확정
 - **점진 부하** — 인원과 정원을 계단으로 올립니다
   - **인원 1,000 → 10,000** · **정원**(`MAX_SESSIONS` — queue가 동시에 입장시키는 인원) **2 → 1,000**
@@ -39,8 +39,7 @@ permalink: /homelab/capacity/
     <b>메모리가 인원을 따라 올랐습니다</b>(CPU 스로틀은 없음).<br>
     → 메모리: 2대 × 768Mi → <b>3대 × 2Gi</b> · 공개 때 앞에 선 <b>엣지가 방문자 연결을
     대신 받게</b> 됐습니다.<br>
-    → 이 판: <b>메모리 파드 최대 12%</b> · <b>연결 최대 327</b> —
-    대다수의 연결이 엣지에서 끝납니다.</figcaption>
+    → 이 판: <b>메모리 파드 최대 12%</b> · <b>연결 최대 327</b> — 대다수가 엣지에서 끝납니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/2.png" alt="queue 대시보드 행2 — queue 메모리·CPU·스로틀" loading="lazy">
@@ -51,7 +50,7 @@ permalink: /homelab/capacity/
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/3.png" alt="queue 대시보드 행3 — 폴링 셋 지연 p99와 5xx" loading="lazy">
-    <figcaption><b>(행3 · 폴링)</b> 홈 화면(좌석 현황판 · 실황)과 대기 화면(순번)의 폴링
+    <figcaption><b>(행3 · 폴링)</b> 홈 화면(좌석 현황판 · 실황)과 대기 화면(순번)의
     지연입니다 — 합격선은 <b>폴링 3초</b>(프론트 주기)와 <b>정상 구간 0.5초</b>.<br>
     → 이 판: 순번 0.04초 · 실황 0.04초 · 좌석 현황판 0.02초 · <b>5xx 0건</b> — 전부 선 안입니다.</figcaption>
   </figure>
@@ -102,14 +101,14 @@ permalink: /homelab/capacity/
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/10.png" alt="Redis·Kafka 대시보드 행2 — 승격→인증·확정→반환 전달 지연" loading="lazy">
     <figcaption><b>(행2 · 전달)</b> 두 서비스는 Kafka로만 잇습니다 — 승격→인증(queue → booking) ·
-    확정→반환(booking → queue)의 전달 지연을 봅니다. 승격이 <b>100명 묶음</b>으로 나가면
-    묶음 맨 뒤가 앞 99명을 기다려, 오픈 직후 인증 지연이 <b>2.5–5초 구간</b>이었습니다.<br>
+    확정→반환(booking → queue)의 지연을 봅니다. 승격이 <b>100명 묶음</b>으로 나가면
+    맨 뒤가 앞 99명을 기다려, 오픈 직후 인증 지연이 <b>2.5–5초 구간</b>이었습니다.<br>
     → 승격: 100명/2초 → <b>25명/0.5초</b> — 초당 상한(50명)은 그대로, 묶음만 4분의 1.<br>
     → 이 판: 승격→인증 <b>1초 아래</b> · 확정→반환 0.1초.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/11.png" alt="Tempo trace — 확정 요청 하나가 booking·Kafka·queue를 지나는 span 21개와 같은 trace_id의 queue 로그" loading="lazy">
-    <figcaption><b>(trace · 확정→반환)</b> 대시보드는 전달 지연의 합만 보여줍니다 — 어느 구간이
+    <figcaption><b>(trace · 확정→반환)</b> 대시보드는 합만 보여줍니다 — 어느 구간이
     얼마인지는 앱에 넣은 trace로 봅니다.<br>
     → 확정 요청 하나(<code>POST /api/bookings</code> 397ms · span 21 · 서비스 2): booking 안 Redis 호출
     <b>182ms</b> · Kafka 발행 <b>96ms</b> · queue 소비 <b>14ms</b>.<br>
