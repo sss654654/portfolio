@@ -41,11 +41,11 @@ permalink: /homelab/cicd/
 
   <rect class="hla-inner" x="48" y="148" width="330" height="120" rx="4"/>
   <text class="hla-c" x="60" y="166">GitLab Runner</text>
-  <text class="hla-t" x="60" y="186">check</text><text class="hla-s2" x="124" y="186">gitleaks · trivy fs · go vet · SpotBugs</text>
+  <text class="hla-t" x="60" y="186">check</text><text class="hla-s2" x="124" y="186">비밀값 · 의존성 취약점 · 정적 분석</text>
   <text class="hla-t" x="60" y="204">test</text><text class="hla-s2" x="124" y="204">동시 50 요청에도 입장 정원 유지 · 좌석 정규화</text>
   <text class="hla-t" x="60" y="222">build</text><text class="hla-s2" x="124" y="222">서비스마다 멀티스테이지 Dockerfile</text>
-  <text class="hla-t" x="60" y="240">scan</text><text class="hla-s2" x="124" y="240">trivy image — 수정판이 있는 것만 막음</text>
-  <text class="hla-t" x="60" y="258">publish</text><text class="hla-s2" x="124" y="258">dev 브랜치에서만 job 이 생김</text>
+  <text class="hla-t" x="60" y="240">scan</text><text class="hla-s2" x="124" y="240">이미지 취약점 — 수정판이 있는 것만</text>
+  <text class="hla-t" x="60" y="258">publish</text><text class="hla-s2" x="124" y="258">레지스트리에 올림 — dev 브랜치에서만</text>
 
   <line class="hla-ln-img" x1="140" y1="268" x2="140" y2="282" marker-end="url(#hlm-i)" fill="none"/>
   <circle class="hla-num" cx="164" cy="275" r="9"/><text class="hla-nt" x="164" y="279">2</text>
