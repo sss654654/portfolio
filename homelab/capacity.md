@@ -37,43 +37,36 @@ permalink: /homelab/capacity/
   - **인원 1,000 → 10,000** (정원 2 고정) — k6가 여정을 도는 사람 수. 앞단(traefik · queue · Redis)이 여기 반응합니다
   - **정원 2 → 1,000** — 좌석 화면에 동시에 들여보내는 인원. `MAX_SESSIONS` 설정값을 바꿔 올리며, 뒷단(booking · MySQL)이 여기 반응합니다
 
-<div class="hl-sub" markdown="0">앞단 — 인원을 올려 잰다 (10,000명 부하)</div>
+정원부터 정했습니다. 초기값 2로는 뒷단이 놀아 잴 수가 없습니다 — 뒷단 부하는
+확정/초 = 정원 ÷ 체류가 정하니까요. 500까지 올려도 booking·MySQL이 한도의 절반
+아래라 **1,000으로 확정**했습니다. 올려서 좋아지는 것은 대기 시간(마지막 구매자
+7분 17초 → 3분 7초)이고, 상한은 자원이 아니라 좌석 4,000입니다.
 
-| 값 · 판 전 | 부하가 드러낸 것 | 왜 그런가 |
-|---|---|---|
-| queue CPU · 500m | 10,000명에서 스로틀 83% · Redis 연결 포기 초당 59건 | CPU가 잘리는 동안 queue가 빌린 연결을 못 돌려줘, 뒤따라온 요청이 포기함 |
-{:.hl-dec}
-
-<div class="hl-sub" markdown="0">뒷단 — 정원을 올려 잰다 (2 → 1,000)</div>
-
-| 값 · 판 전 | 부하가 드러낸 것 | 왜 그런가 |
-|---|---|---|
-| 정원 · 2 | 2로는 뒷단이 놀아 잴 수가 없음 — 500까지 올려도 booking·MySQL이 한도의 절반 아래 | 뒷단 부하 = 확정/초 = 정원 ÷ 체류. 올리면 같은 좌석을 더 빨리 팔아 대기만 줄고, 상한은 자원이 아니라 좌석 4,000 |
-| booking 메모리 · 1Gi | OOMKill 2회 | 힙 768Mi 밖에서 JVM이 비힙 222Mi를 더 써, 합 990Mi가 limit 1Gi에 닿음 |
-| booking CPU · 1코어 | 정원 500 판에서 스로틀 99.7% | Kafka를 읽는 소비 스레드 넷이 코어 하나에 몰림 |
-| DB 커넥션 풀 · 10 | 풀 대기 397건 | 풀이 좁아 대기가 쌓임 — 같은 시각 MySQL CPU는 12%로, 병목은 DB가 아니라 풀 |
-| 승격 · 100명 / 2초 | 정원 1,000의 오픈 직후, 입장 인증 지연 4.97초 | 100명이 한 묶음으로 도착해 booking의 인증 소비가 밀림 |
-{:.hl-dec}
-
-올린 값들 — **정원 1,000 · queue 1코어 · booking 2코어/1,536Mi(힙 768Mi 고정) ·
-풀 30 · 승격 25명/0.5초** — 로 같은 10,000명 판을 다시 돌린 화면입니다.
+나머지 값들은 판이 무너뜨린 자리에서 바뀌었습니다. 아래는 **확정 스펙으로 같은
+10,000명 판을 다시 돌린 화면**이고, 캡션에 판 전 값과 그때 부하가 드러낸 것을 함께 적습니다.
 
 <div class="hl-shots" markdown="0" aria-label="데스크탑 판 대시보드 — 화살표로 넘겨 봅니다">
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/d-queue.png" alt="데스크탑 판 — queue(traefik) 대시보드" loading="lazy">
-    <figcaption><b>(queue)</b> queue CPU를 1코어로 올린 뒤 — 스로틀 0 · CPU 최대 28% ·
-    Redis 연결 포기 0. enter p99 최대 0.34초 · 순번 조회 0.04초, 전부 선 안입니다.</figcaption>
+    <figcaption><b>(queue)</b> CPU 500m → <b>1코어</b> — 이 판 실측: 스로틀 0 ·
+    CPU 최대 28% · enter p99 0.34초 · 순번 조회 0.04초.<br>
+    500m 시절엔 10,000명에서 스로틀 83% · Redis 연결 포기 초당 59건 — CPU가 잘리는
+    동안 빌린 연결을 못 돌려줘, 뒤따라온 요청이 포기했습니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/d-booking.png" alt="데스크탑 판 — booking 대시보드" loading="lazy">
-    <figcaption><b>(booking)</b> 1,536Mi(힙 768Mi 고정) · 2코어 · 풀 30으로 올린 뒤 —
-    워킹셋 55% · 스로틀 0 · 풀 사용 최대 3에 대기 0 · 5xx 0. 정원 1,000이
-    좌석 4,000을 소진시킵니다(매진).</figcaption>
+    <figcaption><b>(booking)</b> 메모리 1Gi → <b>1,536Mi</b>(힙 768Mi 고정) · CPU 1 → <b>2코어</b> ·
+    풀 10 → <b>30</b> — 이 판 실측: 워킹셋 55% · 스로틀 0 · 풀 사용 최대 3에 대기 0 ·
+    5xx 0 · 좌석 4,000 매진.<br>
+    판 전 값들에서는 — 힙+비힙 990Mi가 limit 1Gi에 닿아 OOMKill 2회, Kafka 소비 스레드
+    넷이 한 코어에 몰려 스로틀 99.7%, 풀 10에 대기 397건(같은 시각 MySQL은 12% 유휴)이 났습니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/d-rk.png" alt="데스크탑 판 — Redis·Kafka 대시보드" loading="lazy">
-    <figcaption><b>(Redis · Kafka)</b> 승격을 25명/0.5초로 쪼갠 뒤 — 승격→인증 p99 최대
-    0.94초(기준선 2초 안) · 확정→반환 0.1초. Redis master는 32%입니다.</figcaption>
+    <figcaption><b>(Redis · Kafka)</b> 승격 100명/2초 → <b>25명/0.5초</b>(초당 상한 50은 그대로) —
+    이 판 실측: 승격→인증 p99 최대 0.94초(기준선 2초 안) · 확정→반환 0.1초 · Redis master 32%.<br>
+    100명 묶음 시절엔 정원 1,000의 오픈 직후 인증 지연이 4.97초였습니다 — 한 묶음이
+    한꺼번에 도착해 booking의 소비가 밀린 것입니다.</figcaption>
   </figure>
 </div>
 
@@ -126,26 +119,6 @@ Terraform으로 띄운 인스턴스(8vCPU · 16GB)에서 같은 스크립트를 
 데스크탑에서 쏘면 10,000명분 연결이 공유기 하나를 지나며 눌립니다 — 연결 실패의 범인(공유기)과
 **서버에 닿는 부하가 24% 깎이는 것**이 이 대조로 확정됐습니다. 실사용자는 각자의
 회선에서 오므로, 실물에 가까운 값은 클라우드 쪽입니다.
-
-<div class="hl-shots" markdown="0" aria-label="클라우드 판 대시보드 — 화살표로 넘겨 봅니다">
-  <figure class="hl-shot">
-    <img src="/assets/img/homelab/cap/c-queue.png" alt="클라우드 판 — queue(traefik) 대시보드" loading="lazy">
-    <figcaption><b>(queue)</b> 부하가 제 크기로 닿은 판 — 오픈 순간 초당 1,590 요청.
-    traefik은 연결 최대 458 · 메모리 파드 최대 23%, queue는 스로틀 0 · CPU 31%.
-    순번 조회 p99 최대 0.93초로 선 안입니다.</figcaption>
-  </figure>
-  <figure class="hl-shot">
-    <img src="/assets/img/homelab/cap/c-booking.png" alt="클라우드 판 — booking 대시보드" loading="lazy">
-    <figcaption><b>(booking)</b> 워킹셋 54% · CPU 최대 57% · 풀 사용 최대 14에 대기 0 ·
-    5xx 0 — 데스크탑 판보다 전부 높지만 선 안입니다.</figcaption>
-  </figure>
-  <figure class="hl-shot">
-    <img src="/assets/img/homelab/cap/c-rk.png" alt="클라우드 판 — Redis·Kafka 대시보드" loading="lazy">
-    <figcaption><b>(Redis · Kafka)</b> 같은 조치인데 승격→인증이 오픈 순간 p99 9.3초
-    (순간 최대 19.7초) — 데스크탑 판의 0.94초가 제 부하에서 다시 선을 넘습니다.
-    3분 뒤 0.1초대로 안착하고, Redis master는 34%입니다.</figcaption>
-  </figure>
-</div>
 
 선 밖으로 남은 것은 하나 — 오픈 순간의 승격→인증 지연입니다.
 
