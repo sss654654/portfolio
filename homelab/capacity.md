@@ -73,21 +73,23 @@ permalink: /homelab/capacity/
 <div class="hl-shots" markdown="0" aria-label="booking 대시보드 — 화살표로 넘겨 봅니다">
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/6.png" alt="booking 대시보드 행1 — 메모리·CPU·힙">
-    <figcaption><b>(행1 · booking 파드)</b> 메모리 1Gi → <b>1,536Mi</b>(힙 768Mi 고정) ·
-    CPU 1 → <b>2코어</b> — 이 판: 워킹셋 55% · 스로틀 0.<br>
-    1Gi에선 힙+비힙 990Mi가 limit에 닿아 OOMKill 2회, 1코어에선 Kafka 소비 스레드 넷이
-    몰려 스로틀 99.7%였습니다.</figcaption>
+    <figcaption><b>(행1 · booking 파드)</b> 힙(768Mi) 밖의 비힙 222Mi까지 합이 limit 1Gi에
+    닿아 <b>OOMKill 2회</b>, Kafka 소비 스레드 넷이 한 코어에 몰려 <b>스로틀 99.7%</b>.<br>
+    → 메모리: 1Gi → <b>1,536Mi</b>(힙 768Mi 고정) · CPU: 1코어 → <b>2코어</b>.<br>
+    → 이 판: 워킹셋 55% · <b>스로틀 0</b>.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/7.png" alt="booking 대시보드 행2 — 커넥션 풀과 MySQL" loading="lazy">
-    <figcaption><b>(행2 · 풀과 MySQL)</b> 풀 10 → <b>30</b> — 이 판: 사용 최대 3 · 대기 0 ·
-    MySQL CPU 20%.<br>
-    풀 10에선 대기 397건 — 같은 시각 MySQL은 12% 유휴. 병목은 DB가 아니라 풀이었습니다.</figcaption>
+    <figcaption><b>(행2 · 커넥션 풀 · MySQL)</b> 풀 대기가 <b>397건</b>인데 같은 시각
+    MySQL은 12% 유휴 — 병목은 DB가 아니라 <b>풀 10</b>이었습니다.<br>
+    → 풀: 10 → <b>30</b>.<br>
+    → 이 판: 사용 최대 3 · <b>대기 0</b> · MySQL CPU 20%.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/8.png" alt="booking 대시보드 행3 — 여정 단계별 통과와 지연" loading="lazy">
-    <figcaption><b>(행3 · 여정)</b> 판정 행 — 이 판: 10,000명 전원 완주 · 5xx 0 ·
-    단계별 p99 전부 선 안입니다.</figcaption>
+    <figcaption><b>(행3 · 여정)</b> 입장한 사람이 회차 → 좌석 → 선점 → 확정을 지나는
+    단계별 통과 수와 지연입니다 — 어디서 떨어지는지가 여기서 보입니다.<br>
+    → 이 판: <b>10,000명 전원 완주</b> · 5xx 0 · 단계별 p99 최대 0.25초, 전부 선 안입니다.</figcaption>
   </figure>
 </div>
 
