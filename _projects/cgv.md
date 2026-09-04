@@ -29,24 +29,24 @@ CJ 올리브네트웍스 클라우드웨이브 6기(2025.06–09)에서 5인이 
 
 | 무엇을 | 어떻게 | 그렇게 한 이유 |
 |---|---|---|
-| 인프라 정의 | **Terraform** — `destroy → apply`로 다시 세움 | 손으로 만들면 재현이 안 되고 설정 근거가 어디에도 안 남음 |
-| 서브넷 인터넷 경로 | **Public 양방향 · EKS 나가는 것만 · GitLab·DB 없음** | 소스 저장소와 DB가 같은 VPC에 있어, 서브넷마다 필요한 만큼만 열어야 함 |
-| ECR 트래픽 | **`ecr.api`·`ecr.dkr` 엔드포인트를 서브넷마다** | 하나만 두면 인증은 되는데 pull이 NAT로 샘 · 인터페이스 엔드포인트는 서브넷 단위로 ENI를 만듦 |
-| NAT Gateway | **2a 하나만** — 2c 라우트도 여기로 | 시간당 요금 절반 · 대가는 2a 장애 시 2c 아웃바운드도 끊김 — 개발 환경이라 비용을 택함 |
-| 원격 state | **S3 + DynamoDB**, 별도 디렉터리 | 저장소 자신이 state에 들어가면 순환 · backend 블록은 변수를 못 받아 partial config로 |
-| 대기열 상태 | **Redis Sorted Set 둘** — waiting(상한 없음) · active(Pod 수 기반 정원) | score를 요청 시각으로 두면 도착 순서가 유지되고 순위 조회가 빠름 · 용량 통제는 active가 맡음 |
-| 승격 | **2초 주기 프로세서** — 빈 자리만큼 앞에서부터 | 정원이 비는 즉시가 아니라 주기로 옮겨야 Redis 왕복이 요청마다 늘지 않음 |
-| 승격 통지 | **Kinesis** — WebSocket + 폴링 이중 | 승격을 놓치면 예매 화면에 못 들어감 — 24시간 재처리 보존, 연결이 끊겨도 폴링이 받음 |
+| 인프라 정의 | **Terraform** — `destroy → apply`로 다시 세움 | 손으로 만들면 재현 불가 · 설정 근거도 어디에도 안 남음 |
+| 서브넷 인터넷 경로 | **Public 양방향 · EKS 나가는 것만 · GitLab·DB 없음** | 소스 저장소와 DB가 같은 VPC — 서브넷마다 필요한 만큼만 개방 |
+| ECR 트래픽 | **`ecr.api`·`ecr.dkr` 엔드포인트를 서브넷마다** | 하나만 두면 인증은 되는데 pull이 NAT로 샘 · 인터페이스 엔드포인트는 서브넷 단위 ENI |
+| NAT Gateway | **2a 하나만** — 2c 라우트도 여기로 | 시간당 요금 절반 · 대가는 2a 장애 시 2c 아웃바운드 단절 — 개발 환경이라 비용 우선 |
+| 원격 state | **S3 + DynamoDB**, 별도 디렉터리 | 저장소 자신이 state에 들어가면 순환 · backend 블록은 변수를 못 받아 partial config |
+| 대기열 상태 | **Redis Sorted Set 둘** — waiting(상한 없음) · active(Pod 수 기반 정원) | score가 요청 시각이라 도착 순서 유지 · 순위 조회도 빠름 — 용량 통제는 active 담당 |
+| 승격 | **2초 주기 프로세서** — 빈 자리만큼 앞에서부터 | 정원이 비는 즉시가 아니라 주기로 옮겨야 Redis 왕복이 요청마다 안 늘어남 |
+| 승격 통지 | **Kinesis** — WebSocket + 폴링 이중 | 승격을 놓치면 예매 화면 진입 불가 — 24시간 재처리 보존, 연결이 끊겨도 폴링이 수신 |
 {:.hl-dec}
 
 ## 트러블슈팅
 
 | 증상 | 원인 | 조치 |
 |---|---|---|
-| Consumer 폴링에 `ProvisionedThroughputExceededException` **반복** | 샤드 1개(읽기 초당 5회)를 Pod마다 폴링 → Pod 6개에서 한도 초과 · Consumer가 0번 샤드만 읽어 증설로는 안 풀림 | Pod 순번으로 샤드를 라운드로빈 분배, 샤드별 스레드로 소비 — 필요 샤드 = Pod 10 × 초당 1회 ÷ 샤드당 5회 = **2개** |
-| Pod의 Kinesis 접근이 `AccessDeniedException` — **EC2 노드 역할**로 접근 중 | 서비스 계정 annotation과 신뢰 관계는 정상 — `pom.xml`에 `spring-cloud-aws-starter`가 없어 IRSA 환경변수를 안 읽음 | 의존성 추가 |
-| 인증서를 ACM에 올리고 Client VPN 연결 시 **TLS 핸드셰이크 실패** | 서버 인증서 CN이 `server` 같은 비FQDN이라 ACM이 도메인을 인식 못 함 | Easy-RSA PKI 재구성, FQDN CN으로 재발급 |
-| `destroy → apply` 뒤 GitLab 인스턴스에 **빈 볼륨** | `root_block_device` 인라인 정의라 볼륨이 인스턴스 수명주기에 묶임 — 기존 볼륨은 살아 있었지만 새 인스턴스가 물지 않음 | 독립 `aws_ebs_volume` + `terraform import` + `aws_volume_attachment`로 분리 |
+| Consumer 폴링에 `ProvisionedThroughputExceededException` **반복** | 샤드 1개(읽기 초당 5회)를 Pod마다 폴링 → Pod 6개에서 한도 초과 · Consumer가 0번 샤드만 읽어 증설로도 해소 불가 | Pod 순번으로 샤드를 라운드로빈 분배, 샤드별 스레드로 소비 — 필요 샤드 = Pod 10 × 초당 1회 ÷ 샤드당 5회 = **2개** |
+| Pod의 Kinesis 접근이 `AccessDeniedException` — **EC2 노드 역할**로 접근 중 | 서비스 계정 annotation과 신뢰 관계는 정상 — `pom.xml`에 `spring-cloud-aws-starter`가 없어 IRSA 환경변수 미인식 | 의존성 추가 |
+| 인증서를 ACM에 올리고 Client VPN 연결 시 **TLS 핸드셰이크 실패** | 서버 인증서 CN이 `server` 같은 비FQDN이라 ACM이 도메인 인식 불가 | Easy-RSA PKI 재구성, FQDN CN으로 재발급 |
+| `destroy → apply` 뒤 GitLab 인스턴스에 **빈 볼륨** | `root_block_device` 인라인 정의라 볼륨이 인스턴스 수명주기에 종속 — 기존 볼륨은 살아 있는데 새 인스턴스가 미연결 | 독립 `aws_ebs_volume` + `terraform import` + `aws_volume_attachment`로 분리 |
 {:.hl-tbl}
 
 ## 결과

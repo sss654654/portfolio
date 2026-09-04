@@ -43,7 +43,7 @@ LevelDB는 Google이 만든 임베디드 key-value 저장소입니다.
 <img src="/assets/img/projects/leveldb-lru.png" alt="ShardedLRUCache — key의 상위 해시 비트로 16개 샤드 중 하나를 고르고, 샤드 하나 안에서 같은 LRUHandle이 해시테이블(버킷 체인)과 이중 연결 리스트에 동시에 걸린다. 리스트는 lru_(refs=1, evict 후보)와 in_use_(refs≥2, evict 보호) 둘로 나뉜다">
 </figure>
 
-- **16개 샤드에 독립 락** — 락이 하나면 모든 조회가 줄을 서는데, 샤드를 쪼개면 서로 다른 키는 동시에 조회됩니다
+- **16개 샤드에 독립 락** — 락이 하나면 모든 조회가 순차 대기하는데, 샤드를 쪼개면 서로 다른 키는 동시에 조회됩니다
 - **한 노드로 조회와 순서를 함께** — 같은 `LRUHandle`을 해시테이블과 이중 연결 리스트에 동시에 걸어, 자료구조 둘이 필요한 일을 하나로 합니다
 - **`refs`로 use-after-free 차단** — eviction은 `lru_`(refs=1)만 훑고 `in_use_`(refs≥2)는 건드리지 않아, 쓰는 중인 블록은 해제되지 않습니다
 
@@ -51,7 +51,7 @@ LevelDB는 Google이 만든 임베디드 key-value 저장소입니다.
 
 인덱스 캐시는 개수만, 블록 캐시는 크기만 독립 변수로 두고 세 워크로드의 latency를 쟀습니다.
 워크로드가 갈리는 기준은 **워킹셋 크기**입니다 —
-readrandom(전체 key 무작위) · seekrandom(모든 레벨을 훑어 가장 큼) · readhot(1%만 반복해 가장 작음).
+readrandom(전체 key 무작위) · seekrandom(모든 레벨을 탐색해 가장 큼) · readhot(1%만 반복해 가장 작음).
 환경은 EC2 t2.micro · key 16B · value 100B · fillrandom 100MB.
 
 | 변수 | readrandom | seekrandom | readhot |
