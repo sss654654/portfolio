@@ -5,7 +5,7 @@ sitemap: true
 ---
 
 그 위에 CI/CD · 모니터링 · 방화벽을 직접 구성했고, 1만 명 부하 테스트를 에러 없이 통과했습니다.
-회사에서는 k3s 모니터링 구축을, 부트캠프에서는 AWS 네트워크(Terraform)와 대기열 백엔드를 맡았습니다.
+회사에서는 k3s 모니터링 구축을, 부트캠프에서는 AWS 개발계 구축과 대기열 백엔드를 맡았습니다.
 {:.lead}
 
 [이력서 PDF](/assets/subinhong-resume.pdf) · [홈랩](/homelab/) · [프로젝트](/projects/) · [블로그](https://zed6740.tistory.com/category/HomeLab)
