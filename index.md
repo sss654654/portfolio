@@ -8,9 +8,12 @@ sitemap: true
 회사에서는 k3s 모니터링을 구축했고, 부트캠프에서는 대기열 백엔드를 맡아 AWS에 개발계를 구성해 배포했습니다.
 {:.lead}
 
-[이력서 PDF](/assets/subinhong-resume.pdf) · [홈랩](/homelab/) · [프로젝트](/projects/) · [블로그](https://zed6740.tistory.com/category/HomeLab)
+* [이력서 PDF](/assets/subinhong-resume.pdf) — 2장
+* [홈랩](/homelab/) — 클러스터 구축부터 CI/CD · 모니터링 · 방화벽 · 부하 테스트까지, 여섯 장
+* [프로젝트](/projects/) — 회사 모니터링 구축 · 부트캠프 AWS 대기열 시스템 · 학부 연구
+* [블로그](https://zed6740.tistory.com/category/HomeLab) — 홈랩 구축 기록 21편
 
-## 홈랩
+## 운영 중인 서비스
 
 <!-- 시연 영상 — 무음 자동 재생 루프, 브라우저 창 목업 프레임. 영상 클릭과 아래 버튼 둘 다 실서비스로 이동
      (hover 시 demo-shot::before 배지가 이동 대상임을 알린다). 심야(서비스 꺼짐)에도 이 영상이 데모를 대신한다.

@@ -36,6 +36,10 @@ ul.timeline > li::before {
   background: var(--body-bg);
   border: 2px solid var(--accent-color);
 }
+/* 첫 항목 = 가장 최근 = 채운 점 */
+ul.timeline > li:first-child::before {
+  background: var(--accent-color);
+}
 /* 보조 항목(군 복무 등 small 표기)은 작은 회색 점 */
 ul.timeline > li:has(> small)::before {
   width: 8px;
