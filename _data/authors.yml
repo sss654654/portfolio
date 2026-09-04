@@ -2,7 +2,7 @@
 # Must be the same as `author` in `_config.yml`.
 author1:
   name:              홍수빈
-  email:             subinhong0109@dankook.ac.kr
+  email:             subinhong0109@gmail.com
 
   # Used at the bottom of each page and at the top of the `about` layout
   # Markdown enabled, can use multiple paragraphs (enabled by `|`)
@@ -20,5 +20,4 @@ author1:
   social:
     github:          sss654654
     linkedin:        subinhong0109
-    email:           subinhong0109@dankook.ac.kr
-    blog:            https://zed6740.tistory.com
+    email:           subinhong0109@gmail.com

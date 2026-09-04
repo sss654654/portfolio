@@ -13,18 +13,6 @@
   }
 }
 
-/* 티스토리 아이콘 — 아이콘 폰트에 T 글리프가 없어 글자로 그린다.
-   icomoon 이 [class^="icon-"] 에 font-family 를 !important 로 걸고 뒤에 로드되므로,
-   span.icon-tistory 로 특이도를 한 단계 올려야 이 규칙이 이긴다 */
-span.icon-tistory {
-  font-family: inherit !important;
-  font-weight: 700;
-  font-style: normal;
-}
-span.icon-tistory::before {
-  content: "B";
-}
-
 /* 여기까지 온 길 — 세로 타임라인 (선 + 연도 점) */
 ul.timeline {
   list-style: none;
@@ -47,10 +35,6 @@ ul.timeline > li::before {
   box-sizing: border-box;
   background: var(--body-bg);
   border: 2px solid var(--accent-color);
-}
-/* 현재 진행 중(마지막 항목)은 채운 점 */
-ul.timeline > li:last-child::before {
-  background: var(--accent-color);
 }
 /* 보조 항목(군 복무 등 small 표기)은 작은 회색 점 */
 ul.timeline > li:has(> small)::before {
@@ -107,14 +91,14 @@ ul.timeline > li:has(> small)::before {
 }
 /* 영상 위 상시 CTA 배지 — 클릭은 앵커(demo-shot)가 받는다. 모바일에서도 항상 보인다 */
 .demo-shot::before {
-  content: "직접 해보기 →";
+  content: "실서비스 열기 ↗";
   position: absolute;
   right: .8rem;
   bottom: .8rem;
   padding: .5rem 1rem;
   border-radius: .45rem;
-  background: #e03131; /* 데모 서비스의 빨강에 맞춤 — 테마 액센트(황토색)와 구분 */
-  color: #fff;
+  background: rgba(255,255,255,.92); /* 서비스 UI가 다크·레드라 배지는 중립색 — 빨간 CTA는 광고로 읽힌다 */
+  color: #1d1f21;
   font-size: .85rem;
   font-weight: 700;
   line-height: 1;
