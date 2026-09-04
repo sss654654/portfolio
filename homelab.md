@@ -230,31 +230,6 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
 
 </div>
 
-<!-- AWS 대응표 — 홈랩의 각 층이 AWS에서 무엇인지, 그중 부트캠프에서 실제로 쓴 것은 무엇인지.
-     옮기는 작업은 아직 하지 않았다 — 제목이 조건형인 이유. 한 것처럼 적지 않는다. -->
-
-## AWS로 옮긴다면
-
-홈랩의 각 층이 AWS에서 무엇에 대응하는지, 그중 [부트캠프 CGV](/projects/cgv/)에서 실제로 쓴 것은 무엇인지입니다. 옮기는 작업은 아직 하지 않았습니다.
-
-| 홈랩 | AWS | 부트캠프 CGV에서 |
-|---|---|---|
-| Proxmox VM 3대 | **EC2** | GitLab EC2 — Terraform |
-| k3s | **EKS** — CNI · IRSA 설정이 추가로 붙음 | 팀원이 세운 EKS 위에 배포 · IRSA |
-| OPNsense 방화벽 · 격리망 vmbr1 | **VPC 서브넷 분리 · Security Group · NACL** | VPC · 서브넷 6 · 보안그룹 5 — Terraform |
-| WireGuard 관리 터널 | **Client VPN** | 구성 — 인증서 CN 문제 해결 |
-| Cloudflare 엣지 | **CloudFront · WAF** | — |
-| MetalLB · Traefik | **ALB · AWS Load Balancer Controller** | ALB — Public 서브넷 |
-| 정적 PV (LVM) | **EBS** | GitLab 볼륨 — 인스턴스와 수명주기 분리 |
-| MinIO | **S3** | Terraform state |
-| Redis · MySQL 파드 | **ElastiCache · RDS** | 사용 |
-| Kafka (Strimzi) | **MSK** 또는 Kinesis | Kinesis — 샤드 분배 |
-| GitLab 레지스트리 | **ECR** | `ecr.api` · `ecr.dkr` 엔드포인트 |
-| GitLab CI · ArgoCD | **CodeBuild** 또는 GitHub Actions · ArgoCD | — (팀원 몫) |
-| Sealed Secrets | **Secrets Manager** | — |
-| Mimir · Loki · Tempo | **AMP · CloudWatch · X-Ray**, 또는 EKS 위 같은 스택 | — |
-{:.hl-dec}
-
 <!-- 기록과 코드 -->
 
 ## 기록과 코드
