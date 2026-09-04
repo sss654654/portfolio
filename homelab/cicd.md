@@ -45,7 +45,7 @@ permalink: /homelab/cicd/
   <text class="hla-t" x="60" y="204">test</text><text class="hla-s2" x="124" y="204">동시 50 요청에도 입장 정원 유지 · 좌석 정규화</text>
   <text class="hla-t" x="60" y="222">build</text><text class="hla-s2" x="124" y="222">서비스마다 멀티스테이지 Dockerfile</text>
   <text class="hla-t" x="60" y="240">scan</text><text class="hla-s2" x="124" y="240">이미지 취약점 — 수정판이 있는 것만</text>
-  <text class="hla-t" x="60" y="258">publish</text><text class="hla-s2" x="124" y="258">레지스트리에 올림 — dev 브랜치에서만</text>
+  <text class="hla-t" x="60" y="258">publish</text><text class="hla-s2" x="124" y="258">레지스트리 푸시 — dev 브랜치에서만</text>
 
   <line class="hla-ln-img" x1="140" y1="268" x2="140" y2="282" marker-end="url(#hlm-i)" fill="none"/>
   <circle class="hla-num" cx="164" cy="275" r="9"/><text class="hla-nt" x="164" y="279">2</text>
@@ -64,21 +64,21 @@ permalink: /homelab/cicd/
   <rect class="hla-inner" x="432" y="244" width="268" height="54" rx="3"/>
   <text class="hla-s2" x="444" y="262">environments/dev/values-queue.yaml</text>
   <text class="hla-s2" x="444" y="282">image.tag: <tspan font-weight="700">dev-15-17dcc495</tspan></text>
-  <text class="hla-a" x="434" y="320">이 한 줄이 바뀌면 배포가 일어난다</text>
+  <text class="hla-a" x="434" y="320">이 한 줄이 바뀌면 배포 시작</text>
 
   <!-- 연결부 — 위쪽 끝 y=338, 아래쪽 끝 y=444(상자 윗변). 번호 원 y=358, 라벨 y=392 한 줄.
        6 번 라벨은 5 번 세로선(x=592)을 넘지 않도록 오른쪽 끝에 붙인다. -->
   <line class="hla-ln-img" x1="140" y1="444" x2="140" y2="338" marker-end="url(#hlm-i)" fill="none"/>
   <circle class="hla-num" cx="140" cy="358" r="9"/><text class="hla-nt" x="140" y="362">7</text>
-  <text class="hla-a" x="150" y="392">이미지를 받는다</text>
+  <text class="hla-a" x="150" y="392">이미지 수신</text>
 
   <line class="hla-ln-img" x1="330" y1="444" x2="330" y2="338" marker-end="url(#hlm-i)" fill="none"/>
   <circle class="hla-num" cx="330" cy="358" r="9"/><text class="hla-nt" x="330" y="362">3</text>
-  <text class="hla-a" x="340" y="392">새 태그를 본다</text>
+  <text class="hla-a" x="340" y="392">새 태그 확인</text>
 
   <line class="hla-ln-def" x1="450" y1="444" x2="450" y2="338" marker-end="url(#hlm-d)" fill="none"/>
   <circle class="hla-num" cx="450" cy="358" r="9"/><text class="hla-nt" x="450" y="362">4</text>
-  <text class="hla-a" x="460" y="392">tag 줄을 커밋한다</text>
+  <text class="hla-a" x="460" y="392">tag 줄 커밋</text>
 
   <line class="hla-ln" x1="560" y1="338" x2="560" y2="444" stroke-dasharray="4 4" marker-end="url(#hlm-n)" fill="none"/>
   <circle class="hla-num" cx="560" cy="358" r="9"/><text class="hla-nt" x="560" y="362">5</text>
@@ -86,7 +86,7 @@ permalink: /homelab/cicd/
 
   <line class="hla-ln-def" x1="700" y1="444" x2="700" y2="338" marker-end="url(#hlm-d)" fill="none"/>
   <circle class="hla-num" cx="700" cy="358" r="9"/><text class="hla-nt" x="700" y="362">6</text>
-  <text class="hla-a" x="690" y="384" text-anchor="end">배포 정의를 읽는다</text>
+  <text class="hla-a" x="690" y="384" text-anchor="end">배포 정의 읽기</text>
 
   <rect class="hla-box" x="18" y="412" width="724" height="104" rx="6"/>
   <text class="hla-zone" x="34" y="434">k3s 클러스터 · 격리망 안</text>
@@ -94,23 +94,23 @@ permalink: /homelab/cicd/
   <rect class="hla-inner" x="34" y="444" width="230" height="60" rx="4"/>
   <image href="/assets/img/icons/kubernetes.svg" x="46" y="456" width="18" height="18"/>
   <text class="hla-t" x="70" y="470">노드 3대</text>
-  <text class="hla-s2" x="46" y="492">containerd 가 받는다</text>
+  <text class="hla-s2" x="46" y="492">containerd 가 수신</text>
 
   <rect class="hla-inner" x="292" y="444" width="206" height="60" rx="4"/>
   <image href="/assets/img/icons/argo.svg" x="304" y="456" width="18" height="18"/>
   <text class="hla-t" x="328" y="470">argocd-image-updater</text>
-  <text class="hla-s2" x="304" y="492">새 태그를 git 에 되쓴다</text>
+  <text class="hla-s2" x="304" y="492">새 태그를 git 에 되쓰기</text>
 
   <rect class="hla-inner" x="520" y="444" width="206" height="60" rx="4"/>
   <image href="/assets/img/icons/argo.svg" x="532" y="456" width="18" height="18"/>
   <text class="hla-t" x="556" y="470">ArgoCD</text>
-  <text class="hla-s2" x="532" y="492">git 대로 파드를 맞춘다</text>
+  <text class="hla-s2" x="532" y="492">git 상태로 파드 동기화</text>
 
   <circle class="hla-dot-g" cx="36" cy="536" r="4"/>
   <text class="hla-a" x="48" y="540">이미지</text>
   <circle class="hla-dot-v" cx="124" cy="536" r="4"/>
   <text class="hla-a" x="136" y="540">배포 정의</text>
-  <text class="hla-a" x="232" y="540">점선 — 알림만. 배포 내용은 안 실린다</text>
+  <text class="hla-a" x="232" y="540">점선 — 알림만, 배포 내용은 미포함</text>
 </svg>
 <figcaption>번호가 커밋에서 파드까지의 순서입니다. 실선은 전부 클러스터가 밖으로 나가 가져오는 것입니다.</figcaption>
 </figure>
@@ -119,7 +119,7 @@ permalink: /homelab/cicd/
 
 |  | [cgv-infra](https://github.com/sss654654/cgv-infra) · 배포 정의 | [cgv-onprem](https://github.com/sss654654/cgv-onprem) · 앱 소스 |
 |---|---|---|
-| 브랜치 | **`main` 하나** — ArgoCD가 보는 브랜치가 곧 배포 상태 · 환경은 `environments/` 디렉터리로 | **`dev` 기본 · `main`** — 태그 앞부분이 브랜치 이름(`dev-15-…`) · stg·prd는 여기서 갈림 |
+| 브랜치 | **`main` 하나** — ArgoCD가 보는 브랜치가 곧 배포 상태 · 환경은 `environments/` 디렉터리로 | **`dev` 기본 · `main`** — 태그 앞부분이 브랜치 이름(`dev-15-…`) · stg·prd도 여기서 분기 |
 | 파이프라인 | 없음 — 빌드할 것이 없음 | **다섯 단** — 데스크탑 러너가 돌리고, 통과해야 머지 버튼 활성 |
 | 발급한 자격 | 저장소 자격 **하나** — ArgoCD의 읽기와 image-updater의 태그 쓰기에 공용 | deploy token **둘** `read_registry` — 노드의 이미지 받기와 봇의 태그 조회를 따로 |
 | webhook | **있음** — push하면 GitLab이 ArgoCD를 부름 | **없음** |

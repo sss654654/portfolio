@@ -77,11 +77,11 @@ permalink: /homelab/cluster/
   <!-- 물리 디스크 — 부팅 디스크를 무엇으로 고르느냐가 이 노트북의 역할을 가른다 -->
   <rect class="hla-box" x="30" y="318" width="344" height="46" rx="5"/>
   <text class="hla-c" x="46" y="338">외장 USB SSD 1TB</text>
-  <text class="hla-s2" x="46" y="355">부팅 디스크 — 빠지면 서버가 내려간다</text>
+  <text class="hla-s2" x="46" y="355">부팅 디스크 — 빠지면 서버 정지</text>
 
   <rect class="hla-inner hla-dash" x="386" y="318" width="344" height="46" rx="5"/>
   <text class="hla-c" x="402" y="338">내장 NVMe</text>
-  <text class="hla-s2" x="402" y="355">Windows — 지우지 않았다</text>
+  <text class="hla-s2" x="402" y="355">Windows — 유지</text>
 </svg>
 <figcaption>부팅 디스크를 무엇으로 고르느냐가 이 노트북이 서버인지를 가릅니다.</figcaption>
 </figure>

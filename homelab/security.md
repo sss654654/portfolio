@@ -36,7 +36,7 @@ permalink: /homelab/security/
   <rect class="hla-box" x="20" y="24" width="350" height="46" rx="5"/>
   <image href="/assets/img/icons/cloudflare.svg" x="32" y="33" width="20" height="20"/>
   <text class="hla-t" x="58" y="41">Cloudflare — ticket.subinhong.dev</text>
-  <text class="hla-s2" x="32" y="61">집 IP 은닉 · TLS 종료 · 방문자 연결은 여기서 끝난다</text>
+  <text class="hla-s2" x="32" y="61">집 IP 은닉 · TLS 종료 · 방문자 연결도 여기서 종료</text>
 
   <rect class="hla-box" x="390" y="24" width="350" height="46" rx="5"/>
   <image href="/assets/img/icons/wireguard.svg" x="402" y="33" width="20" height="20"/>

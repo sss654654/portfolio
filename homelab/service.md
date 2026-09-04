@@ -58,14 +58,14 @@ permalink: /homelab/service/
   <image href="/assets/img/icons/apachekafka.svg" x="30" y="210" width="18" height="18"/>
   <text class="hla-t" x="56" y="225">Kafka</text>
 
-  <text class="hla-s2" x="44" y="248">admissions — 입장했다</text>
+  <text class="hla-s2" x="44" y="248">admissions — 입장 완료</text>
   <rect class="hla-inner" x="44" y="254" width="460" height="24" rx="4"/>
   <line class="hla-ln hla-dash" x1="136" y1="256" x2="136" y2="276" opacity=".25"/>
   <line class="hla-ln hla-dash" x1="228" y1="256" x2="228" y2="276" opacity=".25"/>
   <line class="hla-ln hla-dash" x1="320" y1="256" x2="320" y2="276" opacity=".25"/>
   <line class="hla-ln hla-dash" x1="412" y1="256" x2="412" y2="276" opacity=".25"/>
 
-  <text class="hla-s2" x="44" y="302">bookings-completed — 자리가 빈다</text>
+  <text class="hla-s2" x="44" y="302">bookings-completed — 자리 반환</text>
   <rect class="hla-inner" x="44" y="308" width="460" height="24" rx="4"/>
   <line class="hla-ln hla-dash" x1="136" y1="310" x2="136" y2="330" opacity=".25"/>
   <line class="hla-ln hla-dash" x1="228" y1="310" x2="228" y2="330" opacity=".25"/>
@@ -78,15 +78,15 @@ permalink: /homelab/service/
   <!-- 이동 경로는 메시지 점이 그린다 — 번호와 라벨만 경로 요지에 두고,
        도착지가 먼 소비 둘(4·7)만 가는 점선으로 남긴다 -->
   <circle class="hla-num" cx="540" cy="184" r="9"/><text class="hla-nt" x="540" y="188">3</text>
-  <text class="hla-a" x="554" y="188">발행 — 토픽 뒤에 붙는다</text>
+  <text class="hla-a" x="554" y="188">발행 — 토픽 뒤에 적재</text>
   <line class="hla-ln hla-dash" x1="30" y1="270" x2="30" y2="410" opacity=".4" marker-end="url(#cs-a)"/>
   <circle class="hla-num" cx="30" cy="356" r="9"/><text class="hla-nt" x="30" y="360">4</text>
-  <text class="hla-a" x="44" y="360">소비 — 인증이 적힌다</text>
+  <text class="hla-a" x="44" y="360">소비 — 인증 기록</text>
   <circle class="hla-num" cx="224" cy="380" r="9"/><text class="hla-nt" x="224" y="384">6</text>
-  <text class="hla-a" x="238" y="384">발행 — 확정을 알린다</text>
+  <text class="hla-a" x="238" y="384">발행 — 확정 통지</text>
   <line class="hla-ln hla-dash" x1="714" y1="312" x2="714" y2="168" opacity=".4" marker-end="url(#cs-a)"/>
   <circle class="hla-num" cx="714" cy="240" r="9"/><text class="hla-nt" x="714" y="244">7</text>
-  <text class="hla-a" x="702" y="244" text-anchor="end">소비 — active에서 뺀다</text>
+  <text class="hla-a" x="702" y="244" text-anchor="end">소비 — active에서 제거</text>
 
   <!-- ───────── booking ───────── -->
   <rect class="hla-box" x="16" y="366" width="728" height="184" rx="6"/>
@@ -105,7 +105,7 @@ permalink: /homelab/service/
   <rect class="cs-adm hla-inner" x="134" y="464" width="22" height="14" rx="3"/>
   <rect class="cs-adm hla-inner" x="164" y="464" width="22" height="14" rx="3"/>
   <rect class="cs-adm hla-inner" x="194" y="464" width="22" height="14" rx="3"/>
-  <text class="hla-a" x="44" y="493">Kafka로 인증이 온 사람만 좌석 요청이 통과한다</text>
+  <text class="hla-a" x="44" y="493">Kafka로 인증이 온 사람만 좌석 요청 통과</text>
 
   <circle class="hla-num" cx="386" cy="426" r="9"/><text class="hla-nt" x="386" y="430">5</text>
   <text class="hla-s2" x="400" y="430">좌석 24 — 선점 → 확정</text>
@@ -136,7 +136,7 @@ permalink: /homelab/service/
 
   <image href="/assets/img/icons/mysql.svg" x="612" y="436" width="16" height="16"/>
   <text class="hla-s2" x="634" y="449">MySQL</text>
-  <text class="hla-a" x="612" y="472">확정이 적힌다</text>
+  <text class="hla-a" x="612" y="472">확정 기록</text>
   <text class="hla-a" x="612" y="488">같은 좌석 두 번 = 거절</text>
 
   <rect x="612" y="512" width="10" height="10" rx="2" fill="#e0a53c"/>
