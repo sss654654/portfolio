@@ -10,7 +10,7 @@ sitemap: true
 {:.lead}
 
 * [이력서 PDF](/assets/subinhong-resume.pdf) — 2장
-* [홈랩](/homelab/) — 무엇을 골랐고 왜 골랐나
+* [홈랩](/homelab/) — k3s 클러스터 · 대기열 예매 서비스
 * [프로젝트](/projects/) — 회사 · 부트캠프 · 학부 연구
 * [블로그](https://zed6740.tistory.com) — 기술 기록
 
