@@ -2,11 +2,11 @@
 layout: page
 title: 프로젝트
 description: >
-  홈랩 전에 한 것들 — 회사·부트캠프·연구
+  회사 · 부트캠프 · 연구
 permalink: /projects/
 ---
 
-회사에서 하나, 팀 프로젝트 하나, 연구 하나입니다. 홈랩은 [별도 페이지](/homelab/)에 있습니다.
+홈랩은 [별도 페이지](/homelab/)에 있습니다.
 
 <div class="hlc-grid hlc-diagrams" markdown="0">
 
@@ -19,9 +19,9 @@ permalink: /projects/
 
   <a class="hlc-card" href="/projects/cgv/">
     <img class="hlc-img" src="/assets/img/projects/cgv-arch.png" alt="CGV 개발계 AWS 아키텍처 — VPC 안 GitLab·EKS·DB 서브넷과 Client VPN·ECR 엔드포인트">
-    <span class="hlc-tag">부트캠프 · 2025.08</span>
+    <span class="hlc-tag">부트캠프 · 2025.06 – 09</span>
     <span class="hlc-title">CGV 예매 대기열 시스템</span>
-    <span class="hlc-desc">5인 팀에서 개발계 네트워크 계층(Terraform)과 대기열 백엔드(Spring Boot)를 맡았습니다.</span>
+    <span class="hlc-desc">5인 팀에서 AWS 개발계 네트워크(Terraform)와 대기열 백엔드(Spring Boot)를 맡았습니다.</span>
   </a>
 
   <a class="hlc-card" href="/projects/leveldb/">

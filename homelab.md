@@ -10,10 +10,10 @@ permalink: /homelab/
      홈의 "## 홈랩" 절과 겹치지 않도록 "무엇을 만들었나"는 여기서 반복하지 않는다. -->
 
 관리형 쿠버네티스는 컨트롤플레인·네트워크·로드밸런서·볼륨을 선언만 하면 만들어 줍니다.
-만들어진 것을 받는 대신 직접 골라 세우고, **그 아래 리눅스와 하이퍼바이저, 디스크까지** 내려가 보려고 쓰던 노트북을 서버로 삼았습니다.
+그 층을 하나씩 골라 세우고 **그 아래 리눅스·하이퍼바이저·디스크까지** 다루기 위해, 쓰던 노트북을 서버로 삼았습니다.
 
 그 위에 올린 것은 예매 대기열 서비스와 관측입니다.
-서비스는 [부트캠프에서](/projects/cgv/) 배포까지만, 관측은 [semiai에서](/projects/semiai/) 이미 서 있는 클러스터 위에서만 해 봤습니다.
+서비스는 [부트캠프에서](/projects/cgv/) AWS에 배포까지, 관측은 [semiai에서](/projects/semiai/) 기구축 클러스터 위에서 맡았던 것입니다.
 지금 [ticket.subinhong.dev](https://ticket.subinhong.dev)가 아래 구성으로 돌고 있습니다.
 
 <!-- 배선도 — 실제 토폴로지를 세 이야기로 압축:
@@ -58,7 +58,7 @@ permalink: /homelab/
   <g class="hla-g hla-g1">
     <rect x="20" y="146" width="150" height="48" rx="9" class="hla-box"/>
     <image href="/assets/img/icons/wireguard.svg" x="28" y="157" width="24" height="24"/>
-    <text x="57" y="166" class="hla-t">나 — 관리자</text>
+    <text x="57" y="166" class="hla-t">관리자</text>
     <text x="57" y="181" class="hla-s">VPN으로 접속</text>
     <rect x="20" y="244" width="150" height="52" rx="9" class="hla-box"/>
     <image href="/assets/img/icons/gitlab.svg" x="28" y="257" width="24" height="24"/>
@@ -218,24 +218,52 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
     <img class="hlc-img" src="/assets/img/homelab/security-thumb.png" alt="OPNsense 방화벽 규칙 목록과, 터널을 켠 폰에서 열린 Grafana 및 WireGuard 연결 화면">
     <span class="hlc-tag">격리와 공개</span>
     <span class="hlc-title">방화벽 뒤로 격리하고 엣지로 공개</span>
-    <span class="hlc-desc">노드를 방화벽 뒤 격리망으로 옮겼습니다. 관리는 키를 등록한 터널로, 서비스는 엣지를 거친 것만 들어옵니다 — 인터넷에 열린 포트는 그 둘입니다.</span>
+    <span class="hlc-desc">노드를 방화벽 뒤 격리망으로 옮겼습니다. 관리는 키를 등록한 터널(51820)로, 서비스는 엣지를 거친 것(443)만 — 인터넷에 열린 포트는 이 둘입니다.</span>
   </a>
 
   <a class="hlc-card" href="/homelab/capacity/">
     <img class="hlc-img" src="/assets/img/homelab/capacity-thumb.png" alt="k6 실행이 끝난 터미널 — 요청 시간 구간별 지연과 여정 지연, 요청 25,004건 요약">
     <span class="hlc-tag">부하테스트</span>
     <span class="hlc-title">k6 부하테스트로 정원·자원 스펙 확정</span>
-    <span class="hlc-desc">SLO를 먼저 정하고 공개된 경로에 실제 여정 그대로 부하를 걸었습니다. 막히는 자리를 대시보드에서 찾아 고친 끝에 10,000명이 5xx 없이 완주했습니다.</span>
+    <span class="hlc-desc">SLO를 먼저 정하고 공개된 경로에 실제 여정 그대로 부하를 걸었습니다. 막히는 자리를 대시보드에서 찾아 고쳐, 10,000명이 5xx 없이 완주했습니다.</span>
   </a>
 
 </div>
+
+<!-- AWS 대응표 — 홈랩의 각 층이 AWS에서 무엇인지, 그중 부트캠프에서 실제로 쓴 것은 무엇인지.
+     옮기는 작업은 아직 하지 않았다 — 제목이 조건형인 이유. 한 것처럼 적지 않는다. -->
+
+## AWS로 옮긴다면
+
+홈랩의 각 층이 AWS에서 무엇에 대응하는지, 그중 [부트캠프 CGV](/projects/cgv/)에서 실제로 쓴 것은 무엇인지입니다. 옮기는 작업은 아직 하지 않았습니다.
+
+| 홈랩 | AWS | 부트캠프 CGV에서 |
+|---|---|---|
+| Proxmox VM 3대 | **EC2** | GitLab EC2 — Terraform |
+| k3s | **EKS** — CNI · IRSA 설정이 추가로 붙음 | 팀원이 세운 EKS 위에 배포 · IRSA |
+| OPNsense 방화벽 · 격리망 vmbr1 | **VPC 서브넷 분리 · Security Group · NACL** | VPC · 서브넷 6 · 보안그룹 5 — Terraform |
+| WireGuard 관리 터널 | **Client VPN** | 구성 — 인증서 CN 문제 해결 |
+| Cloudflare 엣지 | **CloudFront · WAF** | — |
+| MetalLB · Traefik | **ALB · AWS Load Balancer Controller** | ALB — Public 서브넷 |
+| 정적 PV (LVM) | **EBS** | GitLab 볼륨 — 인스턴스와 수명주기 분리 |
+| MinIO | **S3** | Terraform state |
+| Redis · MySQL 파드 | **ElastiCache · RDS** | 사용 |
+| Kafka (Strimzi) | **MSK** 또는 Kinesis | Kinesis — 샤드 분배 |
+| GitLab 레지스트리 | **ECR** | `ecr.api` · `ecr.dkr` 엔드포인트 |
+| GitLab CI · ArgoCD | **CodeBuild** 또는 GitHub Actions · ArgoCD | — (팀원 몫) |
+| Sealed Secrets | **Secrets Manager** | — |
+| Mimir · Loki · Tempo | **AMP · CloudWatch · X-Ray**, 또는 EKS 위 같은 스택 | — |
+{:.hl-dec}
 
 <!-- 기록과 코드 -->
 
 ## 기록과 코드
 
-시작한 날부터 편별로 블로그에 남겼습니다. 명령과 결과만이 아니라 막힌 곳과 틀린 판단까지 그대로 적었습니다.
+시작한 날부터 편별로 블로그에 남겼습니다.
 
 * [HomeLab 시리즈](https://zed6740.tistory.com/category/HomeLab) — 왜 온프렘인지부터 인터넷 공개까지
 * [cgv-infra](https://github.com/sss654654/cgv-infra) — 클러스터와 배포 정의. 이 페이지의 설정은 전부 여기 있습니다
 * [cgv-onprem](https://github.com/sss654654/cgv-onprem) — 앱 소스. queue(Go) · booking(Spring) · frontend
+
+홈랩 이전의 것은 [프로젝트](/projects/)에, 요약은 [이력서](/resume/)에 있습니다.
+{:.hl-more}
