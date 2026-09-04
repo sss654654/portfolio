@@ -43,7 +43,7 @@ CJ 올리브네트웍스 클라우드웨이브 6기(2025.06–09)에서 5인이 
 
 | 증상 | 원인 | 조치 |
 |---|---|---|
-| Consumer 폴링에 `ProvisionedThroughputExceededException` **반복** | 샤드 1개(읽기 초당 5회)를 Pod마다 폴링 → Pod 6개에서 한도 초과 · Consumer가 0번 샤드만 읽어 증설로는 안 풀림 | Pod가 자기 순번으로 샤드를 라운드로빈 분배 · 샤드별 스레드로 소비 — 필요 샤드 = Pod 10 × 초당 1회 ÷ 샤드당 5회 = **2개** |
+| Consumer 폴링에 `ProvisionedThroughputExceededException` **반복** | 샤드 1개(읽기 초당 5회)를 Pod마다 폴링 → Pod 6개에서 한도 초과 · Consumer가 0번 샤드만 읽어 증설로는 안 풀림 | Pod 순번으로 샤드를 라운드로빈 분배, 샤드별 스레드로 소비 — 필요 샤드 = Pod 10 × 초당 1회 ÷ 샤드당 5회 = **2개** |
 | Pod의 Kinesis 접근이 `AccessDeniedException` — **EC2 노드 역할**로 접근 중 | 서비스 계정 annotation과 신뢰 관계는 정상 — `pom.xml`에 `spring-cloud-aws-starter`가 없어 IRSA 환경변수를 안 읽음 | 의존성 추가 |
 | 인증서를 ACM에 올리고 Client VPN 연결 시 **TLS 핸드셰이크 실패** | 서버 인증서 CN이 `server` 같은 비FQDN이라 ACM이 도메인을 인식 못 함 | Easy-RSA PKI 재구성, FQDN CN으로 재발급 |
 | `destroy → apply` 뒤 GitLab 인스턴스에 **빈 볼륨** | `root_block_device` 인라인 정의라 볼륨이 인스턴스 수명주기에 묶임 — 기존 볼륨은 살아 있었지만 새 인스턴스가 물지 않음 | 독립 `aws_ebs_volume` + `terraform import` + `aws_volume_attachment`로 분리 |
