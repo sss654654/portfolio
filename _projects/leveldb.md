@@ -30,9 +30,13 @@ LevelDB는 Google이 만든 임베디드 key-value 저장소입니다. 기반인
 <figcaption>두 캐시 모두 히트면 메모리에서 끝나고, 미스면 SSTable에서 읽어와 채웁니다.</figcaption>
 </figure>
 
-두 캐시의 차이는 value의 쓰임입니다 — 인덱스 캐시는 **어느 데이터 블록인지 위치를 찾고**,
-블록 캐시는 **값을 바로 꺼냅니다.**
-블록 캐시 키에 `cache_id`가 붙는 것은 여러 SSTable이 같은 offset을 써도 충돌하지 않게 하려는 것입니다.
+SSTable 하나를 읽을 때 두 캐시를 순서대로 거칩니다.
+
+- **인덱스 캐시** — key는 `file_number`, value는 인덱스 블록입니다. 히트면 **어느 데이터 블록인지 위치(offset)**를 돌려주고, 미스면 SSTable을 열어 인덱스 블록을 메모리에 올립니다
+- **블록 캐시** — key는 `cache_id + offset`, value는 데이터 블록입니다. 히트면 **값을 바로 꺼내고**, 미스면 SSTable에서 그 블록을 읽어와 채웁니다
+
+두 캐시의 패턴은 같고 value의 쓰임만 다릅니다 — 앞은 위치를 찾고, 뒤는 값을 꺼냅니다.
+키에 `cache_id`가 붙는 것은 여러 SSTable이 같은 offset을 써도 충돌하지 않게 하려는 것입니다.
 
 ## LRU 엔진
 
