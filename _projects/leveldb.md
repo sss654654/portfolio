@@ -18,12 +18,16 @@ LSM-tree 기반이라 읽기를 캐시 두 계층에 기대는 Google LevelDB에
 
 ## 캐시 구조
 
+<div class="hl-sub" markdown="0">읽기 경로</div>
+
 <figure class="hl-diagram" markdown="0">
 <img src="/assets/img/projects/leveldb-readpath.png" alt="SSTable 읽기 경로 — TableCache::Get(key)가 인덱스 캐시(key=file_number, value=인덱스 블록)를 거쳐 Bloom 필터, 블록 캐시(key=cache_id+offset, value=데이터 블록)를 순서대로 조회. 히트면 메모리에서 반환, 미스면 디스크의 SSTable 파일을 읽어 채움">
 </figure>
 
 - **인덱스 캐시** — key `file_number`, value 인덱스 블록. 히트면 **데이터 블록의 위치(offset)**를 돌려주고, 미스면 SSTable을 열어 인덱스 블록을 올립니다. 용량은 개수(파일 수)로 셉니다
 - **블록 캐시** — key `cache_id + offset`, value 데이터 블록. 히트면 **값을 바로 꺼내고**, 미스면 SSTable에서 그 블록을 읽어와 채웁니다. 용량은 바이트로 셉니다 · `cache_id`가 붙어 여러 SSTable이 같은 offset을 써도 충돌하지 않습니다
+
+<div class="hl-sub" markdown="0">LRU 엔진</div>
 
 <figure class="hl-diagram" markdown="0">
 <img src="/assets/img/projects/leveldb-lru.png" alt="ShardedLRUCache — key의 상위 해시 비트로 16개 샤드 중 하나를 고르고, 샤드 하나 안에서 같은 LRUHandle이 해시테이블(버킷 체인)과 이중 연결 리스트에 동시에 걸린다. 리스트는 lru_(refs=1, evict 후보)와 in_use_(refs≥2, evict 보호) 둘로 나뉜다">
