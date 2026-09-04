@@ -23,14 +23,12 @@ CJ 올리브네트웍스 클라우드웨이브 6기(2025.06–09)에서 5인이 
 
 <figure class="hl-diagram" markdown="0">
 <img src="/assets/img/projects/cgv-arch.png" alt="개발계 아키텍처 — VPC 10.0.0.0/16 안에 GitLab(인터넷 라우트 없음, Client VPN으로 접근) · EKS(NAT 아웃바운드만, ArgoCD 포함) · Public(ALB·NAT, 워크로드 없음) · DB(인터넷 라우트 없음, RDS·ElastiCache). ECR은 ecr.api·ecr.dkr 엔드포인트로, Kinesis도 엔드포인트로">
-<figcaption>한 VPC 안에 네 구역(GitLab · EKS · Public · DB)이 있고, 인터넷으로 나가는 길이 구역마다 다릅니다.</figcaption>
 </figure>
 
 ## 설계 결정
 
 | 항목 | 선택 | 이유 |
 |---|---|---|
-| 인프라 정의 | **Terraform** — `destroy → apply`로 다시 세움 | 손으로 만들면 재현 불가 · 설정 근거도 남지 않음 |
 | 서브넷 인터넷 경로 | **Public 양방향 · EKS 나가는 것만 · GitLab·DB 없음** | 소스 저장소와 DB가 같은 VPC — 서브넷마다 필요한 만큼만 개방 |
 | ECR 트래픽 | **`ecr.api`·`ecr.dkr` 엔드포인트를 서브넷마다** | 하나만 두면 인증은 되는데 pull이 NAT로 나감 · 인터페이스 엔드포인트는 서브넷 단위 ENI |
 | NAT Gateway | **2a 하나만** — 2c 라우트도 여기로 | 시간당 요금 절반 · 대가는 2a 장애 시 2c 아웃바운드 단절 — 개발 환경이라 비용 우선 |
@@ -58,15 +56,13 @@ CJ 올리브네트웍스 클라우드웨이브 6기(2025.06–09)에서 5인이 
 
 ## 한계
 
-- **CI/CD와 GitLab 구축은 팀원 몫이었습니다** — 파이프라인을 직접 짜지 못했고, 팀원이 만든 Helm 차트에 환경변수를 맞추는 데까지 했습니다
-- **EKS를 직접 세우지 못했습니다** — 클러스터는 팀원이 `eksctl`로 만들었고 그 위에 올리기만 했습니다. 쿠버네티스 구조는 [홈랩](/homelab/cluster/)에서 직접 세우며 채웠습니다
-- **개발계에서만 부하를 봤습니다** — 배포계는 별도 인프라에 다른 팀원 몫이었고, RPS·p99·에러율도 재지 않아 동작 확인에 그쳤습니다
+- **CI/CD · EKS 구축과 배포계는 팀원 몫이었습니다** — 파이프라인과 클러스터를 직접 세우지 않았고, 부하는 개발계에서 동작 확인까지만 했습니다. 클러스터 구축은 [홈랩](/homelab/cluster/)에서 채웠습니다
 - **Kinesis와 WebSocket은 이 규모에 과했습니다** — 단일 소비자라 Fan-out·재처리를 쓸 자리가 없었고, 단방향 알림에 양방향 연결은 비용만 컸습니다
 - **Client VPN은 dev 편의로 퍼블릭 서브넷 접근으로 전환했습니다** — 구성은 주석으로 남아 있고, 코드에 남은 GitLab 보안그룹 인바운드가 `0.0.0.0/0`입니다
 
 ## 기술 스택
 
-Terraform · AWS (VPC · VPC Endpoint · Client VPN · EKS · Kinesis · ECR · IRSA) · Java 17 · Spring Boot 3.3 · JPA · Redis (Sorted Set) · WebSocket (STOMP) · MySQL · React
+Terraform · AWS (VPC · VPC Endpoint · Client VPN · EKS · Kinesis · ECR · IRSA) · Java 17 · Spring Boot 3.3 · JPA · Redis (Sorted Set) · WebSocket (STOMP) · MySQL
 {:.hl-more}
 
 [github.com/sss654654/dev_terraform](https://github.com/sss654654/dev_terraform) · [dev_backend](https://github.com/sss654654/dev_backend)

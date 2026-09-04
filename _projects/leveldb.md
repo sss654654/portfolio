@@ -20,7 +20,7 @@ LevelDB는 Google이 만든 임베디드 key-value 저장소입니다.
 그 약점을 **인덱스 캐시와 블록 캐시** 두 계층으로 보완합니다.
 
 맡은 것은 그 두 캐시입니다. 소스에서 보면 키도 값도 다른데
-**LRU 엔진 하나를 공유하는 구조**였고, 여기서 세 가지를 물었습니다.
+**LRU 엔진 하나를 공유하는 구조**였고, 세 가지를 분석했습니다.
 
 1. 두 캐시는 각각 무엇을 담나
 2. 공유 엔진은 어떻게 O(1) 조회와 동시 접근을 지키나
@@ -50,7 +50,7 @@ LevelDB는 Google이 만든 임베디드 key-value 저장소입니다.
 
 ## 실측
 
-인덱스 캐시는 개수만, 블록 캐시는 크기만 독립 변수로 두고 세 워크로드의 latency를 쟀습니다.
+인덱스 캐시는 개수만, 블록 캐시는 크기만 독립 변수로 두고 세 워크로드의 지연을 쟀습니다.
 워크로드가 갈리는 기준은 **워킹셋 크기**입니다 —
 readrandom(전체 key 무작위) · seekrandom(모든 레벨을 탐색해 가장 큼) · readhot(1%만 반복해 가장 작음).
 환경은 EC2 t2.micro · key 16B · value 100B · fillrandom 100MB.
@@ -74,7 +74,6 @@ readrandom(전체 key 무작위) · seekrandom(모든 레벨을 탐색해 가장
 
 인덱스 캐시는 **100개에서 포화합니다** — 이 실험의 SSTable이 100개 이하라 더 캐싱할 인덱스 블록이 없습니다.
 블록 캐시는 **워킹셋에 비례합니다** — seekrandom은 100MB를 넘어야 급락하고, readhot은 1KB에서 이미 낮아 개선 폭이 작습니다.
-같은 캐시 증설이라도 워크로드의 워킹셋이 곡선을 정합니다.
 
 ## 한계
 
@@ -83,7 +82,7 @@ readrandom(전체 key 무작위) · seekrandom(모든 레벨을 탐색해 가장
 
 ## 기술 스택
 
-C++ · LevelDB · LSM-tree · SSTable · LRU Cache · db_bench · AWS EC2
+C++ · LevelDB · db_bench · AWS EC2
 {:.hl-more}
 
 [github.com/sss654654/leveldb-cache-analysis](https://github.com/sss654654/leveldb-cache-analysis) · [논문 PDF](https://github.com/sss654654/leveldb-cache-analysis/blob/main/papers/%EC%B5%9C%EC%A2%85%EB%B3%B8LevelDB_%EC%BA%90%EC%8B%9C_%EA%B5%AC%EC%A1%B0_%EB%B0%8F_%EC%84%B1%EB%8A%A5_%EB%B6%84%EC%84%9D.pdf)
