@@ -212,7 +212,7 @@ permalink: /homelab/observability/
 Mimir · Loki · Tempo · Grafana · Alloy · MinIO · kube-state-metrics · node-exporter · Better Stack
 {:.hl-more}
 
-회사에서는 기구축된 같은 스택 위에서 옵저버빌리티만 맡았습니다 — [semiai](/projects/semiai/).
+회사에서는 팀이 세운 k3s 위에 같은 스택을 구축했습니다 — [semiai](/projects/semiai/).
 {:.hl-more}
 
 {% include hl-nav.html %}

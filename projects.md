@@ -12,7 +12,7 @@ permalink: /projects/
     <img class="hlc-img" src="/assets/img/projects/semiai-pipeline.png" alt="semiai 옵저버빌리티 파이프라인 — 백엔드와 클러스터 타겟의 신호를 Alloy가 모아 LGTM 저장소로, 원본은 MinIO로">
     <span class="hlc-tag">실무 · 2026.03 – 06</span>
     <span class="hlc-title">semiai 옵저버빌리티</span>
-    <span class="hlc-desc">팀이 세운 k3s·LGTM 스택 위에서 인프라·앱 대시보드와 앱 계측을 맡았습니다.</span>
+    <span class="hlc-desc">팀이 세운 k3s 위에 LGTM 스택을 구축하고 인프라·앱 대시보드와 앱 계측을 맡았습니다.</span>
   </a>
 
   <a class="hlc-card" href="/projects/cgv/">
