@@ -22,7 +22,7 @@ CJ 올리브네트웍스 클라우드웨이브 6기(2025.06–09)에서 5인이 
 
 <figure class="hl-diagram" markdown="0">
 <img src="/assets/img/projects/cgv-arch.png" alt="개발계 아키텍처 — VPC 10.0.0.0/16 안에 GitLab(인터넷 라우트 없음, Client VPN으로 접근) · EKS(NAT 아웃바운드만, ArgoCD 포함) · Public(ALB·NAT, 워크로드 없음) · DB(인터넷 라우트 없음, RDS·ElastiCache). ECR은 ecr.api·ecr.dkr 엔드포인트로, Kinesis도 엔드포인트로">
-<figcaption>소스 저장소와 DB가 같은 VPC 안에 있어, 서브넷마다 인터넷 경로를 다르게 뒀습니다.</figcaption>
+<figcaption>한 VPC 안에 네 구역(GitLab · EKS · Public · DB)이 있고, 인터넷으로 나가는 길이 구역마다 다릅니다.</figcaption>
 </figure>
 
 ## 만든 것

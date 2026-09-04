@@ -35,13 +35,12 @@ LevelDB는 Google이 만든 임베디드 key-value 저장소입니다.
 - **블록 캐시** — key `cache_id + offset`, value 데이터 블록. 히트면 **값을 바로 꺼내고**, 미스면 SSTable에서 그 블록을 읽어와 채웁니다
 
 키에 `cache_id`를 붙이면 여러 SSTable이 같은 offset을 써도 충돌하지 않습니다.
-용량을 세는 기준도 달라서, 인덱스 캐시는 개수(파일 수)로 블록 캐시는 바이트로 셉니다.
+용량 기준도 다릅니다 — 인덱스 캐시는 개수(파일 수)로, 블록 캐시는 바이트로 셉니다.
 
 ## LRU 엔진
 
 <figure class="hl-diagram" markdown="0">
 <img src="/assets/img/projects/leveldb-lru.png" alt="ShardedLRUCache — key의 상위 해시 비트로 16개 샤드 중 하나를 고르고, 샤드 하나 안에서 같은 LRUHandle이 해시테이블(버킷 체인)과 이중 연결 리스트에 동시에 걸린다. 리스트는 lru_(refs=1, evict 후보)와 in_use_(refs≥2, evict 보호) 둘로 나뉜다">
-<figcaption>key의 상위 해시 비트로 샤드를 고르고, 샤드 안에서 한 노드가 해시테이블과 리스트 양쪽에 걸립니다.</figcaption>
 </figure>
 
 - **16개 샤드에 독립 락** — 락이 하나면 모든 조회가 줄을 서는데, 샤드를 쪼개면 서로 다른 키는 동시에 조회됩니다
@@ -50,8 +49,8 @@ LevelDB는 Google이 만든 임베디드 key-value 저장소입니다.
 
 ## 실측
 
-파라미터를 어디까지 키워야 읽기가 빨라지는지 재기 위해,
-인덱스 캐시는 개수만, 블록 캐시는 크기만 독립 변수로 두고 세 워크로드의 latency를 쟀습니다.
+파라미터를 어디까지 키워야 읽기가 빨라지는지 보려고,
+인덱스 캐시는 개수만 블록 캐시는 크기만 독립 변수로 두고 세 워크로드의 latency를 쟀습니다.
 워크로드가 다르게 반응하는 이유는 **워킹셋 크기**입니다 —
 readrandom(전체 key 무작위) · seekrandom(모든 레벨을 훑어 가장 큼) · readhot(1%만 반복해 가장 작음).
 환경은 EC2 t2.micro · key 16B · value 100B · fillrandom 100MB.
