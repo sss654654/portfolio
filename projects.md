@@ -6,8 +6,6 @@ description: >
 permalink: /projects/
 ---
 
-홈랩은 [별도 페이지](/homelab/)에 있습니다.
-
 <div class="hlc-grid hlc-diagrams" markdown="0">
 
   <a class="hlc-card" href="/projects/semiai/">
