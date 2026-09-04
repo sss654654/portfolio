@@ -8,8 +8,8 @@ permalink: /homelab/cluster/
 
 <p class="hl-back" markdown="0"><a href="/homelab/">← 홈랩</a></p>
 
-쓰던 노트북 한 대에 RAM 32GB. 내장 Windows는 지우지 않았습니다.
-**관리형 쿠버네티스가 만들어 주던 것이 여기엔 없어, 층마다 기본값을 직접 골라야 했습니다.**
+노트북 한 대에 RAM 32GB. 내장 Windows는 지우지 않았습니다.
+**관리형 쿠버네티스가 만들어 주던 것이 여기엔 없어, 층마다 기본값을 골라야 했습니다.**
 
 ## 클러스터 구조
 
@@ -118,22 +118,19 @@ permalink: /homelab/cluster/
 
 ## 결과
 
-- 노트북 한 대에 Proxmox가 서고 **VM 세 대가 각각 4 vCPU · RAM 8GB 고정**으로 뜹니다
+- 노트북 한 대에 Proxmox를 올리고 **VM 세 대를 각각 4 vCPU · RAM 8GB 고정**으로 구성했습니다
 - **셋 다 control-plane 겸 etcd 멤버**로 묶여 한 대가 멈춰도 유지됩니다
 - 파드에 내줄 몫이 **노드당 5081Mi**로 정해졌습니다 — 노드 메모리 7941에서 k3s 2048 · OS 512 · eviction 300을 뺀 값
-- 덮개를 닫아도 잠들지 않고, 입출력이 뜸해도 USB 디스크 전원이 **내려가지 않습니다**
+- 덮개를 닫아도 잠들지 않고, 입출력이 없어도 USB 디스크 전원이 **내려가지 않습니다**
+- **클러스터 이전은 스크립트, 그 위는 Helm 차트로 정의돼 있습니다** — 재구축 시 같은 순서로 재현됩니다
 
 ## 남은 것
 
-- **외장 USB SSD가 단일 장애점입니다** — 케이블이 빠지면 서버가 내려갑니다. Windows를 지킨 대가라 없앨 수 없어, 자동절전 차단과 종료 절차 고정까지 했습니다
+- **외장 USB SSD가 단일 장애점입니다** — 케이블이 빠지면 서버가 정지합니다. Windows를 유지하는 한 없앨 수 없어, 자동절전 차단과 종료 절차 고정으로 대응했습니다
 
 ## 쓴 것
 
 Proxmox VE · KVM/QEMU · LVM-thin · Ubuntu Server · k3s · etcd · Calico · MetalLB · Traefik · Helm
-{:.hl-more}
-
-클러스터보다 먼저 서야 하는 것은 스크립트로, 그 뒤는 Helm 차트로 정의했습니다 —
-그 차트가 가리키는 이미지를 만드는 경로가 다음입니다.
 {:.hl-more}
 
 {% include hl-nav.html %}

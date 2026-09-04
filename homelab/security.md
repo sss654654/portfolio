@@ -140,7 +140,7 @@ permalink: /homelab/security/
 |---|---|---|
 | **데스크탑에서 격리망을 부르면 답이 안 옴**<br>방화벽 로그에는 초록 pass 가 찍힘 | **가는 길은 열렸는데 오는 길이 돌아감**<br>WAN 쪽 규칙에 `reply-to` 가 자동으로 붙음 — 같은 대역이라 바로 건넬 응답이 공유기로 나가 버려짐 | **그 규칙에서 `reply-to` 해제**<br>응답이 같은 대역으로 바로 오면서 손실 **0%** |
 | **정책을 건 뒤 Grafana 접속이 타임아웃**<br>Traefik 까지는 도달 | **정책에 Service 포트 80 을 적음**<br>정책이 판정하는 것은 파드가 여는 포트 3000 — Service 번호는 닿기 전에 바뀜 | **3000 으로 교체**<br>`targetPort` 를 이름으로 적은 자리도 전부 숫자로 |
-| **443 에 `Host` 헤더를 바꿔 넣으면 ArgoCD 로그인 화면**<br>응답 **200** | **Traefik 이 `Host` 헤더로만 가름**<br>예매 화면·Grafana·ArgoCD 가 80·443 뒤에 함께 있고, 어디로 갈지는 요청자가 적는 글자가 정함 | **관리 UI 라우터를 80 에만**<br>443 에 남는 것은 예매 화면 하나 |
+| **443 에 `Host` 헤더를 바꿔 넣으면 ArgoCD 로그인 화면**<br>응답 **200** | **Traefik 이 `Host` 헤더로만 가름**<br>예매 화면·Grafana·ArgoCD 가 80·443 뒤에 함께 있고, 어디로 갈지를 요청자가 보내는 값이 정함 | **관리 UI 라우터를 80 에만**<br>443 에 남는 것은 예매 화면 하나 |
 {:.hl-tbl}
 
 ## 결과
@@ -153,15 +153,12 @@ permalink: /homelab/security/
 
 ## 남은 것
 
-- **관리용 이름 하나가 집 공인 IP 를 내보냅니다** — 엣지 프록시는 HTTP·HTTPS 만 중계해 UDP 를 쓰는 터널 쪽은 켤 수 없습니다. 어디에도 알리지 않았지만 조회하면 그 주소가 나옵니다
+- **관리용 이름 하나가 집 공인 IP 를 노출합니다** — 엣지 프록시는 HTTP·HTTPS 만 중계해 UDP 터널에는 쓸 수 없습니다. 이름을 알면 조회로 주소가 나옵니다
 - **관리 경로가 OPNsense 한 대에 몰려 있습니다** — 이 VM 이 내려가면 터널 접근과 격리망의 인터넷이 함께 멈춥니다
 
 ## 쓴 것
 
 OPNsense · WireGuard · Cloudflare · cert-manager · Let's Encrypt · Calico NetworkPolicy
-{:.hl-more}
-
-이 경로 위에서 서비스 스펙을 다시 쟀습니다.
 {:.hl-more}
 
 {% include hl-nav.html %}
