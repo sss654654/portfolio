@@ -19,7 +19,7 @@ LevelDB는 Google이 만든 임베디드 key-value 저장소입니다.
 기반인 LSM-tree는 변경을 모아 순차 기록해 쓰기가 빠른 대신, 찾는 key가 어느 SSTable에 있는지 몰라 읽기가 약합니다.
 그 약점을 **인덱스 캐시와 블록 캐시** 두 계층으로 보완합니다.
 
-맡은 것은 그 두 캐시입니다. 소스에서 보면 키도 값도 다른데
+맡은 것은 그 두 캐시입니다. 키도 값도 다른데
 **LRU 엔진 하나를 공유하는 구조**였고, 세 가지를 분석했습니다.
 
 1. 두 캐시는 각각 무엇을 담나
@@ -32,7 +32,7 @@ LevelDB는 Google이 만든 임베디드 key-value 저장소입니다.
 <img src="/assets/img/projects/leveldb-readpath.png" alt="SSTable 읽기 경로 — TableCache::Get(key)가 인덱스 캐시(key=file_number, value=인덱스 블록)를 거쳐 Bloom 필터, 블록 캐시(key=cache_id+offset, value=데이터 블록)를 순서대로 조회. 히트면 메모리에서 반환, 미스면 디스크의 SSTable 파일을 읽어 채움">
 </figure>
 
-- **인덱스 캐시** — key `file_number`, value 인덱스 블록. 히트면 **어느 데이터 블록인지 위치(offset)**를 돌려주고, 미스면 SSTable을 열어 인덱스 블록을 올립니다
+- **인덱스 캐시** — key `file_number`, value 인덱스 블록. 히트면 **데이터 블록의 위치(offset)**를 돌려주고, 미스면 SSTable을 열어 인덱스 블록을 올립니다
 - **블록 캐시** — key `cache_id + offset`, value 데이터 블록. 히트면 **값을 바로 꺼내고**, 미스면 SSTable에서 그 블록을 읽어와 채웁니다
 
 키에 `cache_id`를 붙이면 여러 SSTable이 같은 offset을 써도 충돌하지 않습니다.
@@ -45,7 +45,7 @@ LevelDB는 Google이 만든 임베디드 key-value 저장소입니다.
 </figure>
 
 - **16개 샤드에 독립 락** — 락이 하나면 모든 조회가 순차 대기하는데, 샤드를 쪼개면 서로 다른 키는 동시에 조회됩니다
-- **한 노드로 조회와 순서를 함께** — 같은 `LRUHandle`을 해시테이블과 이중 연결 리스트에 동시에 걸어, 자료구조 둘이 필요한 일을 하나로 합니다
+- **한 노드로 조회와 순서를 함께** — 같은 `LRUHandle`이 해시테이블과 이중 연결 리스트에 동시에 걸려, 조회도 순서 갱신도 복사 없이 O(1)입니다
 - **`refs`로 use-after-free 차단** — eviction은 `lru_`(refs=1)만 훑고 `in_use_`(refs≥2)는 건드리지 않아, 쓰는 중인 블록은 해제되지 않습니다
 
 ## 실측
