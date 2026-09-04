@@ -34,14 +34,9 @@ CJ 올리브네트웍스 클라우드웨이브 6기(2025.06–09)의 팀 프로�
 | ECR 트래픽 | **`ecr.api`·`ecr.dkr` 엔드포인트를 서브넷마다** | 하나만 두면 인증은 되는데 pull이 NAT로 샘. 인터페이스 엔드포인트는 서브넷 단위로 ENI를 만들어 다른 서브넷 트래픽이 우회함 |
 | NAT Gateway | **2a 하나만** — 2c도 그것을 가리킴 | 시간당 요금 절반. 대가는 2a 장애 시 2c 아웃바운드도 끊기는 것 — 개발 환경이라 가용성보다 비용을 택함 |
 | 원격 state | **S3 + DynamoDB**, 별도 디렉터리 | 저장소 자신이 state에 들어가면 순환이 생김. backend 블록은 변수를 못 받아 partial config로 분리 |
-| 대기열 상태 | **Redis Sorted Set 둘** — waiting · active | score를 요청 시각으로 두면 도착 순서가 유지되고 순위 조회가 빠름. 대기는 상한 없이 받고 용량 통제는 active가 맡음 |
-| 승격 전달 | **Kinesis** | 승격 메시지를 놓치면 사용자가 예매 화면에 못 들어감 — 24시간 재처리 보존과 Fan-out |
+| 대기열 상태 | **Redis Sorted Set 둘** — waiting · active | score를 요청 시각으로 두면 도착 순서가 유지되고 순위 조회가 빠름. 대기는 상한 없이 받고, 정원은 Pod 수 기반으로 동적 계산해 2초 주기 프로세서가 빈 자리만큼 승격 |
+| 승격 전달 | **Kinesis** — 통지는 WebSocket + API 폴링 이중 | 승격 메시지를 놓치면 사용자가 예매 화면에 못 들어감 — 24시간 재처리 보존과 Fan-out, 연결이 끊겨도 폴링이 받음 |
 {:.hl-dec}
-
-정원은 Pod 수를 기반으로 동적 계산하고, 2초 주기 프로세서가 빈 자리만큼 앞에서부터 승격합니다.
-통지는 WebSocket에 API 폴링 백업을 겹쳤습니다.
-검증은 UUID 1만 명 분 입장 요청을 스크립트로 투입해 200(즉시 입장)/202(대기 등록)으로 가르고,
-100 → 1,000 → 10,000명 세 단계로 올리며 Redis 풀 10 → 20, Kinesis 샤드 1 → 2, HPA 확장을 확인했습니다.
 
 ## 트러블슈팅
 
@@ -52,6 +47,12 @@ CJ 올리브네트웍스 클라우드웨이브 6기(2025.06–09)의 팀 프로�
 | 인증서를 ACM에 올리고 Client VPN 연결 시 **TLS 핸드셰이크 실패** | 서버 인증서 CN이 `server` 같은 비FQDN이라 ACM이 도메인을 인식 못 함 | Easy-RSA PKI 재구성, FQDN CN으로 재발급 |
 | `destroy → apply` 뒤 GitLab 인스턴스에 **빈 볼륨** | `root_block_device` 인라인 정의라 볼륨이 인스턴스 수명주기에 묶임. 기존 볼륨은 살아 있었지만 새 인스턴스가 물지 않음 | 독립 `aws_ebs_volume` + `terraform import` + `aws_volume_attachment`로 분리 |
 {:.hl-tbl}
+
+## 결과
+
+- **개발계를 코드로 다시 세울 수 있게 됐습니다** — VPC·서브넷·엔드포인트·GitLab EC2까지 `destroy → apply`로 재현
+- **정원을 넘는 요청이 줄로 돌아갔습니다** — UUID 1만 명 분을 스크립트로 투입해 200(즉시 입장)과 202(대기 등록)로 갈리는 것을 확인
+- **세 단계 부하에서 구성을 조정했습니다** — 100 → 1,000 → 10,000명으로 올리며 Redis 풀 **10 → 20** · Kinesis 샤드 **1 → 2** · HPA 확장 확인
 
 ## 남은 것
 
@@ -66,6 +67,9 @@ Terraform · AWS (VPC · VPC Endpoint · Client VPN · EKS · Kinesis · ECR · 
 {:.hl-more}
 
 [github.com/sss654654/dev_terraform](https://github.com/sss654654/dev_terraform) · [dev_backend](https://github.com/sss654654/dev_backend)
+{:.hl-more}
+
+같은 대기열을 온프레미스에서 다시 만들고 부하로 스펙을 잰 것은 [홈랩](/homelab/)에 있습니다.
 {:.hl-more}
 
 {% include pj-nav.html %}

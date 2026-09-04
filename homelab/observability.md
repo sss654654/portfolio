@@ -215,6 +215,9 @@ permalink: /homelab/observability/
 Mimir · Loki · Tempo · Grafana · Alloy · MinIO · kube-state-metrics · node-exporter
 {:.hl-more}
 
+회사에서는 기구축된 같은 스택 위에서 관측만 맡았습니다 — [semiai](/projects/semiai/).
+{:.hl-more}
+
 이 화면들이 지켜보는 서비스가 다음입니다.
 {:.hl-more}
 
