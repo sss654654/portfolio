@@ -235,6 +235,8 @@ ul.timeline > li:has(> small)::before {
   border: 1px solid var(--border-color);
   border-radius: .6rem;
 }
+/* 다이어그램 썸네일 — 글자가 있는 그림은 자르면 버그처럼 보이니 전체를 넣는다 (프로젝트 목록) */
+.hlc-diagrams .hlc-img { object-fit: contain; background: #fff; }
 
 /* 썸네일 — 이미지가 들어오기 전에는 라벨이 있는 자리표시 블록 */
 .hlc-shot {

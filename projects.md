@@ -2,13 +2,13 @@
 layout: page
 title: 프로젝트
 description: >
-  홈랩 전에 한 것들 — 회사에서 하나, 팀 프로젝트 하나, 연구 하나
+  홈랩 전에 한 것들 — 회사·부트캠프·연구
 permalink: /projects/
 ---
 
-홈랩 전에 한 것들입니다 — 회사에서 하나, 팀 프로젝트 하나, 연구 하나. 홈랩은 [별도 페이지](/homelab/)에 있습니다.
+회사에서 하나, 팀 프로젝트 하나, 연구 하나입니다. 홈랩은 [별도 페이지](/homelab/)에 있습니다.
 
-<div class="hlc-grid" markdown="0">
+<div class="hlc-grid hlc-diagrams" markdown="0">
 
   <a class="hlc-card" href="/projects/semiai/">
     <img class="hlc-img" src="/assets/img/projects/semiai-pipeline.png" alt="semiai 관측 파이프라인 — 백엔드와 클러스터 타겟의 신호를 Alloy가 모아 LGTM 저장소로, 원본은 MinIO로">
