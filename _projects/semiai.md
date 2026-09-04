@@ -28,7 +28,7 @@ k3s 전환과 LGTM 스택 구축은 팀이 했고, 계측·수집과 인프라·
 | 인프라 대시보드 | **3단 동선** — control-plane 생존 → 비정상 Pod → 자원 임박 · 비정상 Pod는 `kube_pod_status_ready` 하나로 판정 | 사고를 control-plane → 워크로드 → 자원 순으로 좁힘 · 실패 유형 6종 OR은 조건이 늘수록 신뢰가 떨어짐 |
 | 앱 진단 동선 | **오류 종류로 두 갈래** — 500·panic은 trace → log / 502·503·OOM은 Traefik → 그 시각 힙 flame graph · metric→trace는 path 라벨 dataLink | 파드에 닿지 못한 요청은 Traefik만 앎 · `trace_id`를 metric 라벨에 넣으면 요청마다 시계열 폭발 |
 | profile | **Pyroscope 연속 프로파일링** — Alloy가 `/debug/pprof`를 주기 수집 | OOMKilled는 SIGKILL이라 trace·log가 flush 전에 끊김 — 죽기 직전 힙을 보려면 계속 찍고 있어야 함 |
-| 계측 범위 | **대시보드·알림이 참조하는 신호만** — repository span · 미참조 attribute 22개 제거 | 자동 계측과 중복이거나 참조처 없는 신호는 노이즈·카디널리티 |
+| 계측 범위 | **대시보드·알림이 참조하는 신호만** — 자동 계측과 겹치는 span · 미참조 attribute 제거 | 자동 계측과 중복이거나 참조처 없는 신호는 노이즈·카디널리티 |
 | 알림 기준 | **5xx 절대 건수** | 개발자만 쓰는 dev라 표본이 적어 비율·분위수는 무의미 |
 {:.hl-dec}
 
