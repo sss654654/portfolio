@@ -1,12 +1,59 @@
 ---
 layout: page
-title: CGV 영화 예매 대기열 시스템
+title: CGV 예매 대기열 시스템
 date: 2025-08-01
 description: >
-  (카드에 나오는 한두 줄 — 여기 채운다)
+  5인 팀에서 개발계 네트워크 계층(Terraform)과 대기열 백엔드(Spring Boot)를 맡았습니다
 links:
-  - title: GitHub
-    url: https://github.com/sss654654
+  - title: dev_terraform
+    url: https://github.com/sss654654/dev_terraform
+  - title: dev_backend
+    url: https://github.com/sss654654/dev_backend
 ---
 
-(본문 — 여기 채운다. 팀 5인 · 맡은 범위 · 그림 6장 자리)
+<p class="hl-back" markdown="0"><a href="/projects/">← 프로젝트</a></p>
+
+CJ 올리브네트웍스 클라우드웨이브 6기(2025.06–09)의 팀 프로젝트입니다.
+2024년 한국시리즈 예매에서 대기 인원이 16만 명까지 간 것을 모델로, 몰리는 수요를 백엔드가 감당할 유량으로 바꾸는
+대기열을 5인이 3주 동안 만들었습니다.
+**개발계 네트워크 계층(Terraform)과 대기열 백엔드(Spring Boot)를 맡았습니다.** EKS 클러스터, CI/CD 파이프라인, RDS·ElastiCache는 팀원 몫이었습니다.
+
+## 개발계 구조
+
+<figure class="hl-diagram" markdown="0">
+<img src="/assets/img/projects/cgv-arch.png" alt="개발계 아키텍처 — VPC 10.0.0.0/16 안에 GitLab(인터넷 라우트 없음, Client VPN으로 접근) · EKS(NAT 아웃바운드만, ArgoCD 포함) · Public(ALB·NAT, 워크로드 없음) · DB(인터넷 라우트 없음, RDS·ElastiCache). ECR은 ecr.api·ecr.dkr 엔드포인트로, Kinesis도 엔드포인트로">
+<figcaption>서브넷마다 인터넷 경로가 다릅니다. GitLab·DB는 아예 없고, EKS는 나가는 것만, Public은 관문 전용입니다. ECR·Kinesis 트래픽은 엔드포인트로 VPC 안에서 끝납니다.</figcaption>
+</figure>
+
+## 한 것
+
+- **[네트워크]** VPC · 서브넷 6개 · 라우트 테이블 4개 · 보안그룹 5개 · VPC 엔드포인트 5개 · ECR · GitLab EC2 · 원격 state(S3 + DynamoDB)를 Terraform으로 정의해 `destroy → apply`로 다시 세울 수 있게 했습니다. 서브넷마다 인터넷 경로를 다르게 뒀습니다 — Public은 IGW 양방향, EKS는 NAT 아웃바운드만, GitLab·DB는 인터넷 경로 없음.
+- **[ECR 엔드포인트]** 컨테이너 이미지 pull이 NAT를 지나면 데이터 처리 요금이 붙습니다. `ecr.api`(토큰·조회)와 `ecr.dkr`(레이어 전송) 엔드포인트를 둘 다 두어야 pull이 VPC 안에서 끝나고, 인터페이스 엔드포인트는 서브넷 단위로 ENI를 만들기 때문에 GitLab·EKS 서브넷에 각각 두었습니다.
+- **[비용 결정]** NAT Gateway를 2a 하나만 두고 2c의 EKS 서브넷도 그것을 가리키게 했습니다 — 시간당 요금은 절반, 대신 2a 장애 시 2c 아웃바운드도 끊깁니다. 개발 환경이라 가용성보다 비용을 택했습니다. state 저장소(S3 + DynamoDB)는 별도 디렉터리로 분리했습니다 — 저장소 자신이 state에 들어가면 순환이 생깁니다.
+- **[대기열]** Redis Sorted Set 둘로 대기(waiting — 상한 없이 받음, score=요청 시각, `ZRANK`로 순위)와 입장(active — 정원은 Pod 수 기반 동적 계산)을 나눴습니다. 2초 주기 프로세서가 빈 자리만큼 앞에서부터 승격하고, 승격 이벤트는 Kinesis로 전달합니다. 통지는 WebSocket에 API 폴링 백업을 겹쳤습니다.
+- **[검증]** UUID 1만 명 분 입장 요청을 curl 스크립트로 배치·병렬 투입하고, 200(즉시 입장)/202(대기 등록)으로 갈랐습니다. 100 → 1,000 → 10,000명 세 단계로 올리며 Redis 풀 10 → 20, Kinesis 샤드 1 → 2, HPA 확장을 확인했습니다.
+
+## 트러블슈팅
+
+| 증상 | 원인 | 조치 |
+|---|---|---|
+| Consumer 폴링에 `ProvisionedThroughputExceededException` **반복** | 샤드 1개(읽기 초당 5회)를 Pod마다 폴링 → Pod 6개에서 한도 초과. 게다가 Consumer가 0번 샤드만 읽어 **증설로는 못 푸는 구조** | Pod가 활성 목록의 자기 순번으로 샤드를 라운드로빈 분배, 샤드별 스레드로 소비. 필요 샤드 = Pod 10 × 초당 1회 ÷ 샤드당 5회 = **2개** |
+| Pod의 Kinesis 접근이 `AccessDeniedException` — **EC2 노드 역할**로 접근 중 | 서비스 계정 annotation · `AWS_ROLE_ARN` · 신뢰 관계 전부 정상. `pom.xml`에 `spring-cloud-aws-starter`가 없어 IRSA 환경변수를 안 읽음 | 의존성 추가 |
+| 인증서를 ACM에 올리고 Client VPN 연결 시 **TLS 핸드셰이크 실패** | 서버 인증서 CN이 `server` 같은 비FQDN이라 ACM이 도메인을 인식 못 함 | Easy-RSA PKI 재구성, FQDN CN으로 재발급 |
+| `destroy → apply` 뒤 GitLab 인스턴스에 **빈 볼륨** | `root_block_device` 인라인 정의라 볼륨이 인스턴스 수명주기에 묶임. 기존 볼륨은 살아 있었지만 새 인스턴스가 물지 않음 | 독립 `aws_ebs_volume` + `terraform import` + `aws_volume_attachment`로 분리 |
+{:.hl-tbl}
+
+## 남은 것
+
+- **CI/CD 파이프라인(GitLab → ArgoCD → ECR)은 팀원 몫이었습니다** — 직접 구축하지 못했습니다
+- **부하 테스트가 동작 확인에 그쳤습니다** — RPS·p99·에러율을 재지 않았습니다
+- **Kinesis와 WebSocket은 이 규모에 과했습니다** — 모놀리식 단일 소비자에 Fan-out·재처리는 쓸 자리가 없었고, 서버→클라이언트 단방향 알림에 양방향 연결은 유지 비용만 컸습니다
+- **Client VPN은 dev 편의로 퍼블릭 서브넷 접근으로 전환했습니다** — 구성은 주석으로 남아 있고, 현재 GitLab 보안그룹 인바운드가 `0.0.0.0/0`입니다
+
+## 쓴 것
+
+Terraform · AWS (VPC · VPC Endpoint · Client VPN · EKS · Kinesis · ECR · IRSA) · Java 17 · Spring Boot 3.3 · JPA · Redis (Sorted Set) · WebSocket (STOMP) · MySQL · React
+{:.hl-more}
+
+[github.com/sss654654/dev_terraform](https://github.com/sss654654/dev_terraform) · [dev_backend](https://github.com/sss654654/dev_backend)
+{:.hl-more}

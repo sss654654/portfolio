@@ -162,6 +162,11 @@ ul.timeline > li:has(> small)::before {
   max-width: 760px;
 }
 .hl-diagram svg { width: 100%; height: auto; display: block; color: var(--body-color); }
+.hl-diagram img { width: 100%; height: auto; display: block; }
+/* 그래프 두 장 나란히 — 프로젝트 페이지의 실측 그림. 좁으면 세로로 */
+.hl-pair { display: flex; gap: 1rem; margin: 1rem 0; }
+.hl-pair figure { flex: 1 1 0; margin: 0; }
+@media (max-width: 640px) { .hl-pair { flex-direction: column; } }
 .hl-diagram figcaption { font-size: .82rem; line-height: 1.65; color: var(--gray); margin-top: .55rem; }
 
 .hla-box { fill: var(--gray-bg); stroke: var(--border-color); stroke-width: 1; }
