@@ -237,6 +237,3 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
 * [HomeLab 시리즈](https://zed6740.tistory.com/category/HomeLab) — 왜 온프렘인지부터 인터넷 공개까지
 * [cgv-infra](https://github.com/sss654654/cgv-infra) — 클러스터와 배포 정의. 이 페이지의 설정은 전부 여기 있습니다
 * [cgv-onprem](https://github.com/sss654654/cgv-onprem) — 앱 소스. queue(Go) · booking(Spring) · frontend
-
-홈랩 이전의 것은 [프로젝트](/projects/)에, 요약은 [이력서](/resume/)에 있습니다.
-{:.hl-more}
