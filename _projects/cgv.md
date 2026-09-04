@@ -3,7 +3,7 @@ layout: page
 title: CGV 예매 대기열 시스템
 date: 2025-08-01
 description: >
-  5인 팀에서 개발계 네트워크 계층(Terraform)과 대기열 백엔드(Spring Boot)를 맡았습니다
+  개발계 AWS 네트워크(Terraform)와 Redis·Kinesis 대기열 백엔드(Spring Boot)
 links:
   - title: dev_terraform
     url: https://github.com/sss654654/dev_terraform
@@ -22,19 +22,19 @@ CJ 올리브네트웍스 클라우드웨이브 6기(2025.06–09)의 팀 프로�
 
 <figure class="hl-diagram" markdown="0">
 <img src="/assets/img/projects/cgv-arch.png" alt="개발계 아키텍처 — VPC 10.0.0.0/16 안에 GitLab(인터넷 라우트 없음, Client VPN으로 접근) · EKS(NAT 아웃바운드만, ArgoCD 포함) · Public(ALB·NAT, 워크로드 없음) · DB(인터넷 라우트 없음, RDS·ElastiCache). ECR은 ecr.api·ecr.dkr 엔드포인트로, Kinesis도 엔드포인트로">
-<figcaption>서브넷마다 인터넷 경로가 다릅니다. GitLab·DB는 아예 없고, EKS는 나가는 것만, Public은 관문 전용입니다. ECR·Kinesis 트래픽은 엔드포인트로 VPC 안에서 끝납니다.</figcaption>
+<figcaption>서브넷마다 인터넷 경로가 다릅니다 — GitLab·DB는 아예 없고, EKS는 나가는 것만, Public은 관문 전용입니다.</figcaption>
 </figure>
 
 ## 정한 것
 
 | 무엇을 | 고른 것 | 그렇게 한 이유 |
 |---|---|---|
-| 인프라 정의 | **Terraform** — `destroy → apply`로 다시 세움 | 손으로 만들면 재현이 안 되고, 무엇이 왜 그렇게 됐는지가 어디에도 안 남음 |
+| 인프라 정의 | **Terraform** — `destroy → apply`로 다시 세움 | 손으로 만들면 재현이 안 되고 설정 근거가 어디에도 안 남음 |
 | 서브넷 인터넷 경로 | **Public 양방향 · EKS 나가는 것만 · GitLab·DB 없음** | 소스 저장소와 DB가 같은 VPC에 있어, 서브넷마다 필요한 만큼만 열어야 함 |
 | ECR 트래픽 | **`ecr.api`·`ecr.dkr` 엔드포인트를 서브넷마다** | 하나만 두면 인증은 되는데 pull이 NAT로 샘 · 인터페이스 엔드포인트는 서브넷 단위로 ENI를 만듦 |
 | NAT Gateway | **2a 하나만** — 2c 라우트도 여기로 | 시간당 요금 절반 · 대가는 2a 장애 시 2c 아웃바운드도 끊김 — 개발 환경이라 비용을 택함 |
 | 원격 state | **S3 + DynamoDB**, 별도 디렉터리 | 저장소 자신이 state에 들어가면 순환 · backend 블록은 변수를 못 받아 partial config로 |
-| 대기열 상태 | **Redis Sorted Set 둘** — waiting 은 상한 없음 · active 는 Pod 수 기반 정원 | score를 요청 시각으로 두면 도착 순서가 유지되고 순위 조회가 빠름 · 용량 통제는 active가 맡음 |
+| 대기열 상태 | **Redis Sorted Set 둘** — waiting(상한 없음) · active(Pod 수 기반 정원) | score를 요청 시각으로 두면 도착 순서가 유지되고 순위 조회가 빠름 · 용량 통제는 active가 맡음 |
 | 승격 전달 | **Kinesis** — 2초 주기로 빈 자리만큼, 통지는 WebSocket + 폴링 이중 | 승격을 놓치면 예매 화면에 못 들어감 — 24시간 재처리 보존, 연결이 끊겨도 폴링이 받음 |
 {:.hl-dec}
 
@@ -51,14 +51,14 @@ CJ 올리브네트웍스 클라우드웨이브 6기(2025.06–09)의 팀 프로�
 ## 결과
 
 - **개발계를 코드로 다시 세울 수 있게 됐습니다** — VPC·서브넷·엔드포인트·GitLab EC2까지 `destroy → apply`로 재현
-- **정원을 넘는 요청이 줄로 돌아갔습니다** — UUID 1만 명 분을 스크립트로 투입해 200(즉시 입장)과 202(대기 등록)로 갈리는 것을 확인
+- **정원이 찬 뒤 도착한 요청은 대기열로 갔습니다** — UUID 1만 명 분을 투입해 200(즉시 입장)과 202(대기 등록)로 갈리는 것을 확인
 - **세 단계 부하에서 구성을 조정했습니다** — 100 → 1,000 → 10,000명으로 올리며 Redis 풀 **10 → 20** · Kinesis 샤드 **1 → 2** · HPA 확장 확인
 
 ## 남은 것
 
-- **CI/CD와 GitLab 구축은 팀원 몫이었습니다** — 파이프라인(GitLab → ArgoCD → ECR)을 직접 짜지 못했고, 팀원이 만든 Helm 차트에 제 백엔드 환경변수를 맞추는 데까지 했습니다
+- **CI/CD와 GitLab 구축은 팀원 몫이었습니다** — 파이프라인(GitLab → ArgoCD → ECR)을 직접 짜지 못했고, 팀원이 만든 Helm 차트에 백엔드 환경변수를 맞추는 데까지 했습니다
 - **EKS를 직접 세워 보지 못했습니다** — 클러스터는 팀원이 `eksctl`로 만들었고 그 위에 올리기만 해서, 쿠버네티스 구조를 모르는 채로 썼습니다
-- **개발계에서만 부하를 봤습니다** — 배포계는 다른 인프라에 다른 팀원 몫이었고, RPS·p99·에러율도 재지 않아 동작 확인에 그쳤습니다
+- **개발계에서만 부하를 봤습니다** — 배포계는 별도 인프라에 다른 팀원 몫이었고, RPS·p99·에러율도 재지 않아 동작 확인에 그쳤습니다
 - **Kinesis와 WebSocket은 이 규모에 과했습니다** — 모놀리식 단일 소비자에 Fan-out·재처리는 쓸 자리가 없었고, 서버→클라이언트 단방향 알림에 양방향 연결은 유지 비용만 컸습니다
 - **Client VPN은 dev 편의로 퍼블릭 서브넷 접근으로 전환했습니다** — 구성은 주석으로 남아 있고, 현재 GitLab 보안그룹 인바운드가 `0.0.0.0/0`입니다
 
