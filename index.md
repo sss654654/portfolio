@@ -75,7 +75,7 @@ sitemap: true
 ## 이력
 
 * **2026.07 – 09** — [온프레미스 k3s 홈랩](/homelab/) — 물리 서버부터 인터넷 공개까지 단독 구축 · 10,000명 부하에서 5xx 0건
-* **2026.03 – 06** — [semiai 인프라팀](/projects/semiai/) — 기구축 k3s 위 관측 담당 · 클러스터·앱 대시보드 둘, Go 백엔드에 metric·trace·log·profile 계측
+* **2026.03 – 06** — [semiai 인프라팀](/projects/semiai/) — 기구축 k3s 위 관측 담당 · 인프라·앱 대시보드, Go 백엔드 네 신호 계측 — 힙 프로필로 메모리 점유 함수를 찾아 개발팀에 공유
 * **2025.06 – 09** — [CJ 올리브네트웍스 클라우드웨이브 6기](/projects/cgv/) — CGV 예매 대기열, 5인 팀 · AWS 개발계 네트워크(Terraform)와 Redis 대기열 백엔드 담당
 * <small>2023.08 – 2025.05 — 공군 복무</small>
 * **2022.07 – 12** — [LevelDB 캐시 구조 분석](/projects/leveldb/) — 학부 연구생 · KSC 2022 논문 1저자
