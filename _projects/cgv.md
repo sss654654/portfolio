@@ -25,13 +25,23 @@ CJ 올리브네트웍스 클라우드웨이브 6기(2025.06–09)의 팀 프로�
 <figcaption>서브넷마다 인터넷 경로가 다릅니다. GitLab·DB는 아예 없고, EKS는 나가는 것만, Public은 관문 전용입니다. ECR·Kinesis 트래픽은 엔드포인트로 VPC 안에서 끝납니다.</figcaption>
 </figure>
 
-## 한 것
+## 정한 것
 
-- **[네트워크]** VPC · 서브넷 6개 · 라우트 테이블 4개 · 보안그룹 5개 · VPC 엔드포인트 5개 · ECR · GitLab EC2 · 원격 state(S3 + DynamoDB)를 Terraform으로 정의해 `destroy → apply`로 다시 세울 수 있게 했습니다. 서브넷마다 인터넷 경로를 다르게 뒀습니다 — Public은 IGW 양방향, EKS는 NAT 아웃바운드만, GitLab·DB는 인터넷 경로 없음.
-- **[ECR 엔드포인트]** 컨테이너 이미지 pull이 NAT를 지나면 데이터 처리 요금이 붙습니다. `ecr.api`(토큰·조회)와 `ecr.dkr`(레이어 전송) 엔드포인트를 둘 다 두어야 pull이 VPC 안에서 끝나고, 인터페이스 엔드포인트는 서브넷 단위로 ENI를 만들기 때문에 GitLab·EKS 서브넷에 각각 두었습니다.
-- **[비용 결정]** NAT Gateway를 2a 하나만 두고 2c의 EKS 서브넷도 그것을 가리키게 했습니다 — 시간당 요금은 절반, 대신 2a 장애 시 2c 아웃바운드도 끊깁니다. 개발 환경이라 가용성보다 비용을 택했습니다. state 저장소(S3 + DynamoDB)는 별도 디렉터리로 분리했습니다 — 저장소 자신이 state에 들어가면 순환이 생깁니다.
-- **[대기열]** Redis Sorted Set 둘로 대기(waiting — 상한 없이 받음, score=요청 시각, `ZRANK`로 순위)와 입장(active — 정원은 Pod 수 기반 동적 계산)을 나눴습니다. 2초 주기 프로세서가 빈 자리만큼 앞에서부터 승격하고, 승격 이벤트는 Kinesis로 전달합니다. 통지는 WebSocket에 API 폴링 백업을 겹쳤습니다.
-- **[검증]** UUID 1만 명 분 입장 요청을 curl 스크립트로 배치·병렬 투입하고, 200(즉시 입장)/202(대기 등록)으로 갈랐습니다. 100 → 1,000 → 10,000명 세 단계로 올리며 Redis 풀 10 → 20, Kinesis 샤드 1 → 2, HPA 확장을 확인했습니다.
+| 무엇을 | 고른 것 | 그렇게 한 이유 |
+|---|---|---|
+| 인프라 정의 | **Terraform** — `destroy → apply`로 다시 세움 | 손으로 만들면 재현이 안 되고, 무엇이 왜 그렇게 됐는지가 어디에도 안 남음 |
+| 서브넷 인터넷 경로 | **Public 양방향 · EKS 나가는 것만 · GitLab·DB 없음** | 소스 저장소와 DB가 같은 VPC에 있어, 서브넷마다 필요한 만큼만 열어야 함 |
+| ECR 트래픽 | **`ecr.api`·`ecr.dkr` 엔드포인트를 서브넷마다** | 하나만 두면 인증은 되는데 pull이 NAT로 샘. 인터페이스 엔드포인트는 서브넷 단위로 ENI를 만들어 다른 서브넷 트래픽이 우회함 |
+| NAT Gateway | **2a 하나만** — 2c도 그것을 가리킴 | 시간당 요금 절반. 대가는 2a 장애 시 2c 아웃바운드도 끊기는 것 — 개발 환경이라 가용성보다 비용을 택함 |
+| 원격 state | **S3 + DynamoDB**, 별도 디렉터리 | 저장소 자신이 state에 들어가면 순환이 생김. backend 블록은 변수를 못 받아 partial config로 분리 |
+| 대기열 상태 | **Redis Sorted Set 둘** — waiting · active | score를 요청 시각으로 두면 도착 순서가 유지되고 순위 조회가 빠름. 대기는 상한 없이 받고 용량 통제는 active가 맡음 |
+| 승격 전달 | **Kinesis** | 승격 메시지를 놓치면 사용자가 예매 화면에 못 들어감 — 24시간 재처리 보존과 Fan-out |
+{:.hl-dec}
+
+정원은 Pod 수를 기반으로 동적 계산하고, 2초 주기 프로세서가 빈 자리만큼 앞에서부터 승격합니다.
+통지는 WebSocket에 API 폴링 백업을 겹쳤습니다.
+검증은 UUID 1만 명 분 입장 요청을 스크립트로 투입해 200(즉시 입장)/202(대기 등록)으로 가르고,
+100 → 1,000 → 10,000명 세 단계로 올리며 Redis 풀 10 → 20, Kinesis 샤드 1 → 2, HPA 확장을 확인했습니다.
 
 ## 트러블슈팅
 
@@ -57,3 +67,5 @@ Terraform · AWS (VPC · VPC Endpoint · Client VPN · EKS · Kinesis · ECR · 
 
 [github.com/sss654654/dev_terraform](https://github.com/sss654654/dev_terraform) · [dev_backend](https://github.com/sss654654/dev_backend)
 {:.hl-more}
+
+{% include pj-nav.html %}

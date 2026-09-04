@@ -1,0 +1,6 @@
+<!-- 프로젝트 페이지 하단 내비 — 현재 페이지는 굵게(링크 없음). 홈랩 카드의 hl-nav와 같은 양식. -->
+<nav class="hl-nav" markdown="0">
+  {% if page.url == "/projects/semiai/" %}<b>semiai 옵저버빌리티</b>{% else %}<a href="/projects/semiai/">semiai 옵저버빌리티</a>{% endif %}
+  {% if page.url == "/projects/cgv/" %}<b>CGV 예매 대기열</b>{% else %}<a href="/projects/cgv/">CGV 예매 대기열</a>{% endif %}
+  {% if page.url == "/projects/leveldb/" %}<b>LevelDB 캐시 분석</b>{% else %}<a href="/projects/leveldb/">LevelDB 캐시 분석</a>{% endif %}
+</nav>

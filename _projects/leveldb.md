@@ -65,3 +65,5 @@ C++ · LevelDB · LSM-tree · SSTable · LRU Cache · db_bench · AWS EC2
 
 [github.com/sss654654/leveldb-cache-analysis](https://github.com/sss654654/leveldb-cache-analysis) · [논문 PDF](https://github.com/sss654654/leveldb-cache-analysis/blob/main/papers/%EC%B5%9C%EC%A2%85%EB%B3%B8LevelDB_%EC%BA%90%EC%8B%9C_%EA%B5%AC%EC%A1%B0_%EB%B0%8F_%EC%84%B1%EB%8A%A5_%EB%B6%84%EC%84%9D.pdf)
 {:.hl-more}
+
+{% include pj-nav.html %}
