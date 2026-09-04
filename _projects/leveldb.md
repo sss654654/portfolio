@@ -31,27 +31,26 @@ LevelDB는 Google이 만든 임베디드 key-value 저장소입니다.
 <img src="/assets/img/projects/leveldb-readpath.png" alt="SSTable 읽기 경로 — TableCache::Get(key)가 인덱스 캐시(key=file_number, value=인덱스 블록)를 거쳐 Bloom 필터, 블록 캐시(key=cache_id+offset, value=데이터 블록)를 순서대로 조회. 히트면 메모리에서 반환, 미스면 디스크의 SSTable 파일을 읽어 채움">
 </figure>
 
-SSTable 하나를 읽을 때 두 캐시를 순서대로 거칩니다.
+- **인덱스 캐시** — key `file_number`, value 인덱스 블록. 히트면 **어느 데이터 블록인지 위치(offset)**를 돌려주고, 미스면 SSTable을 열어 인덱스 블록을 올립니다
+- **블록 캐시** — key `cache_id + offset`, value 데이터 블록. 히트면 **값을 바로 꺼내고**, 미스면 SSTable에서 그 블록을 읽어와 채웁니다
 
-- **인덱스 캐시** — key는 `file_number`, value는 인덱스 블록입니다. 히트면 **어느 데이터 블록인지 위치(offset)**를 돌려주고, 미스면 SSTable을 열어 인덱스 블록을 메모리에 올립니다
-- **블록 캐시** — key는 `cache_id + offset`, value는 데이터 블록입니다. 히트면 **값을 바로 꺼내고**, 미스면 SSTable에서 그 블록을 읽어와 채웁니다
-
-키에 `cache_id`가 붙는 것은 여러 SSTable이 같은 offset을 써도 충돌하지 않게 하려는 것입니다.
+키에 `cache_id`를 붙이면 여러 SSTable이 같은 offset을 써도 충돌하지 않습니다.
+용량을 세는 기준도 달라서, 인덱스 캐시는 개수(파일 수)로 블록 캐시는 바이트로 셉니다.
 
 ## LRU 엔진
 
 <figure class="hl-diagram" markdown="0">
 <img src="/assets/img/projects/leveldb-lru.png" alt="ShardedLRUCache — key의 상위 해시 비트로 16개 샤드 중 하나를 고르고, 샤드 하나 안에서 같은 LRUHandle이 해시테이블(버킷 체인)과 이중 연결 리스트에 동시에 걸린다. 리스트는 lru_(refs=1, evict 후보)와 in_use_(refs≥2, evict 보호) 둘로 나뉜다">
-<figcaption>키도 저장물도 다른 두 캐시가 같은 <code>ShardedLRUCache</code>를 씁니다.</figcaption>
+<figcaption>key의 상위 해시 비트로 샤드를 고르고, 샤드 안에서 한 노드가 해시테이블과 리스트 양쪽에 걸립니다.</figcaption>
 </figure>
 
 - **16개 샤드에 독립 락** — 락이 하나면 모든 조회가 줄을 서는데, 샤드를 쪼개면 서로 다른 키는 동시에 조회됩니다
-- **한 노드로 조회와 순서를 함께** — 같은 `LRUHandle`을 해시테이블과 이중 연결 리스트에 동시에 걸어, 보통 자료구조 둘이 필요한 일을 하나로 합니다
+- **한 노드로 조회와 순서를 함께** — O(1) 조회와 LRU 순서는 서로 다른 자료구조를 요구하는데, 같은 `LRUHandle`을 해시테이블과 이중 연결 리스트에 동시에 걸어 하나로 해결합니다
 - **`refs`로 use-after-free 차단** — eviction은 `lru_`(refs=1)만 훑고 `in_use_`(refs≥2)는 건드리지 않아, 쓰는 중인 블록은 해제되지 않습니다
-- **용량 세는 기준이 다름** — 같은 엔진인데 인덱스 캐시는 개수(파일 수)로, 블록 캐시는 바이트로 셉니다
 
 ## 실측
 
+파라미터를 어디까지 키워야 읽기가 빨라지는지 재기 위해,
 인덱스 캐시는 개수만, 블록 캐시는 크기만 독립 변수로 두고 세 워크로드의 latency를 쟀습니다.
 워크로드가 다르게 반응하는 이유는 **워킹셋 크기**입니다 —
 readrandom(전체 key 무작위) · seekrandom(모든 레벨을 훑어 가장 큼) · readhot(1%만 반복해 가장 작음).
