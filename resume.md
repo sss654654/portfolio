@@ -8,6 +8,7 @@ permalink: /resume/
 
 노트북 한 대에 k3s 클러스터를 세워 예매 대기열 서비스를 인터넷에 공개하고,
 10,000명 부하에서 5xx 0건을 유지하며 정원·자원 스펙을 실측했습니다.
+{:.lead}
 
 **[이력서 PDF 내려받기](/assets/subinhong-resume.pdf)**
 

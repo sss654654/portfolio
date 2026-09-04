@@ -9,6 +9,7 @@ permalink: /homelab/cicd/
 <p class="hl-back" markdown="0"><a href="/homelab/">← 홈랩</a></p>
 
 클러스터는 준비됐지만 앱은 뜨지 못했습니다 — **받아 올 이미지가 없었습니다.**
+{:.lead}
 
 ## CI/CD 구조
 
