@@ -11,7 +11,7 @@ permalink: /homelab/
 
 관리형 쿠버네티스는 컨트롤플레인·네트워크·로드밸런서·볼륨을 선언만 하면 만들어 줍니다.
 그 층을 하나씩 골라 세우고 **그 아래 리눅스·하이퍼바이저·디스크까지** 다루기 위해, 쓰던 노트북을 서버로 삼았습니다.
-그 위에 대기열 예매 서비스와 관측을 올려 인터넷에 공개했고, 아래가 그 구성입니다.
+그 위에 대기열 예매 서비스와 옵저버빌리티를 올려 인터넷에 공개했고, 아래가 그 구성입니다.
 {:.lead}
 
 <!-- 배선도 — 실제 토폴로지를 세 이야기로 압축:
@@ -180,7 +180,7 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
 
 <!-- 카드 여섯 — 물리에서 공개까지 순서대로 -->
 
-## 무엇을 골랐고, 왜 그렇게 골랐나
+## 구성
 
 <div class="hlc-grid" markdown="0">
 
@@ -200,9 +200,9 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
 
   <a class="hlc-card" href="/homelab/observability/">
     <img class="hlc-img" src="/assets/img/homelab/observability-thumb.jpg" alt="알림이 발화한 순간의 호스트 대시보드와, 같은 알림이 도착한 폰 Discord 화면">
-    <span class="hlc-tag">관측</span>
-    <span class="hlc-title">LGTM 스택으로 관측 구축</span>
-    <span class="hlc-desc">지표·로그·트레이스를 수집기 하나로 모으고, 클러스터와 서버 호스트의 대시보드·알림을 그 위에 세웠습니다.</span>
+    <span class="hlc-tag">옵저버빌리티</span>
+    <span class="hlc-title">LGTM 스택으로 옵저버빌리티 구축</span>
+    <span class="hlc-desc">metric · log · trace를 수집기 하나로 모으고, 클러스터와 서버 호스트의 대시보드·알림을 그 위에 세웠습니다.</span>
   </a>
 
   <a class="hlc-card" href="/homelab/service/">
@@ -221,8 +221,8 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
 
   <a class="hlc-card" href="/homelab/capacity/">
     <img class="hlc-img" src="/assets/img/homelab/capacity-thumb.png" alt="k6 실행이 끝난 터미널 — 요청 시간 구간별 지연과 여정 지연, 요청 25,004건 요약">
-    <span class="hlc-tag">부하테스트</span>
-    <span class="hlc-title">k6 부하테스트로 정원·자원 스펙 확정</span>
+    <span class="hlc-tag">부하 테스트</span>
+    <span class="hlc-title">k6 부하 테스트로 정원·자원 스펙 확정</span>
     <span class="hlc-desc">SLO를 먼저 정하고 공개된 경로에 실제 여정 그대로 부하를 걸었습니다. 막히는 자리를 대시보드에서 찾아 고쳐, 10,000명이 5xx 없이 완주했습니다.</span>
   </a>
 
@@ -230,7 +230,7 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
 
 <!-- 기록과 코드 -->
 
-## 기록과 코드
+## 기록 · 저장소
 
 시작한 날부터 편별로 블로그에 남겼습니다.
 

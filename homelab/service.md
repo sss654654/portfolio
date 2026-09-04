@@ -26,7 +26,7 @@ permalink: /homelab/service/
 <figure class="hl-diagram hl-diagram-lg" markdown="0">
 <div class="cap-sim" id="cap-sim">
 <div class="cs-ctrl" id="cs-ctrl"><span class="cs-count" id="cs-count">관객 30 · 정원 6 · 좌석 24</span></div>
-<svg viewBox="0 0 760 562" role="img" aria-label="대기열 서비스의 한 판 — 관객이 Redis의 waiting 줄에 서고, 승격이 빈자리만큼 앞에서 꺼내 active 정원에 앉힌다. admissions 메시지가 토픽을 거쳐 booking의 입장 인증(admitted)에 적히면 좌석을 살 수 있고, 확정되면 bookings-completed가 토픽을 거쳐 돌아와 active에서 빠져 자리가 빈다">
+<svg viewBox="0 0 760 562" role="img" aria-label="대기열 서비스의 한 회 — 관객이 Redis의 waiting 줄에 서고, 승격이 빈자리만큼 앞에서 꺼내 active 정원에 앉힌다. admissions 메시지가 토픽을 거쳐 booking의 입장 인증(admitted)에 적히면 좌석을 살 수 있고, 확정되면 bookings-completed가 토픽을 거쳐 돌아와 active에서 빠져 자리가 빈다">
   <defs>
     <marker id="cs-a" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor" opacity=".5"/></marker>
   </defs>
@@ -149,35 +149,35 @@ permalink: /homelab/service/
   <g id="cs-people"></g>
   <g id="cs-msgs"></g>
 </svg>
-<div class="cs-log" id="cs-log">멈춰 있으면 구조도, 재생하면 한 판이 도는 흐름도입니다.</div>
+<div class="cs-log" id="cs-log">멈춰 있으면 구조도, 재생하면 한 회가 도는 흐름도입니다.</div>
 </div>
 <figcaption>관객 30 · 정원 6 · 좌석 24는 흐름을 보기 위한 축소값입니다 — 실측으로 정한 것은
-<a href="/homelab/capacity/">부하테스트</a>에 있습니다.</figcaption>
+<a href="/homelab/capacity/">부하 테스트</a>에 있습니다.</figcaption>
 </figure>
 
-## 정한 것
+## 설계 결정
 
-| 무엇을 | 고른 것 | 그렇게 한 이유 |
+| 항목 | 선택 | 이유 |
 |---|---|---|
 | queue | **Go · 4대 고정** | **요청이 짧고 많음 — 대기열**<br>goroutine이 요청 하나씩 맡아 동시 처리 비용이 낮고, 네이티브 바이너리라 기동 즉시 최고 속도 · HPA는 피크보다 늦어 4대 고정 |
 | 순번·현황 | **Redis 폴링** | **홈·대기 화면이 주기마다 묻는 구조**<br>줄·정원·현황이 전부 Redis에 있어 왕복 1-2번 · 1ms — 부하는 횟수(CPU)이고 어느 파드가 받아도 같은 답 |
 | booking | **Java Spring · 한 대** | **요청이 길고 적음 — 입장객**<br>메모리를 길게 점유하지만 수는 정원으로 제한 · 전부-성공/전부-롤백이 `@Transactional` 하나 — 대가는 기동부터 수백 MiB |
 | 서비스 간 통신 | **Kafka 비동기** — 서로 직접 호출 없음 | **한쪽이 멈춰도 다른 쪽은 계속**<br>동기 호출이면 booking이 멈추는 순간 queue도 정지 · 발행하고 끝이라 못 받은 것은 토픽에 남아 나중에 소비 |
-| 관측 | **코드에 계측을 심음** | **기본 지표만으론 "어디서"가 안 보임**<br>파드 지표는 양만 표시 · 요청 수·지연은 메트릭, 사건은 로그, 구간별 흐름은 트레이스 — 뒤의 둘을 `trace_id`로 연결 |
+| 옵저버빌리티 | **코드에 계측을 심음** | **기본 metric만으론 "어디서"가 안 보임**<br>파드 metric은 양만 표시 · 요청 수·지연은 metric, 사건은 log, 구간별 흐름은 trace — 뒤의 둘을 `trace_id`로 연결 |
 {:.hl-dec}
 
 ## 결과
 
 - **몰리는 인원과 표 파는 처리가 갈렸습니다** — 줄은 queue 4대가 받고 booking 한 대는 정원만큼만 받습니다. frontend 2대까지 세 서비스가 동작합니다
-- **세 신호가 코드에 계측돼 있습니다** — 지표에서 이상을 보면 그 요청의 트레이스와 로그까지 내려갑니다
-- **정원·커넥션 풀·메모리 상한은 아직 가정값입니다** — 이 계측 위에서 부하를 걸어 실측으로 바꾸는 것이 [부하테스트](/homelab/capacity/)입니다
+- **세 신호가 코드에 계측돼 있습니다** — metric에서 이상을 보면 그 요청의 trace와 log까지 내려갑니다
+- **정원·커넥션 풀·메모리 상한은 아직 가정값입니다** — 이 계측 위에서 부하를 걸어 실측으로 바꾸는 것이 [부하 테스트](/homelab/capacity/)입니다
 
-## 남은 것
+## 한계
 
 - **Redis 한 대가 읽기와 쓰기를 다 받습니다** — 명령 처리가 단일 스레드라 코어를 더 줘도 하나만 씁니다. 순번 조회를 복제본으로 분리하는 것이 다음입니다
 - **booking과 MySQL이 한 대씩입니다** — Hibernate가 기동할 때 스키마를 만들어 booking 두 대가 같이 뜨면 DDL이 겹칩니다. 늘리려면 마이그레이션 도구가 먼저입니다
 
-## 쓴 것
+## 기술 스택
 
 Go · Spring Boot · Redis · Kafka(Strimzi) · MySQL · OpenTelemetry
 {:.hl-more}

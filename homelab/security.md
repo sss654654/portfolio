@@ -115,11 +115,11 @@ permalink: /homelab/security/
 두 브리지에 다 꽂힌 VM 하나뿐입니다.</figcaption>
 </figure>
 
-## 정한 것
+## 설계 결정
 
 <div class="hl-sub" markdown="0">클러스터 밖 — 경계와 공개 경로</div>
 
-| 무엇을 | 고른 것 | 그렇게 한 이유 |
+| 항목 | 선택 | 이유 |
 |---|---|---|
 | 격리 방식 | **OPNsense 방화벽 VM** + 가상 브리지로 격리망 구축 | **한 공유기 아래 노드와 데스크탑이 나란히 인터넷을 향함**<br>한쪽이 침해되면 같은 망을 타고 상호 침투 가능 |
 | 관리 접근 | **WireGuard** (OpenVPN 아님) | **관리 페이지는 공개 대상이 아님**<br>Grafana·ArgoCD 를 도메인으로 열지 않고, 키를 등록한 관리자만 터널로 |
@@ -129,7 +129,7 @@ permalink: /homelab/security/
 
 <div class="hl-sub" markdown="0">클러스터 안 — 통신과 인증서</div>
 
-| 무엇을 | 고른 것 | 그렇게 한 이유 |
+| 항목 | 선택 | 이유 |
 |---|---|---|
 | 파드 사이 | **NetworkPolicy 17개** — 네임스페이스마다 기본 차단 뒤 통로만 되열음 | **쿠버네티스 기본값은 파드끼리 전부 접속 가능**<br>하나가 뚫리면 그 파드가 닿는 범위까지 노출 — 앱을 거치면 DB 자격까지 도달 |
 | 인증서 | **Let's Encrypt · DNS-01 방식** | **포트를 열기 전에 인증서를 받음**<br>CA 가 도메인 소유를 확인하는데, DNS 레코드로 증명하면 열린 포트 불필요 |
@@ -152,12 +152,12 @@ permalink: /homelab/security/
 - **관리 화면은 터널 안에서만 열립니다** — Grafana·ArgoCD 는 443 에 라우터가 없고, 등록된 키로 서명이 풀린 기기만 격리망에 닿습니다
 - **파드 사이는 적어 둔 통로만 남았습니다** — 세 네임스페이스가 기본 차단이고, booking 이 나갈 수 있는 곳은 MySQL·Redis·Kafka·수집기 넷뿐입니다
 
-## 남은 것
+## 한계
 
 - **관리용 이름 하나가 집 공인 IP 를 노출합니다** — 엣지 프록시는 HTTP·HTTPS 만 중계해 UDP 터널에는 쓸 수 없습니다. 이름을 알면 조회로 주소가 나옵니다
 - **관리 경로가 OPNsense 한 대에 몰려 있습니다** — 이 VM 이 내려가면 터널 접근과 격리망의 인터넷이 함께 멈춥니다
 
-## 쓴 것
+## 기술 스택
 
 OPNsense · WireGuard · Cloudflare · cert-manager · Let's Encrypt · Calico NetworkPolicy
 {:.hl-more}
