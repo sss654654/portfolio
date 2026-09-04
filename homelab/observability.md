@@ -101,6 +101,7 @@ permalink: /homelab/observability/
 | 저장 몸통 | **클러스터 안 MinIO** — S3 호환 | 셋 다 원본은 여기, 로컬엔 WAL만. 전용 계정이 세 버킷만 읽고 씀 — 루트 자격은 앱에 미노출 |
 | Tempo 보유 한도 | **`max_traces_per_user` 5배** — 동시에 열린 트레이스 1만 → 5만 | 전 요청을 남기기로 하자 폴링이 초당 수천 건이라 기본 한도 초과 — 넘친 트레이스는 버려짐 |
 | 알림에 패널 스크린샷 추가 | **Grafana Image Renderer** — 알림마다 그 지표의 패널을 그려 첨부 | 숫자 하나로는 언제부터 오른 것인지 모름 — 패널 캡처가 붙으면 추이가 함께 옴 |
+| 밖에서 보는 감시 | **Better Stack** — `ticket.subinhong.dev` 를 밖에서 확인, 메일 | 아래 알림은 전부 클러스터 안에서 돎 — 클러스터가 죽으면 알림도 같이 죽어 아무것도 안 옴 |
 {:.hl-dec}
 
 ## 클러스터 대시보드
@@ -203,16 +204,16 @@ permalink: /homelab/observability/
 - **세 신호가 각자의 저장소에 쌓입니다** — 지표는 Mimir(ingester 3대 · 15일), 로그는 Loki(7일), 트레이스는 Tempo(24시간). 원본은 셋 다 클러스터 안 MinIO로 내려가고, 전용 계정이 세 버킷만 읽고 씁니다
 - 그 위에 **대시보드 둘**을 세웠습니다 — 클러스터 상태(노드가 살아 있나부터 어느 파드가 문제인가까지)와 호스트 하드웨어(열·전력·저장). 알림은 호스트 쪽에만 걸었습니다
 - 안 볼 때는 **알림이 Discord로** 옵니다 — 지금 값과 할 일, 패널 그림과 함께
+- **클러스터가 통째로 죽어도 밖에서 잡힙니다** — Better Stack이 서비스 주소를 밖에서 확인하다 상태가 바뀌면 메일을 보냅니다
 
 ## 남은 것
 
 - **관측 스택 자신을 보는 화면이 없습니다** — 구축하며 지표가 에러 없이 버려지거나 상한이 차오르는 일을 겪었습니다
 - **request를 넘거나 limit에 다가선 파드가 아직 있습니다** — 노드 메모리 8GB × 3 안에서 전부에게 여유를 줄 수는 없고, 자원이 큰 클러스터에서 이 화면으로 잰 값으로 다시 잡습니다
-- **호스트가 꺼지면 알림도 함께 멈춥니다** — 알림이 그 위 클러스터에서 돌기 때문이고, 그 구간은 밖에서 보는 감시가 맡습니다
 
 ## 쓴 것
 
-Mimir · Loki · Tempo · Grafana · Alloy · MinIO · kube-state-metrics · node-exporter
+Mimir · Loki · Tempo · Grafana · Alloy · MinIO · kube-state-metrics · node-exporter · Better Stack
 {:.hl-more}
 
 회사에서는 기구축된 같은 스택 위에서 관측만 맡았습니다 — [semiai](/projects/semiai/).

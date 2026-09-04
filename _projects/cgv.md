@@ -31,21 +31,21 @@ CJ 올리브네트웍스 클라우드웨이브 6기(2025.06–09)의 팀 프로�
 |---|---|---|
 | 인프라 정의 | **Terraform** — `destroy → apply`로 다시 세움 | 손으로 만들면 재현이 안 되고, 무엇이 왜 그렇게 됐는지가 어디에도 안 남음 |
 | 서브넷 인터넷 경로 | **Public 양방향 · EKS 나가는 것만 · GitLab·DB 없음** | 소스 저장소와 DB가 같은 VPC에 있어, 서브넷마다 필요한 만큼만 열어야 함 |
-| ECR 트래픽 | **`ecr.api`·`ecr.dkr` 엔드포인트를 서브넷마다** | 하나만 두면 인증은 되는데 pull이 NAT로 샘. 인터페이스 엔드포인트는 서브넷 단위로 ENI를 만들어 다른 서브넷 트래픽이 우회함 |
-| NAT Gateway | **2a 하나만** — 2c도 그것을 가리킴 | 시간당 요금 절반. 대가는 2a 장애 시 2c 아웃바운드도 끊기는 것 — 개발 환경이라 가용성보다 비용을 택함 |
-| 원격 state | **S3 + DynamoDB**, 별도 디렉터리 | 저장소 자신이 state에 들어가면 순환이 생김. backend 블록은 변수를 못 받아 partial config로 분리 |
-| 대기열 상태 | **Redis Sorted Set 둘** — waiting · active | score를 요청 시각으로 두면 도착 순서가 유지되고 순위 조회가 빠름. 대기는 상한 없이 받고, 정원은 Pod 수 기반으로 동적 계산해 2초 주기 프로세서가 빈 자리만큼 승격 |
-| 승격 전달 | **Kinesis** — 통지는 WebSocket + API 폴링 이중 | 승격 메시지를 놓치면 사용자가 예매 화면에 못 들어감 — 24시간 재처리 보존과 Fan-out, 연결이 끊겨도 폴링이 받음 |
+| ECR 트래픽 | **`ecr.api`·`ecr.dkr` 엔드포인트를 서브넷마다** | 하나만 두면 인증은 되는데 pull이 NAT로 샘 · 인터페이스 엔드포인트는 서브넷 단위로 ENI를 만듦 |
+| NAT Gateway | **2a 하나만** — 2c 라우트도 여기로 | 시간당 요금 절반 · 대가는 2a 장애 시 2c 아웃바운드도 끊김 — 개발 환경이라 비용을 택함 |
+| 원격 state | **S3 + DynamoDB**, 별도 디렉터리 | 저장소 자신이 state에 들어가면 순환 · backend 블록은 변수를 못 받아 partial config로 |
+| 대기열 상태 | **Redis Sorted Set 둘** — waiting 은 상한 없음 · active 는 Pod 수 기반 정원 | score를 요청 시각으로 두면 도착 순서가 유지되고 순위 조회가 빠름 · 용량 통제는 active가 맡음 |
+| 승격 전달 | **Kinesis** — 2초 주기로 빈 자리만큼, 통지는 WebSocket + 폴링 이중 | 승격을 놓치면 예매 화면에 못 들어감 — 24시간 재처리 보존, 연결이 끊겨도 폴링이 받음 |
 {:.hl-dec}
 
 ## 트러블슈팅
 
 | 증상 | 원인 | 조치 |
 |---|---|---|
-| Consumer 폴링에 `ProvisionedThroughputExceededException` **반복** | 샤드 1개(읽기 초당 5회)를 Pod마다 폴링 → Pod 6개에서 한도 초과. 게다가 Consumer가 0번 샤드만 읽어 **증설로는 못 푸는 구조** | Pod가 활성 목록의 자기 순번으로 샤드를 라운드로빈 분배, 샤드별 스레드로 소비. 필요 샤드 = Pod 10 × 초당 1회 ÷ 샤드당 5회 = **2개** |
-| Pod의 Kinesis 접근이 `AccessDeniedException` — **EC2 노드 역할**로 접근 중 | 서비스 계정 annotation · `AWS_ROLE_ARN` · 신뢰 관계 전부 정상. `pom.xml`에 `spring-cloud-aws-starter`가 없어 IRSA 환경변수를 안 읽음 | 의존성 추가 |
+| Consumer 폴링에 `ProvisionedThroughputExceededException` **반복** | 샤드 1개(읽기 초당 5회)를 Pod마다 폴링 → Pod 6개에서 한도 초과 · Consumer가 0번 샤드만 읽어 **증설로는 못 푸는 구조** | Pod가 자기 순번으로 샤드를 라운드로빈 분배 · 샤드별 스레드로 소비 — 필요 샤드 = Pod 10 × 초당 1회 ÷ 샤드당 5회 = **2개** |
+| Pod의 Kinesis 접근이 `AccessDeniedException` — **EC2 노드 역할**로 접근 중 | 서비스 계정 annotation · `AWS_ROLE_ARN` · 신뢰 관계는 전부 정상 — `pom.xml`에 `spring-cloud-aws-starter`가 없어 IRSA 환경변수를 안 읽음 | 의존성 추가 |
 | 인증서를 ACM에 올리고 Client VPN 연결 시 **TLS 핸드셰이크 실패** | 서버 인증서 CN이 `server` 같은 비FQDN이라 ACM이 도메인을 인식 못 함 | Easy-RSA PKI 재구성, FQDN CN으로 재발급 |
-| `destroy → apply` 뒤 GitLab 인스턴스에 **빈 볼륨** | `root_block_device` 인라인 정의라 볼륨이 인스턴스 수명주기에 묶임. 기존 볼륨은 살아 있었지만 새 인스턴스가 물지 않음 | 독립 `aws_ebs_volume` + `terraform import` + `aws_volume_attachment`로 분리 |
+| `destroy → apply` 뒤 GitLab 인스턴스에 **빈 볼륨** | `root_block_device` 인라인 정의라 볼륨이 인스턴스 수명주기에 묶임 — 기존 볼륨은 살아 있었지만 새 인스턴스가 물지 않음 | 독립 `aws_ebs_volume` + `terraform import` + `aws_volume_attachment`로 분리 |
 {:.hl-tbl}
 
 ## 결과
@@ -56,8 +56,9 @@ CJ 올리브네트웍스 클라우드웨이브 6기(2025.06–09)의 팀 프로�
 
 ## 남은 것
 
-- **CI/CD 파이프라인(GitLab → ArgoCD → ECR)은 팀원 몫이었습니다** — 직접 구축하지 못했습니다
-- **부하 테스트가 동작 확인에 그쳤습니다** — RPS·p99·에러율을 재지 않았습니다
+- **CI/CD와 GitLab 구축은 팀원 몫이었습니다** — 파이프라인(GitLab → ArgoCD → ECR)을 직접 짜지 못했고, 팀원이 만든 Helm 차트에 제 백엔드 환경변수를 맞추는 데까지 했습니다
+- **EKS를 직접 세워 보지 못했습니다** — 클러스터는 팀원이 `eksctl`로 만들었고 그 위에 올리기만 해서, 쿠버네티스 구조를 모르는 채로 썼습니다
+- **개발계에서만 부하를 봤습니다** — 배포계는 다른 인프라에 다른 팀원 몫이었고, RPS·p99·에러율도 재지 않아 동작 확인에 그쳤습니다
 - **Kinesis와 WebSocket은 이 규모에 과했습니다** — 모놀리식 단일 소비자에 Fan-out·재처리는 쓸 자리가 없었고, 서버→클라이언트 단방향 알림에 양방향 연결은 유지 비용만 컸습니다
 - **Client VPN은 dev 편의로 퍼블릭 서브넷 접근으로 전환했습니다** — 구성은 주석으로 남아 있고, 현재 GitLab 보안그룹 인바운드가 `0.0.0.0/0`입니다
 
