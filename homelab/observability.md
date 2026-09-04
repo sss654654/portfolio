@@ -89,8 +89,6 @@ permalink: /homelab/observability/
   <text class="hla-s2" x="685" y="198" text-anchor="middle">앱 대시보드 3장</text>
   <text class="hla-s2" x="685" y="216" text-anchor="middle">알림 — Discord</text>
 </svg>
-<figcaption>저장소의 메모리와 WAL에는 최근 구간만 있고, 원본은 전부 MinIO로 내려갑니다
-(Mimir는 2시간마다 블록으로).</figcaption>
 </figure>
 
 ## 설계 결정
@@ -99,10 +97,10 @@ permalink: /homelab/observability/
 |---|---|---|
 | metric 저장소 | **Mimir distributed** — ingester만 3대, 노드당 1 | ingester가 죽으면 메모리의 최근 2시간 소실 — 세 저장소를 다 분산할 자원은 없어 **판정에 쓰는 metric만** |
 | log·trace | **Loki·Tempo는 단일** | 위험은 같아도 조사 도구라 **비어도 판정에 무영향** · WAL로 재시작만 복구, 노드째 유실은 감수 |
-| 저장 몸통 | **클러스터 안 MinIO** — S3 호환 | 원본은 전부 여기, 로컬은 WAL만 · 버킷별 전용 계정 — 루트 자격 미노출 |
+| 원본 저장소 | **클러스터 안 MinIO** — S3 호환 | 원본은 전부 여기, 로컬은 WAL만 · 버킷별 전용 계정 — 루트 자격 미노출 |
 | Tempo 보유 한도 | **`max_traces_per_user` 5배** — 동시에 열린 trace 1만 → 5만 | 전 요청을 남기기로 하자 폴링이 초당 수천 건이라 기본 한도 초과 — 넘친 trace는 폐기 |
-| 알림에 패널 스크린샷 추가 | **Grafana Image Renderer** — 알림마다 그 metric의 패널을 그려 첨부 | 숫자만으로는 상승 시점 파악 불가 — 패널 캡처가 붙으면 추이까지 전달 |
-| 밖에서 보는 감시 | **Better Stack** — `ticket.subinhong.dev` 를 밖에서 확인, 메일 | 다른 알림은 전부 클러스터 안에서 동작 — 클러스터가 죽으면 알림도 동반 정지 |
+| 알림 첨부 | **Grafana Image Renderer** — 알림마다 그 metric의 패널을 그려 첨부 | 숫자만으로는 상승 시점 파악 불가 — 패널 캡처가 붙으면 추이까지 전달 |
+| 외부 감시 | **Better Stack** — `ticket.subinhong.dev` 를 밖에서 확인, 메일 | 다른 알림은 전부 클러스터 안에서 동작 — 클러스터가 죽으면 알림도 동반 정지 |
 | 알림 기준 | **받으면 할 일이 있고, 안 받으면 되돌릴 수 없는 것만** | 둘 중 하나만 맞는 것은 대시보드에서 보면 충분 |
 {:.hl-dec}
 
@@ -143,8 +141,8 @@ permalink: /homelab/observability/
     흔적에서 원인까지 클릭 두 번입니다.</figcaption>
   </figure>
   <figure class="hl-shot">
-    <img src="/assets/img/homelab/obs/cluster-row5.png" alt="행5 — 파드 스펙 장부. 도는 컨테이너 전수의 request 대비 실사용 게이지" loading="lazy">
-    <figcaption><b>(행5 · 스펙 장부)</b> 전체 컨테이너의 선언 대 실사용입니다. 빨강은 request 초과(몰리면 먼저 축출),
+    <img src="/assets/img/homelab/obs/cluster-row5.png" alt="행5 — 파드 스펙 목록. 도는 컨테이너 전수의 request 대비 실사용 게이지" loading="lazy">
+    <figcaption><b>(행5 · 스펙 목록)</b> 전체 컨테이너의 선언 대 실사용입니다. 빨강은 request 초과(몰리면 먼저 축출),
     파랑은 선언만 하고 미사용 — 스펙 변경은 여기서 시작합니다.</figcaption>
   </figure>
 </div>
@@ -192,13 +190,13 @@ permalink: /homelab/observability/
 |---|---|---|
 | 시리즈 상한 15만이 차서 늦게 온 metric이 거절됨 — 화면엔 에러 없이 **값만 없음** | 표준 쿠버네티스는 `:6443`·`:10250`이 다른 프로세스라 둘 다 수집 — **k3s는 한 프로세스**라 같은 metric이 두 벌, 15만의 85% | `:6443` 수집을 지우고 상한을 30만으로. 거절 **0** |
 | 유휴인데 CPU 패키지 **92°C** — 예고 없이 꺼진 적이 있는데 온도 기록이 없음 | 온도·전원은 물리 호스트에만 있는 metric이라 VM 안에서는 수집 경로 자체가 없음 | 호스트에 node-exporter를 올리고 변수를 하나씩 바꿈 — 쿨러·덮개 열기·powersave로 **66°C**. 알림 임계 90°C의 근거 |
-| 클러스터 판의 **스펙 장부**에 선언과 실사용의 어긋남이 줄줄이 뜸 | 전부 **실측 없이 넣은 값** — request를 넘기면 몰릴 때 1순위 축출, limit에 임박하면 스파이크 한 번에 종료 | request·limit을 실사용 기준으로 재조정 |
+| 클러스터 대시보드의 **스펙 목록**에 선언과 실사용의 어긋남이 여럿 보임 | 전부 **실측 없이 넣은 값** — request를 넘기면 몰릴 때 1순위 축출, limit에 임박하면 스파이크 한 번에 종료 | request·limit을 실사용 기준으로 재조정 |
 {:.hl-tbl}
 
 ## 결과
 
 - **세 신호가 각자의 저장소에 쌓입니다** — metric Mimir(ingester 3대 · 15일) · log Loki(7일) · trace Tempo(24시간). 원본은 셋 다 MinIO에 저장됩니다
-- **대시보드 둘을 구성했습니다** — 클러스터 상태와 호스트 하드웨어(열·전력·저장). 알림은 호스트 쪽에만 걸었습니다
+- **클러스터·호스트 대시보드를 구성했습니다** — 클러스터 상태와 호스트 하드웨어(열·전력·저장). 알림은 호스트 쪽에만 걸었습니다
 - 안 볼 때는 **알림이 Discord로** 옵니다 — 지금 값과 할 일, 패널 그림과 함께
 - **클러스터가 통째로 죽어도 밖에서 잡힙니다** — Better Stack이 서비스 주소를 밖에서 확인하다 상태가 바뀌면 메일을 보냅니다
 

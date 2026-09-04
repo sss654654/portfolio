@@ -208,14 +208,14 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
   <a class="hlc-card" href="/homelab/service/">
     <img class="hlc-img" src="/assets/img/homelab/service-thumb.png" alt="왼쪽에 좌석 현황판과 예매 카드가 뜬 화면, 오른쪽에 대기 순번 2647번이 뜬 대기 화면">
     <span class="hlc-tag">서비스</span>
-    <span class="hlc-title">대기열과 예매, 두 서비스</span>
+    <span class="hlc-title">Go · Spring · Kafka로 대기열 예매 서비스 구축</span>
     <span class="hlc-desc">열리는 시각에 인원이 몰리는 티케팅입니다. 줄 세우는 queue(Go)와 표를 파는 booking(Spring)을 나눠 Kafka로 이었습니다.</span>
   </a>
 
   <a class="hlc-card" href="/homelab/security/">
     <img class="hlc-img" src="/assets/img/homelab/security-thumb.png" alt="OPNsense 방화벽 규칙 목록과, 터널을 켠 폰에서 열린 Grafana 및 WireGuard 연결 화면">
     <span class="hlc-tag">격리와 공개</span>
-    <span class="hlc-title">방화벽 뒤로 격리하고 엣지로 공개</span>
+    <span class="hlc-title">OPNsense · Cloudflare로 격리망과 공개 경로 구축</span>
     <span class="hlc-desc">노드를 방화벽 뒤 격리망으로 옮겼습니다. 관리는 키를 등록한 터널(51820)로, 서비스는 엣지를 거친 것(443)만 — 인터넷에 열린 포트는 이 둘입니다.</span>
   </a>
 

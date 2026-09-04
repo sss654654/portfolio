@@ -141,8 +141,8 @@ Terraform으로 띄운 인스턴스(8vCPU · 16GB)에서 같은 스크립트를 
 
 | 증상 | 원인 | 조치 |
 |---|---|---|
-| **오픈 순간 booking 경로가 선 밖**<br>`/api/screenings` **4.80초**<br>`/api/screenings/board` **2.38초** | **코드가 컴파일되기 전에 부하 도착**<br>자바는 실행하면서 컴파일 — booking이 93분 유휴, 컴파일된 코드가 없는 상태<br>오픈에 1만 명이 오자 컴파일러가 CPU **111초** 점유 | **측정 절차에 웜업 판 추가**<br>`/api/screenings` 4.80 → **0.94초**<br>`/api/screenings/board` 2.38 → **0.10초** |
-| **데워진 판에서 queue 경로가 선 밖**<br>`/api/admission/position` **4.05초**<br>`/api/admission/events` **4.30초**<br>`/api/admission/enter` **2.49초** | **queue의 Redis 커넥션 풀이 파드당 10**<br>오픈에 동시 요청이 파드당 540 — 연결 10개를 기다림<br>대기 **24,158건 · 10,952초** | **풀 50**<br>대기 10,952 → **785초**<br>`position` 4.05 → **0.94초**<br>`events` 4.30 → **0.86초**<br>`enter` 2.49 → **0.93초** |
+| **오픈 순간 booking 경로가 SLO 밖**<br>`/api/screenings` **4.80초**<br>`/api/screenings/board` **2.38초** | **코드가 컴파일되기 전에 부하 도착**<br>자바는 실행하면서 컴파일 — booking이 93분 유휴, 컴파일된 코드가 없는 상태<br>오픈에 1만 명이 오자 컴파일러가 CPU **111초** 점유 | **측정 절차에 웜업 단계 추가**<br>`/api/screenings` 4.80 → **0.94초**<br>`/api/screenings/board` 2.38 → **0.10초** |
+| **웜업 뒤 queue 경로가 SLO 밖**<br>`/api/admission/position` **4.05초**<br>`/api/admission/events` **4.30초**<br>`/api/admission/enter` **2.49초** | **queue의 Redis 커넥션 풀이 파드당 10**<br>오픈에 동시 요청이 파드당 540 — 연결 10개를 기다림<br>대기 **24,158건 · 10,952초** | **풀 50**<br>대기 10,952 → **785초**<br>`position` 4.05 → **0.94초**<br>`events` 4.30 → **0.86초**<br>`enter` 2.49 → **0.93초** |
 {:.hl-tbl}
 
 ## 한계

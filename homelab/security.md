@@ -42,7 +42,7 @@ permalink: /homelab/security/
   <rect class="hla-box" x="390" y="24" width="350" height="46" rx="5"/>
   <image href="/assets/img/icons/wireguard.svg" x="402" y="33" width="20" height="20"/>
   <text class="hla-t" x="428" y="41">DNS only — 관리용 이름</text>
-  <text class="hla-s2" x="402" y="61">집 공인 IP 그대로 · DDNS 가 추적</text>
+  <text class="hla-s2" x="402" y="61">집 공인 IP 그대로 · DDNS가 추적</text>
 
   <line class="hla-ln" x1="195" y1="70" x2="195" y2="104" marker-end="url(#hlx-arrow)"/>
   <text class="hla-a" x="203" y="91">443/TCP</text>
@@ -72,7 +72,7 @@ permalink: /homelab/security/
 
   <rect class="hla-inner" x="204" y="228" width="522" height="40" rx="4"/>
   <text class="hla-t" x="216" y="245">vmbr0</text>
-  <text class="hla-s2" x="216" y="261">물리 NIC 이 꽂혀 있다 — 공유기까지 이어진다 · <tspan font-weight="700">OPNsense WAN .210</tspan></text>
+  <text class="hla-s2" x="216" y="261">물리 NIC이 꽂혀 있다 — 공유기까지 이어진다 · <tspan font-weight="700">OPNsense WAN .210</tspan></text>
 
   <line class="hla-ln" x1="465" y1="268" x2="465" y2="282" marker-end="url(#hlx-arrow)"/>
 
@@ -81,9 +81,9 @@ permalink: /homelab/security/
   <image href="/assets/img/icons/opnsense.svg" x="216" y="294" width="18" height="18"/>
   <text class="hla-t" x="240" y="308">OPNsense VM — 브리지 둘에 다 꽂힌 유일한 기계</text>
   <text class="hla-c" x="216" y="332">443/TCP</text>
-  <text class="hla-s2" x="290" y="332">출발지가 Cloudflare 대역이면 목적지를 10.0.0.240 으로 바꿔 넘김 · 아니면 버림</text>
+  <text class="hla-s2" x="290" y="332">출발지가 Cloudflare 대역이면 목적지를 10.0.0.240으로 바꿔 넘김 · 아니면 버림</text>
   <text class="hla-c" x="216" y="352">51820/UDP</text>
-  <text class="hla-s2" x="290" y="352">WireGuard 가 키로 풂 → 안쪽 패킷이 10.0.0.x 행이면 넘김 · 안 풀리면 무응답</text>
+  <text class="hla-s2" x="290" y="352">WireGuard가 키로 풂 → 안쪽 패킷이 10.0.0.x 행이면 넘김 · 안 풀리면 무응답</text>
 
   <line class="hla-ln" x1="465" y1="364" x2="465" y2="400" marker-end="url(#hlx-arrow)"/>
 
@@ -91,13 +91,13 @@ permalink: /homelab/security/
   <rect x="204" y="402" width="522" height="200" rx="6" fill="currentColor" opacity=".05"/>
   <rect class="hla-inner" x="204" y="402" width="522" height="200" rx="6"/>
   <text class="hla-t" x="216" y="421">vmbr1 — 격리망 10.0.0.x</text>
-  <text class="hla-s2" x="216" y="437">물리 NIC 이 없다 — 밖으로 가는 길은 위의 VM 뿐 · <tspan font-weight="700">OPNsense LAN 10.0.0.1</tspan></text>
+  <text class="hla-s2" x="216" y="437">물리 NIC이 없다 — 밖으로 가는 길은 위의 VM뿐 · <tspan font-weight="700">OPNsense LAN 10.0.0.1</tspan></text>
 
   <!-- k3s 클러스터 — 노드 셋을 감싼다. 카드1의 층 그림과 같은 꼴 -->
   <rect class="hla-box" x="216" y="448" width="498" height="144" rx="5"/>
   <image href="/assets/img/icons/kubernetes.svg" x="228" y="458" width="18" height="18"/>
   <text class="hla-t" x="252" y="472">k3s 클러스터 — 노드 셋이 전부 이 안에</text>
-  <text class="hla-s2" x="228" y="492"><tspan font-weight="700">MetalLB 10.0.0.240</tspan> → Traefik — 443 은 예매 화면 하나 · 80 은 터널 안에서만</text>
+  <text class="hla-s2" x="228" y="492"><tspan font-weight="700">MetalLB 10.0.0.240</tspan> → Traefik — 443은 예매 화면 하나 · 80은 터널 안에서만</text>
 
   <rect class="hla-inner" x="228" y="504" width="150" height="44" rx="4"/>
   <text class="hla-t" x="240" y="523">k3s-1</text>
@@ -111,7 +111,7 @@ permalink: /homelab/security/
 
   <text class="hla-s2" x="228" y="576">파드 사이 — 네임스페이스마다 기본 차단 · 적어 둔 통로만 허용</text>
 </svg>
-<figcaption>vmbr1 에는 물리 NIC 이 없습니다. 격리망에서 밖으로 가는 길은
+<figcaption>vmbr1에는 물리 NIC이 없습니다. 격리망에서 밖으로 가는 길은
 두 브리지에 다 꽂힌 VM 하나뿐입니다.</figcaption>
 </figure>
 
@@ -122,9 +122,9 @@ permalink: /homelab/security/
 | 항목 | 선택 | 이유 |
 |---|---|---|
 | 격리 방식 | **OPNsense 방화벽 VM** + 가상 브리지로 격리망 구축 | **한 공유기 아래 노드와 데스크탑이 나란히 인터넷을 향함**<br>한쪽이 침해되면 같은 망을 타고 상호 침투 가능 |
-| 관리 접근 | **WireGuard** (OpenVPN 아님) | **관리 페이지는 공개 대상이 아님**<br>Grafana·ArgoCD 를 도메인으로 열지 않고, 키를 등록한 관리자만 터널로 |
+| 관리 접근 | **WireGuard** | **관리 페이지는 공개 대상이 아님**<br>Grafana·ArgoCD를 도메인으로 열지 않고, 키를 등록한 관리자만 터널로 |
 | 엣지 | **Cloudflare 프록시** + 방화벽 출발지를 엣지 대역으로 | **집 공인 IP 은닉 + 연결을 앞에서 종료**<br>엣지가 없으면 방문자 연결이 단일 로드밸런서에 집중 |
-| DNS 설정 | **Cloudflare 에서 도메인 구매 · OPNsense DDNS 연동** | **엣지를 거친 것만 들어오게**<br>공인 IP 가 바뀌면 DDNS 가 레코드를 갱신, 방화벽은 Cloudflare 대역만 통과 |
+| DNS 설정 | **Cloudflare에서 도메인 구매 · OPNsense DDNS 연동** | **엣지를 거친 것만 들어오게**<br>공인 IP가 바뀌면 DDNS가 레코드를 갱신, 방화벽은 Cloudflare 대역만 통과 |
 {:.hl-dec}
 
 <div class="hl-sub" markdown="0">클러스터 안 — 통신과 인증서</div>
@@ -132,30 +132,30 @@ permalink: /homelab/security/
 | 항목 | 선택 | 이유 |
 |---|---|---|
 | 파드 사이 | **NetworkPolicy 17개** — 네임스페이스마다 기본 차단 뒤 통로만 되열음 | **쿠버네티스 기본값은 파드끼리 전부 접속 가능**<br>하나가 뚫리면 그 파드가 닿는 범위까지 노출 — 앱을 거치면 DB 자격까지 도달 |
-| 인증서 | **Let's Encrypt · DNS-01 방식** | **포트를 열기 전에 인증서를 받음**<br>CA 가 도메인 소유를 확인하는데, DNS 레코드로 증명하면 열린 포트 불필요 |
+| 인증서 | **Let's Encrypt · DNS-01 방식** | **포트를 열기 전에 인증서를 받음**<br>CA가 도메인 소유를 확인하는데, DNS 레코드로 증명하면 열린 포트 불필요 |
 {:.hl-dec}
 
 ## 트러블슈팅
 
 | 증상 | 원인 | 조치 |
 |---|---|---|
-| **데스크탑에서 격리망을 부르면 답이 안 옴**<br>방화벽 로그에는 초록 pass 가 찍힘 | **가는 길은 열렸는데 오는 길이 돌아감**<br>WAN 쪽 규칙에 `reply-to` 가 자동으로 붙음 — 같은 대역이라 바로 건넬 응답이 공유기로 나가 버려짐 | **그 규칙에서 `reply-to` 해제**<br>응답이 같은 대역으로 바로 오면서 손실 **0%** |
-| **정책을 건 뒤 Grafana 접속이 타임아웃**<br>Traefik 까지는 도달 | **정책에 Service 포트 80 을 적음**<br>정책이 판정하는 것은 파드가 여는 포트 3000 — Service 번호는 닿기 전에 바뀜 | **3000 으로 교체**<br>`targetPort` 를 이름으로 적은 자리도 전부 숫자로 |
-| **443 에 `Host` 헤더를 바꿔 넣으면 ArgoCD 로그인 화면**<br>응답 **200** | **Traefik 이 `Host` 헤더로만 가름**<br>예매 화면·Grafana·ArgoCD 가 80·443 뒤에 함께 있고, 어디로 갈지를 요청자가 보내는 값이 정함 | **관리 UI 라우터를 80 에만**<br>443 에 남는 것은 예매 화면 하나 |
+| **데스크탑에서 격리망을 부르면 답이 안 옴**<br>방화벽 로그에는 초록 pass가 찍힘 | **가는 길은 열렸는데 오는 길이 돌아감**<br>WAN 쪽 규칙에 `reply-to`가 자동으로 붙음 — 같은 대역이라 바로 건넬 응답이 공유기로 나가 버려짐 | **그 규칙에서 `reply-to` 해제**<br>응답이 같은 대역으로 바로 오면서 손실 **0%** |
+| **정책을 건 뒤 Grafana 접속이 타임아웃**<br>Traefik까지는 도달 | **정책에 Service 포트 80을 적음**<br>정책이 판정하는 것은 파드가 여는 포트 3000 — Service 번호는 닿기 전에 바뀜 | **3000으로 교체**<br>`targetPort`를 이름으로 적은 자리도 전부 숫자로 |
+| **443에 `Host` 헤더를 바꿔 넣으면 ArgoCD 로그인 화면**<br>응답 **200** | **Traefik이 `Host` 헤더로만 가름**<br>예매 화면·Grafana·ArgoCD가 80·443 뒤에 함께 있고, 어디로 갈지를 요청자가 보내는 값이 정함 | **관리 UI 라우터를 80에만**<br>443에 남는 것은 예매 화면 하나 |
 {:.hl-tbl}
 
 ## 결과
 
-- **인터넷에 열린 포트는 둘입니다** — 서비스용 `443/TCP` 와 관리 터널용 `51820/UDP`. 나머지는 공유기가 안으로 넘기지 않습니다
-- **엣지를 지나지 않으면 서비스에 못 들어옵니다** — 공인 IP 로 직접 443 에 접속하면 타임아웃이고, 밖에서 포트 20개를 스캔해 응답한 것은 없습니다
+- **인터넷에 열린 포트는 둘입니다** — 서비스용 `443/TCP`와 관리 터널용 `51820/UDP`. 나머지는 공유기가 안으로 넘기지 않습니다
+- **엣지를 지나지 않으면 서비스에 못 들어옵니다** — 공인 IP로 직접 443에 접속하면 타임아웃이고, 밖에서 포트 20개를 스캔해 응답한 것은 없습니다
 - **인증서는 양쪽에 있습니다** — 방문자는 엣지 인증서를 보고, 엣지는 클러스터의 Let's Encrypt 인증서를 검증합니다
-- **관리 화면은 터널 안에서만 열립니다** — Grafana·ArgoCD 는 443 에 라우터가 없고, 등록된 키로 서명이 풀린 기기만 격리망에 닿습니다
-- **파드 사이는 적어 둔 통로만 남았습니다** — 세 네임스페이스가 기본 차단이고, booking 이 나갈 수 있는 곳은 MySQL·Redis·Kafka·수집기 넷뿐입니다
+- **관리 화면은 터널 안에서만 열립니다** — Grafana·ArgoCD는 443에 라우터가 없고, 등록된 키로 서명이 풀린 기기만 격리망에 닿습니다
+- **파드 사이는 적어 둔 통로만 남았습니다** — 세 네임스페이스가 기본 차단이고, booking이 나갈 수 있는 곳은 MySQL·Redis·Kafka·수집기 넷뿐입니다
 
 ## 한계
 
-- **관리용 이름 하나가 집 공인 IP 를 노출합니다** — 엣지 프록시는 HTTP·HTTPS 만 중계해 UDP 터널에는 쓸 수 없습니다. 이름을 알면 조회로 주소가 나옵니다
-- **관리 경로가 OPNsense 한 대에 몰려 있습니다** — 이 VM 이 내려가면 터널 접근과 격리망의 인터넷이 함께 멈춥니다
+- **관리용 이름 하나가 집 공인 IP를 노출합니다** — 엣지 프록시는 HTTP·HTTPS만 중계해 UDP 터널에는 쓸 수 없습니다. 이름을 알면 조회로 주소가 나옵니다
+- **관리 경로가 OPNsense 한 대에 몰려 있습니다** — 이 VM이 내려가면 터널 접근과 격리망의 인터넷이 함께 멈춥니다
 
 ## 기술 스택
 

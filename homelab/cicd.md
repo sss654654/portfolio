@@ -8,7 +8,7 @@ permalink: /homelab/cicd/
 
 <p class="hl-back" markdown="0"><a href="/homelab/">← 홈랩</a></p>
 
-클러스터는 준비됐지만 앱은 뜨지 못했습니다 — **받아 올 이미지가 없었습니다.**
+클러스터는 준비됐지만 앱은 기동하지 못했습니다 — **받아 올 이미지가 없었습니다.**
 {:.lead}
 
 ## CI/CD 구조
@@ -118,11 +118,11 @@ permalink: /homelab/cicd/
 
 ## GitLab의 두 저장소
 
-|  | [cgv-infra](https://github.com/sss654654/cgv-infra) · 배포 정의 | [cgv-onprem](https://github.com/sss654654/cgv-onprem) · 앱 소스 |
+| 항목 | [cgv-infra](https://github.com/sss654654/cgv-infra) · 배포 정의 | [cgv-onprem](https://github.com/sss654654/cgv-onprem) · 앱 소스 |
 |---|---|---|
 | 브랜치 | **`main` 하나** — ArgoCD가 보는 브랜치가 곧 배포 상태 · 환경은 `environments/` 디렉터리로 | **`dev` 기본 · `main`** — 태그 앞부분이 브랜치 이름(`dev-15-…`) · stg·prd도 여기서 분기 |
 | 파이프라인 | 없음 — 빌드할 것이 없음 | **다섯 단** — 데스크탑 러너가 돌리고, 통과해야 머지 버튼 활성 |
-| 발급한 자격 | 저장소 자격 **하나** — ArgoCD의 읽기와 image-updater의 태그 쓰기에 공용 | deploy token **둘** `read_registry` — 노드의 이미지 받기와 봇의 태그 조회를 따로 |
+| 발급한 자격 | 저장소 자격 **하나** — ArgoCD의 읽기와 image-updater의 태그 쓰기에 공용 | deploy token **둘** `read_registry` — 노드의 이미지 받기와 image-updater의 태그 조회를 따로 |
 | webhook | **있음** — push하면 GitLab이 ArgoCD를 부름 | **없음** |
 {:.hl-two}
 
@@ -131,7 +131,7 @@ permalink: /homelab/cicd/
 | 항목 | 선택 | 이유 |
 |---|---|---|
 | Git 서버 자리 | **클러스터 밖 데스크탑** — 러너도 같이 | GitHub은 사설망 안 ArgoCD를 호출 불가 · 클러스터 안이면 동반 정지 · 빌드 I/O가 부하 실측을 교란 |
-| 파이프라인 단위 | **바뀐 서비스의 job만 생성** — `rules: changes` | 한 저장소에 서비스 셋 — 조건 없이는 한 줄 수정에도 전부 실행 · 안 바뀐 job은 스킵이 아니라 미생성 |
+| 파이프라인 단위 | **바뀐 서비스의 job만 생성** — `rules: changes` | 한 저장소에 서비스 셋 — 조건 없이는 한 줄 수정에도 전부 실행 |
 | 취약점 게이트(scan) | **수정판이 나온 취약점만** 머지 차단 | 패치가 없는 CVE가 수십 개 — 막아도 올릴 수정판이 없어 파이프라인만 정지 |
 | 배포 방식 | **CI와 CD를 분리** — 파이프라인은 이미지까지, 배포는 클러스터 안 ArgoCD가 | 파이프라인이 배포까지 하려면 전권 자격이 클러스터 밖에 필요 — 갈라 두면 안쪽에만 존재 |
 | 배포 권한 | **AppProject** — 단위마다 읽을 저장소·쓸 네임스페이스·만들 리소스 제한 | ArgoCD는 클러스터 관리자 권한으로 동작 — 제한이 없으면 `Application` 하나로 무엇이든 생성 가능 |
@@ -142,7 +142,7 @@ permalink: /homelab/cicd/
 
 | 증상 | 원인 | 조치 |
 |---|---|---|
-| 취약점 스캔을 처음 켜자 **72건** | 셋 다 **버전 고정 후 방치** — 간접 의존 2 · Spring Boot 부모 37 · 갱신 멈춘 nginx 33 | 의존 상향 · 부모 교체 · 베이스 이미지 이동 → **0건** |
+| 취약점 스캔을 처음 켜자 **72건** | 서비스 셋 다 **버전 고정 후 방치** — 간접 의존 2 · Spring Boot 부모 37 · 갱신 멈춘 nginx 33 | 의존 상향 · 부모 교체 · 베이스 이미지 이동 → **0건** |
 | 파이프라인 1회에 **10분 15초** | 회마다 의존성과 취약점 DB를 다시 받음 — 받는 자리가 `lint`·`build`로 갈려 **캐시가 두 곳** | 러너 볼륨과 Dockerfile 캐시로 양쪽 다 남김 → 14회째 **1분 54초** |
 | GitLab이 도는 데스크탑이 하루 열 번씩 멈춤 — 메모리 부족으로 보고 **램을 주문** | 물리 여유 **6.6GB** — 한도는 Windows 커밋 **17.9GB**(페이지파일 2GB 고정) | 페이지파일 12GB → 한도 **28GB** · 램 주문 **취소** |
 {:.hl-tbl}
