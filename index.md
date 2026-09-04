@@ -1,11 +1,11 @@
 ---
 layout: page
-title: 클러스터를 세우고, 관측하고, 부하로 스펙을 잽니다
+title: 노트북 한 대로 쿠버네티스 클러스터를 세워, 예매 서비스를 인터넷에 운영하고 있습니다
 sitemap: true
 ---
 
-노트북 한 대에 k3s를 세워 예매 대기열 서비스를 인터넷에 공개하고, 10,000명 부하에서 정원·자원 스펙을 실측했습니다.
-회사에서는 k3s 위 관측 계층을, 부트캠프에서는 AWS 개발계 네트워크(Terraform)와 대기열 백엔드를 맡았습니다.
+그 위에 CI/CD · 모니터링 · 방화벽을 직접 구성했고, 1만 명 부하 테스트를 에러 없이 통과했습니다.
+회사에서는 k3s 모니터링 구축을, 부트캠프에서는 AWS 네트워크(Terraform)와 대기열 백엔드를 맡았습니다.
 {:.lead}
 
 [이력서 PDF](/assets/subinhong-resume.pdf) · [홈랩](/homelab/) · [프로젝트](/projects/) · [블로그](https://zed6740.tistory.com/category/HomeLab)
