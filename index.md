@@ -1,6 +1,6 @@
 ---
 layout: page
-title: 홍수빈 · SRE / DevOps
+title: 안녕하세요, 홍수빈입니다 👋
 sitemap: true
 ---
 
