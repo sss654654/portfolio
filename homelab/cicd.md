@@ -18,7 +18,7 @@ permalink: /homelab/cicd/
      번호가 커밋에서 파드까지의 순서. 실선은 전부 클러스터가 밖으로 나가 가져오는 것이고,
      위에서 아래로 가는 것은 webhook 점선 하나 — 알림만 실린다. -->
 <figure class="hl-diagram hl-diagram-lg" markdown="0">
-<svg viewBox="0 0 760 556" role="img" aria-label="왼쪽 열에서 cgv-onprem 이 러너 다섯 단을 지나 레지스트리에 이미지로 서고, 오른쪽에서 image-updater 가 cgv-infra 의 tag 줄을 바꿔 ArgoCD 가 읽는다. 번호가 커밋에서 파드까지의 순서">
+<svg viewBox="0 0 760 556" role="img" aria-label="왼쪽 열에서 cgv-onprem이 러너 다섯 단을 지나 레지스트리에 이미지로 서고, 오른쪽에서 image-updater가 cgv-infra의 tag 줄을 바꿔 ArgoCD가 읽는다. 번호가 커밋에서 파드까지의 순서">
   <defs>
     <marker id="hlm-i" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#f08c2e"/></marker>
     <marker id="hlm-d" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#2f6fdb"/></marker>
@@ -95,12 +95,12 @@ permalink: /homelab/cicd/
   <rect class="hla-inner" x="34" y="444" width="230" height="60" rx="4"/>
   <image href="/assets/img/icons/kubernetes.svg" x="46" y="456" width="18" height="18"/>
   <text class="hla-t" x="70" y="470">노드 3대</text>
-  <text class="hla-s2" x="46" y="492">containerd 가 수신</text>
+  <text class="hla-s2" x="46" y="492">containerd가 수신</text>
 
   <rect class="hla-inner" x="292" y="444" width="206" height="60" rx="4"/>
   <image href="/assets/img/icons/argo.svg" x="304" y="456" width="18" height="18"/>
   <text class="hla-t" x="328" y="470">argocd-image-updater</text>
-  <text class="hla-s2" x="304" y="492">새 태그를 git 에 되쓰기</text>
+  <text class="hla-s2" x="304" y="492">새 태그를 git에 되쓰기</text>
 
   <rect class="hla-inner" x="520" y="444" width="206" height="60" rx="4"/>
   <image href="/assets/img/icons/argo.svg" x="532" y="456" width="18" height="18"/>

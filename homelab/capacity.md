@@ -50,7 +50,7 @@ permalink: /homelab/capacity/
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/3.png" alt="queue 대시보드 행3 — 폴링 셋 지연 p99와 5xx" loading="lazy">
     <figcaption><b>(행3 · 폴링)</b> 홈 화면(좌석 현황판 · 실황)과 대기 화면(순번)의
-    지연입니다 — SLO 는 <b>폴링 3초</b>(프론트 주기)와 <b>정상 구간 0.5초</b>.<br>
+    지연입니다 — SLO는 <b>폴링 3초</b>(프론트 주기)와 <b>정상 구간 0.5초</b>.<br>
     → 실측: 순번 0.04초 · 실황 0.04초 · 좌석 현황판 0.02초 · <b>5xx 0건</b> — 전부 선 안입니다.</figcaption>
   </figure>
   <figure class="hl-shot">

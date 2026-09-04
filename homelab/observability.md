@@ -100,7 +100,7 @@ permalink: /homelab/observability/
 | 원본 저장소 | **클러스터 안 MinIO** — S3 호환 | 원본은 전부 여기, 로컬은 WAL만 · 버킷별 전용 계정 — 루트 자격 미노출 |
 | Tempo 보유 한도 | **`max_traces_per_user` 5배** — 동시에 열린 trace 1만 → 5만 | 전 요청을 남기기로 하자 폴링이 초당 수천 건이라 기본 한도 초과 — 넘친 trace는 폐기 |
 | 알림 첨부 | **Grafana Image Renderer** — 알림마다 그 metric의 패널을 그려 첨부 | 숫자만으로는 상승 시점 파악 불가 — 패널 캡처가 붙으면 추이까지 전달 |
-| 외부 감시 | **Better Stack** — `ticket.subinhong.dev` 를 밖에서 확인, 메일 | 다른 알림은 전부 클러스터 안에서 동작 — 클러스터가 죽으면 알림도 동반 정지 |
+| 외부 감시 | **Better Stack** — `ticket.subinhong.dev`를 밖에서 확인, 메일 | 다른 알림은 전부 클러스터 안에서 동작 — 클러스터가 죽으면 알림도 동반 정지 |
 | 알림 기준 | **받으면 할 일이 있고, 안 받으면 되돌릴 수 없는 것만** | 둘 중 하나만 맞는 것은 대시보드에서 보면 충분 |
 {:.hl-dec}
 
@@ -173,7 +173,7 @@ permalink: /homelab/observability/
     물리 상태(온도·읽기 오류). VM 영역은 기본 metric에 없어 <code>lvs</code>를 읽는 수집기를 붙였습니다.</figcaption>
   </figure>
   <figure class="hl-shot">
-    <img src="/assets/img/homelab/obs/host-phone.png" alt="충전선을 뽑은 순간 — 왼쪽 호스트 판의 전원이 배터리(빨강)로 바뀌고 전력 행의 하트가 깨졌으며, 오른쪽 폰 Discord에 발생 알림이 도착" loading="lazy">
+    <img src="/assets/img/homelab/obs/host-phone.png" alt="충전선을 뽑은 순간 — 왼쪽 호스트 대시보드의 전원이 배터리(빨강)로 바뀌고 전력 행의 하트가 깨졌으며, 오른쪽 폰 Discord에 발생 알림이 도착" loading="lazy">
     <figcaption><b>(검증 · AC 끊김)</b> 충전선을 뽑아 검증한 화면입니다 — 전원이 배터리(빨강)로
     바뀌고, 알림이 걸린 패널의 하트가 깨지고(평소엔 초록), 같은 순간 폰에 닿습니다.</figcaption>
   </figure>
