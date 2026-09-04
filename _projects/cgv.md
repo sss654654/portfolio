@@ -16,7 +16,7 @@ links:
 CJ 올리브네트웍스 클라우드웨이브 6기(2025.06–09)의 팀 프로젝트입니다.
 2024년 한국시리즈 예매에서 대기 인원이 16만 명까지 불어난 사례를 설계 기준으로 삼았습니다.
 몰리는 수요를 백엔드가 감당할 유량으로 바꾸는 대기열을 5인이 3주 동안 만들었습니다.
-**개발계 네트워크 계층(Terraform)과 대기열 백엔드(Spring Boot)를 맡았습니다.** EKS 클러스터, CI/CD 파이프라인, RDS·ElastiCache는 팀원 몫이었습니다.
+**개발계 네트워크 계층(Terraform)과 대기열 백엔드(Spring Boot)를 맡았습니다** — 나머지는 팀원 몫이었습니다.
 
 ## 개발계 구조
 
@@ -43,7 +43,7 @@ CJ 올리브네트웍스 클라우드웨이브 6기(2025.06–09)의 팀 프로�
 | 증상 | 원인 | 조치 |
 |---|---|---|
 | Consumer 폴링에 `ProvisionedThroughputExceededException` **반복** | 샤드 1개(읽기 초당 5회)를 Pod마다 폴링 → Pod 6개에서 한도 초과 · Consumer가 0번 샤드만 읽어 **증설로는 못 푸는 구조** | Pod가 자기 순번으로 샤드를 라운드로빈 분배 · 샤드별 스레드로 소비 — 필요 샤드 = Pod 10 × 초당 1회 ÷ 샤드당 5회 = **2개** |
-| Pod의 Kinesis 접근이 `AccessDeniedException` — **EC2 노드 역할**로 접근 중 | 서비스 계정 annotation · `AWS_ROLE_ARN` · 신뢰 관계는 전부 정상 — `pom.xml`에 `spring-cloud-aws-starter`가 없어 IRSA 환경변수를 안 읽음 | 의존성 추가 |
+| Pod의 Kinesis 접근이 `AccessDeniedException` — **EC2 노드 역할**로 접근 중 | 서비스 계정 annotation과 신뢰 관계는 정상 — `pom.xml`에 `spring-cloud-aws-starter`가 없어 IRSA 환경변수를 안 읽음 | 의존성 추가 |
 | 인증서를 ACM에 올리고 Client VPN 연결 시 **TLS 핸드셰이크 실패** | 서버 인증서 CN이 `server` 같은 비FQDN이라 ACM이 도메인을 인식 못 함 | Easy-RSA PKI 재구성, FQDN CN으로 재발급 |
 | `destroy → apply` 뒤 GitLab 인스턴스에 **빈 볼륨** | `root_block_device` 인라인 정의라 볼륨이 인스턴스 수명주기에 묶임 — 기존 볼륨은 살아 있었지만 새 인스턴스가 물지 않음 | 독립 `aws_ebs_volume` + `terraform import` + `aws_volume_attachment`로 분리 |
 {:.hl-tbl}
@@ -51,7 +51,7 @@ CJ 올리브네트웍스 클라우드웨이브 6기(2025.06–09)의 팀 프로�
 ## 결과
 
 - **개발계를 코드로 다시 세울 수 있게 됐습니다** — VPC·서브넷·엔드포인트·GitLab EC2까지 `destroy → apply`로 재현
-- **정원이 찬 뒤 도착한 요청은 대기열로 갔습니다** — UUID 1만 명 분을 투입해 200(즉시 입장)과 202(대기 등록)로 갈리는 것을 확인
+- **정원이 차면 이후 요청은 대기열로 갑니다** — UUID 1만 명 분을 투입해 200(즉시 입장)과 202(대기 등록)로 갈리는 것을 확인했습니다
 - **세 단계 부하에서 구성을 조정했습니다** — 100 → 1,000 → 10,000명으로 올리며 Redis 풀 **10 → 20** · Kinesis 샤드 **1 → 2** · HPA 확장 확인
 
 ## 남은 것
