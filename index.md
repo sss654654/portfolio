@@ -11,7 +11,7 @@ sitemap: true
 * [이력서 PDF](/assets/subinhong-resume.pdf) — 2장
 * [홈랩](/homelab/) — 클러스터 구축부터 CI/CD · 모니터링 · 방화벽 · 부하 테스트까지, 여섯 장
 * [프로젝트](/projects/) — 회사 · 부트캠프 · 학부 연구
-* [블로그](https://zed6740.tistory.com/category/HomeLab) — 홈랩 구축 기록 21편
+* [블로그](https://zed6740.tistory.com) — 홈랩 구축 · 자격증 · 전공 기록
 
 ## 운영 중인 서비스
 
