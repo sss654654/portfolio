@@ -65,7 +65,7 @@ ul.timeline > li:has(> small)::before {
    ::after content:none = 테마가 외부 링크에 붙이는 ↗ 아이콘을 이 블록 안에서만 끈다 */
 .demo-frame {
   margin: 1.1rem 0 0;
-  max-width: 680px; /* 본문 폭을 다 먹으면 화면을 압도해서 상한을 둔다 */
+  max-width: 100%; /* 본문 폭에 맞춘다 (2026-09-04, 680px 상한 해제) */
   border: 1px solid var(--border-color);
   border-radius: .6rem;
   overflow: hidden;
