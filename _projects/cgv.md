@@ -68,7 +68,4 @@ Terraform · AWS (VPC · VPC Endpoint · Client VPN · EKS · Kinesis · ECR · 
 [github.com/sss654654/dev_terraform](https://github.com/sss654654/dev_terraform) · [dev_backend](https://github.com/sss654654/dev_backend)
 {:.hl-more}
 
-같은 대기열을 온프레미스에서 다시 만들고 부하로 스펙을 잰 것은 [홈랩](/homelab/)에 있습니다.
-{:.hl-more}
-
 {% include pj-nav.html %}

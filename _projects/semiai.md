@@ -52,7 +52,4 @@ k3s 전환과 구축은 팀이 했고, 그 위의 LGTM 스택 구축부터 계�
 k3s · Grafana · Mimir · Loki · Tempo · Pyroscope · Alloy · OpenTelemetry · kube-state-metrics · node-exporter · MinIO · LVM · ArgoCD · Helm
 {:.hl-more}
 
-같은 스택을 물리 서버부터 직접 세운 것은 [홈랩 옵저버빌리티](/homelab/observability/)에 있습니다.
-{:.hl-more}
-
 {% include pj-nav.html %}
