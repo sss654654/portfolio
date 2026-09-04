@@ -5,7 +5,7 @@ sitemap: true
 ---
 
 노트북 한 대로 쿠버네티스를 세워 예매 서비스를 인터넷에 운영합니다. CI/CD · 모니터링 · 방화벽을 직접 구성했고, 1만 명 부하 테스트를 에러 없이 통과했습니다.
-회사에서는 k3s 모니터링 구축을, 부트캠프에서는 AWS 개발계 구축과 대기열 백엔드를 맡았습니다.
+회사에서는 k3s 모니터링을 구축했고, 부트캠프에서는 대기열 백엔드를 맡아 AWS에 개발계를 구성해 배포했습니다.
 {:.lead}
 
 [이력서 PDF](/assets/subinhong-resume.pdf) · [홈랩](/homelab/) · [프로젝트](/projects/) · [블로그](https://zed6740.tistory.com/category/HomeLab)
