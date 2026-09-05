@@ -2,7 +2,7 @@
 layout: page
 title: 부하 테스트
 description: >
-  SLO를 먼저 정하고, 공개된 경로에서 부하를 걸어 입장 인원·자원 스펙을 실측으로 확정했습니다
+  SLO를 먼저 정하고, 공개된 경로에서 부하를 걸어 동시 입장 인원·자원 스펙을 실측으로 확정했습니다
 permalink: /homelab/capacity/
 ---
 
@@ -29,6 +29,7 @@ permalink: /homelab/capacity/
 - **한도가 먼저 있습니다** — 노드(8GB · 4vCPU × 3대)가 파드 스펙을, 데스크탑(WSL) 메모리가 생성기 상한 10,000명을 정합니다
 - **부하는 k6가 실제 여정 그대로 만듭니다** — 입장 → 대기 → 좌석 → 확정
 - **점진 부하** — **인원 1,000 → 10,000** · **정원**(`MAX_SESSIONS` — queue가 동시에 입장시키는 인원) **2 → 1,000**
+- **인원 = k6 VU 수** — VU 하나가 한 사람의 여정을 한 번 돌고 끝납니다. ramp-up 없이 오픈 순간 동시에 시작하고, 현황만 보는 watcher VU는 테스트가 끝날 때까지 폴링합니다
 
 <div class="hl-sub" markdown="0">queue(traefik) 대시보드</div>
 
@@ -51,13 +52,13 @@ permalink: /homelab/capacity/
     <img src="/assets/img/homelab/cap/3.png" alt="queue 대시보드 행3 — 폴링 셋 지연 p99와 5xx" loading="lazy">
     <figcaption><b>(행3 · 폴링)</b> 홈 화면(좌석 현황판 · 실황)과 대기 화면(순번)의
     지연입니다 — SLO는 <b>폴링 3초</b>(프론트 주기)와 <b>정상 구간 0.5초</b>.<br>
-    → 실측: 순번 0.04초 · 실황 0.04초 · 좌석 현황판 0.02초 · <b>5xx 0건</b> — 전부 선 안입니다.</figcaption>
+    → 실측: 순번 0.04초 · 실황 0.04초 · 좌석 현황판 0.02초 · <b>5xx 0건</b> — 전부 SLO 안입니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/4.png" alt="queue 대시보드 행4 — enter 호출 수와 지연" loading="lazy">
     <figcaption><b>(행4 · enter)</b> "예매하기"를 누른 사람 수와 응답 지연입니다 —
     <b>입장 경로 SLO 1초</b>가 여기 걸립니다.<br>
-    → 실측: p99 최대 0.34초 — 오픈 피크를 포함해 선 안입니다.</figcaption>
+    → 실측: p99 최대 0.34초 — 오픈 피크를 포함해 SLO 안입니다.</figcaption>
   </figure>
 </div>
 
@@ -82,7 +83,7 @@ permalink: /homelab/capacity/
     <img src="/assets/img/homelab/cap/8.png" alt="booking 대시보드 행3 — 여정 단계별 통과와 지연" loading="lazy">
     <figcaption><b>(행3 · 여정)</b> 입장한 사람이 회차 → 좌석 → 선점 → 확정을 지나는
     통과 수와 지연입니다 — 어디서 떨어지는지가 보입니다.<br>
-    → 실측: <b>10,000명 전원 완주</b> · 5xx 0 · 단계별 p99 최대 0.25초, 전부 선 안입니다.</figcaption>
+    → 실측: <b>10,000명 전원 완주</b> · 5xx 0 · 단계별 p99 최대 0.25초, 전부 SLO 안입니다.</figcaption>
   </figure>
 </div>
 
@@ -94,7 +95,7 @@ permalink: /homelab/capacity/
     <figcaption><b>(행1 · Redis)</b> 명령 처리가 <b>단일 스레드</b>라 CPU의 분모는
     limit이 아니라 <b>1코어</b>입니다.<br>
     → 실측: master <b>32%</b> · 초당 호출은 오픈 피크에서만 증가 · 메모리 여유 —
-    전부 선 안입니다.</figcaption>
+    전부 SLO 안입니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/10.png" alt="Redis·Kafka 대시보드 행2 — 승격→인증·확정→반환 전달 지연" loading="lazy">
@@ -110,7 +111,7 @@ permalink: /homelab/capacity/
     trace로 봅니다.<br>
     → 확정 요청 하나(<code>POST /api/bookings</code> 397ms · span 21 · 서비스 2): booking 안 Redis 호출
     <b>182ms</b> · Kafka 발행 <b>96ms</b> · queue 소비 <b>14ms</b>.<br>
-    → 오른쪽: 같은 trace_id로 찾은 queue 로그 — "예매완료 수신 → active 제거".</figcaption>
+    → 오른쪽: 같은 trace_id로 찾은 queue log — "예매완료 수신 → active 제거".</figcaption>
   </figure>
 </div>
 
@@ -126,7 +127,17 @@ permalink: /homelab/capacity/
 Terraform으로 띄운 인스턴스(8vCPU · 16GB)에서 같은 스크립트를 돌렸습니다 — 인원 10,000 · 정원 1,000.
 30,000 부하를 준 결과는 아래 한계에 정리했습니다.
 
-<div class="hl-sub" markdown="0">SLO 판정</div>
+## 트러블슈팅
+
+| 증상 | 원인 | 조치 |
+|---|---|---|
+| **오픈 순간 booking 경로가 SLO 밖**<br>`/api/screenings` **4.80초**<br>`/api/screenings/board` **2.38초** | **코드가 컴파일되기 전에 부하 도착**<br>자바는 실행하면서 컴파일(JIT) — booking이 93분 유휴, 컴파일된 코드가 없는 상태<br>오픈에 10,000명이 오자 컴파일러가 CPU **111초** 점유 | **측정 절차에 웜업 단계 추가**<br>`/api/screenings` 4.80 → **0.94초**<br>`/api/screenings/board` 2.38 → **0.10초** |
+| **웜업 뒤 queue 경로가 SLO 밖**<br>`/api/admission/position` **4.05초**<br>`/api/admission/events` **4.30초**<br>`/api/admission/enter` **2.49초** | **queue의 Redis 커넥션 풀이 파드당 10**<br>오픈에 동시 요청이 파드당 540 — 연결 10개를 기다림<br>대기 **24,158건 · 10,952초** | **풀 50**<br>대기 10,952 → **785초**<br>`position` 4.05 → **0.94초**<br>`events` 4.30 → **0.86초**<br>`enter` 2.49 → **0.93초** |
+{:.hl-tbl}
+
+## 결과
+
+두 조치 뒤 다시 돌린 판정입니다.
 
 | SLO | 실측 | 판정 |
 |---|---|---|
@@ -137,13 +148,8 @@ Terraform으로 띄운 인스턴스(8vCPU · 16GB)에서 같은 스크립트를 
 | 메모리 limit의 80% | booking 45% · traefik 40% · queue 35% | 통과 |
 {:.hl-dec}
 
-## 트러블슈팅
-
-| 증상 | 원인 | 조치 |
-|---|---|---|
-| **오픈 순간 booking 경로가 SLO 밖**<br>`/api/screenings` **4.80초**<br>`/api/screenings/board` **2.38초** | **코드가 컴파일되기 전에 부하 도착**<br>자바는 실행하면서 컴파일 — booking이 93분 유휴, 컴파일된 코드가 없는 상태<br>오픈에 1만 명이 오자 컴파일러가 CPU **111초** 점유 | **측정 절차에 웜업 단계 추가**<br>`/api/screenings` 4.80 → **0.94초**<br>`/api/screenings/board` 2.38 → **0.10초** |
-| **웜업 뒤 queue 경로가 SLO 밖**<br>`/api/admission/position` **4.05초**<br>`/api/admission/events` **4.30초**<br>`/api/admission/enter` **2.49초** | **queue의 Redis 커넥션 풀이 파드당 10**<br>오픈에 동시 요청이 파드당 540 — 연결 10개를 기다림<br>대기 **24,158건 · 10,952초** | **풀 50**<br>대기 10,952 → **785초**<br>`position` 4.05 → **0.94초**<br>`events` 4.30 → **0.86초**<br>`enter` 2.49 → **0.93초** |
-{:.hl-tbl}
+- **10,000명이 5xx 없이 여정을 마쳤습니다** — 735,273 요청, SLO 5개 전부 통과
+- **파드 스펙이 실측값으로 확정됐습니다** — 동시 입장 인원 1,000 · queue 4대(CPU 1코어 · Redis 풀 50) · booking 1대(메모리 1,536Mi · CPU 2코어 · DB 풀 30) · traefik 3대(메모리 2Gi) · 승격 25명/0.5초
 
 ## 한계
 

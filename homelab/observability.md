@@ -96,7 +96,7 @@ permalink: /homelab/observability/
 | 항목 | 선택 | 이유 |
 |---|---|---|
 | metric 저장소 | **Mimir distributed** — ingester만 3대, 노드당 1 | ingester가 죽으면 메모리의 최근 2시간 소실 — 세 저장소를 다 분산할 자원은 없어 **판정에 쓰는 metric만** |
-| log·trace | **Loki·Tempo는 단일** | 위험은 같아도 조사 도구라 **비어도 판정에 무영향** · WAL로 재시작만 복구, 노드째 유실은 감수 |
+| log·trace | **Loki·Tempo는 단일** | 소실 범위는 같아도 조사 도구라 **비어도 판정에 무영향** · WAL로 재시작만 복구, 노드째 유실은 감수 |
 | 원본 저장소 | **클러스터 안 MinIO** — S3 호환 | 원본은 전부 여기, 로컬은 WAL만 · 버킷별 전용 계정 — 루트 자격 미노출 |
 | Tempo 보유 한도 | **`max_traces_per_user` 5배** — 동시에 열린 trace 1만 → 5만 | 전 요청을 남기기로 하자 폴링이 초당 수천 건이라 기본 한도 초과 — 넘친 trace는 폐기 |
 | 알림 첨부 | **Grafana Image Renderer** — 알림마다 그 metric의 패널을 그려 첨부 | 숫자만으로는 상승 시점 파악 불가 — 패널 캡처가 붙으면 추이까지 전달 |
@@ -169,7 +169,7 @@ permalink: /homelab/observability/
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/obs/host-row4.png" alt="행4 — local(Proxmox 영역)·local-lvm(VM 디스크 저장고)·주 디스크 온도·SMART" loading="lazy">
-    <figcaption><b>(행4 · 저장)</b> 외장 SSD 한 장을 셋으로 나눠 봅니다 — Proxmox 영역(local) · VM 영역(local-lvm, 한도 점선) ·
+    <figcaption><b>(행4 · 저장)</b> 외장 SSD 한 장을 세 축으로 봅니다 — Proxmox 영역(local) · VM 영역(local-lvm, 한도 점선) ·
     물리 상태(온도·읽기 오류). VM 영역은 기본 metric에 없어 <code>lvs</code>를 읽는 수집기를 붙였습니다.</figcaption>
   </figure>
   <figure class="hl-shot">
@@ -196,7 +196,7 @@ permalink: /homelab/observability/
 ## 결과
 
 - **세 신호가 각자의 저장소에 쌓입니다** — metric Mimir(ingester 3대 · 15일) · log Loki(7일) · trace Tempo(24시간). 원본은 셋 다 MinIO에 저장됩니다
-- **클러스터·호스트 대시보드를 구성했습니다** — 클러스터 상태와 호스트 하드웨어(열·전력·저장). 알림은 호스트 쪽에만 걸었습니다
+- **클러스터·호스트 대시보드를 구성했습니다** — 클러스터 상태와 호스트 하드웨어(열·전력·저장). Grafana 알림은 호스트 쪽에만 걸었습니다
 - 안 볼 때는 **알림이 Discord로** 옵니다 — 지금 값과 할 일, 패널 그림과 함께
 - **클러스터가 통째로 죽어도 밖에서 잡힙니다** — Better Stack이 서비스 주소를 밖에서 확인하다 상태가 바뀌면 메일을 보냅니다
 

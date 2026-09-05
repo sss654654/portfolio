@@ -118,6 +118,8 @@ permalink: /homelab/cicd/
 
 ## GitLab의 두 저장소
 
+원본은 데스크탑의 GitLab에 있고, 아래 링크는 GitHub 공개 미러입니다.
+
 | 항목 | [cgv-infra](https://github.com/sss654654/cgv-infra) · 배포 정의 | [cgv-onprem](https://github.com/sss654654/cgv-onprem) · 앱 소스 |
 |---|---|---|
 | 브랜치 | **`main` 하나** — ArgoCD가 보는 브랜치가 곧 배포 상태 · 환경은 `environments/` 디렉터리로 | **`dev` 기본 · `main`** — 태그 앞부분이 브랜치 이름(`dev-15-…`) · stg·prd도 여기서 분기 |

@@ -6,8 +6,7 @@ description: >
 permalink: /homelab/
 ---
 
-<!-- 오버뷰 — 왜(동기) → 무엇을 올렸나 → 어디까지가 범위인가 → 그 구성이 아래 그림.
-     홈의 "## 홈랩" 절과 겹치지 않도록 "무엇을 만들었나"는 여기서 반복하지 않는다. -->
+<!-- 오버뷰 — 왜(동기) → 무엇을 올렸나 → 어디까지가 범위인가 → 그 구성이 아래 그림. -->
 
 관리형 쿠버네티스는 컨트롤플레인·네트워크·로드밸런서·볼륨을 선언만 하면 만들어 줍니다.
 그 층을 하나씩 골라 세우고 **그 아래 리눅스·하이퍼바이저·디스크까지** 다루기 위해, 쓰던 노트북을 서버로 삼았습니다.
@@ -222,7 +221,7 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
   <a class="hlc-card" href="/homelab/capacity/">
     <img class="hlc-img" src="/assets/img/homelab/capacity-thumb.png" alt="k6 실행이 끝난 터미널 — 요청 시간 구간별 지연과 여정 지연, 요청 25,004건 요약">
     <span class="hlc-tag">부하 테스트</span>
-    <span class="hlc-title">k6 부하 테스트로 입장 인원·자원 스펙 확정</span>
+    <span class="hlc-title">k6 부하 테스트로 동시 입장 인원·자원 스펙 확정</span>
     <span class="hlc-desc">SLO를 먼저 정하고 공개된 경로에 실제 여정 그대로 부하를 걸었습니다. 막히는 자리를 대시보드에서 찾아 고쳐, 10,000명이 5xx 없이 완주했습니다.</span>
   </a>
 

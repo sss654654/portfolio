@@ -24,7 +24,7 @@ k3s 전환과 구축은 팀이 했고, 그 위의 LGTM 스택 구축부터 계�
 
 | 항목 | 선택 | 이유 |
 |---|---|---|
-| 수집기 | **Alloy 하나로 통합** | 수집기 넷(Prometheus · Promtail · OTel Collector · Pyroscope agent)의 설정이 제각각 |
+| 수집기 | **Alloy 하나로 통합** — 원본 블록은 MinIO(S3 호환)에 | 수집기 넷(Prometheus · Promtail · OTel Collector · Pyroscope agent)의 설정이 제각각 |
 | 인프라 대시보드 | **3단 동선** — control-plane 생존 → 비정상 Pod → 자원 임박 · 비정상 Pod는 `kube_pod_status_ready` 하나로 판정 | control-plane이 정상이어야 Pod 판정이 유효 · 실패 유형 6종 OR은 조건이 늘수록 신뢰가 떨어짐 |
 | 앱 진단 동선 | **오류 종류로 두 갈래** — 500·panic은 trace → log / 502·503·OOM은 Traefik → 그 시각 힙 flame graph · metric→trace는 path 라벨 dataLink | 파드에 닿지 못한 요청은 Traefik만 앎 · `trace_id`를 metric 라벨에 넣으면 요청마다 시계열 폭발 |
 | profile | **Pyroscope 연속 프로파일링** — Alloy가 `/debug/pprof`를 주기 수집 | OOMKilled는 SIGKILL이라 trace·log가 flush 전에 끊김 — 죽기 직전 힙을 보려면 계속 찍고 있어야 함 |
