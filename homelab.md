@@ -222,7 +222,7 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
   <a class="hlc-card" href="/homelab/capacity/">
     <img class="hlc-img" src="/assets/img/homelab/capacity-thumb.png" alt="k6 실행이 끝난 터미널 — 요청 시간 구간별 지연과 여정 지연, 요청 25,004건 요약">
     <span class="hlc-tag">부하 테스트</span>
-    <span class="hlc-title">k6 부하 테스트로 정원·자원 스펙 확정</span>
+    <span class="hlc-title">k6 부하 테스트로 입장 인원·자원 스펙 확정</span>
     <span class="hlc-desc">SLO를 먼저 정하고 공개된 경로에 실제 여정 그대로 부하를 걸었습니다. 막히는 자리를 대시보드에서 찾아 고쳐, 10,000명이 5xx 없이 완주했습니다.</span>
   </a>
 
