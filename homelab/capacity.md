@@ -2,7 +2,7 @@
 layout: page
 title: 부하 테스트
 description: >
-  SLO를 먼저 정하고, 공개된 경로에서 부하를 걸어 정원·자원 스펙을 실측으로 확정했습니다
+  SLO를 먼저 정하고, 공개된 경로에서 부하를 걸어 입장 인원·자원 스펙을 실측으로 확정했습니다
 permalink: /homelab/capacity/
 ---
 

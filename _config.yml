@@ -26,7 +26,7 @@ title:                 홍수빈
 # Can use markdown, but no more than one paragraph (enforced by `>`)
 description:           >
   인프라 엔지니어 · SRE / DevOps.
-  노트북 한 대에 k3s 클러스터를 세워 예매 대기열 서비스를 인터넷에 공개하고, 10,000명 부하로 스펙을 실측했습니다.
+  노트북 한 대에 k3s 클러스터를 세워 대기열 예매 서비스를 인터넷에 공개하고, 10,000명 부하로 스펙을 실측했습니다.
 
 # A shorter description for the sidebar.
 tagline:               SRE / DevOps
