@@ -30,8 +30,8 @@ _config.yml     사이트 설정 (이름·메뉴·색)
 index.md        현관
 homelab.md      홈랩 (대표)
 projects.md     프로젝트 목록 (_projects/ 카드)
-resume.md       이력서
-_projects/      카드 4장 — homelab · cgv · semiai · leveldb
+assets/subinhong-resume.pdf   이력서 (정본은 PDF 하나 — 웹 이력서 페이지는 두지 않는다. 사이드바 "이력서"가 이 파일을 연다)
+_projects/      프로젝트 3장 — semiai · cgv · leveldb (홈랩은 homelab/ 카드 6장)
 assets/img/     avatar.jpg(사이드바) · photo.jpg(원본)
 ```
 
