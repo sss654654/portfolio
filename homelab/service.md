@@ -151,8 +151,8 @@ permalink: /homelab/service/
 </svg>
 <div class="cs-log" id="cs-log">멈춰 있으면 구조도, 재생하면 한 회가 도는 흐름도입니다.</div>
 </div>
-<figcaption>관객 30 · 정원 6 · 좌석 24는 흐름을 보기 위한 축소값입니다 — 실측으로 정한 것은
-<a href="/homelab/capacity/">부하 테스트</a>에 있습니다.</figcaption>
+<figcaption>관객 30 · 정원 6 · 좌석 24는 흐름을 보기 위한 축소값입니다 — 정원은 이 시뮬레이션이 6,
+공개 데모가 60, 실측으로 확정한 값이 1,000이고 그 실측은 <a href="/homelab/capacity/">부하 테스트</a>에 있습니다.</figcaption>
 </figure>
 
 ## 설계 결정
