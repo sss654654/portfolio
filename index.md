@@ -81,5 +81,5 @@ sitemap: true
 * **2025.06 – 09** — [CJ 올리브네트웍스 클라우드웨이브 6기](/projects/cgv/) — CGV 예매 대기열, 5인 팀 · **AWS 개발계 네트워크(Terraform)**와 Redis 대기열 백엔드 담당
 * <small>2023.08 – 2025.05 — 공군 복무</small>
 * **2022.07 – 12** — [LevelDB 캐시 메커니즘 분석](/projects/leveldb/) — 학부 연구생 · **KSC 2022 학부생 논문 1저자**
-* <small>2021.03 – 2026.02 — 단국대학교 소프트웨어학과</small>
+* <small>2021.03 — 단국대학교 소프트웨어학과 편입</small>
 {:.timeline}
