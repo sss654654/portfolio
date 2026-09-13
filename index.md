@@ -4,16 +4,11 @@ title: 포트폴리오
 sitemap: true
 ---
 
-인프라를 직접 구축하고, 지표와 부하 테스트로 한계를 측정해 스펙을 정하는 엔지니어입니다.
-첫 회사에서 옵저버빌리티를 맡으며 지표 아래의 노드 · 네트워크를 설명하지 못했고, 그 뒤 가상화부터 쿠버네티스 · AWS까지 직접 세웠습니다.
+쿠버네티스 인프라를 구축하고, 옵저버빌리티와 부하 테스트로 한계를 측정해 스펙을 정하는 인프라 엔지니어입니다.
+기구축 k3s 환경의 옵저버빌리티를 담당했고, 이후 가상화부터 쿠버네티스 · CI/CD · AWS EKS까지 직접 구축했습니다.
 {:.lead}
 
-* [홈랩](/homelab/) — 온프레미스 k3s(dev)와 AWS EKS(stg)를 GitLab CI · ArgoCD로 배포, 대기열 예매 서비스 **50,000명 부하 테스트 통과**
-* [semiai 인프라팀](/projects/semiai/) — k3s 위 LGTM 스택 구축 · Go 백엔드 계측, heap profile 진단으로 **OOMKilled 해소**
-* [클라우드웨이브 6기](/projects/cgv/) — 5인 팀, **AWS 개발계 네트워크(Terraform)** · Redis 대기열 백엔드 담당
-* [LevelDB 캐시 분석](/projects/leveldb/) — 학부 연구생, **KSC 2022 학부생 논문 1저자**
-
-측정 기준(SLO)을 먼저 정하고, 해결하지 못한 문제와 한계도 카드마다 함께 적었습니다. 구축 과정은 [블로그](https://zed6740.tistory.com/category/HomeLab)에 편별로 남겼습니다.
+측정 기준(SLO)을 먼저 정하고, 해결하지 못한 문제와 한계도 함께 기록합니다. 구축 과정은 [블로그](https://zed6740.tistory.com/category/HomeLab)에 편별로 남겼습니다.
 
 ## 대기열 예매 서비스
 
@@ -75,13 +70,11 @@ sitemap: true
 
 ## 이력
 
-* **2026.07 – 09** — [홈랩](/homelab/) — 단독
-* **2026.03 – 06** — [semiai 인프라팀](/projects/semiai/)
+* **2026.07 – 09** — [홈랩](/homelab/) — 노트북 한 대에 k3s(dev)를 세워 인터넷 공개까지 단독 구축 · 같은 서비스를 Terraform · EKS(stg)에 올려 **50,000명 부하 테스트 실측**
+* **2026.03 – 06** — [semiai 인프라팀](/projects/semiai/) — 기구축 k3s 위 옵저버빌리티 담당 · 인프라·앱 대시보드, Go 백엔드 네 신호 계측 · heap profile 진단으로 **OOMKilled 해소**
 * <small>2026.02 — 단국대학교 소프트웨어학과 졸업</small>
-* **2025.06 – 09** — [CJ 올리브네트웍스 클라우드웨이브 6기](/projects/cgv/) — 5인 팀
+* **2025.06 – 09** — [CJ 올리브네트웍스 클라우드웨이브 6기](/projects/cgv/) — CGV 예매 대기열, 5인 팀 · **AWS 개발계 네트워크(Terraform)**와 Redis 대기열 백엔드 담당
 * <small>2023.08 – 2025.05 — 공군 복무</small>
-* **2022.07 – 12** — [LevelDB 캐시 메커니즘 분석](/projects/leveldb/) — 학부 연구생
+* **2022.07 – 12** — [LevelDB 캐시 메커니즘 분석](/projects/leveldb/) — 학부 연구생 · **KSC 2022 학부생 논문 1저자**
 * <small>2021.03 — 단국대학교 소프트웨어학과 편입</small>
 {:.timeline}
-
-**자격** — AWS Solutions Architect – Associate · AWS Developer – Associate · 정보처리기사 · 리눅스마스터 2급 · SQLD
