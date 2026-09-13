@@ -26,7 +26,7 @@ permalink: /homelab/service/
 <figure class="hl-diagram hl-diagram-lg" markdown="0">
 <div class="cap-sim" id="cap-sim">
 <div class="cs-ctrl" id="cs-ctrl"><span class="cs-count" id="cs-count">관객 30 · 정원 6 · 좌석 24</span></div>
-<svg viewBox="0 0 760 562" role="img" aria-label="대기열 서비스의 한 회 — 관객이 Redis의 waiting 줄에 서고, 승격이 빈자리만큼 앞에서 꺼내 active 정원에 앉힌다. admissions 메시지가 토픽을 거쳐 booking의 입장 인증(admitted)에 적히면 좌석을 살 수 있고, 확정되면 bookings-completed가 토픽을 거쳐 돌아와 active에서 빠져 자리가 빈다">
+<svg viewBox="0 0 760 562" role="img" aria-label="대기열 서비스의 한 회 — 관객이 Redis의 waiting 줄에 서고, 승격이 빈자리만큼 앞에서 꺼내 active 정원에 넣는다. admissions 메시지가 토픽을 거쳐 booking의 입장 인증(admitted)에 적히면 좌석을 살 수 있고, 확정되면 bookings-completed가 토픽을 거쳐 돌아와 active에서 빠져 자리가 빈다">
   <defs>
     <marker id="cs-a" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor" opacity=".5"/></marker>
   </defs>
@@ -155,11 +155,11 @@ permalink: /homelab/service/
 
 | 항목 | 선택 | 이유 |
 |---|---|---|
-| queue | **Go** · dev는 HPA min = max = 4 · stg는 **4대 고정**(HPA 끔) | **요청이 짧고 많음 — 대기열**<br>goroutine이 요청 하나씩 맡아 동시 처리 비용이 낮고, 네이티브 바이너리라 기동 즉시 최고 속도 · HPA는 오픈 피크보다 늦어 dev부터 넷으로 맞춤 · stg는 CPU 70% 기준이 이 서비스에 안 맞고(1만 명에서 17%) 판 도중 대수가 바뀌면 판끼리 비교가 안 돼 HPA를 끔 |
+| queue | **Go** · dev는 HPA min = max = 4 · stg는 **4대 고정**(HPA 끔) | **요청이 짧고 많음 — 대기열**<br>goroutine이 요청 하나씩 맡아 동시 처리 비용이 낮고, 네이티브 바이너리라 기동 즉시 최고 속도 · HPA는 오픈 피크보다 늦어 dev부터 넷으로 맞춤 · stg는 CPU 70% 기준이 이 서비스에 안 맞고(1만 명에서 17%) 테스트 도중 대수가 바뀌면 회차끼리 비교가 안 돼 HPA를 끔 |
 | 순번 · 현황 | **Redis 폴링** — 깊은 순번일수록 주기가 김 | **홈·대기 화면이 주기마다 묻는 구조**<br>줄·정원·현황이 전부 Redis에 있어 왕복 1–2번 · 1ms — 부하는 횟수(CPU)이고 어느 파드가 받아도 같은 답. 100번 밖 5초 · 20번 밖 2초 · 그 안 1초 |
 | booking | **Java Spring** · dev **1대** · stg **2대** | **요청이 길고 적음 — 입장객**<br>메모리를 길게 점유하지만 수는 정원으로 제한 · 전부-성공/전부-롤백이 `@Transactional` 하나 · stg의 두 대는 Flyway가 DB 잠금 아래 한 대만 스키마를 적용해서 가능 |
 | 서비스 간 통신 | **Kafka 비동기** — 서로 직접 호출 없음 · 파티션 8 · RF 3 · `acks=all` | **한쪽이 멈춰도 다른 쪽은 계속**<br>동기 호출이면 booking이 멈추는 순간 queue도 정지 · 발행하고 끝이라 못 받은 것은 토픽에 남아 나중에 소비 · 파티션 8 = booking 2대 × 컨슈머 4 |
-| 옵저버빌리티 | **코드에 계측** · 사용자당 한 번 부르는 경로는 기동 때 시계열을 0으로 만들어 둠 | **기본 metric만으론 "어디서"가 안 보임**<br>요청 수·지연은 metric, 사건은 log, 구간별 흐름은 trace — 뒤의 둘을 `trace_id`로 연결 · 첫 요청이 오픈 봉우리면 `rate`가 봉우리를 통째로 0으로 내는 함정을 stg 5만 명 판에서 겪음 |
+| 옵저버빌리티 | **코드에 계측** · 사용자당 한 번 부르는 경로는 기동 때 시계열을 0으로 만들어 둠 | **기본 metric만으론 "어디서"가 안 보임**<br>요청 수·지연은 metric, 사건은 log, 구간별 흐름은 trace — 뒤의 둘을 `trace_id`로 연결 · 첫 요청이 오픈 피크면 `rate`가 피크를 통째로 0으로 계산하는 문제를 stg 5만 명 회차에서 겪음 |
 {:.hl-dec}
 
 ## 결과

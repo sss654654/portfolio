@@ -10,7 +10,7 @@ permalink: /homelab/cloud/
 
 stg 환경입니다 — dev에서 뽑은 스펙을 관리형 위에 같은 이미지로 올려 5만 명까지 잰 자리입니다.
 컨트롤 플레인 · 로드밸런서 · 스토리지 · DB · 캐시 · 레지스트리 · 인증서는 AWS에 맡기고, Kafka와 옵저버빌리티는 클러스터 안에 남겼습니다.
-**켠 뒤 부하 판이 노드 구조를 바꿨고, 운영 기간은 하루입니다.**
+**켠 뒤 부하 테스트가 노드 구조를 바꿨고, 운영 기간은 하루입니다.**
 {:.lead}
 
 ## 클라우드 구조
@@ -34,12 +34,12 @@ stg 환경입니다 — dev에서 뽑은 스펙을 관리형 위에 같은 이�
   <rect class="hla-box" x="16" y="60" width="196" height="64" rx="8"/>
   <image href="/assets/img/icons/argo.svg" x="28" y="78" width="22" height="22"/>
   <text class="hla-t" x="58" y="84">ArgoCD 허브</text>
-  <text class="hla-s2" x="58" y="104">노트북 k3s dev 안 · stg 도 배달</text>
+  <text class="hla-s2" x="58" y="104">노트북 k3s dev 안 · stg 도 배포</text>
 
   <rect class="hla-box" x="16" y="150" width="196" height="64" rx="8"/>
   <image href="/assets/img/icons/gitlab.svg" x="28" y="168" width="22" height="22"/>
   <text class="hla-t" x="58" y="174">GitLab CI</text>
-  <text class="hla-s2" x="58" y="194">publish-ecr — 수동 버튼 하나</text>
+  <text class="hla-s2" x="58" y="194">publish-ecr — 수동 승격 job</text>
 
   <rect class="hla-box" x="16" y="262" width="196" height="50" rx="8"/>
   <text class="hla-t" x="28" y="283">부하 발생기 EC2 ×4</text>
@@ -55,7 +55,7 @@ stg 환경입니다 — dev에서 뽑은 스펙을 관리형 위에 같은 이�
 
   <!-- EKS 컨트롤 플레인 -->
   <rect class="hla-box" x="256" y="60" width="472" height="64" rx="6"/>
-  <image href="/assets/img/icons/kubernetes.svg" x="268" y="78" width="22" height="22"/>
+  <image href="/assets/img/icons/aws-eks.png" x="268" y="78" width="22" height="22"/>
   <text class="hla-t" x="298" y="84">EKS 1.36 cgv-stg — 컨트롤 플레인은 AWS 관리</text>
   <text class="hla-s2" x="298" y="104">API 는 집 공인 IP /32 만 · OIDC → IRSA 역할 넷 (S3 · EBS · ALB · CloudWatch)</text>
 
@@ -70,17 +70,19 @@ stg 환경입니다 — dev에서 뽑은 스펙을 관리형 위에 같은 이�
 
   <!-- Secrets Manager -->
   <rect class="hla-box" x="476" y="150" width="252" height="64" rx="6"/>
-  <text class="hla-t" x="488" y="172">Secrets Manager</text>
-  <text class="hla-s2" x="488" y="190">RDS 마스터 비밀번호 (AWS 가 만듦)</text>
-  <text class="hla-s2" x="488" y="206">Redis AUTH 토큰 → secrets.sh</text>
+  <image href="/assets/img/icons/aws-secrets-manager.png" x="486" y="163" width="24" height="24"/>
+  <text class="hla-t" x="518" y="172">Secrets Manager</text>
+  <text class="hla-s2" x="518" y="190">RDS 마스터 비밀번호 (AWS 가 만듦)</text>
+  <text class="hla-s2" x="518" y="206">Redis AUTH 토큰 → secrets.sh</text>
 
   <!-- VPC -->
   <rect class="hla-inner" x="256" y="234" width="472" height="256" rx="6"/>
   <text class="hla-t" x="268" y="253">VPC 10.20.0.0/16 · 퍼블릭 서브넷 ×3 AZ · NAT 없음</text>
 
   <rect class="hla-box" x="268" y="264" width="448" height="40" rx="6"/>
-  <text class="hla-c" x="280" y="281">ALB — ticket-stg.subinhong.dev</text>
-  <text class="hla-s2" x="280" y="296">ACM · 443 · 파드 IP 대상 · 접근 로그 S3 · 초기화 API 403</text>
+  <image href="/assets/img/icons/aws-alb.png" x="278" y="273" width="22" height="22"/>
+  <text class="hla-c" x="308" y="281">ALB — ticket-stg.subinhong.dev</text>
+  <text class="hla-s2" x="308" y="296">ACM · 443 · 파드 IP 대상 · 접근 로그 S3 · 초기화 API 403</text>
 
   <line class="hla-ln" x1="373" y1="304" x2="373" y2="322" marker-end="url(#hlw-arrow)"/>
   <line class="hla-ln" x1="545" y1="304" x2="545" y2="322" marker-end="url(#hlw-arrow)"/>
@@ -126,16 +128,16 @@ Terraform state는 둘로, 클러스터보다 오래 살아야 하는 것(bootst
 
 | 항목 | 선택 | 이유 |
 |---|---|---|
-| Terraform state | **bootstrap / stg 둘** | 판 결과(관측 버킷)와 이미지(ECR)가 클러스터보다 오래 살아야 판과 판을 비교 — bootstrap은 지우지 않고 stg는 하루 살고 지움 |
+| Terraform state | **bootstrap / stg 둘** | 테스트 결과(관측 버킷)와 이미지(ECR)가 클러스터보다 오래 남아야 회차끼리 비교 — bootstrap은 지우지 않고 stg는 하루 살고 지움 |
 | 관리형 경계 | **MySQL · Redis는 관리형, Kafka · 옵저버빌리티는 클러스터 안** | 칸마다 근거가 다름 — MySQL은 목적(prd에서 파드로 안 돌림) · Redis는 코드(Lua가 Cluster Mode에서 `CROSSSLOT` → 클러스터 모드 끔) · Kafka는 비용(MSK가 하루 $3.6으로 60배) · 관측은 용량(집 Mimir가 활성 시리즈 상한의 91.8%) |
-| AZ | **셋** | Kafka 브로커 셋이 KRaft 과반과 `min.insync.replicas 2`를 겸함 — AZ 둘이면 한쪽에 둘이 가고 그 AZ가 죽으면 쓰기가 멈춤 |
+| AZ | **셋** | Kafka 브로커 셋이 KRaft 과반과 `min.insync.replicas 2`를 겸함 — AZ 둘이면 한쪽에 둘이 가고 그 AZ에 장애가 나면 쓰기가 멈춤 |
 | 서브넷 | **퍼블릭 · NAT 없음** | NAT 하나는 AZ 셋 설계와 어긋나고 AZ마다는 비용. 노드에 공인 IP가 붙는 대신 보안 그룹으로 좁힘. prd는 프라이빗 + AZ마다 NAT |
-| 노드그룹 | **app ×4 · booking ×2(AZ별 · taint) · 관측 ×1(AZ 고정)** | 오픈 순간 튀는 파드는 booking 하나라 노드를 혼자 쓰게 함 · 볼륨이 AZ에 묶이는 관측만 AZ를 고정 · t 계열은 크레딧 고갈과 서비스 한계를 가를 수 없어 금지 · 수는 고정 — 판에서 막힘을 가리지 않게 |
+| 노드그룹 | **app ×4 · booking ×2(AZ별 · taint) · 관측 ×1(AZ 고정)** | 오픈 순간 CPU가 급증하는 파드는 booking 하나라 노드를 혼자 쓰게 함 · 볼륨이 AZ에 묶이는 관측만 AZ를 고정 · t 계열은 크레딧 고갈과 서비스 한계를 가를 수 없어 금지 · 수는 고정 — 테스트에서 병목을 가리지 않게 |
 | 파드의 AWS 자격 | **IRSA** · IMDSv2 hop limit 1 | 권한 단위를 노드가 아니라 ServiceAccount로 — 노드 역할에 붙이면 그 노드의 파드 전부가 가짐. hop 1이면 파드가 노드 역할 자격에 닿지 못함 |
 | 진입 | **ALB · ACM · 파드 IP 대상** | MetalLB의 L2 광고가 VPC에서 안 됨 · 층 여섯(Cloudflare · OPNsense · MetalLB · Traefik · cert-manager · Ingress)이 둘(ALB · Service)로 · 평문 http에서 브라우저가 `crypto.randomUUID`를 안 줘 앱 id가 겹침 → HTTPS |
 | 시크릿 | **Secrets Manager + 스크립트** | SealedSecret은 봉인이 그 클러스터 컨트롤러의 개인키에 묶여 컨트롤러가 뜨기 전에 봉인할 수 없음 · 하루 환경이라 ESO의 회전 · 동기화 가치가 0 |
 | Redis | **복제본 1 · TLS + AUTH** | 복제본은 Kafka를 AZ 셋에 둔 것과 짝 · TLS + AUTH가 없으면 6379에 닿는 파드 하나가 대기열 · 좌석 락 · 입장 인증 전권 — 보안 그룹은 "어디서 오는가"만 봄 |
-| 배포 | **집 허브가 원격 배달 · 아티팩트 승격** | EKS 안의 어떤 것도 사설망 GitLab을 못 읽음 · 부하 비교는 두 환경 이미지가 바이트까지 같아야 함 — 상세는 [CI/CD](/homelab/cicd/) |
+| 배포 | **집 허브가 원격 배포 · 아티팩트 승격** | EKS 안의 어떤 것도 사설망 GitLab을 못 읽음 · 부하 비교는 두 환경 이미지가 바이트까지 같아야 함 — 상세는 [CI/CD](/homelab/cicd/) |
 {:.hl-dec}
 
 ## 트러블슈팅
@@ -161,7 +163,7 @@ Terraform state는 둘로, 클러스터보다 오래 살아야 하는 것(bootst
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cloud/eks-nodegroups.png" alt="EKS 콘솔 cgv-stg의 노드그룹 넷 — app 4대, booking-2a와 booking-2c 한 대씩, observability 한 대" loading="lazy">
-    <figcaption><b>(노드그룹 넷)</b> app 4 · booking 2a · booking 2c · observability — 부하 판이 정한 구조입니다. booking 둘은 taint가 있어 다른 파드가 앉지 못합니다.</figcaption>
+    <figcaption><b>(노드그룹 넷)</b> app 4 · booking 2a · booking 2c · observability — 부하 테스트가 정한 구조입니다. booking 둘은 taint가 있어 다른 파드가 배치되지 않습니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cloud/managed.png" alt="RDS MySQL Multi-AZ 인스턴스와 ElastiCache Redis 복제 그룹의 콘솔 화면" loading="lazy">
@@ -170,21 +172,21 @@ Terraform state는 둘로, 클러스터보다 오래 살아야 하는 것(bootst
 </div>
 -->
 
-- **Terraform 두 state로 자원 56개가 30–40분에 뜹니다** — 켜고, 판을 돌리고, 지우는 하루 환경입니다
-- **허브 ArgoCD가 `cgv-stg`를 클러스터 이름으로 배달합니다** — 주소를 옮겨 적는 단계 없이, 기존 ApplicationSet의 환경 목록에 한 줄
+- **Terraform 두 state로 자원 56개가 30–40분에 뜹니다** — 켜고, 부하 테스트를 돌리고, 지우는 하루 환경입니다
+- **허브 ArgoCD가 `cgv-stg`를 클러스터 이름으로 배포합니다** — 주소를 옮겨 적는 단계 없이, 기존 ApplicationSet의 환경 목록에 한 줄
 - **코드에서 브라우저까지 19분 41초**, 사람 손을 뺀 기계 구간 1분 54초
-- **부하 판이 노드 구조를 바꿨습니다** — app 4 + 관측 1로 켰다가 booking 전용 노드그룹 둘이 더해져 일곱 대. 근거 수치는 [부하 테스트](/homelab/capacity/)에 있습니다
-- **5만 명 판에서 관문 다섯이 통과했습니다**
+- **부하 테스트가 노드 구조를 바꿨습니다** — app 4 + 관측 1로 켰다가 booking 전용 노드그룹 둘이 더해져 일곱 대. 근거 수치는 [부하 테스트](/homelab/capacity/)에 있습니다
+- **5만 명 회차에서 관문 다섯이 통과했습니다**
 - **떠 있는 Redis에 암호화와 AUTH를 앱을 끊지 않고 붙였습니다**
 
 ## 한계
 
-- **운영 기간이 하루입니다** — 켜고 판을 돌리고 지우는 환경이라, 장기 운영 · 업그레이드 · 장애 대응은 없습니다. "운영했다"가 아니라 "구축하고 측정했다"입니다
+- **운영 기간이 하루입니다** — 켜고 부하 테스트를 돌리고 지우는 환경이라, 장기 운영 · 업그레이드 · 장애 대응은 없습니다. "운영했다"가 아니라 "구축하고 측정했다"입니다
 - **퍼블릭 서브넷에 노드가 있고 공인 IP가 붙습니다** — prd는 프라이빗 서브넷 + AZ마다 NAT
 - **데이터 보안 그룹이 노드 단위입니다** — 노드 인터페이스에 붙어 노드 위 어느 파드든 통과합니다. 파드 단위는 NetworkPolicy 하나가 맡고, prd는 Security Groups for Pods
 - **CI → AWS가 IAM 사용자 장기 키입니다** — GitLab이 사설 IP라 OIDC 발급자로 쓸 수 없습니다
 - **허브가 집에 있습니다** — 집 공인 IP가 바뀌면 apply를 다시 해야 하고, 집이 밤에 꺼지는 동안 EKS는 마지막 sync 상태로 돕니다
-- **관측이 단일 AZ입니다** — 볼륨이 AZ에 묶이고 노드가 한 대라, 그 AZ가 죽으면 관측이 끊깁니다
+- **관측이 단일 AZ입니다** — 볼륨이 AZ에 묶이고 노드가 한 대라, 그 AZ에 장애가 나면 관측이 끊깁니다
 
 ## 기술 스택
 

@@ -2,14 +2,14 @@
 layout: page
 title: CI/CD
 description: >
-  GitLab 파이프라인 하나가 이미지를 만들고, 노트북 안 ArgoCD 허브 하나가 dev와 stg 두 클러스터에 배달합니다
+  GitLab 파이프라인 하나가 이미지를 만들고, 노트북 안 ArgoCD 허브 하나가 dev와 stg 두 클러스터에 배포합니다
 permalink: /homelab/cicd/
 ---
 
 <p class="hl-back" markdown="0"><a href="/homelab/">← 홈랩</a></p>
 
-GitLab 하나 · 파이프라인 하나 · 허브 하나가 클러스터 둘을 배달합니다.
-dev는 머지하면 자동으로, stg는 버튼 하나를 누르면 **같은 이미지**가 갑니다 — 갈리는 것은 환경 폴더의 값뿐입니다.
+GitLab 하나 · 파이프라인 하나 · 허브 하나가 클러스터 둘에 배포합니다.
+dev는 머지하면 자동으로, stg는 수동 승격 job을 실행하면 **같은 이미지**가 갑니다 — 갈리는 것은 환경 폴더의 값뿐입니다.
 {:.lead}
 
 ## CI/CD 구조
@@ -18,7 +18,7 @@ dev는 머지하면 자동으로, stg는 버튼 하나를 누르면 **같은 이
      주황 = 이미지가 가는 길, 파랑 = 배포 정의와 동기화, 점선 = 폴링과 원격 호출.
      허브가 dev 를 동기화하는 선은 그리지 않는다 — 같은 클러스터 안(in-cluster)이라 선이 없다. -->
 <figure class="hl-diagram hl-diagram-lg" markdown="0">
-<svg viewBox="0 0 760 470" role="img" aria-label="가운데 데스크탑의 GitLab에서 cgv-onprem이 러너 다섯 단을 지나 GitLab 레지스트리에 이미지로 서고, 버튼 하나로 같은 이미지가 오른쪽 AWS ECR로 승격된다. 왼쪽 노트북의 image-updater가 두 레지스트리를 폴링해 cgv-infra의 tag 줄을 커밋하면, 같은 노트북의 ArgoCD 허브가 배포 정의를 읽어 dev 노드 셋과 EKS stg에 동기화한다">
+<svg viewBox="0 0 760 470" role="img" aria-label="가운데 데스크탑의 GitLab에서 cgv-onprem이 러너 다섯 단을 지나 GitLab 레지스트리에 이미지로 서고, 수동 job 하나로 같은 이미지가 오른쪽 AWS ECR로 승격된다. 왼쪽 노트북의 image-updater가 두 레지스트리를 폴링해 cgv-infra의 tag 줄을 커밋하면, 같은 노트북의 ArgoCD 허브가 배포 정의를 읽어 dev 노드 셋과 EKS stg에 동기화한다">
   <defs>
     <marker id="hlm-i" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#f08c2e"/></marker>
     <marker id="hlm-d" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#2f6fdb"/></marker>
@@ -97,7 +97,7 @@ dev는 머지하면 자동으로, stg는 버튼 하나를 누르면 **같은 이
   <text class="hla-a" x="642" y="300">pull · 노드 역할</text>
 
   <rect class="hla-box" x="536" y="316" width="196" height="104" rx="6"/>
-  <image href="/assets/img/icons/kubernetes.svg" x="546" y="330" width="22" height="22"/>
+  <image href="/assets/img/icons/aws-eks.png" x="546" y="330" width="22" height="22"/>
   <text class="hla-t" x="574" y="346">EKS stg — 노드 7대</text>
   <text class="hla-s2" x="546" y="370">허브에 이름 cgv-stg 로 등록</text>
   <text class="hla-s2" x="546" y="386">같은 차트 · envs/stg 의 값</text>
@@ -108,7 +108,7 @@ dev는 머지하면 자동으로, stg는 버튼 하나를 누르면 **같은 이
   <text class="hla-a" x="251" y="244" text-anchor="middle">pull</text>
   <line class="hla-ln-img" x1="486" y1="250" x2="532" y2="250" marker-end="url(#hlm-i)"/>
   <text class="hla-a" x="509" y="243" text-anchor="middle">3 승격</text>
-  <text class="hla-a" x="509" y="265" text-anchor="middle">버튼 하나</text>
+  <text class="hla-a" x="509" y="265" text-anchor="middle">수동 job</text>
 
   <!-- 폴링(점선) — image-updater 가 레지스트리 둘을 본다 -->
   <path class="hla-ln hla-dash" d="M224,304 H380 V282" fill="none" marker-end="url(#hlm-n)"/>
@@ -137,8 +137,8 @@ dev와 stg가 받는 이미지는 태그 이름만 다르고 내용이 같습니
 | Git 서버 자리 | **클러스터 밖 데스크탑** — 러너 · 레지스트리도 같이 | GitHub은 사설망 안 ArgoCD를 호출 불가 · 클러스터 안이면 동반 정지 · 빌드 I/O가 부하 실측을 교란 |
 | CI와 CD | **분리** — 파이프라인은 이미지까지, 배포는 클러스터 안 ArgoCD가 | 파이프라인이 배포까지 하려면 전권 자격이 클러스터 밖에 필요 — 갈라 두면 안쪽에만 존재 |
 | 브랜치 · 환경 | **trunk 하나(`main`)** · 환경은 폴더 `envs/<환경>/` | 브랜치를 환경 축으로 쓰면 환경 축이 둘(브랜치 · 폴더)이 됨 · 승격이 merge가 아니라 태그 커밋 한 줄이라 이력이 한 줄로 남고 되돌리기 쉬움 |
-| 승격 | **한 번 빌드 · 같은 이미지를 ECR로** · 게이트는 `publish-ecr` 수동 버튼 하나 | 부하 비교는 두 환경 이미지가 바이트까지 같아야 함 — 환경마다 빌드하면 "코드 때문인가 이미지가 달라서인가"가 낌 · 버튼을 누르는 것이 승격 결정이고, 변수와 버튼 둘이면 게이트가 두 겹 |
-| 원격 클러스터 | **집 허브가 EKS를 클러스터 이름으로 배달** | EKS 안의 어떤 것도 사설망 GitLab을 못 읽음 · 주소 대신 이름으로 가리켜 켜는 날 주소 치환 20곳이 사라짐 |
+| 승격 | **한 번 빌드 · 같은 이미지를 ECR로** · 게이트는 수동 job `publish-ecr` 하나 | 부하 비교는 두 환경 이미지가 바이트까지 같아야 함 — 환경마다 빌드하면 "코드 때문인가 이미지가 달라서인가"가 낌 · 수동 실행이 곧 승격 결정이고, 변수와 수동 job 둘이면 게이트가 두 겹 |
+| 원격 클러스터 | **집 허브가 EKS를 클러스터 이름으로 배포** | EKS 안의 어떤 것도 사설망 GitLab을 못 읽음 · 주소 대신 이름으로 가리켜 켜는 날 주소 치환 20곳이 사라짐 |
 | 취약점 게이트(scan) | **수정판이 나온 취약점만** 머지 차단 | 패치가 없는 CVE가 수십 개 — 막아도 올릴 수정판이 없어 파이프라인만 정지 |
 | 배포 권한 · 자격 | **AppProject**로 단위마다 제한 · dev는 **SealedSecret**, stg는 **Secrets Manager** | ArgoCD는 관리자 권한으로 동작 — 제한이 없으면 Application 하나로 무엇이든 생성 · 봉인은 그 클러스터 개인키에 묶여 stg로 못 옮김 |
 {:.hl-dec}
@@ -157,10 +157,10 @@ dev와 stg가 받는 이미지는 태그 이름만 다르고 내용이 같습니
 <!-- 캡처 뒤 활성화 — 파일 둘 (EKS 가 꺼져 있어도 찍을 수 있다):
      /assets/img/homelab/cicd/publish-ecr.png       GitLab 파이프라인 화면 — publish 단의 수동 job publish-ecr:* (재생 버튼)
      /assets/img/homelab/cicd/image-updater-commit.png  cgv-infra 커밋 "build: automatic update of queue-stg" 의 diff — envs/stg/queue.yaml image.tag 한 줄
-<div class="hl-shots" markdown="0" aria-label="승격 화면 둘 — 버튼과 되쓰기 커밋, 화살표로 넘겨 봅니다">
+<div class="hl-shots" markdown="0" aria-label="승격 화면 둘 — 수동 job과 되쓰기 커밋, 화살표로 넘겨 봅니다">
   <figure class="hl-shot">
-    <img src="/assets/img/homelab/cicd/publish-ecr.png" alt="GitLab 파이프라인 — publish 단에 수동 job publish-ecr 셋이 재생 버튼으로 서 있는 화면">
-    <figcaption><b>(승격 게이트)</b> 같은 파이프라인의 publish 단입니다 — GitLab 레지스트리 푸시는 자동이고, ECR 푸시는 이 버튼을 눌러야 갑니다.</figcaption>
+    <img src="/assets/img/homelab/cicd/publish-ecr.png" alt="GitLab 파이프라인 — publish 단에 수동 job publish-ecr 셋이 실행 대기 중인 화면">
+    <figcaption><b>(승격 게이트)</b> 같은 파이프라인의 publish 단입니다 — GitLab 레지스트리 푸시는 자동이고, ECR 푸시는 이 job을 수동으로 실행해야 갑니다.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cicd/image-updater-commit.png" alt="cgv-infra 커밋 diff — envs/stg/queue.yaml의 image.tag 한 줄이 새 커밋 해시로 바뀜" loading="lazy">
@@ -172,7 +172,7 @@ dev와 stg가 받는 이미지는 태그 이름만 다르고 내용이 같습니
 - **두 클러스터가 같은 파이프라인 · 같은 허브에서 배포됩니다** — dev는 머지 뒤 **3초**에 반영, stg는 코드에서 브라우저까지 **19분 41초**(사람 손을 뺀 기계 구간 1분 54초)
 - **커밋 뒤 `kubectl`을 실행할 일이 없습니다** — 두 환경 모두 머지가 곧 배포입니다
 - **저장소에 평문 자격이 없습니다** — dev 시크릿 19종은 봉인된 채 커밋돼 있고, stg 시크릿 넷은 Secrets Manager에서 스크립트가 만듭니다
-- **판 중에는 머지하지 않습니다** — 머지가 곧 배포라 판 도중 파드가 굴러 그 판이 무효가 된 적이 있습니다
+- **부하 테스트 중에는 머지하지 않습니다** — 머지가 곧 배포라 테스트 도중 파드가 교체돼 그 회차가 무효가 된 적이 있습니다
 
 ## 한계
 

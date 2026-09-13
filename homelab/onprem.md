@@ -129,11 +129,11 @@ VM 세 대가 데스크탑과 같은 사설망에 있던 것을 **방화벽 뒤�
     <image href="/assets/img/icons/argo.svg" x="523" y="219" width="20" height="20"/>
     <image href="/assets/img/icons/grafana.svg" x="548" y="219" width="20" height="20"/>
     <text x="572" y="226" class="hla-c">ArgoCD 허브 · Grafana</text>
-    <text x="572" y="241" class="hla-s">VPN으로만 · stg 도 배달</text>
+    <text x="572" y="241" class="hla-s">VPN으로만 · stg 도 배포</text>
     <line x1="660" y1="204" x2="660" y2="188" class="hla-ln hla-dash" marker-end="url(#hlp-arrow)"/>
     <text x="668" y="200" class="hla-s2">배포</text>
     <line x1="620" y1="252" x2="620" y2="296" class="hla-ln hla-dash" marker-end="url(#hlp-arrow)"/>
-    <text x="620" y="312" text-anchor="middle" class="hla-s">허브 → stg(EKS) 도 배달</text>
+    <text x="620" y="312" text-anchor="middle" class="hla-s">허브 → stg(EKS) 도 배포</text>
 
     <path class="hla-pod" d="M598.5,135 L595.25,140.63 L588.75,140.63 L585.5,135 L588.75,129.37 L595.25,129.37 Z"/>
     <path class="hla-pod" d="M736.5,124 L733.25,129.63 L726.75,129.63 L723.5,124 L726.75,118.37 L733.25,118.37 Z"/>
@@ -182,7 +182,7 @@ VM 세 대가 데스크탑과 같은 사설망에 있던 것을 **방화벽 뒤�
   </g>
 </svg>
 <figcaption>사용자 · 관리자 · 배포, 세 경로가 모두 노트북 안 방화벽 VM을 지납니다.
-Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 응답하지 않습니다. 이 안의 ArgoCD가 stg(EKS)까지 배달하는 허브입니다.</figcaption>
+Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 응답하지 않습니다. 이 안의 ArgoCD가 stg(EKS)까지 배포하는 허브입니다.</figcaption>
 </figure>
 
 <div class="hl-sub" markdown="0">노트북 — 아래에서 위로 쌓인 층</div>
@@ -286,7 +286,7 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
 
 | 항목 | 선택 | 이유 | stg 에서는 |
 |---|---|---|---|
-| 배포판 | **k3s** — 단일 바이너리 · 셋 다 control-plane | 표준 쿠버네티스는 컴포넌트를 따로 세움 — 컨트롤 플레인이 가벼워야 8GB 노드에 서비스 몫이 남음. 대가는 한 프로세스라 동반 종료 | **EKS** — 컨트롤 플레인은 AWS 관리 · 노드 메모리가 차도 etcd가 안 밀림 |
+| 배포판 | **k3s** — 단일 바이너리 · 셋 다 control-plane | 표준 쿠버네티스는 컴포넌트를 따로 세움 — 컨트롤 플레인이 가벼워야 8GB 노드에 서비스 몫이 남음. 대가는 한 프로세스라 동반 종료 | **EKS** — 컨트롤 플레인은 AWS 관리 · 노드 메모리가 차도 etcd가 지연되지 않음 |
 | 파드 네트워크 | **Calico** | 기본 Flannel은 NetworkPolicy 미집행 — 규칙을 적어도 통신은 그대로 개방 | **VPC CNI** + `enableNetworkPolicy` — 같은 정책 그대로 |
 | 로드밸런서 · 인그레스 | **MetalLB** `10.0.0.240` → **직접 올린 Traefik** | 기본 ServiceLB는 노드 IP를 빌려 그 노드가 멈추면 주소도 소멸 · k3s 번들 Traefik은 고친 설정이 재기동마다 원복 | **ALB** — MetalLB의 L2 광고가 VPC에서 안 됨 · Traefik 없음 |
 | 스토리지 | **정적 PV 10장** — 노드에 붙인 디스크 그대로 | 기본 local-path는 한 파일시스템에 폴더로 — 디스크 metric이 파일시스템 단위라 무엇이 채웠는지 식별 불가. 대가는 파드가 노드에 고정 | **EBS CSI gp3 동적** — 대신 볼륨이 AZ에 묶임 |
@@ -300,7 +300,7 @@ Cloudflare 대역 밖에서 온 443은 버리고, 키 없는 VPN 시도에는 �
 | 격리 | **OPNsense 방화벽 VM** + 물리 NIC 없는 브리지(vmbr1) | 한 공유기 아래 노드와 데스크탑이 나란히 인터넷을 향함 — 한쪽이 침해되면 같은 망으로 상호 침투. 격리망에서 밖으로 가는 길은 이 VM 하나 | **VPC · 보안 그룹** — 집은 기본이 닫힘, 클라우드는 기본이 열 수 있어 적극적으로 좁힘 |
 | 관리 접근 | **WireGuard** 터널 하나 | 관리 페이지는 공개 대상이 아님 — Grafana·ArgoCD를 도메인으로 열지 않고 키를 등록한 관리자만 | EKS API · Grafana를 **집 공인 IP /32**로 제한 |
 | 공개 경로 | **Cloudflare 프록시** + 방화벽 출발지를 엣지 대역으로 · DDNS | 집 공인 IP 은닉 + 방문자 연결을 엣지가 종료 · 공인 IP가 바뀌어도 DDNS가 레코드를 갱신 | Cloudflare **DNS only** — 프록시를 켜면 부하가 엣지로 가서 재는 값이 이 시스템 것이 아니게 됨 |
-| 파드 사이 | **NetworkPolicy 24개** — 네임스페이스마다 기본 차단 뒤 통로만 | 쿠버네티스 기본값은 파드끼리 전부 접속 가능 — 앱 하나가 뚫리면 DB 자격까지 도달 | 같은 정책 — 켜는 날 막혀야 할 것이 막히는지 시험 |
+| 파드 사이 | **NetworkPolicy 24개** — 네임스페이스마다 기본 차단 뒤 통로만 | 쿠버네티스 기본값은 파드끼리 전부 접속 가능 — 앱 하나가 침해되면 DB 자격까지 도달 | 같은 정책 — 켜는 날 막혀야 할 것이 막히는지 시험 |
 | 인증서 | **Let's Encrypt · DNS-01** | CA가 도메인 소유를 DNS 레코드로 확인 — 포트를 열기 전에 인증서를 받음 | **ACM** — ALB가 TLS를 끝냄 · cert-manager 없음 |
 {:.hl-map}
 
