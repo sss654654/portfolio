@@ -141,7 +141,7 @@ Terraform state는 둘로, 클러스터보다 오래 살아야 하는 것(bootst
 
 | 증상 | 원인 | 조치 |
 |---|---|---|
-| 노드그룹이 `CREATING`에서 20분 넘게 안 끝남 — `describe-nodegroup` 정상 · CloudTrail 무오류 | 계정 EC2 vCPU 한도 32 소진 — 실패는 ASG scaling activities에만 `VcpuLimitExceeded`. 정지 인스턴스는 한도에 안 셈 | 한도 **64**로 증설 → 1분 23초에 ACTIVE. 관리형 서비스의 실패는 한 층 아래(ASG · EC2)에서 본다 |
+| 노드그룹이 `CREATING`에서 20분 넘게 안 끝남 — `describe-nodegroup` 정상 · CloudTrail 무오류 | 계정 EC2 vCPU 한도 32 소진 — 실패는 ASG scaling activities에만 `VcpuLimitExceeded`. 정지 인스턴스는 한도에 안 셈 | 한도 **64**로 증설 → 1분 23초에 ACTIVE. 관리형 서비스의 실패는 한 층 아래(ASG · EC2)에서 확인 |
 | 노드그룹 교체 뒤 Mimir ingester **95분 Pending** — 새 지표 저장 중단 | 관측 노드그룹에 서브넷 셋을 줘 노드가 2c → 2b로 옮겨 떴고, EBS 볼륨은 2c에 묶여 있음 | 상태를 든 노드그룹만 AZ 하나에 고정 — 앱 노드그룹 값을 그대로 넘긴 것이 원인 |
 | Redis 암호화를 켠 뒤 앱이 `x509: certificate is valid for …`로 연결 실패 | 전송 암호화를 켜면 주 엔드포인트 이름이 `master.…`로 바뀌고, 인증서는 새 이름에만 맞음 | `REDIS_HOST`를 새 이름으로. 떠 있는 그룹에 앱을 끊지 않고 붙이는 순서는 preferred → 앱 TLS → required → ROTATE → SET |
 | 30명이 한 사람으로 세어짐 — requestId 앞 8자가 전부 같은 시각 | 평문 http에서 브라우저가 `crypto.randomUUID`를 안 줌 → 시각 기반 폴백 id가 겹침 | HTTPS 입구(ACM · 443) + 프론트 폴백 수정 → 30명 중 29명 예매 |
