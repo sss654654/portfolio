@@ -4,14 +4,16 @@ title: 포트폴리오
 sitemap: true
 ---
 
-SRE · DevOps 엔지니어 홍수빈입니다.
-쿠버네티스 인프라 구축, 옵저버빌리티, 부하 테스트 기반 용량 산정을 합니다.
+인프라를 직접 구축하고, 지표와 부하 테스트로 한계를 측정해 스펙을 정하는 엔지니어입니다.
+첫 회사에서 옵저버빌리티를 맡으며 지표 아래의 노드 · 네트워크를 설명하지 못했고, 그 뒤 가상화부터 쿠버네티스 · AWS까지 직접 세웠습니다.
 {:.lead}
 
-* [홈랩](/homelab/) — 온프레미스 k3s(dev)와 AWS EKS(stg)를 GitOps로 구성, 대기열 예매 서비스 **50,000명 부하 테스트**
-* [프로젝트](/projects/) — semiai k3s 옵저버빌리티(LGTM) · 클라우드웨이브 AWS 네트워크(Terraform) · LevelDB 캐시 연구
-* [이력서 PDF](/assets/subinhong-resume.pdf) — 2장
-* [블로그](https://zed6740.tistory.com) — 기술 기록
+* [홈랩](/homelab/) — 온프레미스 k3s(dev)와 AWS EKS(stg)를 GitLab CI · ArgoCD로 배포, 대기열 예매 서비스 **50,000명 부하 테스트 통과**
+* [semiai 인프라팀](/projects/semiai/) — k3s 위 LGTM 스택 구축 · Go 백엔드 계측, heap profile 진단으로 **OOMKilled 해소**
+* [클라우드웨이브 6기](/projects/cgv/) — 5인 팀, **AWS 개발계 네트워크(Terraform)** · Redis 대기열 백엔드 담당
+* [LevelDB 캐시 분석](/projects/leveldb/) — 학부 연구생, **KSC 2022 학부생 논문 1저자**
+
+측정 기준(SLO)을 먼저 정하고, 해결하지 못한 문제와 한계도 카드마다 함께 적었습니다. 구축 과정은 [블로그](https://zed6740.tistory.com/category/HomeLab)에 편별로 남겼습니다.
 
 ## 대기열 예매 서비스
 
@@ -31,7 +33,7 @@ SRE · DevOps 엔지니어 홍수빈입니다.
   </a>
 </div>
 
-<p class="demo-caption" markdown="0">예매가 열리는 순간부터 대기열을 지나 예매를 마치기까지, 실제 서비스 화면을 녹화한 것입니다.</p>
+<p class="demo-caption" markdown="0">예매 오픈부터 대기열 통과 · 예매 완료까지 실제 서비스 화면 녹화입니다.</p>
 
 <!-- 가동 상태 점 — 데모의 stats 엔드포인트(읽기 전용 GET)를 한 번 조회한다.
      판정: 응답이 오면(상태코드 무관) 가동 중 — CORS 헤더가 실린 응답을 받았다는 것 자체가
@@ -69,16 +71,17 @@ SRE · DevOps 엔지니어 홍수빈입니다.
 })();
 </script>
 
-지금 배포된 서비스는 데모용 설정입니다 — 대기 행렬이 보이도록 동시 입장을 60명으로 줄였고, 좌석은 3시간마다 초기화됩니다.
-클러스터부터 부하 테스트까지, 무엇을 골랐고 왜 골랐는지는 [홈랩 페이지](/homelab/)에 있습니다.
+데모용 설정 — 대기 행렬이 보이도록 동시 입장 60명, 좌석은 3시간마다 초기화됩니다. 구성과 선택 근거는 [홈랩](/homelab/)에 있습니다.
 
 ## 이력
 
-* **2026.07 – 09** — [홈랩](/homelab/) — 노트북 한 대에 k3s(dev)를 세워 인터넷 공개까지 단독 구축 · 같은 서비스를 Terraform · EKS(stg)에 올려 50,000명 실측
-* **2026.03 – 06** — [semiai 인프라팀](/projects/semiai/) — 기구축 k3s 위 옵저버빌리티 담당 · 인프라·앱 대시보드, Go 백엔드 네 신호 계측
+* **2026.07 – 09** — [홈랩](/homelab/) — 단독
+* **2026.03 – 06** — [semiai 인프라팀](/projects/semiai/)
 * <small>2026.02 — 단국대학교 소프트웨어학과 졸업</small>
-* **2025.06 – 09** — [CJ 올리브네트웍스 클라우드웨이브 6기](/projects/cgv/) — CGV 예매 대기열, 5인 팀 · **AWS 개발계 네트워크(Terraform)**와 Redis 대기열 백엔드 담당
+* **2025.06 – 09** — [CJ 올리브네트웍스 클라우드웨이브 6기](/projects/cgv/) — 5인 팀
 * <small>2023.08 – 2025.05 — 공군 복무</small>
-* **2022.07 – 12** — [LevelDB 캐시 메커니즘 분석](/projects/leveldb/) — 학부 연구생 · **KSC 2022 학부생 논문 1저자**
+* **2022.07 – 12** — [LevelDB 캐시 메커니즘 분석](/projects/leveldb/) — 학부 연구생
 * <small>2021.03 — 단국대학교 소프트웨어학과 편입</small>
 {:.timeline}
+
+**자격** — AWS Solutions Architect – Associate · AWS Developer – Associate · 정보처리기사 · 리눅스마스터 2급 · SQLD
