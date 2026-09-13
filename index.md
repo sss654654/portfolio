@@ -34,39 +34,48 @@ sitemap: true
 
 <p class="demo-caption" markdown="0">예매 오픈부터 대기열 통과 · 예매 완료까지 실제 서비스 화면 녹화입니다.</p>
 
-<!-- 가동 상태 점 — 데모의 stats 엔드포인트(읽기 전용 GET)를 한 번 조회한다.
-     판정: 응답이 오면(상태코드 무관) 가동 중 — CORS 헤더가 실린 응답을 받았다는 것 자체가
-     origin이 살아 있다는 증거다. 꺼져 있으면 CF 에러 페이지에 그 헤더가 없어 fetch가
-     실패하고, 그때는 아무것도 표시하지 않는다(확인 못 한 상태를 단정하지 않기 위해).
-     movieId는 2026-08-31 실측값 — 틀려도 404 응답이 오므로 판정은 안 깨진다.
-     교차 출처라 cgv-infra의 portfolio-status-cors 라우터가 이 origin에 CORS를 열어야 동작한다. -->
+<!-- 가동 상태 점 — 데모의 두 경로를 읽기 전용으로 한 번씩 조회한다.
+     queue    GET  /api/admission/stats   Traefik → queue
+     frontend HEAD /index.html            Traefik → nginx (방문자가 처음 받는 화면)
+     queue 만 보면 frontend 가 멈춰 첫 화면이 503 이어도 '가동 중'이 뜬다(2026-09-14 실제로 그랬다).
+     판정: 둘 다 응답이 오고 queue 가 5xx 가 아니며 frontend 가 2xx 면 가동 중. 응답은 왔는데
+     그 조건을 못 채우면 접속 장애. 응답이 아예 없으면(꺼짐 · CF 에러 페이지 · 방문자 네트워크)
+     낮에는 아무것도 표시하지 않는다 — 확인 못 한 상태를 단정하지 않는다.
+     movieId는 2026-08-31 실측값 — 틀려도 404 가 오므로 판정은 안 깨진다.
+     교차 출처라 cgv-infra 의 portfolio-status-cors 라우터가 두 경로 모두에 이 origin 의 CORS 를 열어야 동작한다. -->
 <script>
 (function () {
   var box = document.getElementById('demo-status');
-  if (!box || !window.fetch || !window.AbortController) return;
+  if (!box || !window.fetch || !window.AbortController || !window.Promise) return;
   var ctrl = new AbortController();
   var timer = setTimeout(function () { ctrl.abort(); }, 6000);
-  fetch('https://ticket.subinhong.dev/api/admission/stats?movieId=kbo-allstar-2025',
-        { cache: 'no-store', signal: ctrl.signal })
-    .then(function (r) {
-      clearTimeout(timer);
-      box.className = 'up';
-      box.getElementsByTagName('span')[0].textContent = '지금 가동 중';
-      box.hidden = false;
-    })
-    .catch(function () {
-      clearTimeout(timer);
-      /* 응답이 없어도 낮에는 단정하지 않는다(방문자 네트워크 문제일 수 있음).
-         단, KST가 가동 시간(08:00-23:30) 밖이면 꺼져 있는 시간이라고 확정할 수 있다.
-         주의: compress_html이 한 줄로 누르므로 이 블록에 // 주석 금지 */
-      var k = new Date(Date.now() + 9 * 3600 * 1000);
-      var m = k.getUTCHours() * 60 + k.getUTCMinutes();
-      if (m < 8 * 60 || m >= 23 * 60 + 30) {
-        box.className = 'down';
-        box.getElementsByTagName('span')[0].textContent = '지금은 꺼져 있는 시간';
-        box.hidden = false;
-      }
-    });
+  var base = 'https://ticket.subinhong.dev';
+  function show(cls, text) {
+    box.className = cls;
+    box.getElementsByTagName('span')[0].textContent = text;
+    box.hidden = false;
+  }
+  Promise.all([
+    fetch(base + '/api/admission/stats?movieId=kbo-allstar-2025', { cache: 'no-store', signal: ctrl.signal }),
+    fetch(base + '/index.html', { method: 'HEAD', cache: 'no-store', signal: ctrl.signal })
+  ]).then(function (rs) {
+    clearTimeout(timer);
+    if (rs[0].status < 500 && rs[1].ok) {
+      show('up', '지금 가동 중');
+    } else {
+      show('down', '지금 접속 장애');
+    }
+  }).catch(function () {
+    clearTimeout(timer);
+    /* 응답이 없어도 낮에는 단정하지 않는다(방문자 네트워크 문제일 수 있음).
+       단, KST가 가동 시간(08:00-23:30) 밖이면 꺼져 있는 시간이라고 확정할 수 있다.
+       주의: compress_html이 한 줄로 누르므로 이 블록에 // 주석 금지 */
+    var k = new Date(Date.now() + 9 * 3600 * 1000);
+    var m = k.getUTCHours() * 60 + k.getUTCMinutes();
+    if (m < 8 * 60 || m >= 23 * 60 + 30) {
+      show('down', '지금은 꺼져 있는 시간');
+    }
+  });
 })();
 </script>
 
