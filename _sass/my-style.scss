@@ -186,6 +186,10 @@ ul.timeline > li:has(> small)::before {
 /* 흐름 순번 — 선 위에 얹어 어느 것이 먼저인지 보이게 한다 */
 .hla-num { fill: var(--gray-bg); stroke: var(--border-color); stroke-width: 1; }
 .hla-nt { font-size: 10px; font-weight: 700; fill: var(--body-color); text-anchor: middle; }
+/* 클라우드 구성도 — 가용 영역(점선 칸) · 노드(빈 상자) · 칸 이름 */
+.hla-az { fill: none; stroke: var(--border-color); stroke-width: 1; stroke-dasharray: 4 4; }
+.hla-azt { font-size: 10.5px; letter-spacing: .08em; fill: var(--gray); }
+.hla-node { fill: none; stroke: var(--border-color); stroke-width: 1.1; }
 
 .hla-g { opacity: 0; animation: hl-rise .5s ease forwards; }
 .hla-g1 { animation-delay: .1s; }
@@ -447,7 +451,7 @@ html { font-size: 17px; }
 .hl-cmp th:nth-child(2) { width: 24%; }
 .hl-cmp th:nth-child(3) { width: 21%; }
 .hl-cmp th:nth-child(4) { width: 39%; }
-/* 온프렘 층 표 — 항목 · 선택 · 이유 · stg 에서는. 이유가 제일 길고 stg 칸은 한 줄 */
+/* 온프레미스 층 표 — 항목 · 선택 · 이유 · stg 에서는. 이유가 제일 길고 stg 칸은 한 줄 */
 .hl-map { table-layout: fixed; }
 .hl-map th:nth-child(1) { width: 15%; }
 .hl-map th:nth-child(2) { width: 22%; }

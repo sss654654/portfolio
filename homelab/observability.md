@@ -2,19 +2,17 @@
 layout: page
 title: 옵저버빌리티
 description: >
-  metric · log · trace를 수집기 하나로 모으는 LGTM 스택을 dev와 stg에 같은 차트로 두었습니다 — 부하 판정은 전부 여기서 나온 서버 지표입니다
+  metric · log · trace를 수집기 하나로 모으는 LGTM 스택을 dev · stg에 같은 차트로 배포했습니다 — 부하 판정 기준은 이 서버 지표입니다
 permalink: /homelab/observability/
 ---
 
 <p class="hl-back" markdown="0"><a href="/homelab/">← 홈랩</a></p>
 
-클러스터도 배포 경로도 갖춰졌지만, **안에서 무슨 일이 벌어지는지 볼 방법이 없었습니다.**
-같은 차트가 dev와 stg에 있고, 부하 테스트의 판정은 전부 여기서 나온 서버 지표입니다.
+metric · log · trace를 Alloy 하나로 수집하는 LGTM 스택입니다.
+dev · stg에 같은 차트로 배포했고, **부하 테스트 판정은 모두 이 서버 지표 기준**입니다.
 {:.lead}
 
 ## 옵저버빌리티 구조
-
-세 신호를 **Alloy**가 모읍니다 — 노드마다 하나씩 돌며 대상을 나눠 가집니다.
 
 <!-- 신호 셋이 각자 레인으로 나란히 흐르고 Alloy 기둥 하나가 셋을 관통하는 구조.
      원본 저장소 칸이 dev(MinIO) · stg(S3) 로 갈린다. 화살표 = 데이터 방향. -->
@@ -43,7 +41,7 @@ permalink: /homelab/observability/
   <text class="hla-s2" x="38" y="154">stdout · 이벤트</text>
   <line class="hla-ln" x1="144" y1="138" x2="234" y2="138" marker-end="url(#hlo-n)" fill="none"/>
   <text class="hla-a" x="189" y="130" text-anchor="middle">tail</text>
-  <text class="hla-a" x="189" y="154" text-anchor="middle">생기는 대로</text>
+  <text class="hla-a" x="189" y="154" text-anchor="middle">발생 시 수집</text>
   <line class="hla-ln" x1="336" y1="138" x2="414" y2="138" marker-end="url(#hlo-n)" fill="none"/>
   <rect class="hla-box" x="418" y="110" width="158" height="56" rx="5"/>
   <image href="/assets/img/icons/loki.svg" x="432" y="121" width="20" height="20"/>
@@ -56,7 +54,7 @@ permalink: /homelab/observability/
   <text class="hla-s2" x="38" y="224">queue · booking</text>
   <line class="hla-ln" x1="144" y1="208" x2="234" y2="208" marker-end="url(#hlo-n)" fill="none"/>
   <text class="hla-a" x="189" y="200" text-anchor="middle">push — OTLP</text>
-  <text class="hla-a" x="189" y="224" text-anchor="middle">앱이 보냄</text>
+  <text class="hla-a" x="189" y="224" text-anchor="middle">앱이 전송</text>
   <line class="hla-ln" x1="336" y1="208" x2="414" y2="208" marker-end="url(#hlo-n)" fill="none"/>
   <rect class="hla-box" x="418" y="180" width="158" height="56" rx="5"/>
   <image href="/assets/img/icons/tempo.svg" x="432" y="191" width="20" height="20"/>
@@ -67,8 +65,8 @@ permalink: /homelab/observability/
   <rect class="hla-box" x="236" y="30" width="100" height="206" rx="6"/>
   <image href="/assets/img/icons/alloy.svg" x="275" y="42" width="22" height="22"/>
   <text class="hla-t" x="286" y="90" text-anchor="middle">Alloy</text>
-  <text class="hla-s2" x="286" y="118" text-anchor="middle">노드마다 하나</text>
-  <text class="hla-s2" x="286" y="136" text-anchor="middle">대상을 나눠 맡음</text>
+  <text class="hla-s2" x="286" y="118" text-anchor="middle">노드마다 1개</text>
+  <text class="hla-s2" x="286" y="136" text-anchor="middle">수집 대상 분담</text>
 
   <!-- 원본 — dev MinIO · stg S3 -->
   <line class="hla-ln" x1="497" y1="238" x2="497" y2="254" marker-end="url(#hlo-n)" fill="none"/>
@@ -76,7 +74,7 @@ permalink: /homelab/observability/
   <rect class="hla-box" x="418" y="258" width="200" height="44" rx="5"/>
   <image href="/assets/img/icons/minio.svg" x="432" y="266" width="18" height="18"/>
   <text class="hla-t" x="458" y="275">MinIO · S3</text>
-  <text class="hla-s2" x="432" y="294">dev 는 파드 · stg 는 IRSA</text>
+  <text class="hla-s2" x="432" y="294">dev 파드 · stg IRSA</text>
 
   <!-- Grafana — 셋을 읽는 쪽 -->
   <line class="hla-ln" x1="576" y1="68" x2="630" y2="68" marker-end="url(#hlo-n)" fill="none"/>
@@ -85,57 +83,56 @@ permalink: /homelab/observability/
   <rect class="hla-inner" x="634" y="30" width="102" height="206" rx="6"/>
   <image href="/assets/img/icons/grafana.svg" x="676" y="44" width="20" height="20"/>
   <text class="hla-t" x="685" y="90" text-anchor="middle">Grafana</text>
-  <text class="hla-s" x="685" y="118" text-anchor="middle">셋을 읽음</text>
-  <text class="hla-s2" x="685" y="162" text-anchor="middle">대시보드 — 코드로</text>
-  <text class="hla-s2" x="685" y="180" text-anchor="middle">dev 5장 · stg 4장</text>
+  <text class="hla-s" x="685" y="118" text-anchor="middle">3개 저장소 조회</text>
+  <text class="hla-s2" x="685" y="162" text-anchor="middle">대시보드 — 코드</text>
+  <text class="hla-s2" x="685" y="180" text-anchor="middle">dev · stg 공통 차트</text>
   <text class="hla-s2" x="685" y="216" text-anchor="middle">알림 — Discord</text>
 </svg>
-<figcaption>원본은 dev가 MinIO, stg가 S3입니다. RDS · ElastiCache · ALB처럼 exporter를 옆에 붙일 수 없는 것은
-stg에서 CloudWatch exporter가 읽어 같은 Mimir에 넣습니다.</figcaption>
+<figcaption>원본 저장소 — dev MinIO · stg S3. RDS · ElastiCache · ALB처럼 exporter를 붙일 수 없는 자원은 stg의 CloudWatch exporter가 수집해 같은 Mimir에 저장합니다.</figcaption>
 </figure>
 
 ## 설계 결정
 
 | 항목 | 선택 | 이유 |
 |---|---|---|
-| metric 저장소 | **Mimir distributed** — ingester만 3대, 노드당 1 | ingester가 중단되면 메모리의 최근 2시간 소실 — 세 저장소를 다 분산할 자원은 없어 **판정에 쓰는 metric만** |
-| log · trace | **Loki · Tempo는 단일** | 소실 범위는 같아도 조사 도구라 비어도 판정에 무영향 · WAL로 재시작만 복구, 노드째 유실은 감수 |
-| 원본 저장소 | **dev는 MinIO 파드 · stg는 S3(IRSA)** | 원본은 전부 오브젝트 스토리지, 로컬은 WAL만 — stg에서는 MinIO 자리가 S3로 넘어가고 파드가 IRSA로 버킷 권한을 받음 |
-| stg의 스택 | **stg 안에 같은 차트로 따로** — 집으로 보내지 않음 | 집 Mimir가 활성 시리즈 상한의 91.8% — stg를 받을 자리가 없음 · 같은 차트라 대시보드를 그대로 씀 |
-| 부하 판정용 스크레이프 | **stg queue만 5초** | 오픈 피크가 15초 한 주기 안에 끝나 표본이 하나 — 5초면 피크 안이 보임 |
-| 알림 기준 | **받으면 할 일이 있고, 안 받으면 되돌릴 수 없는 것만** · 클러스터 밖 감시는 Better Stack | 둘 중 하나만 맞는 것은 대시보드에서 보면 충분 · 클러스터 안 알림은 클러스터가 멈추면 같이 멈춤 |
+| metric 저장소 | **Mimir distributed** — ingester 3대, 노드당 1 | ingester 중단 시 메모리의 최근 2시간 소실 — 자원상 **판정용 metric만** 분산 |
+| log · trace | **Loki · Tempo 단일** | 조사용이라 공백이 판정에 영향 없음 · WAL로 재시작 복구, 노드 유실은 감수 |
+| 원본 저장소 | **dev MinIO 파드 · stg S3(IRSA)** | 원본은 오브젝트 스토리지, 로컬은 WAL만 — stg는 파드가 IRSA로 버킷 권한 획득 |
+| stg 스택 | **stg 안에 같은 차트로 별도 구성** — 집으로 전송하지 않음 | 집 Mimir 활성 시리즈가 상한의 91.8% — 수용 불가 · 같은 차트라 대시보드 재사용 |
+| 부하 판정용 스크레이프 | **stg queue만 5초** | 오픈 피크가 15초 1주기 안에 끝나 표본 1개 — 5초 주기로 피크 구간 확인 |
+| 알림 기준 | **대응 조치가 있고, 놓치면 복구 불가한 것만** · 클러스터 밖 감시는 Better Stack | 한 조건만 맞으면 대시보드 확인으로 충분 · 클러스터 안 알림은 클러스터 중단 시 동반 중단 |
 {:.hl-dec}
 
 ## 대시보드와 알림
 
-대시보드는 코드(cgv-infra `manifests/dashboards`)로 배포됩니다 — dev는 클러스터 · 호스트 · 앱 셋, stg는 흐름(판정 + 층별 진단 + 노드) · queue · booking · 데이터. 보고 있지 않은 시간은 알림이 맡습니다.
+대시보드는 코드(cgv-infra `manifests/`)로 배포 — dev는 클러스터 · 호스트 · 앱, stg는 흐름(판정 · 층별 진단 · 노드) · queue · booking · 데이터. 상시 감시는 알림이 담당합니다.
 
 <figure class="hl-shot" markdown="0">
-  <img src="/assets/img/homelab/obs/host-phone.png" alt="충전선을 뽑은 순간 — 왼쪽 호스트 대시보드의 전원이 배터리(빨강)로 바뀌고 전력 행의 하트가 깨졌으며, 오른쪽 폰 Discord에 발생 알림이 도착" loading="lazy">
-  <figcaption>충전선을 뽑아 검증한 화면입니다 — 전원이 배터리(빨강)로 바뀌고, 알림이 걸린 패널의 하트가 깨지고, 같은 순간 폰에 닿습니다.</figcaption>
+  <img src="/assets/img/homelab/obs/host-phone.png" alt="충전선을 뽑은 순간 — 왼쪽 호스트 대시보드의 전원이 배터리(빨강)로 바뀌고 전력 행의 알림 상태 표시가 바뀌었으며, 오른쪽 폰 Discord에 발생 알림이 도착" loading="lazy">
+  <figcaption>충전선 분리 검증 — 전원 상태 배터리(빨강) 전환, 알림 패널 상태 변경, 같은 시각 폰 Discord 알림 수신.</figcaption>
 </figure>
 
 ## 트러블슈팅
 
 | 증상 | 원인 | 조치 |
 |---|---|---|
-| 시리즈 상한 15만이 차서 늦게 온 metric이 거절됨 — 화면엔 에러 없이 **값만 없음** | 표준 쿠버네티스는 `:6443`·`:10250`이 다른 프로세스라 둘 다 수집 — **k3s는 한 프로세스**라 같은 metric이 두 벌, 15만의 85% | `:6443` 수집을 지우고 상한을 30만으로. 거절 **0** |
-| 유휴인데 CPU 패키지 **92°C** — 예고 없이 꺼진 적이 있는데 온도 기록이 없음 | 온도·전원은 물리 호스트에만 있는 metric이라 VM 안에서는 수집 경로 자체가 없음 | 호스트에 node-exporter를 올리고 변수를 하나씩 바꿈 — 쿨러·덮개 열기·powersave로 **66°C**. 알림 임계 90°C의 근거 |
-| stg 2.5만 명 회차에서 입장 전파가 **97.445%** — 브로커는 한가한데 브로커에서 기다린 시간 1.852초 | 요청의 96%가 폴링이고 요청마다 접근 로그 한 줄 — Loki **초당 4,256줄** · 로그 수집기가 노드마다 0.5코어 · booking 노드 런큐 **3.30초/초**. 노드를 채운 것은 서비스가 아니라 수집기 | 성공한 폴링의 접근 로그 제외 · 4xx·5xx는 유지 → 100.000% · **741줄/초** · 런큐 **0.26** |
+| 시리즈 상한 15만 도달 — 늦게 온 metric 거절, 화면엔 오류 없이 **값만 누락** | 표준 쿠버네티스는 `:6443` · `:10250`이 별도 프로세스라 둘 다 수집 — **k3s는 단일 프로세스**라 같은 metric 중복, 15만의 85% | `:6443` 수집 제거 · 상한 30만. 거절 **0** |
+| 유휴 시 CPU 패키지 **92°C** — 예고 없는 전원 차단 이력, 온도 기록 없음 | 온도 · 전원은 물리 호스트 metric — VM 안에서 수집 경로 없음 | 호스트에 node-exporter 설치 후 변수별 조정 — 쿨러 · 덮개 · powersave로 **66°C**. 알림 임계 90°C 근거 |
+| stg 2.5만 명 회차 입장 전파 **97.445%** — 브로커 유휴, 브로커 대기 1.852초 | 요청 96%가 폴링, 요청당 접근 로그 1줄 — Loki **초당 4,256줄** · 수집기가 노드당 0.5코어 · booking 노드 런큐 **3.30초/초**. 노드 부하 원인은 서비스가 아닌 수집기 | 성공 폴링 접근 로그 제외(4xx · 5xx 유지) → 100.000% · **741줄/초** · 런큐 **0.26** |
 {:.hl-tbl}
 
 ## 결과
 
-- **세 신호가 각자의 저장소에 쌓입니다** — metric Mimir(15일) · log Loki(7일) · trace Tempo(24시간). 원본은 dev가 MinIO, stg가 S3입니다
-- **같은 차트 · 같은 대시보드가 두 환경에 있습니다** — 부하 테스트 19회의 판정과 진단이 전부 stg Mimir의 서버 지표로 나왔습니다
-- 안 볼 때는 **알림이 Discord로** 옵니다 — 지금 값과 할 일, 패널 그림과 함께. 클러스터가 통째로 멈춰도 Better Stack이 밖에서 감지합니다
-- **관측이 부하를 만든다는 것을 실측으로 봤습니다** — 로그 한 줄의 비용은 디스크가 아니라 그 줄을 읽어 보내는 수집기의 CPU이고, 그것이 같은 노드의 서비스 파드를 밀었습니다
+- **신호별 저장소** — metric Mimir 15일 · log Loki 7일 · trace Tempo 24시간
+- **두 환경에 같은 차트 · 대시보드** — 부하 테스트 19회의 판정 · 진단 모두 stg Mimir 서버 지표 기준
+- **알림은 Discord** — 현재 값 · 조치 · 패널 이미지 포함. 클러스터 전체 중단은 Better Stack이 외부에서 감지
+- **관측 자체의 부하 실측** — 로그 비용은 디스크가 아닌 수집기 CPU, 같은 노드의 서비스 파드에 영향
 
 ## 한계
 
-- **옵저버빌리티 스택 자신을 보는 화면이 없습니다** — 구축 중 metric이 에러 없이 버려지거나 상한이 차는 일이 있었습니다
-- **알림 규칙을 stg에 옮기지 않았습니다** — 테스트 중에는 사람이 보고 있었습니다
-- **stg의 RDS · ElastiCache 칸은 CloudWatch 해상도(1분)와 지연에 묶입니다** — 5만 명 회차의 오픈 순간에는 신뢰하지 않았습니다
+- **관측 스택 자체의 모니터링 화면 없음** — 구축 중 metric이 오류 없이 누락된 사례 있음
+- **stg에 알림 규칙 미적용** — 테스트 중 수동 관찰
+- **stg RDS · ElastiCache 지표는 CloudWatch 1분 해상도 · 지연** — 5만 명 회차 오픈 구간 판정에 미사용
 
 ## 기술 스택
 

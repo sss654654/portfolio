@@ -2,152 +2,183 @@
 layout: page
 title: 클라우드
 description: >
-  홈랩에서 실측으로 뽑은 서비스를 같은 차트 · 같은 파이프라인 · 같은 이미지로 AWS EKS에 두 번째 환경(stg)으로 올렸습니다
+  dev에서 산정한 서비스를 같은 차트 · 파이프라인 · 이미지로 AWS EKS stg 환경에 구성했습니다
 permalink: /homelab/cloud/
 ---
 
 <p class="hl-back" markdown="0"><a href="/homelab/">← 홈랩</a></p>
 
-stg 환경입니다 — dev에서 뽑은 스펙을 관리형 위에 같은 이미지로 올려 5만 명까지 잰 자리입니다.
-컨트롤 플레인 · 로드밸런서 · 스토리지 · DB · 캐시 · 레지스트리 · 인증서는 AWS에 맡기고, Kafka와 옵저버빌리티는 클러스터 안에 남겼습니다.
-**켠 뒤 부하 테스트가 노드 구조를 바꿨고, 운영 기간은 하루입니다.**
+stg 환경 — dev에서 산정한 스펙을 AWS 관리형 위에 같은 이미지로 올려 5만 명까지 측정했습니다.
+컨트롤 플레인 · 로드밸런서 · DB · 캐시 · 레지스트리는 AWS 관리형, Kafka · 옵저버빌리티는 클러스터 안에 두었습니다.
 {:.lead}
 
 ## 클라우드 구조
 
-<!-- 왼쪽 열 = 집에 남은 셋(허브 · CI · 부하 발생기). 집과 AWS 를 잇는 선은 둘뿐 — 허브 → EKS API · CI → ECR.
-     발생기는 기본 VPC 에서 ALB 공인 주소를 부르므로 왼쪽에 둔다. 오른쪽 = AWS.
-     노드그룹 셋과 관리형 둘이 VPC 안, bootstrap 은 지우지 않는 것이라 점선. -->
+<!-- AWS 구성도 — AWS > 리전 > VPC > AZ 셋 > EKS 노드 일곱(파드는 아이콘). 배치는 2026-09-14 kubectl · describe 확인.
+     집과 잇는 선 둘: 허브 → EKS API(파랑 점선) · CI → ECR(주황). RDS 주 2c · 대기 2b / ElastiCache 주 2b · 복제본 2a. -->
 <figure class="hl-diagram hl-diagram-lg" markdown="0">
-<svg viewBox="0 0 760 560" role="img" aria-label="집의 ArgoCD 허브가 EKS API로, GitLab CI가 ECR로 이어지고, AWS VPC 안에 ALB 아래 app · booking · 관측 세 노드그룹과 클러스터 밖 RDS · ElastiCache가 있으며, 부하 발생기 네 대가 ALB를 부르는 구조. bootstrap 자원은 클러스터보다 오래 산다">
+<svg viewBox="0 0 760 590" role="img" aria-label="AWS 서울 리전 구성도. 집의 ArgoCD 허브가 EKS 컨트롤 플레인으로, GitLab CI가 ECR로 이어진다. 사용자는 인터넷 게이트웨이와 ALB를 거쳐 EKS로 들어간다. VPC 안 가용 영역 2a에 app 노드 둘과 booking 노드, 2b에 app 노드 하나, 2c에 app 노드 · booking 노드 · 관측 노드가 있다. RDS는 주 2c · 대기 2b, ElastiCache는 주 2b · 복제본 2a다">
   <defs>
-    <marker id="hlw-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto">
-      <path d="M0,0 L8,4 L0,8 z" fill="currentColor" opacity=".5"/>
-    </marker>
+    <marker id="hlw-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor" opacity=".5"/></marker>
+    <marker id="hlw-i" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#f08c2e"/></marker>
+    <marker id="hlw-d" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#2f6fdb"/></marker>
   </defs>
 
-  <!-- 구역 라벨 -->
-  <text class="hla-zone" x="114" y="28" text-anchor="middle">집</text>
-  <text class="hla-zone" x="492" y="28" text-anchor="middle">AWS ap-northeast-2</text>
+  <!-- 집 · AWS · 리전 -->
+  <g class="hla-g hla-g1">
+    <rect class="hla-inner hla-dash" x="236" y="6" width="290" height="54" rx="8"/>
+    <text class="hla-zone" x="250" y="38">집</text>
+    <image href="/assets/img/icons/argo.svg" x="290" y="12" width="28" height="28"/>
+    <text class="hla-s2" x="304" y="54" text-anchor="middle">ArgoCD 허브</text>
+    <image href="/assets/img/icons/gitlab.svg" x="426" y="12" width="28" height="28"/>
+    <text class="hla-s2" x="440" y="54" text-anchor="middle">GitLab CI</text>
 
-  <!-- 집: 허브 · CI · 발생기 -->
-  <rect class="hla-box" x="16" y="60" width="196" height="64" rx="8"/>
-  <image href="/assets/img/icons/argo.svg" x="28" y="78" width="22" height="22"/>
-  <text class="hla-t" x="58" y="84">ArgoCD 허브</text>
-  <text class="hla-s2" x="58" y="104">노트북 k3s dev 안 · stg 도 배포</text>
+    <rect x="92" y="72" width="660" height="476" rx="4" fill="none" stroke="currentColor" stroke-opacity=".55" stroke-width="1.2"/>
+    <text class="hla-c" x="104" y="90">AWS</text>
+    <rect x="104" y="100" width="638" height="438" rx="4" fill="none" stroke="#00a4a6" stroke-width="1.2" stroke-dasharray="6 4"/>
+    <text class="hla-s2" x="116" y="118" style="fill:#00a4a6">ap-northeast-2 서울</text>
 
-  <rect class="hla-box" x="16" y="150" width="196" height="64" rx="8"/>
-  <image href="/assets/img/icons/gitlab.svg" x="28" y="168" width="22" height="22"/>
-  <text class="hla-t" x="58" y="174">GitLab CI</text>
-  <text class="hla-s2" x="58" y="194">publish-ecr — 수동 승격 job</text>
+    <line class="hla-ln-def hla-dash" x1="304" y1="60" x2="304" y2="127" marker-end="url(#hlw-d)"/>
+    <text class="hla-a" x="310" y="88">sync · 집 IP만</text>
+    <line class="hla-ln-img" x1="440" y1="60" x2="440" y2="127" marker-end="url(#hlw-i)"/>
+    <text class="hla-a" x="446" y="88">승격 push</text>
 
-  <rect class="hla-box" x="16" y="262" width="196" height="50" rx="8"/>
-  <text class="hla-t" x="28" y="283">부하 발생기 EC2 ×4</text>
-  <text class="hla-s2" x="28" y="301">기본 VPC · 대당 12,500명</text>
+    <image href="/assets/img/icons/aws-eks.png" x="286" y="130" width="36" height="36"/>
+    <text class="hla-s2" x="304" y="182" text-anchor="middle">EKS 컨트롤 플레인</text>
+    <image href="/assets/img/icons/aws-ecr.png" x="422" y="130" width="36" height="36"/>
+    <text class="hla-s2" x="440" y="182" text-anchor="middle">ECR</text>
+    <image href="/assets/img/icons/aws-s3.png" x="540" y="130" width="36" height="36"/>
+    <text class="hla-s2" x="558" y="182" text-anchor="middle">S3</text>
+    <image href="/assets/img/icons/aws-secrets-manager.png" x="640" y="130" width="36" height="36"/>
+    <text class="hla-s2" x="658" y="182" text-anchor="middle">Secrets Manager</text>
+  </g>
 
-  <!-- 집 → AWS 선 둘 + 발생기 → ALB -->
-  <line class="hla-ln hla-dash" x1="212" y1="92" x2="254" y2="92" marker-end="url(#hlw-arrow)"/>
-  <line class="hla-ln" x1="212" y1="182" x2="254" y2="182" marker-end="url(#hlw-arrow)"/>
-  <line class="hla-ln" x1="212" y1="287" x2="266" y2="287" marker-end="url(#hlw-arrow)"/>
+  <!-- VPC · 입구 -->
+  <g class="hla-g hla-g2">
+    <rect x="146" y="196" width="590" height="336" rx="4" fill="none" stroke="#8c4fff" stroke-width="1.3"/>
+    <text class="hla-s2" x="158" y="213" style="fill:#8c4fff">VPC 10.20.0.0/16</text>
 
-  <!-- AWS 바깥 상자 -->
-  <rect class="hla-outer" x="240" y="40" width="504" height="504" rx="10"/>
+    <line class="hla-ln hla-dash" x1="304" y1="188" x2="304" y2="227" marker-end="url(#hlw-arrow)"/>
+    <line class="hla-ln-img hla-dash" x1="440" y1="188" x2="440" y2="227" marker-end="url(#hlw-i)"/>
+    <text class="hla-a" x="446" y="210">pull</text>
 
-  <!-- EKS 컨트롤 플레인 -->
-  <rect class="hla-box" x="256" y="60" width="472" height="64" rx="6"/>
-  <image href="/assets/img/icons/aws-eks.png" x="268" y="78" width="22" height="22"/>
-  <text class="hla-t" x="298" y="84">EKS 1.36 cgv-stg — 컨트롤 플레인은 AWS 관리</text>
-  <text class="hla-s2" x="298" y="104">API 는 집 공인 IP /32 만 · OIDC → IRSA 역할 넷 (S3 · EBS · ALB · CloudWatch)</text>
+    <circle cx="46" cy="358" r="8" class="hla-glyph"/>
+    <path d="M32,390 C32,372 60,372 60,390" class="hla-glyph"/>
+    <text class="hla-s2" x="46" y="408" text-anchor="middle">사용자</text>
+    <line class="hla-ln" x1="66" y1="374" x2="129" y2="374" marker-end="url(#hlw-arrow)"/>
 
-  <!-- ECR -->
-  <rect class="hla-box" x="256" y="150" width="200" height="64" rx="6"/>
-  <image href="/assets/img/icons/aws-ecr.png" x="266" y="163" width="24" height="24"/>
-  <text class="hla-t" x="298" y="172">ECR ×3</text>
-  <text class="hla-s2" x="298" y="190">태그 = 커밋 해시 8자</text>
-  <text class="hla-s2" x="298" y="206">dev 와 같은 이미지</text>
-  <line class="hla-ln" x1="356" y1="214" x2="356" y2="232" marker-end="url(#hlw-arrow)"/>
-  <text class="hla-s2" x="364" y="228">pull</text>
+    <circle cx="146" cy="374" r="15" class="hla-box" style="stroke:#8c4fff;stroke-width:2"/>
+    <path d="M139,382 V372 A7,7 0 0 1 153,372 V382" fill="none" stroke="#8c4fff" stroke-width="2.4"/>
+    <text class="hla-s2" x="146" y="404" text-anchor="middle">IGW</text>
+    <line class="hla-ln" x1="161" y1="374" x2="186" y2="374" marker-end="url(#hlw-arrow)"/>
 
-  <!-- Secrets Manager -->
-  <rect class="hla-box" x="476" y="150" width="252" height="64" rx="6"/>
-  <image href="/assets/img/icons/aws-secrets-manager.png" x="486" y="163" width="24" height="24"/>
-  <text class="hla-t" x="518" y="172">Secrets Manager</text>
-  <text class="hla-s2" x="518" y="190">RDS 마스터 비밀번호 (AWS 가 만듦)</text>
-  <text class="hla-s2" x="518" y="206">Redis AUTH 토큰 → secrets.sh</text>
+    <image href="/assets/img/icons/aws-alb.png" x="188" y="356" width="36" height="36"/>
+    <text class="hla-s2" x="206" y="408" text-anchor="middle">ALB</text>
+    <text class="hla-a" x="206" y="422" text-anchor="middle">ACM · 443</text>
+    <line class="hla-ln" x1="224" y1="374" x2="290" y2="374" marker-end="url(#hlw-arrow)"/>
+  </g>
 
-  <!-- VPC -->
-  <rect class="hla-inner" x="256" y="234" width="472" height="256" rx="6"/>
-  <text class="hla-t" x="268" y="253">VPC 10.20.0.0/16 · 퍼블릭 서브넷 ×3 AZ · NAT 없음</text>
+  <!-- AZ 셋 · EKS 노드 · 관리형 -->
+  <g class="hla-g hla-g3">
+    <rect x="240" y="222" width="488" height="98" rx="4" fill="none" stroke="#147eba" stroke-dasharray="5 4"/>
+    <text class="hla-s2" x="248" y="238" style="fill:#147eba">AZ 2a</text>
+    <rect x="240" y="328" width="488" height="96" rx="4" fill="none" stroke="#147eba" stroke-dasharray="5 4"/>
+    <text class="hla-s2" x="248" y="344" style="fill:#147eba">AZ 2b</text>
+    <rect x="240" y="432" width="488" height="94" rx="4" fill="none" stroke="#147eba" stroke-dasharray="5 4"/>
+    <text class="hla-s2" x="248" y="448" style="fill:#147eba">AZ 2c</text>
 
-  <rect class="hla-box" x="268" y="264" width="448" height="40" rx="6"/>
-  <image href="/assets/img/icons/aws-alb.png" x="278" y="273" width="22" height="22"/>
-  <text class="hla-c" x="308" y="281">ALB — ticket-stg.subinhong.dev</text>
-  <text class="hla-s2" x="308" y="296">ACM · 443 · 파드 IP 대상 · 접근 로그 S3 · 초기화 API 403</text>
+    <rect x="292" y="230" width="290" height="292" rx="4" fill="none" stroke="#ed7100" stroke-width="1.3"/>
+    <text class="hla-s2" x="300" y="246" style="fill:#ed7100">EKS 1.36 · 노드 m5.xlarge ×7</text>
 
-  <line class="hla-ln" x1="373" y1="304" x2="373" y2="322" marker-end="url(#hlw-arrow)"/>
-  <line class="hla-ln" x1="545" y1="304" x2="545" y2="322" marker-end="url(#hlw-arrow)"/>
+    <!-- 2a -->
+    <rect class="hla-node" x="300" y="254" width="84" height="58" rx="5"/>
+    <text class="hla-a" x="308" y="269">app</text>
+    <image href="/assets/img/icons/go.svg" x="308" y="278" width="22" height="22"/>
+    <image href="/assets/img/icons/apachekafka.svg" x="334" y="278" width="22" height="22"/>
+    <rect class="hla-node" x="392" y="254" width="84" height="58" rx="5"/>
+    <text class="hla-a" x="400" y="269">app</text>
+    <image href="/assets/img/icons/go.svg" x="400" y="278" width="22" height="22"/>
+    <rect class="hla-node" x="484" y="254" width="84" height="58" rx="5"/>
+    <text class="hla-a" x="492" y="269">booking</text>
+    <image href="/assets/img/icons/spring.svg" x="492" y="278" width="22" height="22"/>
 
-  <rect class="hla-box" x="268" y="324" width="210" height="80" rx="6"/>
-  <text class="hla-c" x="280" y="343">app — m5.xlarge ×4</text>
-  <text class="hla-s2" x="280" y="362">queue ×4 (노드마다 하나)</text>
-  <text class="hla-s2" x="280" y="378">frontend · Kafka ×3 (AZ 마다 하나)</text>
-  <text class="hla-s2" x="280" y="394">Strimzi · ALB Controller</text>
+    <image href="/assets/img/icons/aws-elasticache.png" x="660" y="246" width="30" height="30"/>
+    <text class="hla-s2" x="675" y="292" text-anchor="middle">Redis 복제본</text>
 
-  <rect class="hla-box" x="490" y="324" width="110" height="80" rx="6"/>
-  <text class="hla-c" x="500" y="343">booking ×2</text>
-  <text class="hla-s2" x="500" y="362">2a · 2c 한 대씩</text>
-  <text class="hla-s2" x="500" y="378">taint — 혼자 씀</text>
-  <text class="hla-s2" x="500" y="394">JIT 컴파일 격리</text>
+    <!-- 2b -->
+    <rect class="hla-node" x="300" y="358" width="84" height="58" rx="5"/>
+    <text class="hla-a" x="308" y="373">app</text>
+    <image href="/assets/img/icons/go.svg" x="308" y="382" width="22" height="22"/>
+    <image href="/assets/img/icons/apachekafka.svg" x="334" y="382" width="22" height="22"/>
 
-  <rect class="hla-box" x="612" y="324" width="104" height="80" rx="6"/>
-  <image href="/assets/img/icons/grafana.svg" x="622" y="331" width="16" height="16"/>
-  <text class="hla-c" x="644" y="343">관측 ×1</text>
-  <text class="hla-s2" x="622" y="362">2c 고정 · taint</text>
-  <text class="hla-s2" x="622" y="378">LGTM · Alloy</text>
-  <text class="hla-s2" x="622" y="394">→ S3 (IRSA)</text>
+    <image href="/assets/img/icons/aws-rds.png" x="606" y="350" width="30" height="30"/>
+    <text class="hla-s2" x="621" y="396" text-anchor="middle">RDS 대기</text>
+    <image href="/assets/img/icons/aws-elasticache.png" x="660" y="350" width="30" height="30"/>
+    <text class="hla-s2" x="675" y="396" text-anchor="middle">Redis 주</text>
 
-  <line class="hla-ln" x1="373" y1="404" x2="373" y2="422" marker-end="url(#hlw-arrow)"/>
-  <line class="hla-ln" x1="545" y1="404" x2="545" y2="422" marker-end="url(#hlw-arrow)"/>
+    <!-- 2c -->
+    <rect class="hla-node" x="300" y="460" width="84" height="58" rx="5"/>
+    <text class="hla-a" x="308" y="475">app</text>
+    <image href="/assets/img/icons/go.svg" x="308" y="484" width="22" height="22"/>
+    <image href="/assets/img/icons/apachekafka.svg" x="334" y="484" width="22" height="22"/>
+    <rect class="hla-node" x="392" y="460" width="84" height="58" rx="5"/>
+    <text class="hla-a" x="400" y="475">booking</text>
+    <image href="/assets/img/icons/spring.svg" x="400" y="484" width="22" height="22"/>
+    <rect class="hla-node" x="484" y="460" width="84" height="58" rx="5"/>
+    <text class="hla-a" x="492" y="475">관측</text>
+    <image href="/assets/img/icons/grafana.svg" x="490" y="486" width="17" height="17"/>
+    <image href="/assets/img/icons/mimir.svg" x="509" y="486" width="17" height="17"/>
+    <image href="/assets/img/icons/loki.svg" x="528" y="486" width="17" height="17"/>
+    <image href="/assets/img/icons/tempo.svg" x="547" y="486" width="17" height="17"/>
 
-  <rect class="hla-box" x="268" y="424" width="448" height="56" rx="6"/>
-  <text class="hla-c" x="280" y="442">클러스터 밖 — 노드 보안 그룹에서만 3306 · 6379</text>
-  <image href="/assets/img/icons/aws-rds.png" x="280" y="451" width="18" height="18"/>
-  <text class="hla-s2" x="304" y="464">RDS MySQL 8.4 · Multi-AZ</text>
-  <image href="/assets/img/icons/aws-elasticache.png" x="492" y="451" width="18" height="18"/>
-  <text class="hla-s2" x="516" y="464">ElastiCache Redis 7.1 · 복제본 · TLS + AUTH</text>
+    <image href="/assets/img/icons/aws-rds.png" x="606" y="454" width="30" height="30"/>
+    <text class="hla-s2" x="621" y="500" text-anchor="middle">RDS 주</text>
 
-  <!-- bootstrap — 지우지 않는 것 -->
-  <rect class="hla-inner hla-dash" x="256" y="502" width="472" height="30" rx="6"/>
-  <text class="hla-s2" x="268" y="521">bootstrap (지우지 않음) — tfstate · 관측 버킷 ×3 · ALB 로그 · ECR · IAM 사용자 둘 · ACM · 예산 경보</text>
+    <!-- 복제 -->
+    <line class="hla-ln hla-dash" x1="621" y1="452" x2="621" y2="402" marker-end="url(#hlw-arrow)"/>
+    <line class="hla-ln hla-dash" x1="675" y1="348" x2="675" y2="298" marker-end="url(#hlw-arrow)"/>
+
+    <!-- 범례 -->
+    <image href="/assets/img/icons/go.svg" x="100" y="560" width="16" height="16"/>
+    <text class="hla-s2" x="120" y="572">queue</text>
+    <image href="/assets/img/icons/spring.svg" x="172" y="560" width="16" height="16"/>
+    <text class="hla-s2" x="192" y="572">booking</text>
+    <image href="/assets/img/icons/apachekafka.svg" x="254" y="560" width="16" height="16"/>
+    <text class="hla-s2" x="274" y="572">Kafka 브로커</text>
+    <image href="/assets/img/icons/grafana.svg" x="356" y="560" width="16" height="16"/>
+    <text class="hla-s2" x="376" y="572">Grafana · Mimir · Loki · Tempo</text>
+    <line class="hla-ln hla-dash" x1="552" y1="568" x2="576" y2="568"/>
+    <text class="hla-s2" x="582" y="572">복제</text>
+  </g>
 </svg>
-<figcaption>집과 AWS를 잇는 선은 둘입니다 — 허브가 EKS API로(집 공인 IP만 허용), CI가 ECR로.
-Terraform state는 둘로, 클러스터보다 오래 살아야 하는 것(bootstrap)과 하루 살고 지우는 것(stg)을 갈랐습니다.</figcaption>
+<figcaption>노드 · 파드 배치는 2026-09-14 클러스터 기준(주요 파드만). booking · 관측 노드는 taint로 다른 파드 배치를 막습니다.
+RDS는 2c → 2b 동기 복제, ElastiCache는 2b → 2a 비동기 복제. 서비스 ALB 외에 Grafana용 ALB(집 IP만 허용)가 하나 더 있습니다.</figcaption>
 </figure>
 
 ## 설계 결정
 
 | 항목 | 선택 | 이유 |
 |---|---|---|
-| Terraform state | **bootstrap / stg 둘** | 테스트 결과(관측 버킷)와 이미지(ECR)가 클러스터보다 오래 남아야 회차끼리 비교 — bootstrap은 지우지 않고 stg는 하루 살고 지움 |
-| 관리형 경계 | **MySQL · Redis는 관리형, Kafka · 옵저버빌리티는 클러스터 안** | 칸마다 근거가 다름 — MySQL은 목적(prd에서 파드로 안 돌림) · Redis는 코드(Lua가 Cluster Mode에서 `CROSSSLOT` → 클러스터 모드 끔) · Kafka는 비용(MSK가 하루 $3.6으로 60배) · 관측은 용량(집 Mimir가 활성 시리즈 상한의 91.8%) |
-| AZ | **셋** | Kafka 브로커 셋이 KRaft 과반과 `min.insync.replicas 2`를 겸함 — AZ 둘이면 한쪽에 둘이 가고 그 AZ에 장애가 나면 쓰기가 멈춤 |
-| 서브넷 | **퍼블릭 · NAT 없음** | NAT 하나는 AZ 셋 설계와 어긋나고 AZ마다는 비용. 노드에 공인 IP가 붙는 대신 보안 그룹으로 좁힘. prd는 프라이빗 + AZ마다 NAT |
-| 노드그룹 | **app ×4 · booking ×2(AZ별 · taint) · 관측 ×1(AZ 고정)** | 오픈 순간 CPU가 급증하는 파드는 booking 하나라 노드를 혼자 쓰게 함 · 볼륨이 AZ에 묶이는 관측만 AZ를 고정 · t 계열은 크레딧 고갈과 서비스 한계를 가를 수 없어 금지 · 수는 고정 — 테스트에서 병목을 가리지 않게 |
-| 파드의 AWS 자격 | **IRSA** · IMDSv2 hop limit 1 | 권한 단위를 노드가 아니라 ServiceAccount로 — 노드 역할에 붙이면 그 노드의 파드 전부가 가짐. hop 1이면 파드가 노드 역할 자격에 닿지 못함 |
-| 진입 | **ALB · ACM · 파드 IP 대상** | MetalLB의 L2 광고가 VPC에서 안 됨 · 층 여섯(Cloudflare · OPNsense · MetalLB · Traefik · cert-manager · Ingress)이 둘(ALB · Service)로 · 평문 http에서 브라우저가 `crypto.randomUUID`를 안 줘 앱 id가 겹침 → HTTPS |
-| 시크릿 | **Secrets Manager + 스크립트** | SealedSecret은 봉인이 그 클러스터 컨트롤러의 개인키에 묶여 컨트롤러가 뜨기 전에 봉인할 수 없음 · 하루 환경이라 ESO의 회전 · 동기화 가치가 0 |
-| Redis | **복제본 1 · TLS + AUTH** | 복제본은 Kafka를 AZ 셋에 둔 것과 짝 · TLS + AUTH가 없으면 6379에 닿는 파드 하나가 대기열 · 좌석 락 · 입장 인증 전권 — 보안 그룹은 "어디서 오는가"만 봄 |
-| 배포 | **집 허브가 원격 배포 · 아티팩트 승격** | EKS 안의 어떤 것도 사설망 GitLab을 못 읽음 · 부하 비교는 두 환경 이미지가 바이트까지 같아야 함 — 상세는 [CI/CD](/homelab/cicd/) |
+| Terraform state | **bootstrap / stg 분리** | 관측 버킷 · ECR은 클러스터 삭제 후에도 유지 — 회차 간 비교용. bootstrap은 유지, stg는 사용 후 삭제 |
+| 관리형 경계 | **MySQL · Redis 관리형 / Kafka · 옵저버빌리티 클러스터 안** | MySQL — prd에서 파드로 운영하지 않음 · Redis — Lua가 Cluster Mode에서 `CROSSSLOT`(클러스터 모드 끔) · Kafka — MSK 하루 $3.6, 60배 · 관측 — 집 Mimir 활성 시리즈가 상한의 91.8% |
+| AZ | **3개** | Kafka 브로커 3대 = KRaft 과반 + `min.insync.replicas 2`. AZ 2개면 한 AZ에 2대 — 해당 AZ 장애 시 쓰기 중단 |
+| 서브넷 | **퍼블릭 · NAT 없음** | NAT 1개는 AZ 3개 설계와 불일치, AZ별 NAT는 비용. 노드 공인 IP는 보안 그룹으로 제한. prd는 프라이빗 + AZ별 NAT |
+| 노드그룹 | **app ×4 · booking ×2(AZ별 · taint) · 관측 ×1(AZ 고정)** | 오픈 시 CPU 급증 파드는 booking뿐 — 전용 노드 · 관측은 볼륨이 AZ에 묶여 AZ 고정 · t 계열 제외(크레딧 고갈과 서비스 한계 구분 불가) · 대수 고정(병목 은폐 방지) |
+| 파드의 AWS 자격 | **IRSA** · IMDSv2 hop limit 1 | 권한 단위를 ServiceAccount로 — 노드 역할에 부여하면 해당 노드의 파드 전체가 보유. hop 1로 파드의 노드 역할 접근 차단 |
+| 진입 | **ALB · ACM · 파드 IP 대상** | MetalLB L2 광고가 VPC에서 동작하지 않음 · 층 6개(Cloudflare · OPNsense · MetalLB · Traefik · cert-manager · Ingress) → 2개(ALB · Service) · 평문 http에서 `crypto.randomUUID` 미제공 → HTTPS 필요 |
+| 시크릿 | **Secrets Manager + 스크립트** | SealedSecret은 대상 클러스터 컨트롤러 개인키에 묶여 기동 전 봉인 불가 · 하루 환경이라 ESO 회전 · 동기화 불필요 |
+| Redis | **복제본 1 · TLS + AUTH** | 복제본 — Kafka AZ 3개 배치와 짝 · TLS + AUTH가 없으면 6379에 닿는 파드가 대기열 · 좌석 락 · 입장 인증 전권 보유(보안 그룹은 출발지만 검사) |
+| 배포 | **집 허브의 원격 배포 · 아티팩트 승격** | EKS에서 사설망 GitLab 접근 불가 · 부하 비교에 두 환경 이미지 동일 필요 — [CI/CD](/homelab/cicd/) |
 {:.hl-dec}
 
 ## 트러블슈팅
 
 | 증상 | 원인 | 조치 |
 |---|---|---|
-| 노드그룹이 `CREATING`에서 20분 넘게 안 끝남 — `describe-nodegroup` 정상 · CloudTrail 무오류 | 계정 EC2 vCPU 한도 32 소진 — 실패는 ASG scaling activities에만 `VcpuLimitExceeded`. 정지 인스턴스는 한도에 안 셈 | 한도 **64**로 증설 → 1분 23초에 ACTIVE. 관리형 서비스의 실패는 한 층 아래(ASG · EC2)에서 확인 |
-| 노드그룹 교체 뒤 Mimir ingester **95분 Pending** — 새 지표 저장 중단 | 관측 노드그룹에 서브넷 셋을 줘 노드가 2c → 2b로 옮겨 떴고, EBS 볼륨은 2c에 묶여 있음 | 상태를 든 노드그룹만 AZ 하나에 고정 — 앱 노드그룹 값을 그대로 넘긴 것이 원인 |
-| Redis 암호화를 켠 뒤 앱이 `x509: certificate is valid for …`로 연결 실패 | 전송 암호화를 켜면 주 엔드포인트 이름이 `master.…`로 바뀌고, 인증서는 새 이름에만 맞음 | `REDIS_HOST`를 새 이름으로. 떠 있는 그룹에 앱을 끊지 않고 붙이는 순서는 preferred → 앱 TLS → required → ROTATE → SET |
-| 30명이 한 사람으로 세어짐 — requestId 앞 8자가 전부 같은 시각 | 평문 http에서 브라우저가 `crypto.randomUUID`를 안 줌 → 시각 기반 폴백 id가 겹침 | HTTPS 입구(ACM · 443) + 프론트 폴백 수정 → 30명 중 29명 예매 |
+| 노드그룹 `CREATING` 20분 이상 지속 — `describe-nodegroup` 정상 · CloudTrail 오류 없음 | 계정 EC2 vCPU 한도 32 소진 — `VcpuLimitExceeded`는 ASG scaling activities에만 기록. 정지 인스턴스는 한도 미포함 | 한도 **64**로 증설 → 1분 23초 후 ACTIVE |
+| 노드그룹 교체 후 Mimir ingester **95분 Pending** — 신규 지표 저장 중단 | 관측 노드그룹에 서브넷 3개 지정 → 노드가 2c → 2b로 이동, EBS 볼륨은 2c에 고정 | 상태를 가진 노드그룹만 단일 AZ 고정 |
+| Redis 암호화 적용 후 `x509: certificate is valid for …` 연결 실패 | 전송 암호화 활성화 시 주 엔드포인트가 `master.…`로 변경, 인증서는 새 이름 기준 | `REDIS_HOST` 변경. 무중단 순서: preferred → 앱 TLS → required → ROTATE → SET |
+| 30명이 1명으로 집계 — requestId 앞 8자 동일 | 평문 http에서 `crypto.randomUUID` 미제공 → 시각 기반 폴백 id 중복 | HTTPS 입구(ACM · 443) + 프론트 폴백 수정 → 30명 중 29명 예매 |
 {:.hl-tbl}
 
 ## 결과
@@ -159,34 +190,34 @@ Terraform state는 둘로, 클러스터보다 오래 살아야 하는 것(bootst
 <div class="hl-shots" markdown="0" aria-label="stg 콘솔 — 허브의 클러스터 둘 · 노드그룹 넷 · 관리형 둘, 화살표로 넘겨 봅니다">
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cloud/argocd-clusters.png" alt="노트북 ArgoCD 허브의 Clusters 화면 — in-cluster와 cgv-stg 두 클러스터가 등록돼 있음">
-    <figcaption><b>(허브 · 클러스터 둘)</b> 집 노트북의 ArgoCD가 dev(in-cluster)와 stg(cgv-stg)를 같이 봅니다 — stg는 주소가 아니라 이름으로 등록돼 있습니다.</figcaption>
+    <figcaption><b>(허브 · 클러스터 2개)</b> 노트북 ArgoCD에 dev(in-cluster) · stg(cgv-stg) 등록 — stg는 주소가 아닌 이름으로 등록.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cloud/eks-nodegroups.png" alt="EKS 콘솔 cgv-stg의 노드그룹 넷 — app 4대, booking-2a와 booking-2c 한 대씩, observability 한 대" loading="lazy">
-    <figcaption><b>(노드그룹 넷)</b> app 4 · booking 2a · booking 2c · observability — 부하 테스트가 정한 구조입니다. booking 둘은 taint가 있어 다른 파드가 배치되지 않습니다.</figcaption>
+    <figcaption><b>(노드그룹 4개)</b> app 4 · booking 2a · booking 2c · observability — 부하 테스트 결과로 정한 구조. booking은 taint로 다른 파드 배치 차단.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cloud/managed.png" alt="RDS MySQL Multi-AZ 인스턴스와 ElastiCache Redis 복제 그룹의 콘솔 화면" loading="lazy">
-    <figcaption><b>(관리형 둘)</b> 클러스터 밖으로 뺀 MySQL과 Redis입니다 — 노드 보안 그룹에서만 3306 · 6379를 받습니다.</figcaption>
+    <figcaption><b>(관리형 2개)</b> 클러스터 밖 MySQL · Redis — 노드 보안 그룹에서만 3306 · 6379 허용.</figcaption>
   </figure>
 </div>
 -->
 
-- **Terraform 두 state로 자원 56개가 30–40분에 뜹니다** — 켜고, 부하 테스트를 돌리고, 지우는 하루 환경입니다
-- **허브 ArgoCD가 `cgv-stg`를 클러스터 이름으로 배포합니다** — 주소를 옮겨 적는 단계 없이, 기존 ApplicationSet의 환경 목록에 한 줄
-- **코드에서 브라우저까지 19분 41초**, 사람 손을 뺀 기계 구간 1분 54초
-- **부하 테스트가 노드 구조를 바꿨습니다** — app 4 + 관측 1로 켰다가 booking 전용 노드그룹 둘이 더해져 일곱 대. 근거 수치는 [부하 테스트](/homelab/capacity/)에 있습니다
-- **5만 명 회차에서 관문 다섯이 통과했습니다**
-- **떠 있는 Redis에 암호화와 AUTH를 앱을 끊지 않고 붙였습니다**
+- **자원 56개 · Terraform state 2개** — 생성 30–40분, 사용 후 삭제하는 하루 환경
+- **허브 ArgoCD가 클러스터 이름 `cgv-stg`로 배포** — ApplicationSet 환경 목록에 한 줄 추가
+- **코드 → 브라우저 19분 41초** (기계 구간 1분 54초)
+- **부하 테스트 결과로 노드 구조 변경** — app 4 + 관측 1에 booking 전용 2대 추가, 총 7대. 근거는 [부하 테스트](/homelab/capacity/)
+- **5만 명 회차 SLO 5개 통과**
+- **운영 중인 Redis에 TLS · AUTH 무중단 적용**
 
 ## 한계
 
-- **운영 기간이 하루입니다** — 켜고 부하 테스트를 돌리고 지우는 환경이라, 장기 운영 · 업그레이드 · 장애 대응은 없습니다. "운영했다"가 아니라 "구축하고 측정했다"입니다
-- **퍼블릭 서브넷에 노드가 있고 공인 IP가 붙습니다** — prd는 프라이빗 서브넷 + AZ마다 NAT
-- **데이터 보안 그룹이 노드 단위입니다** — 노드 인터페이스에 붙어 노드 위 어느 파드든 통과합니다. 파드 단위는 NetworkPolicy 하나가 맡고, prd는 Security Groups for Pods
-- **CI → AWS가 IAM 사용자 장기 키입니다** — GitLab이 사설 IP라 OIDC 발급자로 쓸 수 없습니다
-- **허브가 집에 있습니다** — 집 공인 IP가 바뀌면 apply를 다시 해야 하고, 집이 밤에 꺼지는 동안 EKS는 마지막 sync 상태로 돕니다
-- **관측이 단일 AZ입니다** — 볼륨이 AZ에 묶이고 노드가 한 대라, 그 AZ에 장애가 나면 관측이 끊깁니다
+- **운영 기간 하루** — 장기 운영 · 업그레이드 · 장애 대응 경험 없음
+- **노드가 퍼블릭 서브넷 · 공인 IP 보유** — prd는 프라이빗 서브넷 + AZ별 NAT
+- **데이터 보안 그룹이 노드 단위** — 노드 위 모든 파드가 통과. 파드 단위 제어는 NetworkPolicy, prd는 Security Groups for Pods
+- **CI → AWS 자격이 IAM 사용자 장기 키** — GitLab이 사설 IP라 OIDC 발급자로 사용 불가
+- **허브가 집에 위치** — 집 공인 IP 변경 시 재적용 필요, 집 전원 차단 중에는 마지막 sync 상태 유지
+- **관측 단일 AZ** — 해당 AZ 장애 시 관측 중단
 
 ## 기술 스택
 

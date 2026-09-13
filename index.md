@@ -4,13 +4,13 @@ title: 포트폴리오
 sitemap: true
 ---
 
-노트북 한 대로 쿠버네티스 · CI/CD · 옵저버빌리티 · 방화벽을 세우고, 그 위에 대기열 예매 서비스를 인터넷에 공개해 운영하며 **10,000명 부하 테스트를 5xx 없이 통과**했습니다.
-같은 서비스를 같은 파이프라인으로 **Terraform · EKS에 올려 50,000명까지 실측**했습니다.
+SRE · DevOps 엔지니어 홍수빈입니다.
+쿠버네티스 인프라 구축, 옵저버빌리티, 부하 테스트 기반 용량 산정을 합니다.
 {:.lead}
 
+* [홈랩](/homelab/) — 온프레미스 k3s(dev)와 AWS EKS(stg)를 GitOps로 구성, 대기열 예매 서비스 **50,000명 부하 테스트**
+* [프로젝트](/projects/) — semiai k3s 옵저버빌리티(LGTM) · 클라우드웨이브 AWS 네트워크(Terraform) · LevelDB 캐시 연구
 * [이력서 PDF](/assets/subinhong-resume.pdf) — 2장
-* [홈랩](/homelab/) — k3s(dev) · EKS(stg) · 대기열 예매 서비스
-* [프로젝트](/projects/) — 회사 · 부트캠프 · 학부 연구
 * [블로그](https://zed6740.tistory.com) — 기술 기록
 
 ## 대기열 예매 서비스
