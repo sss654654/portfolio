@@ -2,199 +2,163 @@
 layout: page
 title: 홈랩
 description: >
-  노트북 한 대에 세운 k3s(dev)와 Terraform으로 세운 EKS(stg) — 파이프라인 하나, 허브 하나가 두 클러스터에 같은 이미지를 배포합니다
+  노트북 한 대에 세운 k3s(dev)와 Terraform으로 세운 EKS(stg) — 파이프라인 하나, ArgoCD 허브 하나가 두 클러스터에 같은 이미지를 배포합니다
 permalink: /homelab/
 ---
 
-<!-- 오버뷰 — 왜(동기) → dev 에서 무엇을 했나 → 그것을 stg 로 → 아래 그림이 그 둘. -->
+<!-- 오버뷰 — 환경 둘의 역할과 그 둘을 잇는 GitOps 를 세 줄로. 그림은 흐름도(누가 → 무엇을 → 어디로). -->
 
-관리형 쿠버네티스가 만들어 주는 컨트롤 플레인 · 네트워크 · 로드밸런서 · 볼륨을 **하나씩 직접 세우려고** 쓰던 노트북을 서버로 삼았습니다.
-그 위에 대기열 예매 서비스와 옵저버빌리티를 올려 인터넷에 공개하고, 부하를 걸어 스펙을 실측했습니다 — 이것이 **dev** 입니다.
-그 서비스를 같은 차트 · 같은 파이프라인 · 같은 이미지로 **AWS EKS에 두 번째 환경(stg)** 으로 올려 5만 명까지 쟀습니다.
-아래가 그 둘의 구성입니다.
+노트북 한 대의 k3s가 **dev** — 개발과 데모 시연을 위해 인터넷에 공개한 환경입니다.
+Terraform으로 세운 AWS EKS가 **stg** — prd로 갈 스펙을 재기 위해 부하 테스트를 돌린 클라우드 환경입니다.
+두 클러스터는 데스크탑 GitLab의 파이프라인 하나와 노트북 안 ArgoCD 허브 하나가 GitOps로 제어합니다 — 허브-스포크 멀티클러스터 구성입니다.
+아래가 그 흐름입니다.
 {:.lead}
 
-<!-- 전체 구조도 — 집(데스크탑 GitLab · 노트북 k3s dev + ArgoCD 허브)과 AWS(ECR · EKS stg · 관리형).
-     집과 AWS 를 잇는 선은 둘뿐(CI → ECR · 허브 → EKS API). 점 넷이 12초 한 바퀴 —
-     사용자(빨강) → dev 이미지(주황) → stg 이미지(주황) → 허브 동기화(파랑).
-     아이콘 = simple-icons(CC0). prefers-reduced-motion 이면 정지 -->
+<!-- 흐름도 — 개발자 push → GitLab CI → 레지스트리 둘 → 클러스터 둘. 사용자는 dev 데모로, 발생기는 stg 로.
+     허브는 dev(같은 클러스터)와 stg(EKS API) 둘에 동기화. image-updater · webhook 같은 배관은 CI/CD 카드에.
+     점 여섯이 12초 한 바퀴 — 요청(빨강) → 이미지(주황) → 동기화(파랑). prefers-reduced-motion 이면 정지 -->
 <figure class="hl-diagram" markdown="0">
-<svg viewBox="0 0 760 450" role="img" aria-label="집의 데스크탑 GitLab이 이미지를 만들어 노트북 k3s(dev)와 AWS ECR에 올리고, 노트북 안 ArgoCD 허브가 dev와 EKS(stg) 두 클러스터에 배포 정의를 동기화하는 구조. 사용자는 방화벽을 지나 dev 서비스에, stg는 ALB 뒤에 RDS와 ElastiCache를 둔다">
+<svg viewBox="0 0 760 440" role="img" aria-label="개발자가 push 한 코드를 데스크탑 GitLab CI 가 이미지로 만들어 GitLab 레지스트리와 ECR 에 올리고, 노트북 k3s(dev)와 AWS EKS(stg)가 각각 받는다. 사용자는 dev 데모를 쓰고 부하 발생기는 stg 를 5만 명으로 시험한다. 노트북 안 ArgoCD 허브가 dev 와 stg 둘을 동기화한다">
   <defs>
     <marker id="hla-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
       <path d="M0,0 L8,4 L0,8 z" fill="currentColor" opacity=".5"/>
     </marker>
-    <pattern id="hla-bricks" width="18" height="12" patternUnits="userSpaceOnUse">
-      <path d="M0,0.5 H18 M0,6.5 H18 M4.5,0.5 V6.5 M13.5,6.5 V12" stroke="#d94f00" stroke-opacity=".22" stroke-width="1" fill="none"/>
-    </pattern>
   </defs>
 
-  <!-- 구역 라벨 -->
+  <!-- 개발자 → 데스크탑 GitLab CI -->
   <g class="hla-g hla-g1">
-    <text x="95" y="28" class="hla-zone" text-anchor="middle">인터넷</text>
-    <text x="321" y="28" class="hla-zone" text-anchor="middle">집 — 온프레미스 · dev</text>
-    <text x="620" y="28" class="hla-zone" text-anchor="middle">AWS ap-northeast-2 — stg</text>
+    <rect x="40" y="24" width="120" height="52" rx="9" class="hla-box"/>
+    <circle cx="58" cy="44" r="5.5" class="hla-glyph"/>
+    <path d="M48,61 C48,50 68,50 68,61" class="hla-glyph"/>
+    <text x="78" y="46" class="hla-t">개발자</text>
+    <text x="78" y="64" class="hla-s">push · 머지</text>
+    <line x1="160" y1="50" x2="198" y2="50" class="hla-ln" marker-end="url(#hla-arrow)"/>
+    <rect x="200" y="24" width="380" height="52" rx="9" class="hla-box"/>
+    <image href="/assets/img/icons/gitlab.svg" x="210" y="38" width="24" height="24"/>
+    <text x="242" y="46" class="hla-t">데스크탑 GitLab — CI 5단 → 이미지</text>
+    <text x="242" y="64" class="hla-s">check · test · build · scan · publish</text>
   </g>
 
-  <!-- 인터넷: 사용자 -->
-  <g class="hla-g hla-g1">
-    <rect x="20" y="183" width="150" height="58" rx="9" class="hla-box"/>
-    <circle cx="38" cy="205" r="5.5" class="hla-glyph"/>
-    <path d="M28,222 C28,211 48,211 48,222" class="hla-glyph"/>
-    <text x="58" y="207" class="hla-t">사용자</text>
-    <text x="58" y="225" class="hla-a">ticket.subinhong.dev</text>
-    <line x1="170" y1="212" x2="188" y2="212" class="hla-ln" marker-end="url(#hla-arrow)"/>
-  </g>
-
-  <!-- 집: 데스크탑 -->
-  <g class="hla-g hla-g1">
-    <rect x="190" y="44" width="262" height="60" rx="9" class="hla-box"/>
-    <image href="/assets/img/icons/gitlab.svg" x="200" y="59" width="24" height="24"/>
-    <text x="232" y="66" class="hla-t">데스크탑 — GitLab · CI · 레지스트리</text>
-    <text x="232" y="86" class="hla-s">push → 5단 파이프라인 → 이미지</text>
-  </g>
-
-  <!-- 집: 노트북 -->
+  <!-- 레지스트리 둘 -->
   <g class="hla-g hla-g2">
-    <rect x="190" y="126" width="262" height="304" rx="12" class="hla-outer"/>
-    <image href="/assets/img/icons/proxmox.svg" x="204" y="136" width="20" height="20"/>
-    <text x="230" y="151" class="hla-t">노트북 — Proxmox · 전부 VM</text>
+    <line x1="270" y1="76" x2="270" y2="110" class="hla-ln" marker-end="url(#hla-arrow)"/>
+    <text x="278" y="98" class="hla-s2">자동</text>
+    <line x1="490" y1="76" x2="490" y2="110" class="hla-ln" marker-end="url(#hla-arrow)"/>
+    <text x="498" y="98" class="hla-s2">수동 승격</text>
 
-    <!-- OPNsense 세로 벽 -->
-    <rect x="204" y="162" width="30" height="258" rx="8" class="hla-wall"/>
-    <rect x="204" y="162" width="30" height="258" rx="8" fill="url(#hla-bricks)" stroke="none"/>
-    <image href="/assets/img/icons/opnsense.svg" x="208" y="170" width="22" height="22"/>
-    <text x="219" y="290" text-anchor="middle" class="hla-wallc">방</text>
-    <text x="219" y="310" text-anchor="middle" class="hla-wallc">화</text>
-    <text x="219" y="330" text-anchor="middle" class="hla-wallc">벽</text>
+    <rect x="170" y="112" width="200" height="52" rx="9" class="hla-box"/>
+    <g class="hla-glyph" transform="translate(182,126)"><rect x="0" y="4" width="11" height="9"/><rect x="4" y="0" width="11" height="9"/></g>
+    <text x="206" y="134" class="hla-c">GitLab 레지스트리</text>
+    <text x="182" y="153" class="hla-s2">dev 이미지 · 머지마다</text>
 
-    <!-- k3s dev -->
-    <rect x="244" y="162" width="200" height="258" rx="10" class="hla-inner"/>
-    <image href="/assets/img/icons/kubernetes.svg" x="252" y="170" width="18" height="18"/>
-    <text x="276" y="184" class="hla-t">k3s dev — VM 3 · HA</text>
+    <rect x="390" y="112" width="200" height="52" rx="9" class="hla-box"/>
+    <image href="/assets/img/icons/aws-ecr.png" x="400" y="126" width="24" height="24"/>
+    <text x="432" y="134" class="hla-c">ECR ×3</text>
+    <text x="432" y="153" class="hla-s2">stg 이미지 · dev 와 같은 이미지</text>
 
-    <line x1="234" y1="212" x2="252" y2="212" class="hla-ln" marker-end="url(#hla-arrow)"/>
-    <rect x="254" y="194" width="182" height="46" rx="8" class="hla-box"/>
-    <image href="/assets/img/icons/ticket.svg" x="262" y="206" width="20" height="20"/>
-    <text x="288" y="212" class="hla-c">대기열 서비스</text>
-    <text x="288" y="229" class="hla-s2">queue · booking · frontend</text>
-
-    <rect x="254" y="248" width="182" height="34" rx="8" class="hla-box"/>
-    <text x="345" y="270" text-anchor="middle" class="hla-s2">Redis · MySQL · Kafka · LGTM</text>
-
-    <rect x="254" y="296" width="182" height="52" rx="8" class="hla-box"/>
-    <image href="/assets/img/icons/argo.svg" x="262" y="311" width="20" height="20"/>
-    <text x="288" y="316" class="hla-c">ArgoCD 허브</text>
-    <text x="288" y="333" class="hla-s2">dev · stg 둘 다 동기화</text>
-
-    <rect x="254" y="360" width="182" height="52" rx="8" class="hla-box"/>
-    <image href="/assets/img/icons/argo.svg" x="262" y="375" width="20" height="20"/>
-    <text x="288" y="380" class="hla-c">image-updater</text>
-    <text x="288" y="397" class="hla-s2">새 태그를 보고 tag 커밋</text>
-    <line x1="345" y1="360" x2="345" y2="350" class="hla-ln" marker-end="url(#hla-arrow)"/>
-    <line x1="345" y1="296" x2="345" y2="284" class="hla-ln" marker-end="url(#hla-arrow)"/>
+    <line x1="270" y1="164" x2="270" y2="186" class="hla-ln" marker-end="url(#hla-arrow)"/>
+    <text x="278" y="180" class="hla-s2">pull</text>
+    <line x1="490" y1="164" x2="490" y2="186" class="hla-ln" marker-end="url(#hla-arrow)"/>
+    <text x="498" y="180" class="hla-s2">pull</text>
   </g>
 
-  <!-- 데스크탑 → dev (이미지) · 데스크탑 → ECR (승격) -->
-  <g class="hla-g hla-g2">
-    <line x1="430" y1="104" x2="430" y2="124" class="hla-ln" marker-end="url(#hla-arrow)"/>
-    <text x="424" y="118" class="hla-s2" text-anchor="end">이미지 · 자동</text>
-    <line x1="452" y1="74" x2="498" y2="74" class="hla-ln" marker-end="url(#hla-arrow)"/>
-    <text x="475" y="94" class="hla-s2" text-anchor="middle">수동 승격</text>
+  <!-- 클러스터 둘 -->
+  <g class="hla-g hla-g3">
+    <rect x="170" y="188" width="200" height="150" rx="12" class="hla-outer"/>
+    <image href="/assets/img/icons/kubernetes.svg" x="180" y="196" width="18" height="18"/>
+    <text x="204" y="210" class="hla-t">노트북 — k3s dev</text>
+    <rect x="180" y="220" width="180" height="40" rx="8" class="hla-box"/>
+    <image href="/assets/img/icons/ticket.svg" x="188" y="230" width="20" height="20"/>
+    <text x="214" y="237" class="hla-c">대기열 서비스</text>
+    <text x="214" y="252" class="hla-s2">개발 · 데모 — 인터넷 공개</text>
+    <rect x="180" y="274" width="180" height="52" rx="8" class="hla-box"/>
+    <image href="/assets/img/icons/argo.svg" x="188" y="289" width="20" height="20"/>
+    <text x="214" y="294" class="hla-c">ArgoCD 허브</text>
+    <text x="214" y="311" class="hla-s2">dev · stg 동기화</text>
+    <line x1="270" y1="274" x2="270" y2="262" class="hla-ln hla-dash" marker-end="url(#hla-arrow)"/>
+
+    <rect x="390" y="188" width="200" height="150" rx="12" class="hla-outer"/>
+    <image href="/assets/img/icons/aws-eks.png" x="400" y="196" width="20" height="20"/>
+    <text x="426" y="210" class="hla-t">AWS — EKS stg</text>
+    <rect x="400" y="220" width="180" height="40" rx="8" class="hla-box"/>
+    <image href="/assets/img/icons/ticket.svg" x="408" y="230" width="20" height="20"/>
+    <text x="434" y="237" class="hla-c">대기열 서비스</text>
+    <text x="434" y="252" class="hla-s2">prd 스펙 산정 · 부하 테스트</text>
+    <rect x="400" y="274" width="180" height="52" rx="8" class="hla-box"/>
+    <image href="/assets/img/icons/aws-rds.png" x="408" y="284" width="16" height="16"/>
+    <image href="/assets/img/icons/aws-elasticache.png" x="408" y="302" width="16" height="16"/>
+    <text x="430" y="296" class="hla-s2">RDS · ElastiCache · ALB</text>
+    <text x="430" y="313" class="hla-s2">AWS 관리형 · 5만 명 통과</text>
+
+    <path d="M360,300 H380 V250 H398" class="hla-ln hla-dash" fill="none" marker-end="url(#hla-arrow)"/>
+    <text x="380" y="356" class="hla-s2" text-anchor="middle">허브 → stg 동기화 — EKS API · 집 공인 IP 만 허용</text>
   </g>
 
-  <!-- AWS: ECR -->
+  <!-- 사용자 · 부하 발생기 -->
   <g class="hla-g hla-g1">
-    <rect x="500" y="44" width="240" height="60" rx="9" class="hla-box"/>
-    <image href="/assets/img/icons/aws-ecr.png" x="510" y="60" width="26" height="26"/>
-    <text x="544" y="66" class="hla-t">ECR ×3</text>
-    <text x="544" y="86" class="hla-s">태그 = 커밋 해시 · 같은 이미지</text>
-    <line x1="724" y1="104" x2="724" y2="124" class="hla-ln" marker-end="url(#hla-arrow)"/>
-    <text x="716" y="118" class="hla-s2" text-anchor="end">pull</text>
+    <rect x="14" y="210" width="144" height="60" rx="9" class="hla-box"/>
+    <circle cx="32" cy="232" r="5.5" class="hla-glyph"/>
+    <path d="M22,249 C22,238 42,238 42,249" class="hla-glyph"/>
+    <text x="52" y="236" class="hla-t">사용자</text>
+    <text x="24" y="261" class="hla-a">ticket.subinhong.dev · 데모</text>
+    <line x1="158" y1="240" x2="168" y2="240" class="hla-ln" marker-end="url(#hla-arrow)"/>
+
+    <rect x="602" y="210" width="144" height="60" rx="9" class="hla-box"/>
+    <text x="612" y="236" class="hla-t">부하 발생기 ×4</text>
+    <text x="612" y="256" class="hla-s">k6 · 5만 명 · 관문 다섯</text>
+    <line x1="602" y1="240" x2="592" y2="240" class="hla-ln" marker-end="url(#hla-arrow)"/>
   </g>
 
-  <!-- AWS: EKS stg -->
-  <g class="hla-g hla-g3">
-    <rect x="500" y="126" width="240" height="232" rx="12" class="hla-outer"/>
-    <image href="/assets/img/icons/aws-eks.png" x="510" y="134" width="22" height="22"/>
-    <text x="540" y="151" class="hla-t">EKS stg — 노드 7 · AZ 3</text>
-
-    <rect x="510" y="162" width="220" height="40" rx="8" class="hla-box"/>
-    <image href="/assets/img/icons/aws-alb.png" x="516" y="173" width="18" height="18"/>
-    <text x="540" y="179" class="hla-c">ALB · ticket-stg.subinhong.dev</text>
-    <text x="540" y="194" class="hla-s2">ACM · 443 · 파드 IP 대상</text>
-    <line x1="620" y1="202" x2="620" y2="212" class="hla-ln" marker-end="url(#hla-arrow)"/>
-
-    <rect x="510" y="214" width="220" height="46" rx="8" class="hla-box"/>
-    <image href="/assets/img/icons/ticket.svg" x="518" y="226" width="20" height="20"/>
-    <text x="544" y="232" class="hla-c">대기열 서비스 — 같은 이미지</text>
-    <text x="544" y="249" class="hla-s2">queue ×4 · booking ×2 · Kafka ×3</text>
-
-    <rect x="510" y="270" width="220" height="40" rx="8" class="hla-box"/>
-    <image href="/assets/img/icons/grafana.svg" x="518" y="280" width="20" height="20"/>
-    <text x="544" y="287" class="hla-c">LGTM — S3 (IRSA)</text>
-    <text x="544" y="302" class="hla-s2">5만 명 부하 테스트의 판정 지표</text>
-
-    <text x="512" y="350" class="hla-s2">허브 → EKS API · 집 공인 IP 만 허용</text>
-  </g>
-
-  <!-- 허브 → EKS -->
-  <g class="hla-g hla-g3">
-    <line x1="436" y1="330" x2="498" y2="330" class="hla-ln hla-dash" marker-end="url(#hla-arrow)"/>
-  </g>
-
-  <!-- AWS: 관리형 -->
-  <g class="hla-g hla-g3">
-    <rect x="500" y="372" width="240" height="58" rx="9" class="hla-box"/>
-    <text x="516" y="389" class="hla-c">클러스터 밖 — 관리형</text>
-    <image href="/assets/img/icons/aws-rds.png" x="516" y="396" width="15" height="15"/>
-    <text x="537" y="408" class="hla-s2">RDS MySQL 8.4 · Multi-AZ</text>
-    <image href="/assets/img/icons/aws-elasticache.png" x="516" y="413" width="15" height="15"/>
-    <text x="537" y="425" class="hla-s2">ElastiCache Redis 7.1 · 복제본 · TLS + AUTH</text>
-  </g>
-
-  <!-- 흐르는 점 넷 — 12초 한 바퀴 -->
+  <!-- 흐르는 점 — 요청 둘 → 이미지 둘 → 동기화 둘 -->
   <circle class="hla-dot hla-dot-u" r="4.5" opacity="0">
     <animateMotion dur="12s" begin="1.2s" repeatCount="indefinite" calcMode="linear"
-      keyTimes="0;0.04;0.22;1" keyPoints="0;0;1;1"
-      path="M60,212 L219,212 L254,212 L330,212"/>
+      keyTimes="0;0.02;0.16;1" keyPoints="0;0;1;1" path="M40,240 L262,240"/>
     <animate attributeName="opacity" dur="12s" begin="1.2s" repeatCount="indefinite"
-      keyTimes="0;0.04;0.06;0.20;0.22;1" values="0;0;1;1;0;0"/>
+      keyTimes="0;0.02;0.04;0.14;0.16;1" values="0;0;1;1;0;0"/>
+  </circle>
+  <circle class="hla-dot hla-dot-u" r="4.5" opacity="0">
+    <animateMotion dur="12s" begin="1.2s" repeatCount="indefinite" calcMode="linear"
+      keyTimes="0;0.18;0.32;1" keyPoints="0;0;1;1" path="M700,240 L498,240"/>
+    <animate attributeName="opacity" dur="12s" begin="1.2s" repeatCount="indefinite"
+      keyTimes="0;0.18;0.20;0.30;0.32;1" values="0;0;1;1;0;0"/>
   </circle>
   <circle class="hla-dot hla-dot-g" r="4.5" opacity="0">
     <animateMotion dur="12s" begin="1.2s" repeatCount="indefinite" calcMode="linear"
-      keyTimes="0;0.28;0.44;1" keyPoints="0;0;1;1"
-      path="M430,88 L430,178"/>
+      keyTimes="0;0.36;0.58;1" keyPoints="0;0;1;1" path="M100,50 L270,50 L270,236"/>
     <animate attributeName="opacity" dur="12s" begin="1.2s" repeatCount="indefinite"
-      keyTimes="0;0.28;0.30;0.42;0.44;1" values="0;0;1;1;0;0"/>
+      keyTimes="0;0.36;0.38;0.56;0.58;1" values="0;0;1;1;0;0"/>
   </circle>
   <circle class="hla-dot hla-dot-g" r="4.5" opacity="0">
     <animateMotion dur="12s" begin="1.2s" repeatCount="indefinite" calcMode="linear"
-      keyTimes="0;0.50;0.72;1" keyPoints="0;0;1;1"
-      path="M400,74 L724,74 L724,146"/>
+      keyTimes="0;0.60;0.82;1" keyPoints="0;0;1;1" path="M100,50 L490,50 L490,236"/>
     <animate attributeName="opacity" dur="12s" begin="1.2s" repeatCount="indefinite"
-      keyTimes="0;0.50;0.52;0.70;0.72;1" values="0;0;1;1;0;0"/>
+      keyTimes="0;0.60;0.62;0.80;0.82;1" values="0;0;1;1;0;0"/>
   </circle>
   <circle class="hla-dot hla-dot-v" r="4.5" opacity="0">
     <animateMotion dur="12s" begin="1.2s" repeatCount="indefinite" calcMode="linear"
-      keyTimes="0;0.78;0.94;1" keyPoints="0;0;1;1"
-      path="M345,330 L600,330"/>
+      keyTimes="0;0.84;0.90;1" keyPoints="0;0;1;1" path="M270,298 L270,244"/>
     <animate attributeName="opacity" dur="12s" begin="1.2s" repeatCount="indefinite"
-      keyTimes="0;0.78;0.80;0.92;0.94;1" values="0;0;1;1;0;0"/>
+      keyTimes="0;0.84;0.85;0.89;0.90;1" values="0;0;1;1;0;0"/>
+  </circle>
+  <circle class="hla-dot hla-dot-v" r="4.5" opacity="0">
+    <animateMotion dur="12s" begin="1.2s" repeatCount="indefinite" calcMode="linear"
+      keyTimes="0;0.90;0.99;1" keyPoints="0;0;1;1" path="M360,300 L380,300 L380,250 L470,250"/>
+    <animate attributeName="opacity" dur="12s" begin="1.2s" repeatCount="indefinite"
+      keyTimes="0;0.90;0.91;0.98;0.99;1" values="0;0;1;1;0;0"/>
   </circle>
 
   <!-- 범례 -->
   <g class="hla-g hla-g3">
-    <circle cx="30" cy="398" r="4.5" fill="#e03131"/>
-    <text x="41" y="402" class="hla-s">사용자 → dev 서비스</text>
-    <circle cx="30" cy="416" r="4.5" fill="#f08c2e"/>
-    <text x="41" y="420" class="hla-s">이미지 — CI → 클러스터</text>
-    <circle cx="30" cy="434" r="4.5" fill="#2f6fdb"/>
-    <text x="41" y="438" class="hla-s">동기화 — 허브 → stg</text>
+    <circle cx="30" cy="388" r="4.5" fill="#e03131"/>
+    <text x="41" y="392" class="hla-s">요청 — 사용자는 dev, 부하 발생기는 stg</text>
+    <circle cx="30" cy="406" r="4.5" fill="#f08c2e"/>
+    <text x="41" y="410" class="hla-s">이미지 — push 에서 클러스터까지</text>
+    <circle cx="30" cy="424" r="4.5" fill="#2f6fdb"/>
+    <text x="41" y="428" class="hla-s">동기화 — ArgoCD 허브 → dev · stg</text>
   </g>
 </svg>
-<figcaption>파이프라인 하나가 이미지를 만들고, 노트북 안 ArgoCD 허브가 dev와 stg 둘에 배포합니다.
-집과 AWS를 잇는 선은 둘뿐입니다 — CI가 ECR로, 허브가 EKS API로. 갈리는 것은 환경 값뿐이고 코드 · 차트 · 이미지는 같습니다.</figcaption>
+<figcaption>이미지는 한 번 만들어 두 레지스트리에 서고, 두 클러스터가 각자 받습니다. 배포 정의는 노트북 안 ArgoCD 허브가 dev와 stg에 같이 맞춥니다.
+그 사이 배관(image-updater · webhook · 승격 job)은 CI/CD 카드에 있습니다.</figcaption>
 </figure>
 
 <!-- 카드 여섯 — 환경 둘(온프렘 · 클라우드) → 둘에 공통인 것(CI/CD · 옵저버빌리티) → 그 위의 서비스 → 부하 -->
@@ -211,14 +175,14 @@ permalink: /homelab/
   </a>
 
   <a class="hlc-card" href="/homelab/cloud/">
-    <img class="hlc-img" src="/assets/img/homelab/cloud-thumb.png" alt="클라우드 구조도 — 집의 허브와 CI가 EKS API와 ECR로 이어지고, VPC 안에 ALB · 노드그룹 셋 · RDS · ElastiCache가 있는 그림">
+    <img class="hlc-img" src="/assets/img/homelab/cloud-thumb.png" alt="클라우드 구성도 — VPC 안 AZ 셋에 노드 일곱과 각 노드의 파드, ALB, 클러스터 밖 RDS · ElastiCache, VPC 밖 EKS 컨트롤 플레인 · ECR · S3 · Secrets Manager">
     <span class="hlc-tag">클라우드 · stg</span>
     <span class="hlc-title">Terraform · EKS로 stg 환경 구축</span>
     <span class="hlc-desc">같은 차트 · 같은 이미지를 관리형 위에 올렸습니다. 컨트롤 플레인 · 로드밸런서 · DB · 캐시는 AWS가, Kafka와 옵저버빌리티는 클러스터 안에 — 칸마다 근거가 다릅니다.</span>
   </a>
 
   <a class="hlc-card" href="/homelab/cicd/">
-    <img class="hlc-img" src="/assets/img/homelab/cicd-thumb.png" alt="CI/CD 구조도 — GitLab 파이프라인이 이미지를 레지스트리 둘에 올리고, 허브의 image-updater와 ArgoCD가 dev와 stg에 배포하는 그림">
+    <img class="hlc-img" src="/assets/img/homelab/cicd-thumb.png" alt="CI/CD 흐름 — push 에서 CI, 레지스트리 둘, image-updater, cgv-infra, ArgoCD 허브를 거쳐 k3s dev 와 EKS stg 의 파드 교체까지 위에서 아래로 갈라지는 그림">
     <span class="hlc-tag">CI/CD · dev → stg</span>
     <span class="hlc-title">GitLab · ArgoCD 허브로 두 클러스터에 배포</span>
     <span class="hlc-desc">파이프라인 하나가 이미지를 만들고, 허브 하나가 dev와 stg에 배포합니다. 승격은 수동 job 하나이고, 코드에서 브라우저까지 19분 41초입니다.</span>
