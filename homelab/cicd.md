@@ -89,8 +89,9 @@ dev는 머지하면 자동으로, stg는 버튼 하나를 누르면 **같은 이
   <text class="hla-s" x="536" y="86">ap-northeast-2</text>
 
   <rect class="hla-box" x="536" y="222" width="196" height="56" rx="6"/>
-  <text class="hla-t" x="548" y="244">ECR ×3</text>
-  <text class="hla-s2" x="548" y="266">3b6bd07c — 같은 이미지</text>
+  <image href="/assets/img/icons/aws-ecr.png" x="546" y="238" width="24" height="24"/>
+  <text class="hla-t" x="578" y="244">ECR ×3</text>
+  <text class="hla-s2" x="578" y="266">3b6bd07c — 같은 이미지</text>
 
   <line class="hla-ln-img" x1="634" y1="278" x2="634" y2="314" marker-end="url(#hlm-i)"/>
   <text class="hla-a" x="642" y="300">pull · 노드 역할</text>

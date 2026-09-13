@@ -106,8 +106,9 @@ permalink: /homelab/
   <!-- AWS: ECR -->
   <g class="hla-g hla-g1">
     <rect x="500" y="44" width="240" height="60" rx="9" class="hla-box"/>
-    <text x="516" y="66" class="hla-t">ECR ×3</text>
-    <text x="516" y="86" class="hla-s">태그 = 커밋 해시 · dev 와 같은 이미지</text>
+    <image href="/assets/img/icons/aws-ecr.png" x="510" y="60" width="26" height="26"/>
+    <text x="544" y="66" class="hla-t">ECR ×3</text>
+    <text x="544" y="86" class="hla-s">태그 = 커밋 해시 · 같은 이미지</text>
     <line x1="620" y1="104" x2="620" y2="124" class="hla-ln" marker-end="url(#hla-arrow)"/>
     <text x="630" y="118" class="hla-s2">pull</text>
   </g>
@@ -145,10 +146,10 @@ permalink: /homelab/
   <g class="hla-g hla-g3">
     <rect x="500" y="364" width="240" height="66" rx="9" class="hla-box"/>
     <text x="516" y="382" class="hla-c">클러스터 밖 — 관리형</text>
-    <image href="/assets/img/icons/mysql.svg" x="516" y="392" width="16" height="16"/>
-    <text x="538" y="404" class="hla-s2">RDS MySQL 8.4 · Multi-AZ</text>
-    <image href="/assets/img/icons/redis.svg" x="516" y="410" width="16" height="16"/>
-    <text x="538" y="422" class="hla-s2">ElastiCache Redis 7.1 · 복제본 · TLS + AUTH</text>
+    <image href="/assets/img/icons/aws-rds.png" x="516" y="391" width="17" height="17"/>
+    <text x="539" y="404" class="hla-s2">RDS MySQL 8.4 · Multi-AZ</text>
+    <image href="/assets/img/icons/aws-elasticache.png" x="516" y="409" width="17" height="17"/>
+    <text x="539" y="422" class="hla-s2">ElastiCache Redis 7.1 · 복제본 · TLS + AUTH</text>
   </g>
 
   <!-- 흐르는 점 넷 — 12초 한 바퀴 -->

@@ -61,9 +61,10 @@ stg 환경입니다 — dev에서 뽑은 스펙을 관리형 위에 같은 이�
 
   <!-- ECR -->
   <rect class="hla-box" x="256" y="150" width="200" height="64" rx="6"/>
-  <text class="hla-t" x="268" y="172">ECR ×3</text>
-  <text class="hla-s2" x="268" y="190">태그 = 커밋 해시 8자</text>
-  <text class="hla-s2" x="268" y="206">dev 와 같은 이미지</text>
+  <image href="/assets/img/icons/aws-ecr.png" x="266" y="163" width="24" height="24"/>
+  <text class="hla-t" x="298" y="172">ECR ×3</text>
+  <text class="hla-s2" x="298" y="190">태그 = 커밋 해시 8자</text>
+  <text class="hla-s2" x="298" y="206">dev 와 같은 이미지</text>
   <line class="hla-ln" x1="356" y1="214" x2="356" y2="232" marker-end="url(#hlw-arrow)"/>
   <text class="hla-s2" x="364" y="228">pull</text>
 
@@ -108,10 +109,10 @@ stg 환경입니다 — dev에서 뽑은 스펙을 관리형 위에 같은 이�
 
   <rect class="hla-box" x="268" y="424" width="448" height="56" rx="6"/>
   <text class="hla-c" x="280" y="442">클러스터 밖 — 노드 보안 그룹에서만 3306 · 6379</text>
-  <image href="/assets/img/icons/mysql.svg" x="280" y="452" width="16" height="16"/>
-  <text class="hla-s2" x="302" y="464">RDS MySQL 8.4 · Multi-AZ</text>
-  <image href="/assets/img/icons/redis.svg" x="492" y="452" width="16" height="16"/>
-  <text class="hla-s2" x="514" y="464">ElastiCache Redis 7.1 · 복제본 · TLS + AUTH</text>
+  <image href="/assets/img/icons/aws-rds.png" x="280" y="451" width="18" height="18"/>
+  <text class="hla-s2" x="304" y="464">RDS MySQL 8.4 · Multi-AZ</text>
+  <image href="/assets/img/icons/aws-elasticache.png" x="492" y="451" width="18" height="18"/>
+  <text class="hla-s2" x="516" y="464">ElastiCache Redis 7.1 · 복제본 · TLS + AUTH</text>
 
   <!-- bootstrap — 지우지 않는 것 -->
   <rect class="hla-inner hla-dash" x="256" y="502" width="472" height="30" rx="6"/>
