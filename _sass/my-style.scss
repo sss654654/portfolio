@@ -447,6 +447,18 @@ html { font-size: 17px; }
 .hl-cmp th:nth-child(2) { width: 24%; }
 .hl-cmp th:nth-child(3) { width: 21%; }
 .hl-cmp th:nth-child(4) { width: 39%; }
+/* 온프렘 층 표 — 항목 · 선택 · 이유 · stg 에서는. 이유가 제일 길고 stg 칸은 한 줄 */
+.hl-map { table-layout: fixed; }
+.hl-map th:nth-child(1) { width: 15%; }
+.hl-map th:nth-child(2) { width: 22%; }
+.hl-map th:nth-child(3) { width: 39%; }
+.hl-map th:nth-child(4) { width: 24%; }
+/* 부하 결과 표 — 행 이름 · 1만 · 2.5만 · 5만. 값 칸 셋이 같은 무게여야 나란히 읽힌다 */
+.hl-res { table-layout: fixed; }
+.hl-res th:nth-child(1) { width: 28%; }
+.hl-res th:nth-child(2) { width: 24%; }
+.hl-res th:nth-child(3) { width: 24%; }
+.hl-res th:nth-child(4) { width: 24%; }
 .hl-tbl { table-layout: fixed; }
 .hl-tbl th:nth-child(1) { width: 29%; }
 .hl-tbl th:nth-child(2) { width: 44%; }
@@ -485,12 +497,12 @@ html { font-size: 17px; }
 
 /* 하위 페이지 표 — 본문보다 작게, 헤더도 본문과 같은 왼쪽 정렬로.
    keep-all 이 없으면 좁은 칸에서 한글이 단어 중간에서 끊긴다(링/크는, 적용·재/기동). */
-.hl-cmp, .hl-tbl, .hl-two, .hl-dec, .hl-why, .hl-run { font-size: .88rem; word-break: keep-all; }
-.hl-cmp th, .hl-tbl th, .hl-two th, .hl-dec th, .hl-why th, .hl-run th {
+.hl-cmp, .hl-tbl, .hl-two, .hl-dec, .hl-why, .hl-run, .hl-map, .hl-res { font-size: .88rem; word-break: keep-all; }
+.hl-cmp th, .hl-tbl th, .hl-two th, .hl-dec th, .hl-why th, .hl-run th, .hl-map th, .hl-res th {
   text-align: left; vertical-align: bottom;
   font-size: .8rem; font-weight: 600; color: var(--gray);
 }
-.hl-cmp td, .hl-tbl td, .hl-two td, .hl-dec td, .hl-why td, .hl-run td { vertical-align: top; line-height: 1.6; }
+.hl-cmp td, .hl-tbl td, .hl-two td, .hl-dec td, .hl-why td, .hl-run td, .hl-map td, .hl-res td { vertical-align: top; line-height: 1.6; }
 
 /* 대조표는 첫 열이 항목 이름이라, 줄바꿈되면 단어가 두 줄로 쪼개져 읽기 나쁘다 */
 .hl-cmp td:first-child,
@@ -501,7 +513,11 @@ html { font-size: 17px; }
 .hl-two td:first-child,
 .hl-dec td:first-child,
 .hl-why td:first-child,
-.hl-run td:first-child { font-weight: 600; color: var(--body-color); }
+.hl-run td:first-child,
+.hl-map td:first-child,
+.hl-res td:first-child { font-weight: 600; color: var(--body-color); }
+/* stg 칸은 대조 상대라 회색으로 한 톤 낮춘다 */
+.hl-map td:nth-child(4) { color: var(--gray); }
 
 /* 표 바로 위에 붙는 소제목 */
 .hl-sub { margin: 1.6rem 0 .4rem; font-weight: 700; font-size: .94rem; }

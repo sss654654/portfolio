@@ -2,7 +2,7 @@
 layout: page
 title: 서비스
 description: >
-  몰리는 사람을 줄 세우는 대기열과 표를 파는 예매, 두 서비스로 나누고 Kafka가 둘을 잇습니다
+  몰리는 사람을 줄 세우는 대기열과 표를 파는 예매, 두 서비스로 나누고 Kafka가 둘을 잇습니다 — 같은 이미지가 dev와 stg에 있습니다
 permalink: /homelab/service/
 ---
 
@@ -10,8 +10,8 @@ permalink: /homelab/service/
 
 티케팅 서비스입니다 — 열리는 순간 전원이 몰리는데 좌석은 4,000석입니다.
 2024년 한국시리즈 극장 생중계 예매의 대기 16만 명을 모델로, 목표 규모를 10만으로 잡았습니다.
-표를 파는 처리는 한 사람마다 트랜잭션과 DB 커넥션을 점유해,
-**그 인원을 그대로 받는 구조가 될 수 없습니다.**
+표를 파는 처리는 한 사람마다 트랜잭션과 DB 커넥션을 점유해 **그 인원을 그대로 받는 구조가 될 수 없습니다.**
+같은 이미지가 dev와 stg에 있고, 갈리는 것은 환경 값뿐입니다.
 {:.lead}
 
 ## 서비스 구조
@@ -76,8 +76,6 @@ permalink: /homelab/service/
   <text class="hla-a" x="516" y="290">메시지 {requestId, movieId}</text>
   <text class="hla-a" x="516" y="308">키 = requestId — 사람별 순서</text>
 
-  <!-- 이동 경로는 메시지 점이 그린다 — 번호와 라벨만 경로 요지에 두고,
-       도착지가 먼 소비 둘(4·7)만 가는 점선으로 남긴다 -->
   <circle class="hla-num" cx="540" cy="184" r="9"/><text class="hla-nt" x="540" y="188">3</text>
   <text class="hla-a" x="554" y="188">발행 — 토픽 뒤에 적재</text>
   <line class="hla-ln hla-dash" x1="30" y1="270" x2="30" y2="410" opacity=".4" marker-end="url(#cs-a)"/>
@@ -94,8 +92,6 @@ permalink: /homelab/service/
   <image href="/assets/img/icons/spring.svg" x="30" y="380" width="20" height="20"/>
   <text class="hla-t" x="58" y="396">booking</text>
 
-  <!-- 입장 인증도 Redis — queue 와 같은 인스턴스를 본다. ZSet 이 아니라 키+TTL 이라,
-       인증이 오면 칸이 켜지고(SET) 확정하면 소진돼 꺼진다(DEL). 시간이 지나도 저절로 꺼진다 -->
   <rect class="hla-inner" x="28" y="416" width="310" height="84" rx="5"/>
   <image href="/assets/img/icons/redis.svg" x="40" y="426" width="14" height="14"/>
   <text class="hla-c" x="60" y="438">Redis</text>
@@ -152,33 +148,34 @@ permalink: /homelab/service/
 <div class="cs-log" id="cs-log">멈춰 있으면 구조도, 재생하면 한 회가 도는 흐름도입니다.</div>
 </div>
 <figcaption>관객 30 · 정원 6 · 좌석 24는 흐름을 보기 위한 축소값입니다 — 정원은 이 시뮬레이션이 6,
-공개 데모가 60, 실측으로 확정한 값이 1,000이고 그 실측은 <a href="/homelab/capacity/">부하 테스트</a>에 있습니다.</figcaption>
+공개 데모(dev)가 60, stg 실측값이 1,000이고 그 실측은 <a href="/homelab/capacity/">부하 테스트</a>에 있습니다.</figcaption>
 </figure>
 
 ## 설계 결정
 
 | 항목 | 선택 | 이유 |
 |---|---|---|
-| queue | **Go · 4대 고정** | **요청이 짧고 많음 — 대기열**<br>goroutine이 요청 하나씩 맡아 동시 처리 비용이 낮고, 네이티브 바이너리라 기동 즉시 최고 속도 · HPA는 피크보다 늦어 4대 고정 |
-| 순번·현황 | **Redis 폴링** | **홈·대기 화면이 주기마다 묻는 구조**<br>줄·정원·현황이 전부 Redis에 있어 왕복 1-2번 · 1ms — 부하는 횟수(CPU)이고 어느 파드가 받아도 같은 답 |
-| booking | **Java Spring · 한 대** | **요청이 길고 적음 — 입장객**<br>메모리를 길게 점유하지만 수는 정원으로 제한 · 전부-성공/전부-롤백이 `@Transactional` 하나 — 대가는 기동부터 수백 MiB |
-| 서비스 간 통신 | **Kafka 비동기** — 서로 직접 호출 없음 | **한쪽이 멈춰도 다른 쪽은 계속**<br>동기 호출이면 booking이 멈추는 순간 queue도 정지 · 발행하고 끝이라 못 받은 것은 토픽에 남아 나중에 소비 |
-| 옵저버빌리티 | **코드에 계측을 심음** | **기본 metric만으론 "어디서"가 안 보임**<br>파드 metric은 양만 표시 · 요청 수·지연은 metric, 사건은 log, 구간별 흐름은 trace — 뒤의 둘을 `trace_id`로 연결 |
+| queue | **Go** · dev · stg 모두 **4대 고정** | **요청이 짧고 많음 — 대기열**<br>goroutine이 요청 하나씩 맡아 동시 처리 비용이 낮고, 네이티브 바이너리라 기동 즉시 최고 속도 · HPA는 CPU 70% 기준이 이 서비스에 안 맞고(1만 명에서 17%), 판 도중 대수가 바뀌면 판끼리 비교가 안 됨 |
+| 순번 · 현황 | **Redis 폴링** — 깊은 순번일수록 주기가 김 | **홈·대기 화면이 주기마다 묻는 구조**<br>줄·정원·현황이 전부 Redis에 있어 왕복 1–2번 · 1ms — 부하는 횟수(CPU)이고 어느 파드가 받아도 같은 답. 100번 밖 5초 · 20번 밖 2초 · 그 안 1초 |
+| booking | **Java Spring** · dev **1대** · stg **2대** | **요청이 길고 적음 — 입장객**<br>메모리를 길게 점유하지만 수는 정원으로 제한 · 전부-성공/전부-롤백이 `@Transactional` 하나 · stg의 두 대는 Flyway가 DB 잠금 아래 한 대만 스키마를 적용해서 가능 |
+| 서비스 간 통신 | **Kafka 비동기** — 서로 직접 호출 없음 · 파티션 8 · RF 3 · `acks=all` | **한쪽이 멈춰도 다른 쪽은 계속**<br>동기 호출이면 booking이 멈추는 순간 queue도 정지 · 발행하고 끝이라 못 받은 것은 토픽에 남아 나중에 소비 · 파티션 8 = booking 2대 × 컨슈머 4 |
+| 옵저버빌리티 | **코드에 계측** · 사용자당 한 번 부르는 경로는 기동 때 시계열을 0으로 만들어 둠 | **기본 metric만으론 "어디서"가 안 보임**<br>요청 수·지연은 metric, 사건은 log, 구간별 흐름은 trace — 뒤의 둘을 `trace_id`로 연결 · 첫 요청이 오픈 봉우리면 `rate`가 봉우리를 통째로 0으로 내는 함정을 stg 5만 명 판에서 겪음 |
 {:.hl-dec}
 
 ## 결과
 
-- **몰리는 인원과 표 파는 처리가 갈렸습니다** — 줄은 queue 4대가 받고 booking 한 대는 정원만큼만 받습니다. frontend 2대까지 세 서비스가 동작합니다
+- **몰리는 인원과 표 파는 처리가 갈렸습니다** — 줄은 queue 4대가 받고, booking은 정원만큼만 받습니다. 사용자가 1만 명에서 5만 명으로 5배가 될 때 예매 여정 요청은 29,519건에서 45,468건으로 **1.54배**였습니다
+- **같은 이미지가 dev와 stg에 있습니다** — 갈리는 것은 환경 값(정원 · 승격 배치 · 커넥션 풀 · limit · Redis 주소)뿐이고, 코드와 차트는 같습니다
 - **세 신호가 코드에 계측돼 있습니다** — metric에서 이상을 보면 그 요청의 trace와 log까지 내려갑니다
 
 ## 한계
 
-- **Redis 한 대가 읽기와 쓰기를 다 받습니다** — 명령 처리가 단일 스레드라 코어를 더 줘도 하나만 씁니다. 순번 조회를 복제본으로 분리하는 것이 다음입니다
-- **booking과 MySQL이 한 대씩입니다** — Hibernate가 기동할 때 스키마를 만들어 booking 두 대가 같이 뜨면 DDL이 겹칩니다. 늘리려면 마이그레이션 도구가 먼저입니다
+- **Redis 한 대가 읽기와 쓰기를 다 받습니다** — 명령 처리가 단일 스레드라 코어를 더 줘도 하나만 씁니다. 5만 명까지는 상한이 아니었고(엔진 CPU 37%), 순번 조회 Lua가 쓰기(`ZADD`)라 읽기 복제본으로 못 빼 노드 크기가 축입니다
+- **dev의 booking과 MySQL은 한 대씩입니다** — 노드 RAM 8GB × 3에서 두 대 몫이 없습니다. stg는 booking 두 대 · RDS Multi-AZ입니다
 
 ## 기술 스택
 
-Go · Spring Boot · Redis · Kafka(Strimzi) · MySQL · OpenTelemetry
+Go · Spring Boot · Flyway · Redis · Kafka(Strimzi) · MySQL · OpenTelemetry
 {:.hl-more}
 
 {% include hl-nav.html %}
