@@ -8,8 +8,8 @@ permalink: /homelab/cicd/
 
 <p class="hl-back" markdown="0"><a href="/homelab/">← HomeLab</a></p>
 
-GitLab CI가 `main` 머지마다 서비스 이미지를 한 번 빌드 — check · test · scan을 통과한 이미지만 등록.
-dev는 GitLab 레지스트리에 자동, stg는 수동 job `publish-ecr` 실행 시 **같은 이미지**를 ECR로 승격.
+GitLab CI가 `main` 머지마다 이미지를 한 번 빌드 — check · test · scan 통과 시 등록.
+dev는 GitLab 레지스트리에 자동, stg는 수동 job `publish-ecr`로 **같은 이미지**를 ECR에 승격.
 image-updater가 새 태그를 cgv-infra에 커밋하면 노트북 ArgoCD 허브가 두 클러스터에 동기화.
 {:.lead}
 
