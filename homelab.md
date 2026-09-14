@@ -17,12 +17,14 @@ stg는 dev가 3만 명 부하에서 노드 한계에 도달한 뒤 Terraform으�
 
 <!-- 구성도 — 코드가 이미지가 되어 레지스트리 둘에 오르고 각 클러스터가 pull 한다(실선).
      ArgoCD 가 dev 와 stg 를 동기화한다(점선). 사용자는 dev, 부하 발생기는 stg 로.
+     클러스터 칸은 위부터 관측(LGTM) · 대기열 서비스 · ArgoCD 또는 관리형 데이터 — 목차의 영역과 같은 것이 그림에 보이게.
      상자 안은 이름과 로고만 — image-updater · webhook · 승격 job 같은 세부는 CI/CD 카드에.
      점 여덟이 14초 한 바퀴 — 요청(빨강) → 이미지 push(주황) → 동기화(파랑) → 이미지 pull(주황).
      pull 이 동기화 뒤라는 순서는 움직임으로만 보인다. prefers-reduced-motion 이면 점은 숨는다.
+     관측 칸을 더하며 파이프라인 쪽 세로 여백을 줄여, 노트북 첫 화면에 범례까지 들어오게 했다.
      폰에서는 줄이면 글자가 5px 아래로 떨어져 가로로 넘겨 본다(hl-diagram-scroll). -->
 <figure class="hl-diagram hl-diagram-lg hl-diagram-hero hl-diagram-scroll" markdown="0">
-<svg viewBox="0 0 760 350" role="img" aria-label="개발자가 머지한 코드를 데스크탑 GitLab CI가 이미지로 만들어 GitLab 레지스트리(자동)와 ECR(수동 승격)에 올리고, 각 클러스터가 자기 레지스트리에서 pull 한다. 노트북 k3s dev 안 ArgoCD가 dev와 AWS EKS stg를 동기화한다. 사용자는 dev를, 부하 발생기는 stg를 쓴다">
+<svg viewBox="0 0 760 354" role="img" aria-label="개발자가 머지한 코드를 데스크탑 GitLab CI가 이미지로 만들어 GitLab 레지스트리(자동)와 ECR(수동 승격)에 올리고, 각 클러스터가 자기 레지스트리에서 pull 한다. 노트북 k3s dev 안 ArgoCD가 dev와 AWS EKS stg를 동기화한다. 두 클러스터 모두 LGTM 관측 스택을 둔다. 사용자는 dev를, 부하 발생기는 stg를 쓴다">
   <defs>
     <marker id="hla-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
       <path d="M0,0 L8,4 L0,8 z" fill="currentColor" opacity=".5"/>
@@ -30,148 +32,145 @@ stg는 dev가 3만 명 부하에서 노드 한계에 도달한 뒤 Terraform으�
   </defs>
 
   <!-- 개발자 → 데스크탑 GitLab CI -->
-  <rect x="10" y="20" width="84" height="52" rx="9" class="hla-box"/>
-  <circle cx="27" cy="40" r="5.5" class="hla-glyph"/>
-  <path d="M17,57 C17,46 37,46 37,57" class="hla-glyph"/>
-  <text x="44" y="51" class="hla-t">개발자</text>
-  <line x1="94" y1="46" x2="138" y2="46" class="hla-ln" marker-end="url(#hla-arrow)"/>
-  <text x="117" y="37" class="hla-s" text-anchor="middle">git push</text>
+  <rect x="10" y="12" width="84" height="52" rx="9" class="hla-box"/>
+  <circle cx="27" cy="32" r="5.5" class="hla-glyph"/>
+  <path d="M17,49 C17,38 37,38 37,49" class="hla-glyph"/>
+  <text x="44" y="43" class="hla-t">개발자</text>
+  <line x1="94" y1="38" x2="138" y2="38" class="hla-ln" marker-end="url(#hla-arrow)"/>
+  <text x="117" y="29" class="hla-s" text-anchor="middle">git push</text>
 
-  <rect x="140" y="20" width="480" height="52" rx="9" class="hla-box"/>
-  <image href="/assets/img/icons/gitlab.svg" x="308" y="34" width="24" height="24"/>
-  <text x="340" y="51" class="hla-t">데스크탑 · GitLab CI</text>
+  <rect x="140" y="12" width="480" height="52" rx="9" class="hla-box"/>
+  <image href="/assets/img/icons/gitlab.svg" x="308" y="26" width="24" height="24"/>
+  <text x="340" y="43" class="hla-t">데스크탑 · GitLab CI</text>
 
   <!-- 이미지 — CI → 레지스트리 둘 → 각 클러스터 -->
-  <line x1="245" y1="72" x2="245" y2="110" class="hla-ln" marker-end="url(#hla-arrow)"/>
-  <text x="253" y="95" class="hla-s">자동</text>
-  <line x1="515" y1="72" x2="515" y2="110" class="hla-ln" marker-end="url(#hla-arrow)"/>
-  <text x="523" y="95" class="hla-s">수동 승격</text>
+  <line x1="245" y1="64" x2="245" y2="88" class="hla-ln" marker-end="url(#hla-arrow)"/>
+  <text x="253" y="81" class="hla-s">자동</text>
+  <line x1="515" y1="64" x2="515" y2="88" class="hla-ln" marker-end="url(#hla-arrow)"/>
+  <text x="523" y="81" class="hla-s">수동 승격</text>
 
-  <rect x="140" y="112" width="210" height="40" rx="9" class="hla-box"/>
-  <image href="/assets/img/icons/gitlab.svg" x="152" y="123" width="18" height="18"/>
-  <text x="178" y="137" class="hla-c">GitLab 레지스트리</text>
+  <rect x="140" y="90" width="210" height="40" rx="9" class="hla-box"/>
+  <image href="/assets/img/icons/gitlab.svg" x="152" y="101" width="18" height="18"/>
+  <text x="178" y="115" class="hla-c">GitLab 레지스트리</text>
 
-  <rect x="410" y="112" width="210" height="40" rx="9" class="hla-box"/>
-  <image href="/assets/img/icons/aws-ecr.png" x="422" y="123" width="18" height="18"/>
-  <text x="448" y="137" class="hla-c">ECR</text>
+  <rect x="410" y="90" width="210" height="40" rx="9" class="hla-box"/>
+  <image href="/assets/img/icons/aws-ecr.png" x="422" y="101" width="18" height="18"/>
+  <text x="448" y="115" class="hla-c">ECR</text>
 
-  <line x1="245" y1="152" x2="245" y2="186" class="hla-ln" marker-end="url(#hla-arrow)"/>
-  <text x="253" y="173" class="hla-s">pull</text>
-  <line x1="515" y1="152" x2="515" y2="186" class="hla-ln" marker-end="url(#hla-arrow)"/>
-  <text x="523" y="173" class="hla-s">pull</text>
+  <line x1="245" y1="130" x2="245" y2="156" class="hla-ln" marker-end="url(#hla-arrow)"/>
+  <text x="253" y="148" class="hla-s">pull</text>
+  <line x1="515" y1="130" x2="515" y2="156" class="hla-ln" marker-end="url(#hla-arrow)"/>
+  <text x="523" y="148" class="hla-s">pull</text>
 
-  <!-- 노트북 k3s dev -->
-  <rect x="140" y="188" width="210" height="128" rx="12" class="hla-outer"/>
-  <image href="/assets/img/icons/kubernetes.svg" x="152" y="199" width="18" height="18"/>
-  <text x="176" y="213" class="hla-t">노트북 · k3s dev</text>
-  <!-- 관측 — 두 클러스터 모두 LGTM 스택. 글자 없이 로고만 (Grafana · Mimir · Loki · Tempo) -->
-  <image href="/assets/img/icons/grafana.svg" x="284" y="202" width="13" height="13"/>
-  <image href="/assets/img/icons/mimir.svg" x="300" y="202" width="13" height="13"/>
-  <image href="/assets/img/icons/loki.svg" x="316" y="202" width="13" height="13"/>
-  <image href="/assets/img/icons/tempo.svg" x="332" y="202" width="13" height="13"/>
-  <rect x="152" y="222" width="186" height="30" rx="8" class="hla-box"/>
-  <image href="/assets/img/icons/ticket.svg" x="160" y="228" width="18" height="18"/>
-  <text x="186" y="241" class="hla-c">대기열 서비스</text>
-  <rect x="152" y="274" width="186" height="30" rx="8" class="hla-box"/>
-  <image href="/assets/img/icons/argo.svg" x="160" y="280" width="18" height="18"/>
-  <text x="186" y="293" class="hla-c">ArgoCD</text>
-  <line x1="245" y1="274" x2="245" y2="254" class="hla-ln hla-dash" marker-end="url(#hla-arrow)"/>
+  <!-- 노트북 k3s dev — 관측 · 서비스 · ArgoCD -->
+  <rect x="140" y="158" width="210" height="168" rx="12" class="hla-outer"/>
+  <image href="/assets/img/icons/kubernetes.svg" x="152" y="169" width="18" height="18"/>
+  <text x="176" y="183" class="hla-t">노트북 · k3s dev</text>
+  <rect x="152" y="192" width="186" height="30" rx="8" class="hla-box"/>
+  <image href="/assets/img/icons/grafana.svg" x="160" y="198" width="18" height="18"/>
+  <text x="186" y="211" class="hla-c">관측 · LGTM</text>
+  <rect x="152" y="232" width="186" height="30" rx="8" class="hla-box"/>
+  <image href="/assets/img/icons/ticket.svg" x="160" y="238" width="18" height="18"/>
+  <text x="186" y="251" class="hla-c">대기열 서비스</text>
+  <rect x="152" y="284" width="186" height="30" rx="8" class="hla-box"/>
+  <image href="/assets/img/icons/argo.svg" x="160" y="290" width="18" height="18"/>
+  <text x="186" y="303" class="hla-c">ArgoCD</text>
+  <line x1="245" y1="284" x2="245" y2="264" class="hla-ln hla-dash" marker-end="url(#hla-arrow)"/>
 
-  <!-- AWS EKS stg -->
-  <rect x="410" y="188" width="210" height="128" rx="12" class="hla-outer"/>
-  <image href="/assets/img/icons/aws-eks.png" x="422" y="199" width="18" height="18"/>
-  <text x="446" y="213" class="hla-t">AWS · EKS stg</text>
-  <image href="/assets/img/icons/grafana.svg" x="554" y="202" width="13" height="13"/>
-  <image href="/assets/img/icons/mimir.svg" x="570" y="202" width="13" height="13"/>
-  <image href="/assets/img/icons/loki.svg" x="586" y="202" width="13" height="13"/>
-  <image href="/assets/img/icons/tempo.svg" x="602" y="202" width="13" height="13"/>
-  <rect x="422" y="222" width="186" height="30" rx="8" class="hla-box"/>
-  <image href="/assets/img/icons/ticket.svg" x="430" y="228" width="18" height="18"/>
-  <text x="456" y="241" class="hla-c">대기열 서비스</text>
-  <rect x="422" y="274" width="186" height="30" rx="8" class="hla-box"/>
-  <image href="/assets/img/icons/aws-rds.png" x="430" y="280" width="18" height="18"/>
-  <image href="/assets/img/icons/aws-elasticache.png" x="452" y="280" width="18" height="18"/>
-  <text x="478" y="293" class="hla-c">RDS · ElastiCache</text>
+  <!-- AWS EKS stg — 관측 · 서비스 · 관리형 데이터 -->
+  <rect x="410" y="158" width="210" height="168" rx="12" class="hla-outer"/>
+  <image href="/assets/img/icons/aws-eks.png" x="422" y="169" width="18" height="18"/>
+  <text x="446" y="183" class="hla-t">AWS · EKS stg</text>
+  <rect x="422" y="192" width="186" height="30" rx="8" class="hla-box"/>
+  <image href="/assets/img/icons/grafana.svg" x="430" y="198" width="18" height="18"/>
+  <text x="456" y="211" class="hla-c">관측 · LGTM</text>
+  <rect x="422" y="232" width="186" height="30" rx="8" class="hla-box"/>
+  <image href="/assets/img/icons/ticket.svg" x="430" y="238" width="18" height="18"/>
+  <text x="456" y="251" class="hla-c">대기열 서비스</text>
+  <rect x="422" y="284" width="186" height="30" rx="8" class="hla-box"/>
+  <image href="/assets/img/icons/aws-rds.png" x="430" y="290" width="18" height="18"/>
+  <image href="/assets/img/icons/aws-elasticache.png" x="452" y="290" width="18" height="18"/>
+  <text x="478" y="303" class="hla-c">RDS · ElastiCache</text>
 
   <!-- ArgoCD → stg 동기화 -->
-  <path d="M338,289 H380 V237 H420" class="hla-ln hla-dash" fill="none" marker-end="url(#hla-arrow)"/>
-  <text x="380" y="229" class="hla-s" text-anchor="middle">동기화</text>
+  <path d="M338,299 H380 V247 H420" class="hla-ln hla-dash" fill="none" marker-end="url(#hla-arrow)"/>
+  <text x="380" y="239" class="hla-s" text-anchor="middle">동기화</text>
 
-  <!-- 사용자 → dev · 부하 발생기 → stg -->
-  <rect x="10" y="220" width="108" height="34" rx="9" class="hla-box"/>
-  <circle cx="30" cy="231" r="5" class="hla-glyph"/>
-  <path d="M21,247 C21,238 39,238 39,247" class="hla-glyph"/>
-  <text x="48" y="242" class="hla-t">사용자</text>
-  <line x1="118" y1="237" x2="150" y2="237" class="hla-ln" marker-end="url(#hla-arrow)"/>
+  <!-- 사용자 → dev · 부하 발생기 → stg (서비스 칸 높이) -->
+  <rect x="10" y="230" width="108" height="34" rx="9" class="hla-box"/>
+  <circle cx="30" cy="241" r="5" class="hla-glyph"/>
+  <path d="M21,257 C21,248 39,248 39,257" class="hla-glyph"/>
+  <text x="48" y="252" class="hla-t">사용자</text>
+  <line x1="118" y1="247" x2="150" y2="247" class="hla-ln" marker-end="url(#hla-arrow)"/>
 
-  <rect x="642" y="220" width="108" height="34" rx="9" class="hla-box"/>
-  <image href="/assets/img/icons/k6.svg" x="652" y="228" width="18" height="18"/>
-  <text x="676" y="242" class="hla-t">부하 발생기</text>
-  <line x1="642" y1="237" x2="610" y2="237" class="hla-ln" marker-end="url(#hla-arrow)"/>
+  <rect x="642" y="230" width="108" height="34" rx="9" class="hla-box"/>
+  <image href="/assets/img/icons/k6.svg" x="652" y="238" width="18" height="18"/>
+  <text x="676" y="252" class="hla-t">부하 발생기</text>
+  <line x1="642" y1="247" x2="610" y2="247" class="hla-ln" marker-end="url(#hla-arrow)"/>
 
   <!-- 흐르는 점 — 요청 둘 → 이미지 push 둘 → 동기화 둘 → 이미지 pull 둘 -->
   <circle class="hla-dot hla-dot-u" r="4.5" opacity="0">
     <animateMotion dur="14s" begin="1s" repeatCount="indefinite" calcMode="linear"
-      keyTimes="0;0.01;0.08;1" keyPoints="0;0;1;1" path="M118,237 L190,237"/>
+      keyTimes="0;0.01;0.08;1" keyPoints="0;0;1;1" path="M118,247 L190,247"/>
     <animate attributeName="opacity" dur="14s" begin="1s" repeatCount="indefinite"
       keyTimes="0;0.01;0.02;0.07;0.08;1" values="0;0;1;1;0;0"/>
   </circle>
   <circle class="hla-dot hla-dot-u" r="4.5" opacity="0">
     <animateMotion dur="14s" begin="1s" repeatCount="indefinite" calcMode="linear"
-      keyTimes="0;0.10;0.17;1" keyPoints="0;0;1;1" path="M642,237 L560,237"/>
+      keyTimes="0;0.10;0.17;1" keyPoints="0;0;1;1" path="M642,247 L560,247"/>
     <animate attributeName="opacity" dur="14s" begin="1s" repeatCount="indefinite"
       keyTimes="0;0.10;0.11;0.16;0.17;1" values="0;0;1;1;0;0"/>
   </circle>
   <circle class="hla-dot hla-dot-g" r="4.5" opacity="0">
     <animateMotion dur="14s" begin="1s" repeatCount="indefinite" calcMode="linear"
-      keyTimes="0;0.20;0.36;1" keyPoints="0;0;1;1" path="M94,46 L245,46 L245,132"/>
+      keyTimes="0;0.20;0.36;1" keyPoints="0;0;1;1" path="M94,38 L245,38 L245,110"/>
     <animate attributeName="opacity" dur="14s" begin="1s" repeatCount="indefinite"
       keyTimes="0;0.20;0.21;0.35;0.36;1" values="0;0;1;1;0;0"/>
   </circle>
   <circle class="hla-dot hla-dot-g" r="4.5" opacity="0">
     <animateMotion dur="14s" begin="1s" repeatCount="indefinite" calcMode="linear"
-      keyTimes="0;0.38;0.56;1" keyPoints="0;0;1;1" path="M94,46 L515,46 L515,132"/>
+      keyTimes="0;0.38;0.56;1" keyPoints="0;0;1;1" path="M94,38 L515,38 L515,110"/>
     <animate attributeName="opacity" dur="14s" begin="1s" repeatCount="indefinite"
       keyTimes="0;0.38;0.39;0.55;0.56;1" values="0;0;1;1;0;0"/>
   </circle>
   <circle class="hla-dot hla-dot-v" r="4.5" opacity="0">
     <animateMotion dur="14s" begin="1s" repeatCount="indefinite" calcMode="linear"
-      keyTimes="0;0.59;0.65;1" keyPoints="0;0;1;1" path="M245,289 L245,237"/>
+      keyTimes="0;0.59;0.65;1" keyPoints="0;0;1;1" path="M245,299 L245,247"/>
     <animate attributeName="opacity" dur="14s" begin="1s" repeatCount="indefinite"
       keyTimes="0;0.59;0.60;0.64;0.65;1" values="0;0;1;1;0;0"/>
   </circle>
   <circle class="hla-dot hla-dot-v" r="4.5" opacity="0">
     <animateMotion dur="14s" begin="1s" repeatCount="indefinite" calcMode="linear"
-      keyTimes="0;0.66;0.77;1" keyPoints="0;0;1;1" path="M338,289 L380,289 L380,237 L470,237"/>
+      keyTimes="0;0.66;0.77;1" keyPoints="0;0;1;1" path="M338,299 L380,299 L380,247 L470,247"/>
     <animate attributeName="opacity" dur="14s" begin="1s" repeatCount="indefinite"
       keyTimes="0;0.66;0.67;0.76;0.77;1" values="0;0;1;1;0;0"/>
   </circle>
   <circle class="hla-dot hla-dot-g" r="4.5" opacity="0">
     <animateMotion dur="14s" begin="1s" repeatCount="indefinite" calcMode="linear"
-      keyTimes="0;0.80;0.87;1" keyPoints="0;0;1;1" path="M245,132 L245,196"/>
+      keyTimes="0;0.80;0.87;1" keyPoints="0;0;1;1" path="M245,110 L245,170"/>
     <animate attributeName="opacity" dur="14s" begin="1s" repeatCount="indefinite"
       keyTimes="0;0.80;0.81;0.86;0.87;1" values="0;0;1;1;0;0"/>
   </circle>
   <circle class="hla-dot hla-dot-g" r="4.5" opacity="0">
     <animateMotion dur="14s" begin="1s" repeatCount="indefinite" calcMode="linear"
-      keyTimes="0;0.88;0.95;1" keyPoints="0;0;1;1" path="M515,132 L515,196"/>
+      keyTimes="0;0.88;0.95;1" keyPoints="0;0;1;1" path="M515,110 L515,170"/>
     <animate attributeName="opacity" dur="14s" begin="1s" repeatCount="indefinite"
       keyTimes="0;0.88;0.89;0.94;0.95;1" values="0;0;1;1;0;0"/>
   </circle>
 
   <!-- 범례 — 한 줄 -->
-  <circle cx="16" cy="336" r="4.5" fill="#e03131"/>
-  <text x="26" y="340" class="hla-s">요청 (dev · stg)</text>
-  <circle cx="126" cy="336" r="4.5" fill="#f08c2e"/>
-  <text x="136" y="340" class="hla-s">이미지 push · pull</text>
-  <circle cx="246" cy="336" r="4.5" fill="#2f6fdb"/>
-  <text x="256" y="340" class="hla-s">ArgoCD 동기화</text>
+  <circle cx="16" cy="340" r="4.5" fill="#e03131"/>
+  <text x="26" y="344" class="hla-s">요청 (dev · stg)</text>
+  <circle cx="126" cy="340" r="4.5" fill="#f08c2e"/>
+  <text x="136" y="344" class="hla-s">이미지 push · pull</text>
+  <circle cx="246" cy="340" r="4.5" fill="#2f6fdb"/>
+  <text x="256" y="344" class="hla-s">ArgoCD 동기화</text>
 </svg>
-<figcaption>dev는 DB · 캐시 · Kafka까지 클러스터 안, stg는 DB · 캐시를 AWS 관리형으로 분리. GitLab이 사설망에 있어 stg는 ECR 승격과 노트북 ArgoCD의 원격 동기화로 배포 — 이미지는 두 환경 동일.</figcaption>
+<figcaption>이미지는 한 번 빌드 — dev는 GitLab 레지스트리, stg는 수동 승격한 ECR에서 pull. 배포는 노트북 ArgoCD 하나가 두 클러스터를 동기화 — EKS가 사설망 GitLab에 접근할 수 없어 stg는 ECR과 EKS API로 원격 배포. 사용자는 dev, 부하 발생기는 stg에 요청.</figcaption>
 </figure>
 
 <!-- 목차 — 세 묶음 · 여섯 줄. 이 페이지의 그림은 위 구성도 하나뿐이라 카드 테두리 없이 목록으로 둔다.
-     묶음은 구성도와 같은 축: 좌우 클러스터 둘 = 환경 · 위 파이프라인 = 배포 · 관측 · 서비스 상자와 발생기 = 서비스 · 검증.
+     묶음은 구성도와 같은 축: 좌우 클러스터 둘 = 환경 · 위 파이프라인과 관측 칸 = 배포 · 관측 · 서비스 칸과 발생기 = 서비스 · 검증.
      줄 = 영역 이름 + 구절 하나(핵심 구성 + 핵심 선택, 값은 각 카드에 적힌 것만). 문장은 쓰지 않는다.
      제목은 목록의 역할(세부 페이지 안내)만 — "설계 · 결과" 는 줄 내용과 맞지 않았다.
      a 안은 inline 요소만 — 블록을 넣으면 compress_html 과 테마 앵커가 a 를 쪼갠다 -->
