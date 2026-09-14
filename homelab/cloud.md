@@ -155,7 +155,7 @@ Terraform으로 AWS 서울 리전 VPC에 EKS 노드 7대(app 4 · booking 2 · �
     <text class="hla-s2" x="582" y="572">복제</text>
   </g>
 </svg>
-<figcaption>배치는 2026-09-14 클러스터 기준(주요 파드만).</figcaption>
+<figcaption>AZ 3개에 노드 · DB · 캐시를 나눈 배치 — 2026-09-14 클러스터 기준(주요 파드만).</figcaption>
 </figure>
 
 ## 설계 결정
@@ -166,8 +166,8 @@ Terraform으로 AWS 서울 리전 VPC에 EKS 노드 7대(app 4 · booking 2 · �
 
 | 항목 | 선택 | 이유 |
 |---|---|---|
-| 노드 배치 | **AZ 3개** · app 4 · booking 2(AZ별 · taint) · 관측 1(AZ 고정) | Kafka 브로커 AZ마다 1대 — AZ 장애에도 과반 유지 · booking은 JVM 컴파일이 브로커를 밀어내 분리 |
-| DB · 캐시 | **RDS Multi-AZ · ElastiCache 복제본 1** | AZ 하나가 죽어도 다른 AZ의 대기 · 복제본이 자동으로 넘겨받음 — Kafka를 AZ 3개에 둔 것과 맞춤 |
+| 노드 배치 | **AZ 3개** · app 4 · booking 2(AZ별 · taint) · 관측 1(AZ 고정) | Kafka 브로커 AZ마다 1대 — AZ 장애에도 과반 유지 · booking은 JVM 컴파일이 브로커 CPU를 점유해 분리 |
+| DB · 캐시 | **RDS Multi-AZ · ElastiCache 복제본 1** | AZ 장애 시 다른 AZ의 대기 · 복제본으로 자동 전환 — Kafka를 AZ 3개에 둔 것과 맞춤 |
 {:.hl-dec}
 
 <div class="hl-sub" markdown="0">보안</div>
@@ -182,9 +182,9 @@ Terraform으로 AWS 서울 리전 VPC에 EKS 노드 7대(app 4 · booking 2 · �
 
 | 항목 | 선택 | 이유 |
 |---|---|---|
-| 환경 수명 | **Terraform state 둘** — bootstrap 유지 · stg 삭제 | ECR · 관측 버킷은 남기고 클러스터만 지워 회차 간 비교 데이터 유지 |
+| 환경 수명 | **Terraform state 둘** — bootstrap 유지 · stg 삭제 | ECR · S3 관측 버킷은 남기고 클러스터만 지워 회차 간 비교 데이터 유지 |
 | 서브넷 | **퍼블릭 · NAT 없음** | AZ별 NAT 비용 대신 보안 그룹으로 제한 — prd는 프라이빗 + AZ별 NAT |
-| 클러스터 안에 둔 것 | **Kafka · 관측** | MSK는 비용 60배 · 집 Mimir는 활성 시리즈 상한의 91.8%라 stg 지표 수용 불가 |
+| 클러스터 안에 둔 것 | **Kafka · 관측** | MSK는 하루 약 $3.6 추가 · 집 Mimir는 활성 시리즈 상한의 91.8%라 stg 지표 수용 불가 |
 {:.hl-dec}
 
 ## 트러블슈팅
@@ -193,13 +193,13 @@ Terraform으로 AWS 서울 리전 VPC에 EKS 노드 7대(app 4 · booking 2 · �
 |---|---|---|
 | 노드그룹이 **`CREATING`에서 20분 넘게 멈춤** — CloudTrail에 오류 없음 | 계정 vCPU 한도 32 소진 — 원인은 ASG scaling activities에만 기록 | 한도 **64**로 증설 → 1분 23초 뒤 ACTIVE |
 | 관측 노드 교체 후 **Mimir ingester 95분 Pending** — metric 저장 중단 | 서브넷 3개 지정으로 새 노드가 2b에 생성 — EBS 볼륨은 2c에만 연결 가능 | 관측 노드그룹을 **볼륨이 있는 AZ로 고정** |
-| Redis 전송 암호화(TLS)를 켠 뒤 **앱 연결 실패** — 인증서 이름 불일치 | TLS를 켜면 AWS가 접속 주소를 `master.…`로 변경 — 앱은 옛 주소로 접속 | `REDIS_HOST`를 새 주소로 교체 · 앱 TLS를 먼저 켠 뒤 TLS 필수로 — **무중단 전환** |
+| Redis 전송 암호화(TLS)를 켠 뒤 **앱 연결 실패** — 인증서 이름 불일치 | TLS를 켜면 AWS가 접속 주소를 `master.…`로 변경 — 앱은 옛 주소로 접속 | 새 주소로 교체 · 앱 TLS를 먼저 켠 뒤 TLS 필수로 — **무중단 전환** |
 {:.hl-tbl}
 
 ## 결과
 
 - **자원 65개 · 첫 생성 30–40분** — 부하 테스트 뒤 stg state만 삭제
-- **AWS 비용 US$151.79 · 하루 약 US$50** — 5만 명 부하 스펙의 stg 3일 운영(2026-09-12 – 14), 부하 발생기 포함
+- **AWS 비용 US$151.79 · 하루 약 US$50** — 5만 명 부하 스펙 stg 3일(2026-09-12 – 14) · 부하 발생기 포함
   - EC2 $95.80 — EKS 노드 m5.xlarge × 7(app 4 · booking 2 · 관측 1) · 부하 발생기 c5.2xlarge 최대 4대
   - RDS $21.38 — MySQL db.m5.large Multi-AZ
   - ElastiCache $17.38 — Redis cache.m5.large × 2(주 · 복제본)
@@ -210,7 +210,7 @@ Terraform으로 AWS 서울 리전 VPC에 EKS 노드 7대(app 4 · booking 2 · �
 
 - **운영 기간 3일** — 장기 운영 · 업그레이드 · 장애 대응 경험 없음
 - **DB 보안 그룹은 노드 단위** — 출구 NetworkPolicy가 없는 파드(관측 Job)는 RDS에 연결됨, prd는 Security Groups for Pods
-- **허브가 집에 위치** — 집 공인 IP가 바뀌면 재적용
+- **허브가 집에 위치** — 집 공인 IP가 바뀌면 EKS API 허용 목록 재적용
 - **관측 단일 AZ** — 해당 AZ 장애 시 관측 중단
 
 ## 기술 스택
