@@ -155,7 +155,7 @@ Terraform으로 AWS 서울 리전 VPC에 EKS 노드 7대(app 4 · booking 2 · �
     <text class="hla-s2" x="582" y="572">복제</text>
   </g>
 </svg>
-<figcaption>배치는 2026-09-14 클러스터 기준(주요 파드만). RDS는 동기 · ElastiCache는 비동기 복제.</figcaption>
+<figcaption>배치는 2026-09-14 클러스터 기준(주요 파드만).</figcaption>
 </figure>
 
 ## 설계 결정
@@ -167,7 +167,7 @@ Terraform으로 AWS 서울 리전 VPC에 EKS 노드 7대(app 4 · booking 2 · �
 | 항목 | 선택 | 이유 |
 |---|---|---|
 | 노드 배치 | **AZ 3개** · app 4 · booking 2(AZ별 · taint) · 관측 1(AZ 고정) | Kafka 브로커 AZ마다 1대 — AZ 장애에도 과반 유지 · booking은 JVM 컴파일이 브로커를 밀어내 분리 |
-| DB · 캐시 | **RDS Multi-AZ · ElastiCache 복제본 1** | MySQL은 prd 조건 재현(관리형 전환 · 동기 복제 쓰기 지연) · Redis 복제본은 Kafka처럼 AZ 장애 대비 |
+| DB · 캐시 | **RDS Multi-AZ · ElastiCache 복제본 1** | MySQL은 prd와 같은 관리형 · 대기 기록 후 커밋으로 측정 · Redis 복제본은 Kafka처럼 AZ 장애 대비 |
 {:.hl-dec}
 
 <div class="hl-sub" markdown="0">보안</div>
@@ -200,6 +200,9 @@ Terraform으로 AWS 서울 리전 VPC에 EKS 노드 7대(app 4 · booking 2 · �
 
 - **자원 65개 · 첫 생성 30–40분** — 부하 테스트 뒤 stg state만 삭제
 - **AWS 비용 US$151.79** — stg 운영 3일(2026-09-12 – 14), 부하 발생기 포함 · EC2 $95.80 · RDS $21.38 · ElastiCache $17.38
+  - EKS 노드 m5.xlarge × 7(app 4 · booking 2 · 관측 1) · 디스크 Kafka 60Gi × 3 · 관측 10Gi × 3
+  - RDS MySQL db.m5.large Multi-AZ · ElastiCache Redis cache.m5.large × 2(주 · 복제본)
+  - 부하 발생기 c5.2xlarge 최대 4대 — 별도 Terraform · 기본 VPC
 - **5만 명 부하 수용** — 판정 · 병목은 [부하 테스트](/homelab/capacity/)
 
 ## 한계
