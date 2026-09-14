@@ -2,14 +2,14 @@
 layout: page
 title: 부하 테스트
 description: >
-  SLO 5개를 먼저 확정하고, dev 1만 · stg 5만 명까지 실제 사용자 여정으로 부하를 걸어 스펙을 실측했습니다
+  SLO 5개를 먼저 확정하고, dev 1만 · stg 5만 명까지 실제 사용자 여정으로 스펙 실측
 permalink: /homelab/capacity/
 ---
 
 <p class="hl-back" markdown="0"><a href="/homelab/">← 홈랩</a></p>
 
 기준 사례 — 2024년 한국시리즈 극장 생중계 예매, 대기 인원 16만 명.
-정원 · 커넥션 풀 · 메모리 상한은 측정 전 설정값이었고, **dev(홈랩) 1만 명 · stg(EKS) 5만 명까지 실측**했습니다.
+정원 · 커넥션 풀 · 메모리 상한은 측정 전 설정값 — **dev(홈랩) 1만 명 · stg(EKS) 5만 명까지 실측**.
 {:.lead}
 
 ## SLO — 테스트 전 확정

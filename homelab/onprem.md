@@ -2,7 +2,7 @@
 layout: page
 title: 온프레미스
 description: >
-  노트북 1대에 Proxmox · VM 3대로 k3s HA 클러스터를 구성하고, 방화벽 뒤 격리망에서 엣지를 거쳐 공개했습니다
+  노트북 1대 · Proxmox VM 3대로 k3s HA 클러스터 구성, 방화벽 뒤 격리망에서 엣지를 거쳐 공개
 permalink: /homelab/onprem/
 redirect_from:
   - /homelab/cluster/
@@ -11,8 +11,8 @@ redirect_from:
 
 <p class="hl-back" markdown="0"><a href="/homelab/">← 홈랩</a></p>
 
-dev 환경 — 부하 테스트로 stg 스펙을 산정하는 환경입니다. 노트북 1대(RAM 32GB, 내장 Windows 유지)에 구성했습니다.
-컨트롤 플레인 · 네트워크 · 로드밸런서 · 볼륨을 **층마다 직접 선택**하고, 노드를 **방화벽 뒤로 격리한 뒤 포트를 열었습니다.**
+dev 환경 — 부하 테스트로 stg 스펙을 산정하는 환경. 노트북 1대(RAM 32GB, 내장 Windows 유지)에 구성.
+컨트롤 플레인 · 네트워크 · 로드밸런서 · 볼륨은 **층마다 직접 선택**, 노드는 **방화벽 뒤로 격리한 뒤 포트 개방**.
 {:.lead}
 
 ## 온프레미스 구조

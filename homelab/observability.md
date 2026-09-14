@@ -2,14 +2,14 @@
 layout: page
 title: 옵저버빌리티
 description: >
-  metric · log · trace를 수집기 하나로 모으는 LGTM 스택을 dev · stg에 같은 차트로 배포했습니다 — 부하 판정 기준은 이 서버 지표입니다
+  metric · log · trace를 수집기 하나로 모으는 LGTM 스택, dev · stg에 같은 차트로 배포 — 부하 판정 기준 서버 지표
 permalink: /homelab/observability/
 ---
 
 <p class="hl-back" markdown="0"><a href="/homelab/">← 홈랩</a></p>
 
-metric · log · trace를 Alloy 하나로 수집하는 LGTM 스택입니다.
-dev · stg에 같은 차트로 배포했고, **부하 테스트 판정은 모두 이 서버 지표 기준**입니다.
+metric · log · trace를 Alloy 하나로 수집하는 LGTM 스택.
+dev · stg에 같은 차트로 배포, **부하 테스트 판정은 모두 이 서버 지표 기준**.
 {:.lead}
 
 ## 옵저버빌리티 구조
@@ -105,7 +105,7 @@ dev · stg에 같은 차트로 배포했고, **부하 테스트 판정은 모두
 
 ## 대시보드와 알림
 
-대시보드는 코드(cgv-infra `manifests/`)로 배포 — dev는 클러스터 · 호스트 · 앱, stg는 흐름(판정 · 층별 진단 · 노드) · queue · booking · 데이터. 상시 감시는 알림이 담당합니다.
+대시보드는 코드(cgv-infra `manifests/`)로 배포 — dev는 클러스터 · 호스트 · 앱, stg는 흐름(판정 · 층별 진단 · 노드) · queue · booking · 데이터. 상시 감시는 알림 담당.
 
 <figure class="hl-shot" markdown="0">
   <img src="/assets/img/homelab/obs/host-phone.png" alt="충전선을 뽑은 순간 — 왼쪽 호스트 대시보드의 전원이 배터리(빨강)로 바뀌고 전력 행의 알림 상태 표시가 바뀌었으며, 오른쪽 폰 Discord에 발생 알림이 도착" loading="lazy">

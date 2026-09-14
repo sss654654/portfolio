@@ -4,9 +4,9 @@ title: 포트폴리오
 sitemap: true
 ---
 
-온프레미스와 AWS에 쿠버네티스 인프라를 구축하고, 측정한 값으로 판단하는 엔지니어입니다.
-기구축 k3s의 **옵저버빌리티**를 맡은 뒤, 그 아래 층까지 이해하려고 **가상화 · 네트워크부터** 직접 세웠습니다.
-원인은 metric · log · trace로 찾고, 용량은 SLO 기반 **부하 테스트**로 정합니다.
+쿠버네티스 인프라 · 옵저버빌리티 엔지니어입니다.
+기구축 k3s 환경의 **옵저버빌리티**를 담당했고, **가상화 · 네트워크부터 AWS EKS까지** 인프라를 단독 구축했습니다.
+문제 원인은 metric · log · trace로 추적하고, 용량은 SLO 기반 **부하 테스트로 50,000명까지** 실측했습니다.
 {:.lead}
 
 * [이력서 PDF](/assets/subinhong-resume.pdf) — 2장
@@ -32,7 +32,7 @@ sitemap: true
   </a>
 </div>
 
-<p class="demo-caption" markdown="0">예매 오픈부터 대기열 통과 · 예매 완료까지 실제 서비스 화면 녹화입니다.</p>
+<p class="demo-caption" markdown="0">예매 오픈 · 대기열 통과 · 예매 완료까지 실제 서비스 화면 녹화.</p>
 
 <!-- 가동 상태 점 — 데모의 두 경로를 읽기 전용으로 한 번씩 조회한다.
      queue    GET  /api/admission/stats   Traefik → queue
@@ -79,14 +79,14 @@ sitemap: true
 })();
 </script>
 
-데모용 설정 — 대기 행렬이 보이도록 동시 입장 60명, 좌석은 3시간마다 초기화됩니다. 구성과 선택 근거는 [홈랩](/homelab/)에 있습니다.
+데모용 설정 — 대기 행렬 표시를 위해 동시 입장 60명, 좌석은 3시간마다 초기화. 구성 · 선택 근거는 [홈랩](/homelab/).
 
 ## 이력
 
-* **2026.07 – 09** — [홈랩](/homelab/) — 노트북 한 대에 k3s(dev)를 세워 인터넷 공개까지 단독 구축 · 같은 서비스를 Terraform · EKS(stg)에 올려 **50,000명 부하 테스트 실측**
-* **2026.03 – 06** — [semiai 인프라팀](/projects/semiai/) — 기구축 k3s 위 옵저버빌리티 담당 · 인프라·앱 대시보드, Go 백엔드 네 신호 계측 · heap profile 진단으로 **OOMKilled 해소**
+* **2026.07 – 09** — [홈랩](/homelab/) — 노트북 k3s(dev) 단독 구축 · 인터넷 공개, Terraform · EKS(stg)로 확장 · **50,000명 부하 테스트 실측**
+* **2026.03 – 06** — [semiai 인프라팀](/projects/semiai/) — 기구축 k3s 옵저버빌리티 담당 · 인프라 · 앱 대시보드 · Go 백엔드 네 신호 계측 · heap profile 진단으로 **OOMKilled 해소**
 * <small>2026.02 — 단국대학교 소프트웨어학과 졸업</small>
-* **2025.06 – 09** — [CJ 올리브네트웍스 클라우드웨이브 6기](/projects/cgv/) — CGV 예매 대기열, 5인 팀 · **AWS 개발계 네트워크(Terraform)**와 Redis 대기열 백엔드 담당
+* **2025.06 – 09** — [CJ 올리브네트웍스 클라우드웨이브 6기](/projects/cgv/) — CGV 예매 대기열 · 5인 팀 · **AWS 개발계 네트워크(Terraform)** · Redis 대기열 백엔드 담당
 * <small>2023.08 – 2025.05 — 공군 복무</small>
 * **2022.07 – 12** — [LevelDB 캐시 메커니즘 분석](/projects/leveldb/) — 학부 연구생 · **KSC 2022 학부생 논문 1저자**
 * <small>2021.03 — 단국대학교 소프트웨어학과 편입</small>

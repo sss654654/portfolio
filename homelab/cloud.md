@@ -2,14 +2,14 @@
 layout: page
 title: 클라우드
 description: >
-  dev에서 산정한 서비스를 같은 차트 · 파이프라인 · 이미지로 AWS EKS stg 환경에 구성했습니다
+  dev에서 산정한 서비스를 같은 차트 · 파이프라인 · 이미지로 AWS EKS stg 환경에 구성
 permalink: /homelab/cloud/
 ---
 
 <p class="hl-back" markdown="0"><a href="/homelab/">← 홈랩</a></p>
 
-stg 환경 — dev에서 산정한 스펙을 AWS 관리형 위에 같은 이미지로 올려 5만 명까지 측정했습니다.
-컨트롤 플레인 · 로드밸런서 · DB · 캐시 · 레지스트리는 AWS 관리형, Kafka · 옵저버빌리티는 클러스터 안에 두었습니다.
+stg 환경 — dev에서 산정한 스펙을 AWS 관리형 위에 같은 이미지로 올려 5만 명까지 측정.
+컨트롤 플레인 · 로드밸런서 · DB · 캐시 · 레지스트리는 AWS 관리형, Kafka · 옵저버빌리티는 클러스터 안.
 {:.lead}
 
 ## 클라우드 구조
@@ -151,8 +151,8 @@ stg 환경 — dev에서 산정한 스펙을 AWS 관리형 위에 같은 이미�
     <text class="hla-s2" x="582" y="572">복제</text>
   </g>
 </svg>
-<figcaption>노드 · 파드 배치는 2026-09-14 클러스터 기준(주요 파드만). booking · 관측 노드는 taint로 다른 파드 배치를 막습니다.
-RDS는 2c → 2b 동기 복제, ElastiCache는 2b → 2a 비동기 복제. 서비스 ALB 외에 Grafana용 ALB(집 IP만 허용)가 하나 더 있습니다.</figcaption>
+<figcaption>노드 · 파드 배치는 2026-09-14 클러스터 기준(주요 파드만). booking · 관측 노드는 taint로 다른 파드 배치 차단.
+RDS는 2c → 2b 동기 복제, ElastiCache는 2b → 2a 비동기 복제. 서비스 ALB 외 Grafana용 ALB(집 IP만 허용) 1개 추가.</figcaption>
 </figure>
 
 ## 설계 결정
