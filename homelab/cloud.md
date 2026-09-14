@@ -61,7 +61,7 @@ Terraform으로 AWS 서울 리전 VPC에 EKS 노드 7대(app 4 · booking 2 · �
   <!-- VPC · 입구 -->
   <g class="hla-g hla-g2">
     <rect x="146" y="196" width="590" height="336" rx="4" fill="none" stroke="#8c4fff" stroke-width="1.3"/>
-    <text class="hla-s2" x="158" y="213" style="fill:#8c4fff">VPC 10.20.0.0/16</text>
+    <text class="hla-s2" x="158" y="213" style="fill:#8c4fff">VPC</text>
 
     <line class="hla-ln hla-dash" x1="304" y1="188" x2="304" y2="227" marker-end="url(#hlw-arrow)"/>
     <line class="hla-ln-img hla-dash" x1="440" y1="188" x2="440" y2="227" marker-end="url(#hlw-i)"/>
@@ -79,7 +79,6 @@ Terraform으로 AWS 서울 리전 VPC에 EKS 노드 7대(app 4 · booking 2 · �
 
     <image href="/assets/img/icons/aws-alb.png" x="188" y="356" width="36" height="36"/>
     <text class="hla-s2" x="206" y="408" text-anchor="middle">ALB</text>
-    <text class="hla-a" x="206" y="422" text-anchor="middle">ACM · 443</text>
     <line class="hla-ln" x1="224" y1="374" x2="290" y2="374" marker-end="url(#hlw-arrow)"/>
   </g>
 
@@ -93,7 +92,7 @@ Terraform으로 AWS 서울 리전 VPC에 EKS 노드 7대(app 4 · booking 2 · �
     <text class="hla-s2" x="248" y="448" style="fill:#147eba">AZ 2c</text>
 
     <rect x="292" y="230" width="290" height="292" rx="4" fill="none" stroke="#ed7100" stroke-width="1.3"/>
-    <text class="hla-s2" x="300" y="246" style="fill:#ed7100">EKS 1.36 · 노드 m5.xlarge ×7</text>
+    <text class="hla-s2" x="300" y="246" style="fill:#ed7100">EKS · m5.xlarge ×7</text>
 
     <!-- 2a -->
     <rect class="hla-node" x="300" y="254" width="84" height="58" rx="5"/>
@@ -151,7 +150,7 @@ Terraform으로 AWS 서울 리전 VPC에 EKS 노드 7대(app 4 · booking 2 · �
     <image href="/assets/img/icons/apachekafka.svg" x="254" y="560" width="16" height="16"/>
     <text class="hla-s2" x="274" y="572">Kafka 브로커</text>
     <image href="/assets/img/icons/grafana.svg" x="356" y="560" width="16" height="16"/>
-    <text class="hla-s2" x="376" y="572">Grafana · Mimir · Loki · Tempo</text>
+    <text class="hla-s2" x="376" y="572">관측 (LGTM)</text>
     <line class="hla-ln hla-dash" x1="552" y1="568" x2="576" y2="568"/>
     <text class="hla-s2" x="582" y="572">복제</text>
   </g>
@@ -161,26 +160,41 @@ Terraform으로 AWS 서울 리전 VPC에 EKS 노드 7대(app 4 · booking 2 · �
 
 ## 설계 결정
 
+<!-- 클라우드의 판단 축 = 가용성 · 보안 · 비용의 절충. 진입(ALB · ACM)과 관리 경로 제한은 리드가 말한다 -->
+
+<div class="hl-sub" markdown="0">가용성</div>
+
 | 항목 | 선택 | 이유 |
 |---|---|---|
-| Terraform state | **bootstrap / stg 분리** | 관측 버킷 · ECR은 클러스터 삭제 후에도 유지 — 회차 간 비교용. stg만 사용 후 삭제 |
-| 관리형 경계 | **MySQL · Redis 관리형 / Kafka · 옵저버빌리티 클러스터 안** | MySQL — prd에서 파드로 운영하지 않음 · Redis — Lua가 Cluster Mode에서 `CROSSSLOT`(클러스터 모드 끔) · Kafka — MSK 하루 $3.6, 60배 · 관측 — 집 Mimir 활성 시리즈가 상한의 91.8% |
-| AZ | **3개** | Kafka 브로커 3대 = KRaft 과반 + `min.insync.replicas 2` — AZ 2개면 한 AZ에 2대, 그 AZ 장애 시 쓰기 중단 |
-| 서브넷 | **퍼블릭 · NAT 없음** | NAT 1개는 AZ 3개 설계와 불일치, AZ별 NAT는 비용. 노드 공인 IP는 보안 그룹으로 제한 — prd는 프라이빗 + AZ별 NAT |
-| 노드그룹 | **app ×4 · booking ×2(AZ별 · taint) · 관측 ×1(AZ 고정)** | 오픈 시 CPU가 몰리는 booking만 전용 노드 · 관측은 볼륨이 AZ에 묶여 AZ 고정 · t 계열 제외(크레딧 고갈과 서비스 한계 구분 불가) · 대수 고정(병목 은폐 방지) |
-| 파드의 AWS 자격 | **IRSA** · IMDSv2 hop limit 1 | 권한 단위를 ServiceAccount로 — 노드 역할에 주면 그 노드의 모든 파드가 보유. hop 1로 파드의 노드 역할 접근 차단 |
-| 진입 | **ALB · ACM · 파드 IP 대상** | MetalLB L2 광고가 VPC에서 동작하지 않음 · 층 6개(Cloudflare · OPNsense · MetalLB · Traefik · cert-manager · Ingress) → 2개(ALB · Service) |
-| Redis | **복제본 1 · TLS + AUTH** | 복제본 — Kafka AZ 3개 배치와 짝 · TLS + AUTH가 없으면 6379에 닿는 파드가 대기열 · 좌석 락 · 입장 인증 전권 보유(보안 그룹은 출발지만 검사) |
+| 노드 배치 | **AZ 3개** · app 4 · booking 2(AZ별 · taint) · 관측 1(AZ 고정) | Kafka 브로커를 AZ마다 1대 — 한 AZ 장애에도 과반 유지 · 오픈 시 CPU가 몰리는 booking만 전용 노드 |
+| DB · 캐시 | **RDS Multi-AZ · ElastiCache 복제본 1** | MySQL은 prd에서 파드로 운영하지 않음 · 주 장애 시 대기 · 복제본으로 전환 |
+{:.hl-dec}
+
+<div class="hl-sub" markdown="0">보안</div>
+
+| 항목 | 선택 | 이유 |
+|---|---|---|
+| 파드의 AWS 권한 | **IRSA** · IMDSv2 hop limit 1 | 노드 역할에 주면 그 노드의 모든 파드가 보유 — ServiceAccount 단위로 분리, 노드 역할 접근 차단 |
+| Redis 접근 | **TLS + AUTH** | 인증이 없으면 6379에 닿는 파드가 대기열 · 좌석 락 · 입장 인증 전권 보유(보안 그룹은 출발지만 검사) |
+{:.hl-dec}
+
+<div class="hl-sub" markdown="0">비용 · 수명주기</div>
+
+| 항목 | 선택 | 이유 |
+|---|---|---|
+| 환경 수명 | **Terraform state 둘** — bootstrap 유지 · stg 삭제 | ECR · 관측 버킷은 남기고 클러스터만 지워 회차 간 비교 데이터 유지 |
+| 서브넷 | **퍼블릭 · NAT 없음** | AZ별 NAT 비용 대신 보안 그룹으로 제한 — prd는 프라이빗 + AZ별 NAT |
+| 클러스터 안에 둔 것 | **Kafka · 관측** | MSK는 비용 60배 · 집 Mimir는 활성 시리즈 상한의 91.8%라 stg 지표 수용 불가 |
 {:.hl-dec}
 
 ## 트러블슈팅
 
 | 증상 | 원인 | 조치 |
 |---|---|---|
-| 노드그룹이 **`CREATING`에서 20분 넘게 멈춤** — `describe-nodegroup` · CloudTrail에 오류 없음 | 계정 EC2 vCPU 한도 32 소진 — `VcpuLimitExceeded`는 ASG scaling activities에만 기록 | 한도 **64**로 증설 → 1분 23초 뒤 ACTIVE |
-| 노드그룹 교체 후 **Mimir ingester 95분 Pending** — 새 지표 저장 중단 | 관측 노드그룹에 서브넷 3개 지정 → 노드가 2c → 2b로 이동, EBS 볼륨은 2c에 고정 | 상태를 가진 노드그룹만 **단일 AZ 고정** |
-| Redis 암호화 적용 후 **`x509: certificate is valid for …` 연결 실패** | 전송 암호화를 켜면 주 엔드포인트가 `master.…`로 바뀌고 인증서도 새 이름 기준 | `REDIS_HOST` 변경 — 무중단 순서 preferred → 앱 TLS → required → ROTATE → SET |
-| **30명이 1명으로 집계** — requestId 앞 8자 동일 | 평문 http에서 `crypto.randomUUID` 미제공 → 시각 기반 폴백 id 중복 | HTTPS 입구(ACM · 443) + 폴백 수정 → 30명 중 **29명** 예매 |
+| 노드그룹이 **`CREATING`에서 20분 넘게 멈춤** — CloudTrail에 오류 없음 | 계정 vCPU 한도 32 소진 — 원인은 ASG scaling activities에만 기록 | 한도 **64**로 증설 → 1분 23초 뒤 ACTIVE |
+| 노드그룹 교체 후 **Mimir ingester 95분 Pending** | 서브넷 3개 지정으로 관측 노드가 2c → 2b 이동, EBS 볼륨은 2c에 고정 | 상태를 가진 노드그룹만 **단일 AZ 고정** |
+| Redis 암호화 적용 후 **인증서 오류로 연결 실패** | 전송 암호화를 켜면 엔드포인트가 `master.…`로 바뀌고 인증서도 새 이름 기준 | `REDIS_HOST` 변경, 앱 TLS를 먼저 켠 뒤 required로 — **무중단 전환** |
+| **30명이 1명으로 집계** — requestId 앞 8자 동일 | 평문 http에서 `crypto.randomUUID` 미제공 → 시각 기반 폴백 id 중복 | HTTPS 입구 + 폴백 수정 → 30명 중 **29명** 예매 |
 {:.hl-tbl}
 
 ## 결과
@@ -205,16 +219,15 @@ Terraform으로 AWS 서울 리전 VPC에 EKS 노드 7대(app 4 · booking 2 · �
 </div>
 -->
 
-- **자원 56개 · Terraform state 2개** — 생성 30–40분, 부하 테스트 뒤 삭제하는 단기 환경
-- **AWS 비용 US$151.79** — stg 운영 3일(2026-09-12 – 14), 부하 발생기 포함 · EC2 $95.80 · RDS $21.38 · ElastiCache $17.38 · EKS $4.56
-- **5만 명 부하 테스트로 노드 구조 확정** — SLO 5개 통과, booking 전용 노드 2대 추가. 근거는 [부하 테스트](/homelab/capacity/)
-- **운영 중인 Redis에 TLS · AUTH 무중단 적용**
+- **자원 56개 · 생성 30–40분** — 부하 테스트 뒤 stg state만 삭제
+- **AWS 비용 US$151.79** — stg 운영 3일(2026-09-12 – 14), 부하 발생기 포함 · EC2 $95.80 · RDS $21.38 · ElastiCache $17.38
+- **5만 명 부하 테스트 · SLO 5개 통과** — 노드 구조를 회차별 결과로 결정 · [부하 테스트](/homelab/capacity/)
 
 ## 한계
 
 - **운영 기간 3일** — 장기 운영 · 업그레이드 · 장애 대응 경험 없음
-- **데이터 보안 그룹이 노드 단위** — 노드 위 모든 파드가 통과, prd는 Security Groups for Pods
-- **허브가 집에 위치** — 집 공인 IP 변경 시 재적용 필요, 집 전원 차단 중에는 마지막 동기화 상태 유지
+- **파드 단위 네트워크 제어 없음** — 데이터 보안 그룹이 노드 단위, prd는 Security Groups for Pods
+- **허브가 집에 위치** — 집 공인 IP가 바뀌면 재적용
 - **관측 단일 AZ** — 해당 AZ 장애 시 관측 중단
 
 ## 기술 스택
