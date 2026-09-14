@@ -137,21 +137,6 @@ image-updater가 새 태그를 cgv-infra(배포 정의)에 커밋하면 노트�
 
 ## 결과
 
-<!-- 캡처 뒤 활성화 — 파일 둘 (EKS 가 꺼져 있어도 찍을 수 있다):
-     /assets/img/homelab/cicd/publish-ecr.png       GitLab 파이프라인 화면 — publish 단의 수동 job publish-ecr:* (재생 버튼)
-     /assets/img/homelab/cicd/image-updater-commit.png  cgv-infra 커밋 "build: automatic update of queue-stg" 의 diff — envs/stg/queue.yaml image.tag 한 줄
-<div class="hl-shots" markdown="0" aria-label="승격 화면 둘 — 수동 job과 되쓰기 커밋, 화살표로 넘겨 봅니다">
-  <figure class="hl-shot">
-    <img src="/assets/img/homelab/cicd/publish-ecr.png" alt="GitLab 파이프라인 — publish 단에 수동 job publish-ecr 셋이 실행 대기 중인 화면">
-    <figcaption><b>(승격 게이트)</b> publish 단 — GitLab 레지스트리 푸시는 자동, ECR 푸시는 이 job 수동 실행 시에만.</figcaption>
-  </figure>
-  <figure class="hl-shot">
-    <img src="/assets/img/homelab/cicd/image-updater-commit.png" alt="cgv-infra 커밋 diff — envs/stg/queue.yaml의 image.tag 한 줄이 새 커밋 해시로 바뀜" loading="lazy">
-    <figcaption><b>(되쓰기 커밋)</b> image-updater가 ECR 새 태그를 감지해 stg 환경 파일 tag 한 줄 커밋 — 이 커밋이 허브 sync 시작점.</figcaption>
-  </figure>
-</div>
--->
-
 - **stg 배포 1회 실측** — 코드 커밋부터 화면 반영 19분 41초, 이 중 ECR 등록 뒤는 태그 커밋 93초 · 동기화 21초
 - **반복 배포에 `kubectl` 0회** — 사람 손은 머지와 stg 승격 버튼뿐
 - **게이트 실제 차단 2건**(2026-09-10) — Go grpc HIGH · Java netty CRITICAL, 둘 다 레지스트리 등록 전 차단
