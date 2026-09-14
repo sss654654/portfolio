@@ -2,7 +2,7 @@
 layout: page
 title: HomeLab
 description: >
-  온프레미스 dev · AWS stg
+  개인 프로젝트 · 2026.07 – 09
 permalink: /homelab/
 ---
 
@@ -10,7 +10,7 @@ permalink: /homelab/
      한 문장에 한 가지: 두 클러스터의 역할 → 둘의 관계(dev 한계 → stg) → 둘을 잇는 배포 경로(아래 구성도로 넘어간다).
      서비스는 만든 목적이 아니라 올린 워크로드. 5만 명 실측은 홈 리드와 부하 카드가 말한다. -->
 
-노트북 k3s의 **dev**는 공개 데모 · 개발 환경, AWS EKS의 **stg**는 prd 스펙 산정용 부하 테스트 환경입니다.
+노트북 k3s의 **dev**는 공개 데모 · 개발 환경, AWS EKS의 **stg**는 부하 테스트로 prd 스펙을 산정한 환경입니다.
 stg는 dev가 3만 명 부하에서 노드 한계에 도달한 뒤 Terraform으로 구성했습니다.
 두 클러스터에는 대기열 예매 서비스를 데스크탑 GitLab&nbsp;CI와 노트북 ArgoCD 하나로 배포합니다.
 {:.lead}
@@ -64,6 +64,11 @@ stg는 dev가 3만 명 부하에서 노드 한계에 도달한 뒤 Terraform으�
   <rect x="140" y="188" width="210" height="128" rx="12" class="hla-outer"/>
   <image href="/assets/img/icons/kubernetes.svg" x="152" y="199" width="18" height="18"/>
   <text x="176" y="213" class="hla-t">노트북 · k3s dev</text>
+  <!-- 관측 — 두 클러스터 모두 LGTM 스택. 글자 없이 로고만 (Grafana · Mimir · Loki · Tempo) -->
+  <image href="/assets/img/icons/grafana.svg" x="284" y="202" width="13" height="13"/>
+  <image href="/assets/img/icons/mimir.svg" x="300" y="202" width="13" height="13"/>
+  <image href="/assets/img/icons/loki.svg" x="316" y="202" width="13" height="13"/>
+  <image href="/assets/img/icons/tempo.svg" x="332" y="202" width="13" height="13"/>
   <rect x="152" y="222" width="186" height="30" rx="8" class="hla-box"/>
   <image href="/assets/img/icons/ticket.svg" x="160" y="228" width="18" height="18"/>
   <text x="186" y="241" class="hla-c">대기열 서비스</text>
@@ -76,6 +81,10 @@ stg는 dev가 3만 명 부하에서 노드 한계에 도달한 뒤 Terraform으�
   <rect x="410" y="188" width="210" height="128" rx="12" class="hla-outer"/>
   <image href="/assets/img/icons/aws-eks.png" x="422" y="199" width="18" height="18"/>
   <text x="446" y="213" class="hla-t">AWS · EKS stg</text>
+  <image href="/assets/img/icons/grafana.svg" x="554" y="202" width="13" height="13"/>
+  <image href="/assets/img/icons/mimir.svg" x="570" y="202" width="13" height="13"/>
+  <image href="/assets/img/icons/loki.svg" x="586" y="202" width="13" height="13"/>
+  <image href="/assets/img/icons/tempo.svg" x="602" y="202" width="13" height="13"/>
   <rect x="422" y="222" width="186" height="30" rx="8" class="hla-box"/>
   <image href="/assets/img/icons/ticket.svg" x="430" y="228" width="18" height="18"/>
   <text x="456" y="241" class="hla-c">대기열 서비스</text>
@@ -178,9 +187,9 @@ stg는 dev가 3만 명 부하에서 노드 한계에 도달한 뒤 Terraform으�
   </div>
 
   <div class="hl-index-group">
-    <span class="hl-index-head">배포 · 관측 — 두 환경 공통</span>
+    <span class="hl-index-head">배포 · 관측</span>
     <a href="/homelab/cicd/"><b>CI/CD</b><span>GitLab CI 1회 빌드 · stg 수동 승격 · ArgoCD 허브 동기화</span></a>
-    <a href="/homelab/observability/"><b>옵저버빌리티</b><span>Alloy · Mimir · Loki · Tempo, 부하 판정은 서버 지표 기준</span></a>
+    <a href="/homelab/observability/"><b>옵저버빌리티</b><span>Alloy · Mimir · Loki · Tempo, 부하 테스트 판정은 서버 지표 기준</span></a>
   </div>
 
   <div class="hl-index-group">
@@ -198,10 +207,10 @@ stg는 dev가 3만 명 부하에서 노드 한계에 도달한 뒤 Terraform으�
 <div class="hl-index" markdown="0">
 
   <div class="hl-index-group">
-    <a href="https://zed6740.tistory.com/category/HomeLab"><b>블로그 · HomeLab 시리즈</b><span>온프레미스 선택부터 인터넷 공개까지 구축 기록</span></a>
     <a href="https://github.com/sss654654/cgv-infra"><b>GitHub · cgv-infra</b><span>클러스터 · 배포 정의, dev · stg 환경 값</span></a>
     <a href="https://github.com/sss654654/cgv-terraform"><b>GitHub · cgv-terraform</b><span>AWS 자원, 유지용 bootstrap · 삭제용 stg 두 state</span></a>
     <a href="https://github.com/sss654654/cgv-onprem"><b>GitHub · cgv-onprem</b><span>앱 소스, queue(Go) · booking(Spring) · frontend</span></a>
+    <a href="https://zed6740.tistory.com/category/HomeLab"><b>블로그 · HomeLab 시리즈</b><span>온프레미스 선택부터 인터넷 공개까지 구축 기록</span></a>
   </div>
 
 </div>

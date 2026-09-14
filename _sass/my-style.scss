@@ -312,14 +312,29 @@ ul.timeline > li:has(> small)::before {
   /* 이름 열 12rem — "블로그 · HomeLab 시리즈" · "GitHub · cgv-terraform" 이 10rem 에서 두 줄로 접힌다 */
   grid-template-columns: minmax(0, 12rem) minmax(0, 1fr);
   gap: .15rem 1.2rem;
-  padding: .5rem 0;
+  padding: .5rem 1.8rem .5rem 0;
+  position: relative;
   border-top: 1px solid var(--border-color);
   border-bottom: none !important;
   color: inherit !important;
   text-decoration: none !important;
 }
-.hl-index a::after { content: none !important; }
-.hl-index a b { font-weight: 700; color: var(--body-color); }
+/* 누를 수 있어 보이게 — 이름은 링크 색, 줄 끝에 화살표(사이트 안 →, 밖 ↗).
+   테마가 외부 링크 ::after 에 아이콘 글꼴을 !important 로 붙이므로 같은 수준으로 덮는다 */
+.hl-index a::after {
+  content: "→" !important;
+  position: absolute;
+  right: .2rem;
+  top: .5rem;
+  font-family: inherit !important;
+  font-size: 1rem !important;
+  line-height: 1.6 !important;
+  color: var(--gray) !important;
+  transition: transform .15s, color .15s;
+}
+.hl-index a[href^="http"]::after { content: "↗" !important; }
+.hl-index a:hover::after { color: var(--accent-color) !important; transform: translateX(3px); }
+.hl-index a b { font-weight: 700; color: var(--accent-color); }
 .hl-index a span { font-size: .92rem; line-height: 1.6; color: var(--gray-text); word-break: keep-all; }
 .hl-index a:hover b { text-decoration: underline; text-underline-offset: 3px; }
 @media (max-width: 640px) {
