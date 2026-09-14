@@ -320,8 +320,9 @@ ul.timeline > li:has(> small)::before {
   text-decoration: none !important;
 }
 /* 누를 수 있어 보이게 — 이름은 링크 색, 줄 끝에 화살표(사이트 안 →, 밖 ↗).
-   테마가 외부 링크 ::after 에 아이콘 글꼴을 !important 로 붙이므로 같은 수준으로 덮는다 */
-.hl-index a::after {
+   테마의 외부 링크 규칙 `a.external::after` 가 아이콘 글꼴을 !important 로 붙이고
+   no-mark-external 예외도 없다 — 선택자를 한 단계 더 구체적으로(.hl-index .hl-index-group) 해서 덮는다 */
+.hl-index .hl-index-group a::after {
   content: "→" !important;
   position: absolute;
   right: .2rem;
@@ -332,8 +333,8 @@ ul.timeline > li:has(> small)::before {
   color: var(--gray) !important;
   transition: transform .15s, color .15s;
 }
-.hl-index a[href^="http"]::after { content: "↗" !important; }
-.hl-index a:hover::after { color: var(--accent-color) !important; transform: translateX(3px); }
+.hl-index .hl-index-group a[href^="http"]::after { content: "↗" !important; }
+.hl-index .hl-index-group a:hover::after { color: var(--accent-color) !important; transform: translateX(3px); }
 .hl-index a b { font-weight: 700; color: var(--accent-color); }
 .hl-index a span { font-size: .92rem; line-height: 1.6; color: var(--gray-text); word-break: keep-all; }
 .hl-index a:hover b { text-decoration: underline; text-underline-offset: 3px; }
