@@ -10,6 +10,7 @@ permalink: /homelab/service/
 
 티케팅 서비스 — 오픈 순간 사용자 집중, 좌석 4,000석.
 예매 처리는 1인당 트랜잭션 · DB 커넥션을 점유해 **전체 인원을 그대로 받을 수 없는 구조** — 대기열이 입장 인원을 제한.
+[CGV 팀 프로젝트](/projects/cgv/)의 대기열(Redis waiting · active · 주기 승격)을 queue(Go) · booking(Spring) 두 서비스와 Kafka로 다시 구성.
 {:.lead}
 
 ## 서비스 구조

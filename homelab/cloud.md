@@ -8,12 +8,11 @@ permalink: /homelab/cloud/
 
 <p class="hl-back" markdown="0"><a href="/homelab/">← HomeLab</a></p>
 
-<!-- 홈 · HomeLab 이 stg 의 역할(prd 스펙 산정)과 dev 에서 넘어온 이유 · 5만 명 실측을 이미 말한다. 여기는 목차 줄
-     "Terraform으로 EKS 노드 7대 · AZ 3개, RDS · ElastiCache 관리형" 을 한 단계 풀어 무엇으로 어떻게 만들었는지만.
-     온프레미스 리드와 같은 틀: 구성 → 경계(관리형 · 클러스터 안) → 공개 · 관리 경로 -->
+<!-- 흐름: 온프레미스 한계(노드 RAM — 3만 명에서 k3s 재시작) → 그 층(입구 · 컨트롤 플레인)을 관리형으로 넘긴 stg → 결과에서 부하 테스트로.
+     설계 결정은 "온프레미스에서 바뀐 것" · "stg에서 정한 것" 두 표. 작업자가 설명할 수 없는 설정은 넣지 않는다 -->
 
-Terraform으로 AWS 서울 리전 VPC에 EKS 노드 7대(app 4 · booking 2 · 관측&nbsp;1)를 AZ 3개에 나눠 구성.
-컨트롤 플레인 · 로드밸런서 · DB · 캐시 · 레지스트리는 **AWS 관리형**, Kafka&nbsp;·&nbsp;옵저버빌리티는 **클러스터 안**.
+dev 3만 명 부하에서 한계였던 입구(Traefik)와 컨트롤 플레인(etcd)을 **AWS 관리형**으로 넘긴 부하 테스트 환경.
+Terraform으로 EKS 노드 7대(app 4 · booking 2 · 관측&nbsp;1)를 AZ 3개에 구성, DB · 캐시는 RDS · ElastiCache.
 서비스는 ALB · ACM으로 인터넷 <span style="white-space:nowrap">공개(443)</span> · EKS API와 Grafana는 집 공인 IP만 허용.
 {:.lead}
 
@@ -160,31 +159,25 @@ Terraform으로 AWS 서울 리전 VPC에 EKS 노드 7대(app 4 · booking 2 · �
 
 ## 설계 결정
 
-<!-- 클라우드의 판단 축 = 가용성 · 보안 · 비용의 절충. 진입(ALB · ACM)과 관리 경로 제한은 리드가 말한다 -->
+<div class="hl-sub" markdown="0">온프레미스에서 바뀐 것</div>
 
-<div class="hl-sub" markdown="0">가용성</div>
+| 항목 | 선택 | 이유 |
+|---|---|---|
+| 입구 | MetalLB · Traefik → **ALB · ACM** | MetalLB는 VPC에서 동작 안 함 · dev 3만에서 한계였던 연결 처리를 클러스터 밖으로 |
+| 컨트롤 플레인 | k3s(노드와 겸함) → **EKS 관리형** | 노드 메모리가 차도 etcd 지연 없음 — dev 3만 재시작 원인 제거 |
+| 스토리지 | 정적 PV → **EBS gp3 동적 생성** | PVC마다 볼륨 자동 생성 · 대신 볼륨이 AZ에 묶임 |
+| MySQL · Redis | 파드 → **RDS Multi-AZ · ElastiCache 복제본 1** | prd와 같은 관리형 구성 · AZ 장애 시 AWS가 자동 전환 |
+| Kafka · 관측 | **클러스터 안 유지** | MSK는 하루 약 $3.6 추가 · 관측은 같은 차트로 대시보드 재사용 |
+{:.hl-dec}
+
+<div class="hl-sub" markdown="0">stg에서 정한 것</div>
 
 | 항목 | 선택 | 이유 |
 |---|---|---|
 | 노드 배치 | **AZ 3개** · app 4 · booking 2(AZ별 · taint) · 관측 1(AZ 고정) | Kafka 브로커 AZ마다 1대 — AZ 장애에도 과반 유지 · booking은 JVM 컴파일이 브로커 CPU를 점유해 분리 |
-| DB · 캐시 | **RDS Multi-AZ · ElastiCache 복제본 1** | AZ 장애 시 다른 AZ의 대기 · 복제본으로 자동 전환 — Kafka를 AZ 3개에 둔 것과 맞춤 |
-{:.hl-dec}
-
-<div class="hl-sub" markdown="0">보안</div>
-
-| 항목 | 선택 | 이유 |
-|---|---|---|
-| 파드의 AWS 권한 | **IRSA** · IMDSv2 hop limit 1 | 노드 역할에 주면 그 노드의 모든 파드가 보유 — ServiceAccount 단위로 분리, 노드 역할 접근 차단 |
-| Redis 접근 | **TLS + AUTH** | 인증이 없으면 6379에 닿는 파드가 대기열 · 좌석 락 · 입장 인증 전권 보유(보안 그룹은 출발지만 검사) |
-{:.hl-dec}
-
-<div class="hl-sub" markdown="0">비용 · 수명주기</div>
-
-| 항목 | 선택 | 이유 |
-|---|---|---|
-| 환경 수명 | **Terraform state 둘** — bootstrap 유지 · stg 삭제 | ECR · S3 관측 버킷은 남기고 클러스터만 지워 회차 간 비교 데이터 유지 |
-| 서브넷 | **퍼블릭 · NAT 없음** | AZ별 NAT 비용 대신 보안 그룹으로 제한 — prd는 프라이빗 + AZ별 NAT |
-| 클러스터 안에 둔 것 | **Kafka · 관측** | MSK는 하루 약 $3.6 추가 · 집 Mimir는 활성 시리즈 상한의 91.8%라 stg 지표 수용 불가 |
+| 노드 타입 · 수 | **m5.xlarge 고정** — t 계열 · 오토스케일 없음 | 크레딧 고갈이나 자동 증설이 있으면 먼저 막힌 곳을 구분할 수 없음 |
+| 파드의 AWS 권한 | **IRSA** | 노드 역할에 주면 그 노드의 모든 파드가 보유 — ServiceAccount 단위로 분리 |
+| Redis 접근 | **TLS + AUTH** | 대기열 · 좌석 락 · 입장 인증 데이터 보호 — 인증이 없으면 6379에 닿는 파드가 전권 보유 |
 {:.hl-dec}
 
 ## 트러블슈팅
@@ -193,23 +186,23 @@ Terraform으로 AWS 서울 리전 VPC에 EKS 노드 7대(app 4 · booking 2 · �
 |---|---|---|
 | 노드그룹이 **`CREATING`에서 20분 넘게 멈춤** — CloudTrail에 오류 없음 | 계정 vCPU 한도 32 소진 — 원인은 ASG scaling activities에만 기록 | 한도 **64**로 증설 → 1분 23초 뒤 ACTIVE |
 | 관측 노드 교체 후 **Mimir ingester 95분 Pending** — metric 저장 중단 | 서브넷 3개 지정으로 새 노드가 2b에 생성 — EBS 볼륨은 2c에만 연결 가능 | 관측 노드그룹을 **볼륨이 있는 AZ로 고정** |
-| Redis 전송 암호화(TLS)를 켠 뒤 **앱 연결 실패** — 인증서 이름 불일치 | TLS를 켜면 AWS가 접속 주소를 `master.…`로 변경 — 앱은 옛 주소로 접속 | 새 주소로 교체 · 앱 TLS를 먼저 켠 뒤 TLS 필수로 — **무중단 전환** |
 {:.hl-tbl}
 
 ## 결과
 
-- **자원 65개 · 첫 생성 30–40분** — 부하 테스트 뒤 stg state만 삭제
+- **자원 65개 · 첫 생성 30–40분** — 부하 테스트 뒤 stg state만 삭제, ECR · S3 관측 버킷은 유지
 - **AWS 비용 US$151.79 · 하루 약 US$50** — 5만 명 부하 스펙 stg 3일(2026-09-12 – 14) · 부하 발생기 포함
   - EC2 $95.80 — EKS 노드 m5.xlarge × 7(app 4 · booking 2 · 관측 1) · 부하 발생기 c5.2xlarge 최대 4대
   - RDS $21.38 — MySQL db.m5.large Multi-AZ
   - ElastiCache $17.38 — Redis cache.m5.large × 2(주 · 복제본)
   - EKS 컨트롤 플레인 $4.56 · EC2 기타 $4.44 · 기타 $8.23
-- **5만 명 부하 수용** — 판정 · 병목은 [부하 테스트](/homelab/capacity/)
+- **dev 3만 한계 해소** — 입구 · 컨트롤 플레인이 클러스터 밖이라 부하가 서비스 파드 · Redis · Kafka로 전달, 판정 · 병목은 [부하 테스트](/homelab/capacity/)
 
 ## 한계
 
 - **운영 기간 3일** — 장기 운영 · 업그레이드 · 장애 대응 경험 없음
-- **DB 보안 그룹은 노드 단위** — 출구 NetworkPolicy가 없는 파드(관측 Job)는 RDS에 연결됨, prd는 Security Groups for Pods
+- **노드가 퍼블릭 서브넷** — AZ별 NAT 비용 대신 보안 그룹으로 제한, prd는 프라이빗 서브넷 + NAT
+- **DB 보안 그룹은 노드 단위** — 출구 NetworkPolicy가 없는 파드(관측 Job)도 RDS에 연결됨
 - **허브가 집에 위치** — 집 공인 IP가 바뀌면 EKS API 허용 목록 재적용
 - **관측 단일 AZ** — 해당 AZ 장애 시 관측 중단
 

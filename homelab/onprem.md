@@ -191,8 +191,8 @@ redirect_from:
 
 ## 한계
 
+- **노드 RAM이 부하 상한** — 3만 명 부하에서 k3s 재시작, 이후 부하 측정은 stg(EKS)
 - **관리 경로가 OPNsense 1대에 집중** — VM 중단 시 터널 · 격리망 인터넷 동시 중단
-- **Proxmox · VM 생성은 수동** — 코드는 k3s부터, stg는 Terraform
 - **VPN 접속용 도메인은 집 공인 IP 노출** — WireGuard는 UDP라 HTTP만 중계하는 Cloudflare 프록시를 쓸 수 없음
 
 ## 기술 스택
