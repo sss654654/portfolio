@@ -9,14 +9,15 @@ permalink: /homelab/cicd/
 <p class="hl-back" markdown="0"><a href="/homelab/">← HomeLab</a></p>
 
 GitLab CI가 cgv-onprem(앱 소스) `main` 머지마다 이미지를 한 번 빌드 — 검사 통과 시 등록.
-dev는 자동, stg는 수동 job `publish-ecr`로 **같은 이미지**를 ECR에 승격.
+dev 자동 배포, stg는 수동 job `publish-ecr`로 **같은 이미지**를 ECR에 승격.
 image-updater가 새 태그를 cgv-infra(배포 정의)에 커밋하면 노트북 ArgoCD 허브가 두 클러스터에 동기화.
 {:.lead}
 
 ## CI/CD 흐름
 
 <!-- 흐름도 — 개발자 → CI → (자동: GitLab 레지스트리 / 수동: ECR) → image-updater → cgv-infra → 허브 → (k3s dev / EKS stg).
-     주황 = 이미지, 파랑 = 배포 정의 · 동기화, 회색 점선 = 폴링, 파랑 점선 = EKS API. 위아래 호 = 클러스터가 자기 레지스트리에서 pull -->
+     주황 = 이미지, 파랑 = 배포 정의 · 동기화, 회색 점선 = 폴링, 파랑 점선 = EKS API. 위아래 호 = 클러스터가 자기 레지스트리에서 pull.
+     범례는 그림 아래 선 견본 넷. 설계 결정 표의 행 순서는 이 그림의 왼쪽 → 오른쪽 순서 -->
 <figure class="hl-diagram hl-diagram-lg hl-diagram-scroll" markdown="0">
 <svg viewBox="0 0 760 334" role="img" aria-label="개발자가 main 에 머지하면 GitLab CI 가 이미지를 만들어 GitLab 레지스트리(자동)와 ECR(수동)로 나눠 올린다. image-updater 가 두 레지스트리의 새 태그를 감지해 cgv-infra 에 tag 를 커밋하고, webhook 을 받은 ArgoCD 허브가 k3s dev 와 EKS stg 에 동기화한다. 각 클러스터는 자기 레지스트리에서 이미지를 받는다">
   <defs>
@@ -117,13 +118,13 @@ image-updater가 새 태그를 cgv-infra(배포 정의)에 커밋하면 노트�
 
 | 항목 | 선택 | 이유 |
 |---|---|---|
-| Git 서버 위치 | **클러스터 밖 데스크탑** — 러너 · 레지스트리 포함 | 클러스터 안이면 동반 중단 · GitHub은 사설망 webhook 불가 · 빌드 I/O가 부하 측정에 간섭 |
+| Git 서버 위치 | **GitLab을 클러스터 밖 데스크탑에** — 러너 · 레지스트리 포함 | 클러스터 안이면 동반 중단 · GitHub은 사설망 webhook 불가 · 빌드 I/O가 부하 측정에 간섭 |
 | CI · CD | **분리** — cgv-onprem 파이프라인은 이미지까지, cgv-infra는 ArgoCD가 배포 | 파이프라인이 배포하면 러너에 클러스터 전권 자격 필요 — 분리하면 배포 자격은 허브 ArgoCD에만 |
 | 브랜치 · 환경 | **두 저장소 모두 trunk 하나(`main`)** · 환경은 cgv-infra `envs/<환경>/` 폴더 | 브랜치를 환경으로 쓰면 환경 축이 둘(브랜치 · 폴더) · 승격은 merge 대신 태그 커밋 한 줄 |
-| 승격 | **1회 빌드 · 같은 이미지를 ECR로** · 게이트는 수동 job `publish-ecr` | 환경별로 빌드하면 부하 결과 차이의 원인 구분 불가 · EKS 노드는 사설망 GitLab 레지스트리 접근 불가 |
-| 원격 클러스터 | **집 허브가 EKS를 클러스터 이름으로 배포** | EKS에서 사설망 GitLab 접근 불가 · 주소 대신 이름 지정 — 클러스터 재생성 시 주소 치환 20곳 제거 |
-| 취약점 게이트 | **수정판 있는 HIGH 이상만** 차단 — 소스(빌드 전) · 이미지(등록 전) 두 겹 | 수정판 없는 취약점까지 막으면 파이프라인이 상시 실패 — 결국 게이트를 끄게 됨 |
-| 배포 권한 · 자격 | **AppProject**로 배포 범위 제한 · dev **SealedSecret** · stg 켜는 날 스크립트 생성 | 제한 없으면 Application 하나로 전 자원 생성 · 봉인은 클러스터 개인키에 묶여 stg 재사용 불가 |
+| 취약점 게이트 | **수정판 있는 HIGH 이상만** 차단 — 소스(빌드 전) · 이미지(등록 전) 두 겹 | 수정판 없는 취약점까지 막으면 고칠 수단 없이 파이프라인 상시 실패 |
+| 승격 | **1회 빌드 · 같은 이미지를 ECR로** · 게이트는 수동 job `publish-ecr` | 환경별로 빌드하면 부하 결과 차이의 원인 구분 불가 · 버튼 실행 기록이 곧 승격 기록 |
+| 원격 클러스터 | **집 허브가 EKS를 클러스터 이름으로 배포** | EKS에서 사설망 GitLab 저장소 · 레지스트리 접근 불가 · 이름 지정으로 재생성 시 주소 치환 20곳 제거 |
+| 배포 권한 · 자격 | **AppProject**로 배포 범위 제한 · dev **SealedSecret** · stg는 생성 뒤 스크립트로 주입 | 제한 없으면 Application 하나로 전 자원 생성 · 봉인은 클러스터 개인키에 묶여 stg에서 복호화 불가 |
 {:.hl-dec}
 
 ## 트러블슈팅
@@ -132,23 +133,22 @@ image-updater가 새 태그를 cgv-infra(배포 정의)에 커밋하면 노트�
 |---|---|---|
 | 취약점 스캔 첫 적용 시 **72건** | 서비스 3개 모두 버전 고정 후 미갱신 — Go 간접 의존 2 · Spring Boot 부모 37 · 갱신 중단 nginx 태그 33 | 간접 의존 상향 · 부모 3.5.16 + netty 지정 · nginx 1.31 → **0건** |
 | 파이프라인 1회 **10분 15초** | job 컨테이너가 매번 새로 떠 의존성 · 취약점 DB 재다운로드 — docker build 안쪽은 러너 볼륨이 닿지 않음 | 러너 볼륨 · BuildKit 캐시 마운트 · 동시 실행 2 → **1분 54초** |
-| ECR push가 레이어 업로드 후 **마지막에 403** | push 권한에 `BatchGetImage` 없음 — docker가 업로드 후 매니페스트를 HEAD로 확인 | 읽기 권한 1개 추가 |
+| ECR push가 레이어 업로드 후 **마지막에 403** | push 정책에 `BatchGetImage` 없음 — 매니페스트 등록 전 존재 확인(HEAD)을 ECR이 읽기로 판정 | `ci-push` 정책에 `BatchGetImage` 추가 |
 {:.hl-tbl}
 
 ## 결과
 
-- **stg 배포 1회 실측** — 코드 커밋부터 화면 반영 19분 41초, 이 중 ECR 등록 뒤는 태그 커밋 93초 · 동기화 21초
-- **반복 배포에 `kubectl` 0회** — 사람 손은 머지와 stg 승격 버튼뿐
-- **게이트 실제 차단 2건**(2026-09-10) — Go grpc HIGH · Java netty CRITICAL, 둘 다 레지스트리 등록 전 차단
-- **저장소에 평문 자격 없음** — dev 시크릿 19종은 봉인본으로 커밋, stg 4종은 켜는 날 스크립트가 생성(DB · Redis 비밀번호는 Secrets Manager에서 읽음)
+- **머지부터 dev · stg 배포까지 자동 경로 완성** — `kubectl` 0회 · stg만 승격 버튼 1회(버튼 뒤 태그 커밋 93초 → 동기화 완료 21초)
+- **취약점 게이트가 등록 전 차단 2건**(2026-09-10) — queue-go grpc HIGH · booking netty CRITICAL
+- **저장소 평문 자격 0건** — dev 시크릿 19종은 봉인본 커밋 · stg 4종은 클러스터 생성 뒤 스크립트로 주입(DB · Redis 비밀번호는 Secrets Manager)
 
 ## 한계
 
-- **자동화 토큰 3개가 2026-11-01 동시 만료** — 노드 이미지 pull · 봇 태그 조회 · 저장소 읽기와 태그 되쓰기가 함께 중단, 사전 알림 없음
-- **stg 이미지 롤백 불가** — image-updater가 최신 빌드를 선택, 수정 후 재빌드
+- **자동화 토큰 3개가 2026-11-01 동시 만료** — 노드 이미지 pull · image-updater 태그 조회 · 저장소 읽기와 태그 되쓰기 동시 중단, 만료 알림 없음
+- **stg 이미지 롤백 불가** — image-updater가 항상 최신 빌드 선택, 문제 시 수정 후 재빌드
 - **ECR 자격이 IAM 사용자 장기 키 둘** — CI push · image-updater 조회용, GitLab이 사설 IP라 OIDC 페더레이션 불가
 - **허브가 가진 EKS 자격이 만료 없는 cluster-admin 토큰** — 교체는 수동, 허브 침해 시 EKS 전권 노출
-- **부하 테스트 중 머지 금지** — 머지가 곧 동기화라 테스트 도중 파드가 교체돼 회차 1회 무효
+- **배포 정의 머지가 즉시 동기화** — 부하 테스트 중 파드 교체로 회차 1회 무효, 테스트 중 머지 금지로 운영
 
 ## 기술 스택
 
