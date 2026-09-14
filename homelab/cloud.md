@@ -167,7 +167,7 @@ Terraform으로 AWS 서울 리전 VPC에 EKS 노드 7대(app 4 · booking 2 · �
 | 항목 | 선택 | 이유 |
 |---|---|---|
 | 노드 배치 | **AZ 3개** · app 4 · booking 2(AZ별 · taint) · 관측 1(AZ 고정) | Kafka 브로커 AZ마다 1대 — AZ 장애에도 과반 유지 · booking은 JVM 컴파일이 브로커를 밀어내 분리 |
-| DB · 캐시 | **RDS Multi-AZ · ElastiCache 복제본 1** | MySQL은 prd와 같은 관리형 · 대기 기록 후 커밋으로 측정 · Redis 복제본은 Kafka처럼 AZ 장애 대비 |
+| DB · 캐시 | **RDS Multi-AZ · ElastiCache 복제본 1** | AZ 하나가 죽어도 다른 AZ의 대기 · 복제본이 자동으로 넘겨받음 — Kafka를 AZ 3개에 둔 것과 맞춤 |
 {:.hl-dec}
 
 <div class="hl-sub" markdown="0">보안</div>
@@ -192,17 +192,18 @@ Terraform으로 AWS 서울 리전 VPC에 EKS 노드 7대(app 4 · booking 2 · �
 | 증상 | 원인 | 조치 |
 |---|---|---|
 | 노드그룹이 **`CREATING`에서 20분 넘게 멈춤** — CloudTrail에 오류 없음 | 계정 vCPU 한도 32 소진 — 원인은 ASG scaling activities에만 기록 | 한도 **64**로 증설 → 1분 23초 뒤 ACTIVE |
-| 노드그룹 교체 후 **Mimir ingester 95분 Pending** | 서브넷 3개 지정으로 관측 노드가 2c → 2b 이동, EBS 볼륨은 2c에 고정 | 상태를 가진 노드그룹만 **단일 AZ 고정** |
-| Redis 암호화 적용 후 **인증서 오류로 연결 실패** | 전송 암호화를 켜면 엔드포인트가 `master.…`로 바뀌고 인증서도 새 이름 기준 | `REDIS_HOST` 변경, 앱 TLS를 먼저 켠 뒤 required로 — **무중단 전환** |
+| 관측 노드 교체 후 **Mimir ingester 95분 Pending** — metric 저장 중단 | 서브넷 3개 지정으로 새 노드가 2b에 생성 — EBS 볼륨은 2c에만 연결 가능 | 관측 노드그룹을 **볼륨이 있는 AZ로 고정** |
+| Redis 전송 암호화(TLS)를 켠 뒤 **앱 연결 실패** — 인증서 이름 불일치 | TLS를 켜면 AWS가 접속 주소를 `master.…`로 변경 — 앱은 옛 주소로 접속 | `REDIS_HOST`를 새 주소로 교체 · 앱 TLS를 먼저 켠 뒤 TLS 필수로 — **무중단 전환** |
 {:.hl-tbl}
 
 ## 결과
 
 - **자원 65개 · 첫 생성 30–40분** — 부하 테스트 뒤 stg state만 삭제
-- **AWS 비용 US$151.79** — stg 운영 3일(2026-09-12 – 14), 부하 발생기 포함 · EC2 $95.80 · RDS $21.38 · ElastiCache $17.38
-  - EKS 노드 m5.xlarge × 7(app 4 · booking 2 · 관측 1) · 디스크 Kafka 60Gi × 3 · 관측 10Gi × 3
-  - RDS MySQL db.m5.large Multi-AZ · ElastiCache Redis cache.m5.large × 2(주 · 복제본)
-  - 부하 발생기 c5.2xlarge 최대 4대 — 별도 Terraform · 기본 VPC
+- **AWS 비용 US$151.79 · 하루 약 US$50** — 5만 명 부하 스펙의 stg 3일 운영(2026-09-12 – 14), 부하 발생기 포함
+  - EC2 $95.80 — EKS 노드 m5.xlarge × 7(app 4 · booking 2 · 관측 1) · 부하 발생기 c5.2xlarge 최대 4대
+  - RDS $21.38 — MySQL db.m5.large Multi-AZ
+  - ElastiCache $17.38 — Redis cache.m5.large × 2(주 · 복제본)
+  - EKS 컨트롤 플레인 $4.56 · EC2 기타 $4.44 · 기타 $8.23
 - **5만 명 부하 수용** — 판정 · 병목은 [부하 테스트](/homelab/capacity/)
 
 ## 한계
