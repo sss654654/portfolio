@@ -165,7 +165,7 @@ Terraform으로 EKS 노드 7대(app 4 · booking 2 · 관측&nbsp;1)를 AZ 3개�
 | 항목 | 선택 | 이유 |
 |---|---|---|
 | 입구 | MetalLB · Traefik · cert-manager → **ALB&nbsp;·&nbsp;ACM** | MetalLB는 VPC에서 동작 안 함 · ALB가 TLS까지 종료해 cert-manager 불필요 |
-| 쿠버네티스 | k3s(VM 3대) → **EKS 관리형** | EC2에 쿠버네티스 직접 설치는 홈랩과 중복 — 같은 차트 · 이미지를 그대로 배포 |
+| 쿠버네티스 | k3s(VM 3대 직접 설치) → **EKS 관리형** | k3s는 노드가 컨트롤 플레인까지 실행해 파드용 메모리 감소 — EKS는 컨트롤 플레인을 AWS가 운영 |
 | 스토리지 | 정적 PV → **EBS CSI 드라이버 · gp3 동적 생성** | PVC마다 볼륨 자동 생성 · 대신 볼륨은 생성된 AZ에서만 연결 |
 | MySQL · Redis | 파드 → **RDS Multi-AZ · ElastiCache 복제본 1** | MySQL은 prd 구성과 일치 · 둘 다 AZ 장애 시 AWS가 자동 전환 |
 | Kafka · 관측 | **클러스터 안 유지** | MSK는 하루 약 $3.6 추가 · 관측은 같은 차트로 대시보드 재사용 |
