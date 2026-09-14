@@ -16,7 +16,7 @@ dev · stg에 같은 차트로 배포, **부하 테스트 판정은 모두 이 �
 
 <!-- 신호 셋이 각자 레인으로 나란히 흐르고 Alloy 기둥 하나가 셋을 관통하는 구조.
      원본 저장소 칸이 dev(MinIO) · stg(S3) 로 갈린다. 화살표 = 데이터 방향. -->
-<figure class="hl-diagram hl-diagram-lg" markdown="0">
+<figure class="hl-diagram hl-diagram-lg hl-diagram-scroll" markdown="0">
 <svg viewBox="0 0 760 312" role="img" aria-label="metric·log·trace 세 레인이 나란히 흐르고, 노드마다 도는 Alloy 기둥 하나가 셋을 모아 Mimir·Loki·Tempo로 보낸다. 세 저장소의 원본은 dev에서 MinIO, stg에서 S3에 저장되고 Grafana가 셋을 읽는다">
   <defs>
     <marker id="hlo-n" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor" opacity=".5"/></marker>
@@ -88,7 +88,7 @@ dev · stg에 같은 차트로 배포, **부하 테스트 판정은 모두 이 �
   <text class="hla-s2" x="685" y="180" text-anchor="middle">dev · stg 공통 차트</text>
   <text class="hla-s2" x="685" y="216" text-anchor="middle">알림 — Discord</text>
 </svg>
-<figcaption>원본 저장소 — dev MinIO · stg S3. RDS · ElastiCache · ALB처럼 exporter를 붙일 수 없는 자원은 stg의 CloudWatch exporter가 수집해 같은 Mimir에 저장합니다.</figcaption>
+<figcaption>원본 저장소 — dev MinIO · stg S3. RDS · ElastiCache · ALB처럼 exporter를 붙일 수 없는 자원은 stg의 CloudWatch exporter가 수집해 같은 Mimir에 저장.</figcaption>
 </figure>
 
 ## 설계 결정

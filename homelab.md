@@ -10,9 +10,9 @@ permalink: /homelab/
      마지막 문장이 배포로 끝나 바로 아래 배포 흐름 구성도로 넘어간다.
      5만 명 실측은 홈 리드와 부하 카드가 말하므로 여기서는 반복하지 않는다. -->
 
-노트북 k3s의 **dev**와 AWS EKS의 **stg**를 구축해 대기열 예매 서비스를 배포했습니다.
-dev는 공개 데모 · 개발 환경으로, 3만 명 부하에서 노드 한계에 도달해 prd 스펙 산정용 stg를 Terraform으로 구성했습니다.
-두 환경은 데스크탑의 GitLab CI와 노트북의 ArgoCD 하나로 배포합니다.
+대기열 예매 서비스를 위해 노트북 k3s **dev**와 AWS EKS **stg**를 구축했습니다.
+공개 데모 · 개발 환경인 dev가 3만 명 부하에서 노드 한계에 도달해, prd 스펙 산정용 stg를 Terraform으로 구성했습니다.
+두 환경은 데스크탑 GitLab&nbsp;CI와 노트북 ArgoCD 하나로 배포합니다.
 {:.lead}
 
 <!-- 구성도 — 코드가 이미지가 되어 레지스트리 둘에 오르고 각 클러스터가 pull 한다(실선).
@@ -158,7 +158,7 @@ dev는 공개 데모 · 개발 환경으로, 3만 명 부하에서 노드 한계
   <circle cx="246" cy="336" r="4.5" fill="#2f6fdb"/>
   <text x="256" y="340" class="hla-s">ArgoCD 동기화</text>
 </svg>
-<figcaption>EKS는 집 사설망의 GitLab에 닿지 않아, 이미지는 ECR로 승격하고 배포는 노트북 ArgoCD가 EKS API로 수행. 이미지는 한 번만 빌드 — 두 환경의 부하 결과 차이가 환경 때문인지 이미지 때문인지 구분하기 위함.</figcaption>
+<figcaption>GitLab이 사설망에 있어 EKS에서 접근 불가 — 이미지는 ECR로 승격, 배포는 노트북 ArgoCD가 EKS API로 수행. 이미지는 한 번만 빌드해 두 환경의 부하 결과 차이를 환경 차이로만 해석.</figcaption>
 </figure>
 
 <!-- 목차 — 세 묶음 · 여섯 줄. 이 페이지의 그림은 위 구성도 하나뿐이라 카드 테두리 없이 목록으로 둔다.
@@ -178,7 +178,7 @@ dev는 공개 데모 · 개발 환경으로, 3만 명 부하에서 노드 한계
 
   <div class="hl-index-group">
     <span class="hl-index-head">배포 · 관측 — 두 환경 공통</span>
-    <a href="/homelab/cicd/"><b>CI/CD</b><span>파이프라인 1개로 두 클러스터, dev 머지 후 3초 반영</span></a>
+    <a href="/homelab/cicd/"><b>CI/CD</b><span>파이프라인 1개 · ArgoCD 1개, 배포 정의 커밋 후 3초 반영</span></a>
     <a href="/homelab/observability/"><b>옵저버빌리티</b><span>LGTM 스택, 부하 판정 기준 지표</span></a>
   </div>
 
@@ -197,9 +197,9 @@ dev는 공개 데모 · 개발 환경으로, 3만 명 부하에서 노드 한계
 <div class="hl-index" markdown="0">
 
   <div class="hl-index-group">
-    <a href="https://zed6740.tistory.com/category/HomeLab"><b>HomeLab 시리즈</b><span>온프레미스 선택 이유부터 인터넷 공개까지, 편별 구축 기록</span></a>
+    <a href="https://zed6740.tistory.com/category/HomeLab"><b>HomeLab 시리즈</b><span>온프레미스 선택부터 인터넷 공개까지 구축 기록</span></a>
     <a href="https://github.com/sss654654/cgv-infra"><b>cgv-infra</b><span>클러스터 · 배포 정의, dev · stg 환경 값</span></a>
-    <a href="https://github.com/sss654654/cgv-terraform"><b>cgv-terraform</b><span>AWS 자원, bootstrap · stg 두 state</span></a>
+    <a href="https://github.com/sss654654/cgv-terraform"><b>cgv-terraform</b><span>AWS 자원, 유지용 bootstrap · 삭제용 stg 두 state</span></a>
     <a href="https://github.com/sss654654/cgv-onprem"><b>cgv-onprem</b><span>앱 소스, queue(Go) · booking(Spring) · frontend</span></a>
   </div>
 

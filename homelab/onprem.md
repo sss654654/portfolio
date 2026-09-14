@@ -20,7 +20,7 @@ dev 환경 — 부하 테스트로 stg 스펙을 산정하는 환경. 노트북 
 <!-- 배선도 — 사용자 → Traefik → 대기열 서비스 / 관리자 → VPN → 관리 UI / GitLab → CI → ArgoCD → 배포.
      세 흐름 전부 노트북 안 OPNsense VM(세로 벽)을 지난다. 점 셋이 12초 한 바퀴를 순서대로.
      아이콘 = simple-icons(CC0). prefers-reduced-motion 이면 정지 -->
-<figure class="hl-diagram" markdown="0">
+<figure class="hl-diagram hl-diagram-scroll" markdown="0">
 <svg viewBox="0 0 760 384" role="img" aria-label="사용자는 ticket.subinhong.dev로 Cloudflare와 공유기를 거쳐 대기열 서비스에, 관리자는 WireGuard로 관리 UI에, 배포는 GitLab에서 ArgoCD로 — 세 흐름이 모두 노트북 안 OPNsense 방화벽 VM을 지나는 구조">
   <defs>
     <marker id="hlp-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
@@ -177,7 +177,7 @@ dev 환경 — 부하 테스트로 stg 스펙을 산정하는 환경. 노트북 
   </g>
 </svg>
 <figcaption>사용자 · 관리자 · 배포 경로 모두 노트북 안 방화벽 VM(OPNsense) 경유.
-Cloudflare 대역 밖 443은 차단, 키 없는 VPN 요청은 무응답. 이 안의 ArgoCD가 stg(EKS)까지 배포하는 허브입니다.</figcaption>
+Cloudflare 대역 밖 443은 차단, 키 없는 VPN 요청은 무응답. 이 안의 ArgoCD가 stg(EKS)까지 배포하는 허브.</figcaption>
 </figure>
 
 ## 설계 결정

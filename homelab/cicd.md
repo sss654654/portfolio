@@ -16,7 +16,7 @@ dev는 머지 시 자동, stg는 수동 승격 job 실행 시 **같은 이미지
 
 <!-- 흐름도 — 개발자 → CI → (자동: GitLab 레지스트리 / 수동: ECR) → image-updater → cgv-infra → 허브 → (k3s dev / EKS stg).
      주황 = 이미지, 파랑 = 배포 정의 · 동기화, 회색 점선 = 폴링, 파랑 점선 = EKS API. 위아래 호 = 클러스터가 자기 레지스트리에서 pull -->
-<figure class="hl-diagram hl-diagram-lg" markdown="0">
+<figure class="hl-diagram hl-diagram-lg hl-diagram-scroll" markdown="0">
 <svg viewBox="0 0 760 306" role="img" aria-label="개발자가 main 에 머지하면 GitLab CI 가 이미지를 만들어 GitLab 레지스트리(자동)와 ECR(수동)로 나눠 올린다. image-updater 가 두 레지스트리의 새 태그를 감지해 cgv-infra 에 tag 를 커밋하고, webhook 을 받은 ArgoCD 허브가 k3s dev 와 EKS stg 에 동기화한다. 각 클러스터는 자기 레지스트리에서 이미지를 받는다">
   <defs>
     <marker id="hlm-i" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#f08c2e"/></marker>
@@ -97,7 +97,7 @@ dev는 머지 시 자동, stg는 수동 승격 job 실행 시 **같은 이미지
   </g>
 </svg>
 <figcaption>주황 — 이미지 · 파랑 — 배포 정의 · 동기화 · 회색 점선 — 폴링 · 파랑 점선 — EKS API(집 IP만 허용).
-image-updater · 허브는 노트북 k3s, cgv-infra는 데스크탑 GitLab에 위치. 두 레지스트리의 이미지는 태그만 다르고 내용은 같습니다.</figcaption>
+image-updater · 허브는 노트북 k3s, cgv-infra는 데스크탑 GitLab에 위치. 두 레지스트리의 이미지는 태그만 다르고 내용은 같음.</figcaption>
 </figure>
 
 ## 설계 결정

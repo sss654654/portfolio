@@ -20,7 +20,7 @@ permalink: /homelab/service/
      토픽 레인·좌석)는 이 마크업에 있고, 움직이는 점(사람·메시지)은
      /assets/js/capacity-sim.js 가 그린다. JS 가 없으면 뼈대가 번호 붙은 정적 흐름도로
      남는 것이 폴백이다. 좌표는 JS 가 rect 속성에서 읽거나 마크업과 맞춰 두었다. -->
-<figure class="hl-diagram hl-diagram-lg" markdown="0">
+<figure class="hl-diagram hl-diagram-lg hl-diagram-scroll" markdown="0">
 <div class="cap-sim" id="cap-sim">
 <div class="cs-ctrl" id="cs-ctrl"><span class="cs-count" id="cs-count">관객 30 · 정원 6 · 좌석 24</span></div>
 <svg viewBox="0 0 760 562" role="img" aria-label="대기열 서비스의 한 회 — 관객이 Redis의 waiting 줄에 서고, 승격이 빈자리만큼 앞에서 꺼내 active 정원에 넣는다. admissions 메시지가 토픽을 거쳐 booking의 입장 인증(admitted)에 적히면 좌석을 살 수 있고, 확정되면 bookings-completed가 토픽을 거쳐 돌아와 active에서 빠져 자리가 빈다">
