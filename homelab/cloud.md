@@ -12,8 +12,8 @@ permalink: /homelab/cloud/
      "Terraform으로 EKS 노드 7대 · AZ 3개, RDS · ElastiCache 관리형" 을 한 단계 풀어 무엇으로 어떻게 만들었는지만.
      온프레미스 리드와 같은 틀: 구성 → 경계(관리형 · 클러스터 안) → 공개 · 관리 경로 -->
 
-Terraform으로 AWS 서울 리전 VPC에 EKS 노드 7대(app 4 · booking 2 · 관측 1)를 AZ 3개에 나눠 구성.
-컨트롤 플레인 · 로드밸런서 · DB · 캐시 · 레지스트리는 **AWS 관리형**, Kafka · 옵저버빌리티는 **클러스터 안**.
+Terraform으로 AWS 서울 리전 VPC에 EKS 노드 7대(app 4 · booking 2 · 관측&nbsp;1)를 AZ 3개에 나눠 구성.
+컨트롤 플레인 · 로드밸런서 · DB · 캐시 · 레지스트리는 **AWS 관리형**, Kafka&nbsp;·&nbsp;옵저버빌리티는 **클러스터 안**.
 서비스는 ALB · ACM으로 인터넷 공개(443) · EKS API와 Grafana는 집 공인 IP만 허용.
 {:.lead}
 
@@ -156,7 +156,7 @@ Terraform으로 AWS 서울 리전 VPC에 EKS 노드 7대(app 4 · booking 2 · �
     <text class="hla-s2" x="582" y="572">복제</text>
   </g>
 </svg>
-<figcaption>배치는 2026-09-14 클러스터 기준(주요 파드만). RDS는 동기 · ElastiCache는 비동기 복제, Grafana용 ALB(집 IP만 허용)는 그림에서 생략.</figcaption>
+<figcaption>배치는 2026-09-14 클러스터 기준(주요 파드만). RDS는 동기 · ElastiCache는 비동기 복제.</figcaption>
 </figure>
 
 ## 설계 결정
@@ -205,13 +205,14 @@ Terraform으로 AWS 서울 리전 VPC에 EKS 노드 7대(app 4 · booking 2 · �
 </div>
 -->
 
-- **자원 56개 · Terraform state 2개** — 생성 30–40분, 사용 후 삭제하는 하루 환경
-- **부하 테스트 결과로 노드 구조 변경** — app 4 + 관측 1에 booking 전용 2대 추가, 근거는 [부하 테스트](/homelab/capacity/)
+- **자원 56개 · Terraform state 2개** — 생성 30–40분, 부하 테스트 뒤 삭제하는 단기 환경
+- **AWS 비용 US$151.79** — stg 운영 3일(2026-09-12 – 14), 부하 발생기 포함 · EC2 $95.80 · RDS $21.38 · ElastiCache $17.38 · EKS $4.56
+- **5만 명 부하 테스트로 노드 구조 확정** — SLO 5개 통과, booking 전용 노드 2대 추가. 근거는 [부하 테스트](/homelab/capacity/)
 - **운영 중인 Redis에 TLS · AUTH 무중단 적용**
 
 ## 한계
 
-- **운영 기간 하루** — 장기 운영 · 업그레이드 · 장애 대응 경험 없음
+- **운영 기간 3일** — 장기 운영 · 업그레이드 · 장애 대응 경험 없음
 - **데이터 보안 그룹이 노드 단위** — 노드 위 모든 파드가 통과, prd는 Security Groups for Pods
 - **허브가 집에 위치** — 집 공인 IP 변경 시 재적용 필요, 집 전원 차단 중에는 마지막 동기화 상태 유지
 - **관측 단일 AZ** — 해당 AZ 장애 시 관측 중단
