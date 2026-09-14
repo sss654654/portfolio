@@ -2,14 +2,19 @@
 layout: page
 title: 클라우드
 description: >
-  dev에서 산정한 서비스를 같은 차트 · 파이프라인 · 이미지로 AWS EKS stg 환경에 구성
+  stg · prd 스펙 산정용 부하 테스트
 permalink: /homelab/cloud/
 ---
 
 <p class="hl-back" markdown="0"><a href="/homelab/">← HomeLab</a></p>
 
-stg 환경 — dev에서 산정한 스펙을 AWS 관리형 위에 같은 이미지로 올려 5만 명까지 측정.
-컨트롤 플레인 · 로드밸런서 · DB · 캐시 · 레지스트리는 AWS 관리형, Kafka · 옵저버빌리티는 클러스터 안.
+<!-- 홈 · HomeLab 이 stg 의 역할(prd 스펙 산정)과 dev 에서 넘어온 이유 · 5만 명 실측을 이미 말한다. 여기는 목차 줄
+     "Terraform으로 EKS 노드 7대 · AZ 3개, RDS · ElastiCache 관리형" 을 한 단계 풀어 무엇으로 어떻게 만들었는지만.
+     온프레미스 리드와 같은 틀: 구성 → 경계(관리형 · 클러스터 안) → 공개 · 관리 경로 -->
+
+Terraform으로 AWS 서울 리전 VPC에 EKS 노드 7대(app 4 · booking 2 · 관측 1)를 AZ 3개에 나눠 구성.
+컨트롤 플레인 · 로드밸런서 · DB · 캐시 · 레지스트리는 **AWS 관리형**, Kafka · 옵저버빌리티는 **클러스터 안**.
+서비스는 ALB · ACM으로 인터넷 공개(443) · EKS API와 Grafana는 집 공인 IP만 허용.
 {:.lead}
 
 ## 클라우드 구조
@@ -17,7 +22,7 @@ stg 환경 — dev에서 산정한 스펙을 AWS 관리형 위에 같은 이미�
 <!-- AWS 구성도 — AWS > 리전 > VPC > AZ 셋 > EKS 노드 일곱(파드는 아이콘). 배치는 2026-09-14 kubectl · describe 확인.
      집과 잇는 선 둘: 허브 → EKS API(파랑 점선) · CI → ECR(주황). RDS 주 2c · 대기 2b / ElastiCache 주 2b · 복제본 2a. -->
 <figure class="hl-diagram hl-diagram-lg hl-diagram-scroll" markdown="0">
-<svg viewBox="0 0 760 590" role="img" aria-label="AWS 서울 리전 구성도. 집의 ArgoCD 허브가 EKS 컨트롤 플레인으로, GitLab CI가 ECR로 이어진다. 사용자는 인터넷 게이트웨이와 ALB를 거쳐 EKS로 들어간다. VPC 안 가용 영역 2a에 app 노드 둘과 booking 노드, 2b에 app 노드 하나, 2c에 app 노드 · booking 노드 · 관측 노드가 있다. RDS는 주 2c · 대기 2b, ElastiCache는 주 2b · 복제본 2a다">
+<svg viewBox="0 0 760 590" role="img" aria-label="AWS 서울 리전 구성도. 집의 ArgoCD 허브가 EKS 컨트롤 플레인으로 동기화하고, GitLab CI가 ECR로 이미지를 승격한다. 사용자는 인터넷 게이트웨이와 ALB를 거쳐 EKS로 들어간다. VPC 안 가용 영역 2a에 app 노드 둘과 booking 노드, 2b에 app 노드 하나, 2c에 app 노드 · booking 노드 · 관측 노드가 있다. RDS는 주 2c · 대기 2b, ElastiCache는 주 2b · 복제본 2a다">
   <defs>
     <marker id="hlw-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor" opacity=".5"/></marker>
     <marker id="hlw-i" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#f08c2e"/></marker>
@@ -39,7 +44,7 @@ stg 환경 — dev에서 산정한 스펙을 AWS 관리형 위에 같은 이미�
     <text class="hla-s2" x="116" y="118" style="fill:#00a4a6">ap-northeast-2 서울</text>
 
     <line class="hla-ln-def hla-dash" x1="304" y1="60" x2="304" y2="127" marker-end="url(#hlw-d)"/>
-    <text class="hla-a" x="310" y="88">sync · 집 IP만</text>
+    <text class="hla-a" x="310" y="88">동기화 · 집 IP만</text>
     <line class="hla-ln-img" x1="440" y1="60" x2="440" y2="127" marker-end="url(#hlw-i)"/>
     <text class="hla-a" x="446" y="88">승격 push</text>
 
@@ -151,34 +156,31 @@ stg 환경 — dev에서 산정한 스펙을 AWS 관리형 위에 같은 이미�
     <text class="hla-s2" x="582" y="572">복제</text>
   </g>
 </svg>
-<figcaption>노드 · 파드 배치는 2026-09-14 클러스터 기준(주요 파드만). booking · 관측 노드는 taint로 다른 파드 배치 차단.
-RDS는 2c → 2b 동기 복제, ElastiCache는 2b → 2a 비동기 복제. 서비스 ALB 외 Grafana용 ALB(집 IP만 허용) 1개 추가.</figcaption>
+<figcaption>배치는 2026-09-14 클러스터 기준(주요 파드만). RDS는 동기 · ElastiCache는 비동기 복제, Grafana용 ALB(집 IP만 허용)는 그림에서 생략.</figcaption>
 </figure>
 
 ## 설계 결정
 
 | 항목 | 선택 | 이유 |
 |---|---|---|
-| Terraform state | **bootstrap / stg 분리** | 관측 버킷 · ECR은 클러스터 삭제 후에도 유지 — 회차 간 비교용. bootstrap은 유지, stg는 사용 후 삭제 |
+| Terraform state | **bootstrap / stg 분리** | 관측 버킷 · ECR은 클러스터 삭제 후에도 유지 — 회차 간 비교용. stg만 사용 후 삭제 |
 | 관리형 경계 | **MySQL · Redis 관리형 / Kafka · 옵저버빌리티 클러스터 안** | MySQL — prd에서 파드로 운영하지 않음 · Redis — Lua가 Cluster Mode에서 `CROSSSLOT`(클러스터 모드 끔) · Kafka — MSK 하루 $3.6, 60배 · 관측 — 집 Mimir 활성 시리즈가 상한의 91.8% |
-| AZ | **3개** | Kafka 브로커 3대 = KRaft 과반 + `min.insync.replicas 2`. AZ 2개면 한 AZ에 2대 — 해당 AZ 장애 시 쓰기 중단 |
-| 서브넷 | **퍼블릭 · NAT 없음** | NAT 1개는 AZ 3개 설계와 불일치, AZ별 NAT는 비용. 노드 공인 IP는 보안 그룹으로 제한. prd는 프라이빗 + AZ별 NAT |
-| 노드그룹 | **app ×4 · booking ×2(AZ별 · taint) · 관측 ×1(AZ 고정)** | 오픈 시 CPU 급증 파드는 booking뿐 — 전용 노드 · 관측은 볼륨이 AZ에 묶여 AZ 고정 · t 계열 제외(크레딧 고갈과 서비스 한계 구분 불가) · 대수 고정(병목 은폐 방지) |
-| 파드의 AWS 자격 | **IRSA** · IMDSv2 hop limit 1 | 권한 단위를 ServiceAccount로 — 노드 역할에 부여하면 해당 노드의 파드 전체가 보유. hop 1로 파드의 노드 역할 접근 차단 |
-| 진입 | **ALB · ACM · 파드 IP 대상** | MetalLB L2 광고가 VPC에서 동작하지 않음 · 층 6개(Cloudflare · OPNsense · MetalLB · Traefik · cert-manager · Ingress) → 2개(ALB · Service) · 평문 http에서 `crypto.randomUUID` 미제공 → HTTPS 필요 |
-| 시크릿 | **Secrets Manager + 스크립트** | SealedSecret은 대상 클러스터 컨트롤러 개인키에 묶여 기동 전 봉인 불가 · 하루 환경이라 ESO 회전 · 동기화 불필요 |
+| AZ | **3개** | Kafka 브로커 3대 = KRaft 과반 + `min.insync.replicas 2` — AZ 2개면 한 AZ에 2대, 그 AZ 장애 시 쓰기 중단 |
+| 서브넷 | **퍼블릭 · NAT 없음** | NAT 1개는 AZ 3개 설계와 불일치, AZ별 NAT는 비용. 노드 공인 IP는 보안 그룹으로 제한 — prd는 프라이빗 + AZ별 NAT |
+| 노드그룹 | **app ×4 · booking ×2(AZ별 · taint) · 관측 ×1(AZ 고정)** | 오픈 시 CPU가 몰리는 booking만 전용 노드 · 관측은 볼륨이 AZ에 묶여 AZ 고정 · t 계열 제외(크레딧 고갈과 서비스 한계 구분 불가) · 대수 고정(병목 은폐 방지) |
+| 파드의 AWS 자격 | **IRSA** · IMDSv2 hop limit 1 | 권한 단위를 ServiceAccount로 — 노드 역할에 주면 그 노드의 모든 파드가 보유. hop 1로 파드의 노드 역할 접근 차단 |
+| 진입 | **ALB · ACM · 파드 IP 대상** | MetalLB L2 광고가 VPC에서 동작하지 않음 · 층 6개(Cloudflare · OPNsense · MetalLB · Traefik · cert-manager · Ingress) → 2개(ALB · Service) |
 | Redis | **복제본 1 · TLS + AUTH** | 복제본 — Kafka AZ 3개 배치와 짝 · TLS + AUTH가 없으면 6379에 닿는 파드가 대기열 · 좌석 락 · 입장 인증 전권 보유(보안 그룹은 출발지만 검사) |
-| 배포 | **집 허브의 원격 배포 · 아티팩트 승격** | EKS에서 사설망 GitLab 접근 불가 · 부하 비교에 두 환경 이미지 동일 필요 — [CI/CD](/homelab/cicd/) |
 {:.hl-dec}
 
 ## 트러블슈팅
 
 | 증상 | 원인 | 조치 |
 |---|---|---|
-| 노드그룹 `CREATING` 20분 이상 지속 — `describe-nodegroup` 정상 · CloudTrail 오류 없음 | 계정 EC2 vCPU 한도 32 소진 — `VcpuLimitExceeded`는 ASG scaling activities에만 기록. 정지 인스턴스는 한도 미포함 | 한도 **64**로 증설 → 1분 23초 후 ACTIVE |
-| 노드그룹 교체 후 Mimir ingester **95분 Pending** — 신규 지표 저장 중단 | 관측 노드그룹에 서브넷 3개 지정 → 노드가 2c → 2b로 이동, EBS 볼륨은 2c에 고정 | 상태를 가진 노드그룹만 단일 AZ 고정 |
-| Redis 암호화 적용 후 `x509: certificate is valid for …` 연결 실패 | 전송 암호화 활성화 시 주 엔드포인트가 `master.…`로 변경, 인증서는 새 이름 기준 | `REDIS_HOST` 변경. 무중단 순서: preferred → 앱 TLS → required → ROTATE → SET |
-| 30명이 1명으로 집계 — requestId 앞 8자 동일 | 평문 http에서 `crypto.randomUUID` 미제공 → 시각 기반 폴백 id 중복 | HTTPS 입구(ACM · 443) + 프론트 폴백 수정 → 30명 중 29명 예매 |
+| 노드그룹이 **`CREATING`에서 20분 넘게 멈춤** — `describe-nodegroup` · CloudTrail에 오류 없음 | 계정 EC2 vCPU 한도 32 소진 — `VcpuLimitExceeded`는 ASG scaling activities에만 기록 | 한도 **64**로 증설 → 1분 23초 뒤 ACTIVE |
+| 노드그룹 교체 후 **Mimir ingester 95분 Pending** — 새 지표 저장 중단 | 관측 노드그룹에 서브넷 3개 지정 → 노드가 2c → 2b로 이동, EBS 볼륨은 2c에 고정 | 상태를 가진 노드그룹만 **단일 AZ 고정** |
+| Redis 암호화 적용 후 **`x509: certificate is valid for …` 연결 실패** | 전송 암호화를 켜면 주 엔드포인트가 `master.…`로 바뀌고 인증서도 새 이름 기준 | `REDIS_HOST` 변경 — 무중단 순서 preferred → 앱 TLS → required → ROTATE → SET |
+| **30명이 1명으로 집계** — requestId 앞 8자 동일 | 평문 http에서 `crypto.randomUUID` 미제공 → 시각 기반 폴백 id 중복 | HTTPS 입구(ACM · 443) + 폴백 수정 → 30명 중 **29명** 예매 |
 {:.hl-tbl}
 
 ## 결과
@@ -204,24 +206,19 @@ RDS는 2c → 2b 동기 복제, ElastiCache는 2b → 2a 비동기 복제. 서�
 -->
 
 - **자원 56개 · Terraform state 2개** — 생성 30–40분, 사용 후 삭제하는 하루 환경
-- **허브 ArgoCD가 클러스터 이름 `cgv-stg`로 배포** — ApplicationSet 환경 목록에 한 줄 추가
-- **코드 → 브라우저 19분 41초** (기계 구간 1분 54초)
-- **부하 테스트 결과로 노드 구조 변경** — app 4 + 관측 1에 booking 전용 2대 추가, 총 7대. 근거는 [부하 테스트](/homelab/capacity/)
-- **5만 명 회차 SLO 5개 통과**
+- **부하 테스트 결과로 노드 구조 변경** — app 4 + 관측 1에 booking 전용 2대 추가, 근거는 [부하 테스트](/homelab/capacity/)
 - **운영 중인 Redis에 TLS · AUTH 무중단 적용**
 
 ## 한계
 
 - **운영 기간 하루** — 장기 운영 · 업그레이드 · 장애 대응 경험 없음
-- **노드가 퍼블릭 서브넷 · 공인 IP 보유** — prd는 프라이빗 서브넷 + AZ별 NAT
-- **데이터 보안 그룹이 노드 단위** — 노드 위 모든 파드가 통과. 파드 단위 제어는 NetworkPolicy, prd는 Security Groups for Pods
-- **CI → AWS 자격이 IAM 사용자 장기 키** — GitLab이 사설 IP라 OIDC 발급자로 사용 불가
-- **허브가 집에 위치** — 집 공인 IP 변경 시 재적용 필요, 집 전원 차단 중에는 마지막 sync 상태 유지
+- **데이터 보안 그룹이 노드 단위** — 노드 위 모든 파드가 통과, prd는 Security Groups for Pods
+- **허브가 집에 위치** — 집 공인 IP 변경 시 재적용 필요, 집 전원 차단 중에는 마지막 동기화 상태 유지
 - **관측 단일 AZ** — 해당 AZ 장애 시 관측 중단
 
 ## 기술 스택
 
-AWS (EKS · VPC · IAM/IRSA · RDS · ElastiCache · S3 · ECR · ACM · ALB · Secrets Manager · CloudWatch) · Terraform · ArgoCD · GitLab CI · Strimzi · Grafana LGTM · k6
+AWS (EKS · VPC · IAM/IRSA · RDS · ElastiCache · S3 · ECR · ACM · ALB · Secrets Manager · CloudWatch) · Terraform · Strimzi
 {:.hl-more}
 
 {% include hl-nav.html %}
