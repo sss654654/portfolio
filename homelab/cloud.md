@@ -166,7 +166,7 @@ Terraform으로 AWS 서울 리전 VPC에 EKS 노드 7대(app 4 · booking 2 · �
 
 | 항목 | 선택 | 이유 |
 |---|---|---|
-| 노드 배치 | **AZ 3개** · app 4 · booking 2(AZ별 · taint) · 관측 1(AZ 고정) | Kafka 브로커를 AZ마다 1대 — 한 AZ 장애에도 과반 유지 · JVM 컴파일이 같은 노드 브로커를 밀어낸 booking만 전용 노드 |
+| 노드 배치 | **AZ 3개** · app 4 · booking 2(AZ별 · taint) · 관측 1(AZ 고정) | Kafka 브로커 AZ마다 1대 — 한 AZ 장애에도 과반 유지 · JVM 컴파일이 브로커를 밀어낸 booking만 전용 노드 |
 | DB · 캐시 | **RDS Multi-AZ · ElastiCache 복제본 1** | MySQL은 prd 조건 재현(관리형 전환 · 동기 복제 쓰기 지연) · Redis 복제본은 Kafka처럼 AZ 장애 대비 |
 {:.hl-dec}
 
