@@ -158,34 +158,35 @@ permalink: /homelab/
   <circle cx="246" cy="336" r="4.5" fill="#2f6fdb"/>
   <text x="256" y="340" class="hla-s">ArgoCD 동기화</text>
 </svg>
-<figcaption>GitLab이 사설망에 있어 EKS에서 접근 불가 — 이미지는 ECR로 승격, 배포는 노트북 ArgoCD가 EKS API로 수행. 이미지는 한 번만 빌드해 두 환경의 부하 결과 차이를 환경 차이로만 해석.</figcaption>
+<figcaption>EKS는 사설망의 GitLab 저장소 · 레지스트리에 접근할 수 없어, 이미지는 ECR로 승격하고 배포는 노트북 ArgoCD가 EKS API로 수행. 이미지는 한 번만 빌드 — 두 환경의 부하 결과를 비교할 때 이미지를 변수에서 제외.</figcaption>
 </figure>
 
 <!-- 목차 — 세 묶음 · 여섯 줄. 이 페이지의 그림은 위 구성도 하나뿐이라 카드 테두리 없이 목록으로 둔다.
      묶음은 구성도와 같은 축: 좌우 클러스터 둘 = 환경 · 위 파이프라인 = 배포 · 관측 · 서비스 상자와 발생기 = 서비스 · 검증.
-     줄 = 영역 이름 + 구절 하나(결과가 있으면 결과, 없으면 그 페이지를 정하는 선택). 문장은 쓰지 않는다.
+     줄 = 영역 이름 + 구절 하나(핵심 구성 + 핵심 선택, 값은 각 카드에 적힌 것만). 문장은 쓰지 않는다.
+     제목은 목록의 역할(세부 페이지 안내)만 — "설계 · 결과" 는 줄 내용과 맞지 않았다.
      a 안은 inline 요소만 — 블록을 넣으면 compress_html 과 테마 앵커가 a 를 쪼갠다 -->
 
-## 영역별 설계 · 결과
+## 영역별 상세
 
 <div class="hl-index" markdown="0">
 
   <div class="hl-index-group">
     <span class="hl-index-head">환경</span>
-    <a href="/homelab/onprem/"><b>온프레미스 · dev</b><span>노트북 1대 · VM 3대 k3s HA, 인터넷 개방 포트 2개</span></a>
-    <a href="/homelab/cloud/"><b>클라우드 · stg</b><span>Terraform · EKS, DB · 캐시는 AWS 관리형</span></a>
+    <a href="/homelab/onprem/"><b>온프레미스 · dev</b><span>Proxmox VM 3대 k3s HA 클러스터, OPNsense 방화벽 뒤 격리</span></a>
+    <a href="/homelab/cloud/"><b>클라우드 · stg</b><span>Terraform으로 EKS 노드 7대 · AZ 3개, RDS · ElastiCache 관리형</span></a>
   </div>
 
   <div class="hl-index-group">
     <span class="hl-index-head">배포 · 관측 — 두 환경 공통</span>
-    <a href="/homelab/cicd/"><b>CI/CD</b><span>파이프라인 1개 · ArgoCD 1개, 배포 정의 커밋 후 3초 반영</span></a>
-    <a href="/homelab/observability/"><b>옵저버빌리티</b><span>LGTM 스택, 부하 판정 기준 지표</span></a>
+    <a href="/homelab/cicd/"><b>CI/CD</b><span>GitLab CI 1회 빌드 · stg 수동 승격 · ArgoCD 허브 동기화</span></a>
+    <a href="/homelab/observability/"><b>옵저버빌리티</b><span>Alloy · Mimir · Loki · Tempo, 부하 판정은 서버 지표 기준</span></a>
   </div>
 
   <div class="hl-index-group">
     <span class="hl-index-head">서비스 · 검증</span>
-    <a href="/homelab/service/"><b>대기열 예매 서비스</b><span>queue(Go) · booking(Spring), Kafka로 입장 전달</span></a>
-    <a href="/homelab/capacity/"><b>부하 테스트</b><span>5만 명 · SLO 5개 통과</span></a>
+    <a href="/homelab/service/"><b>대기열 예매 서비스</b><span>queue(Go · Redis) · booking(Spring · MySQL), Kafka로 입장 전달</span></a>
+    <a href="/homelab/capacity/"><b>부하 테스트</b><span>k6 발생기 4대로 5만 명, SLO 5개 통과</span></a>
   </div>
 
 </div>
@@ -197,10 +198,10 @@ permalink: /homelab/
 <div class="hl-index" markdown="0">
 
   <div class="hl-index-group">
-    <a href="https://zed6740.tistory.com/category/HomeLab"><b>HomeLab 시리즈</b><span>온프레미스 선택부터 인터넷 공개까지 구축 기록</span></a>
-    <a href="https://github.com/sss654654/cgv-infra"><b>cgv-infra</b><span>클러스터 · 배포 정의, dev · stg 환경 값</span></a>
-    <a href="https://github.com/sss654654/cgv-terraform"><b>cgv-terraform</b><span>AWS 자원, 유지용 bootstrap · 삭제용 stg 두 state</span></a>
-    <a href="https://github.com/sss654654/cgv-onprem"><b>cgv-onprem</b><span>앱 소스, queue(Go) · booking(Spring) · frontend</span></a>
+    <a href="https://zed6740.tistory.com/category/HomeLab"><b>블로그 · HomeLab 시리즈</b><span>온프레미스 선택부터 인터넷 공개까지 구축 기록</span></a>
+    <a href="https://github.com/sss654654/cgv-infra"><b>GitHub · cgv-infra</b><span>클러스터 · 배포 정의, dev · stg 환경 값</span></a>
+    <a href="https://github.com/sss654654/cgv-terraform"><b>GitHub · cgv-terraform</b><span>AWS 자원, 유지용 bootstrap · 삭제용 stg 두 state</span></a>
+    <a href="https://github.com/sss654654/cgv-onprem"><b>GitHub · cgv-onprem</b><span>앱 소스, queue(Go) · booking(Spring) · frontend</span></a>
   </div>
 
 </div>

@@ -309,7 +309,8 @@ ul.timeline > li:has(> small)::before {
 }
 .hl-index a {
   display: grid;
-  grid-template-columns: minmax(0, 10rem) minmax(0, 1fr);
+  /* 이름 열 12rem — "블로그 · HomeLab 시리즈" · "GitHub · cgv-terraform" 이 10rem 에서 두 줄로 접힌다 */
+  grid-template-columns: minmax(0, 12rem) minmax(0, 1fr);
   gap: .15rem 1.2rem;
   padding: .5rem 0;
   border-top: 1px solid var(--border-color);
