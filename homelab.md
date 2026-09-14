@@ -166,7 +166,7 @@ stg는 dev가 3만 명 부하에서 노드 한계에 도달한 뒤 Terraform으�
   <circle cx="246" cy="340" r="4.5" fill="#2f6fdb"/>
   <text x="256" y="344" class="hla-s">ArgoCD 동기화</text>
 </svg>
-<figcaption>이미지는 한 번 빌드 — dev는 GitLab 레지스트리, stg는 수동 승격한 ECR에서 pull. 배포는 노트북 ArgoCD 하나가 두 클러스터를 동기화 — EKS가 사설망 GitLab에 접근할 수 없어 stg는 ECR과 EKS API로 원격 배포. 사용자는 dev, 부하 발생기는 stg에 요청.</figcaption>
+<figcaption>이미지는 한 번 빌드 — dev는 GitLab 레지스트리, stg는 수동 승격한 ECR에서 pull. 배포는 노트북 ArgoCD 하나가 두 클러스터를 동기화.</figcaption>
 </figure>
 
 <!-- 목차 — 세 묶음 · 여섯 줄. 이 페이지의 그림은 위 구성도 하나뿐이라 카드 테두리 없이 목록으로 둔다.
