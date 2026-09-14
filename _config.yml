@@ -25,14 +25,14 @@ title:                 홍수빈
 # A short description (~150 chars) of the page used for the meta description tag.
 # Can use markdown, but no more than one paragraph (enforced by `>`)
 description:           >
-  인프라 엔지니어 · SRE / DevOps.
+  인프라 엔지니어 · DevOps / SRE.
   온프레미스 k3s와 Terraform · AWS EKS에 인프라를 구축하고, 대기열 예매 서비스를 GitOps로 배포해 50,000명 동시 접속을 실측했습니다.
 
 # A shorter description for the sidebar.
-tagline:               SRE / DevOps
+tagline:               DevOps / SRE
 
 # A list of keywords for your blog
-keywords:              [SRE, DevOps, Observability, Kubernetes, k3s, 홈랩]
+keywords:              [DevOps, SRE, Observability, Kubernetes, k3s, 홈랩]
 
 # A (square) logo for your site.
 # If provided, it will be shown at the top of the sidebar.
