@@ -159,6 +159,11 @@ ul.timeline > li:has(> small)::before {
 .hl-pair figure { flex: 1 1 0; margin: 0; }
 @media (max-width: 640px) { .hl-pair { flex-direction: column; } }
 .hl-diagram figcaption { font-size: .82rem; line-height: 1.65; color: var(--gray); margin-top: .55rem; }
+/* 폰에서 760 폭 그림을 줄이면 글자가 5px 아래로 떨어진다 — 줄이지 않고 가로로 넘겨 본다 */
+@media (max-width: 640px) {
+  .hl-diagram-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .hl-diagram-scroll svg { min-width: 680px; }
+}
 
 .hla-box { fill: var(--gray-bg); stroke: var(--border-color); stroke-width: 1; }
 .hla-outer { fill: none; stroke: var(--border-color); stroke-width: 1.2; }
@@ -281,6 +286,16 @@ ul.timeline > li:has(> small)::before {
   line-height: 1.75;
   color: var(--gray-text);
 }
+/* 글자 카드 — 입구에 구성도가 있어 카드는 목차 역할만 한다. 테두리로 한 덩어리임을 보인다 */
+.hlc-text { gap: 1rem; }
+.hlc-text .hlc-card {
+  padding: 1rem 1.2rem .35rem;
+  border: 1px solid var(--border-color) !important;
+  border-radius: .6rem;
+  transition: border-color .15s;
+}
+.hlc-text .hlc-card:hover { border-color: var(--gray) !important; }
+
 .hlc-num {
   display: block;
   font-size: .82rem;
