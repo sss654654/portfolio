@@ -10,7 +10,7 @@ permalink: /homelab/
      5만 명 실측은 홈 리드와 부하 카드가 말하므로 여기서는 반복하지 않는다. -->
 
 대기열 예매 서비스를 공개 데모용 **dev**(노트북 k3s)와 부하 테스트용 **stg**(AWS EKS)에 구축했습니다.
-stg는 dev가 3만 명 부하에서 노드 한계에 도달한 뒤 Terraform으로 구성했고, 두 환경 모두 GitLab CI와 ArgoCD 하나로 배포합니다.
+stg는 dev가 3만 명 부하에서 노드 한계에 도달한 뒤 Terraform으로 구성했고, 두 환경 모두 데스크탑의 GitLab CI와 노트북의 ArgoCD 하나로 배포합니다.
 {:.lead}
 
 <!-- 구성도 — 코드가 이미지가 되어 레지스트리 둘에 오르고 각 클러스터가 pull 한다(실선).
@@ -156,7 +156,7 @@ stg는 dev가 3만 명 부하에서 노드 한계에 도달한 뒤 Terraform으�
   <circle cx="246" cy="336" r="4.5" fill="#2f6fdb"/>
   <text x="256" y="340" class="hla-s">ArgoCD 동기화</text>
 </svg>
-<figcaption>이미지는 한 번 빌드해 dev는 GitLab 레지스트리에, stg는 같은 이미지를 수동 승격해 ECR에 저장. ArgoCD가 두 클러스터를 동기화한 뒤 각 클러스터가 자기 레지스트리에서 pull.</figcaption>
+<figcaption>dev · stg는 한 번 빌드한 같은 이미지를 사용 — 환경별로 빌드하면 두 환경의 부하 결과를 비교할 때 이미지 차이를 배제할 수 없음.</figcaption>
 </figure>
 
 <!-- 카드 여섯 — 글자만. 입구의 시각 요소는 위 구성도 하나로 둔다.
