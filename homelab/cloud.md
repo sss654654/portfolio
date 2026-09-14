@@ -174,7 +174,7 @@ Terraform으로 AWS 서울 리전 VPC에 EKS 노드 7대(app 4 · booking 2 · �
 
 | 항목 | 선택 | 이유 |
 |---|---|---|
-| 파드의 AWS 권한 | **IRSA** · IMDSv2 hop limit 1 | 노드 역할에 주면 그 노드의 모든 파드가 보유 — ServiceAccount 단위로 분리, 노드 역할 접근 차단 |
+| 파드의 AWS 권한 | **IRSA** · IMDSv2 hop limit 1 | 권한을 노드 역할에 주면 그 노드의 모든 파드가 보유 — ServiceAccount 단위로 분리, 노드 역할 접근 차단 |
 | Redis 접근 | **TLS + AUTH** | 인증이 없으면 6379에 닿는 파드가 대기열 · 좌석 락 · 입장 인증 전권 보유(보안 그룹은 출발지만 검사) |
 {:.hl-dec}
 
@@ -194,7 +194,6 @@ Terraform으로 AWS 서울 리전 VPC에 EKS 노드 7대(app 4 · booking 2 · �
 | 노드그룹이 **`CREATING`에서 20분 넘게 멈춤** — CloudTrail에 오류 없음 | 계정 vCPU 한도 32 소진 — 원인은 ASG scaling activities에만 기록 | 한도 **64**로 증설 → 1분 23초 뒤 ACTIVE |
 | 노드그룹 교체 후 **Mimir ingester 95분 Pending** | 서브넷 3개 지정으로 관측 노드가 2c → 2b 이동, EBS 볼륨은 2c에 고정 | 상태를 가진 노드그룹만 **단일 AZ 고정** |
 | Redis 암호화 적용 후 **인증서 오류로 연결 실패** | 전송 암호화를 켜면 엔드포인트가 `master.…`로 바뀌고 인증서도 새 이름 기준 | `REDIS_HOST` 변경, 앱 TLS를 먼저 켠 뒤 required로 — **무중단 전환** |
-| **30명이 1명으로 집계** — requestId 앞 8자 동일 | 평문 http에서 `crypto.randomUUID` 미제공 → 시각 기반 폴백 id 중복 | HTTPS 입구 + 폴백 수정 → **30명 개별 집계** |
 {:.hl-tbl}
 
 ## 결과

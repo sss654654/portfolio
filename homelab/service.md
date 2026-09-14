@@ -2,14 +2,14 @@
 layout: page
 title: 서비스
 description: >
-  대기열(queue) · 예매(booking) 두 서비스를 Kafka로 연결 — dev · stg 같은 이미지
+  대기열 예매 · 대기와 예매 처리를 분리
 permalink: /homelab/service/
 ---
 
 <p class="hl-back" markdown="0"><a href="/homelab/">← HomeLab</a></p>
 
-티케팅 서비스 — 오픈 순간 사용자 집중, 좌석 4,000석. 2024년 한국시리즈 극장 생중계 예매 대기 16만 명 기준, 목표 10만 명.
-예매 처리는 1인당 트랜잭션 · DB 커넥션을 점유해 **전체 인원을 그대로 받을 수 없는 구조**. dev · stg는 같은 이미지, 환경 값만 다름.
+티케팅 서비스 — 오픈 순간 사용자 집중, 좌석 4,000석.
+예매 처리는 1인당 트랜잭션 · DB 커넥션을 점유해 **전체 인원을 그대로 받을 수 없는 구조** — 대기열이 입장 인원을 제한.
 {:.lead}
 
 ## 서비스 구조
@@ -144,7 +144,7 @@ permalink: /homelab/service/
 </svg>
 <div class="cs-log" id="cs-log">정지 상태는 구조도, 재생 시 한 회 흐름을 표시합니다.</div>
 </div>
-<figcaption>관객 30 · 정원 6 · 좌석 24는 시각화용 축소값 — 실제 정원은 공개 데모(dev) 60, stg 실측 1,000(<a href="/homelab/capacity/">부하 테스트</a>).</figcaption>
+<figcaption>관객 30 · 정원 6 · 좌석 24는 시각화용 축소값 — 실제 정원은 공개 데모(dev) 60 · stg 1,000(<a href="/homelab/capacity/">부하 테스트</a>로 결정).</figcaption>
 </figure>
 
 ## 설계 결정
@@ -153,14 +153,14 @@ permalink: /homelab/service/
 |---|---|---|
 | queue | **Go** · dev HPA min = max = 4 · stg **4대 고정**(HPA 끔) | **요청: 짧고 많음 — 대기열**<br>goroutine 요청당 처리로 동시 처리 비용 낮음 · 네이티브 바이너리라 기동 즉시 최대 성능 · HPA는 오픈 피크보다 늦어 dev부터 4대 · stg는 CPU 70% 기준 부적합(1만 명에서 17%), 테스트 중 대수가 바뀌면 회차 비교 불가 → HPA 끔 |
 | 순번 · 현황 | **Redis 폴링** — 순번이 뒤일수록 주기 증가 | **홈 · 대기 화면이 주기적으로 조회**<br>줄 · 정원 · 현황 모두 Redis — 왕복 1–2회 · 1ms, 부하는 호출 횟수(CPU), 어느 파드든 같은 결과. 100번 밖 5초 · 20번 밖 2초 · 이내 1초 |
-| booking | **Java Spring** · dev **1대** · stg **2대** | **요청: 길고 적음 — 입장객**<br>메모리 점유는 길지만 수는 정원으로 제한 · 전체 성공/롤백을 `@Transactional` 하나로 · stg 2대는 Flyway가 DB 잠금으로 한 대만 스키마를 적용해 가능 |
+| booking | **Java Spring** · dev **1대** · stg **2대** | **요청: 길고 적음 — 입장객**<br>메모리 점유 시간은 길지만 동시 요청 수는 정원으로 제한 · 전체 성공/롤백을 `@Transactional` 하나로 · stg 2대는 Flyway가 DB 잠금으로 한 대만 스키마를 적용해 가능 |
 | 서비스 간 통신 | **Kafka 비동기** — 직접 호출 없음 · 파티션 8 · RF 3 · `acks=all` | **한쪽 중단 시 다른 쪽 유지**<br>동기 호출이면 booking 중단 시 queue도 중단 · 미소비 메시지는 토픽에 보존 후 소비 · 파티션 8 = booking 2대 × 컨슈머 4 |
 | 옵저버빌리티 | **코드 계측** · 사용자당 1회 호출 경로는 기동 시 시계열을 0으로 초기화 | **기본 metric만으로는 발생 위치 파악 불가**<br>요청 수 · 지연은 metric, 사건은 log, 구간 흐름은 trace — log · trace는 `trace_id`로 연결 · 첫 요청이 오픈 피크면 `rate`가 피크를 0으로 계산(stg 5만 명 회차에서 확인) |
 {:.hl-dec}
 
 ## 결과
 
-- **대기 인원과 예매 처리 분리** — 대기는 queue 4대, booking은 정원만큼만 처리. 사용자 5배(1만 → 5만)에 예매 여정 요청 **1.54배**(29,519 → 45,468건)
+- **대기 인원과 예매 처리 분리** — 대기는 queue 4대가 받고, booking은 정원 인원만 처리
 - **dev · stg 같은 이미지** — 차이는 환경 값(정원 · 승격 배치 · 커넥션 풀 · limit · Redis 주소)뿐, 코드 · 차트 동일
 - **세 신호 코드 계측** — metric 이상 → 해당 요청의 trace · log로 추적
 

@@ -2,14 +2,15 @@
 layout: page
 title: 옵저버빌리티
 description: >
-  metric · log · trace를 수집기 하나로 모으는 LGTM 스택, dev · stg에 같은 차트로 배포 — 부하 판정 기준 서버 지표
+  LGTM · 부하 테스트 판정의 기준 지표
 permalink: /homelab/observability/
 ---
 
 <p class="hl-back" markdown="0"><a href="/homelab/">← HomeLab</a></p>
 
-metric · log · trace를 Alloy 하나로 수집하는 LGTM 스택.
-dev · stg에 같은 차트로 배포, **부하 테스트 판정은 모두 이 서버 지표 기준**.
+노드마다 Alloy 1개가 metric · log · trace를 모아 Mimir · Loki · Tempo에 저장.
+판정에 쓰는 metric만 **Mimir 분산**(ingester 3대), log · trace는 단일 구성.
+stg는 같은 차트로 **클러스터 안에 별도 구성** — 집 Mimir로 보내지 않음.
 {:.lead}
 
 ## 옵저버빌리티 구조
@@ -88,14 +89,14 @@ dev · stg에 같은 차트로 배포, **부하 테스트 판정은 모두 이 �
   <text class="hla-s2" x="685" y="180" text-anchor="middle">dev · stg 공통 차트</text>
   <text class="hla-s2" x="685" y="216" text-anchor="middle">알림 — Discord</text>
 </svg>
-<figcaption>원본 저장소 — dev MinIO · stg S3. RDS · ElastiCache · ALB처럼 exporter를 붙일 수 없는 자원은 stg의 CloudWatch exporter가 수집해 같은 Mimir에 저장.</figcaption>
+<figcaption>화살표 — 데이터 방향. exporter를 붙일 수 없는 RDS · ElastiCache · ALB는 stg의 CloudWatch exporter가 같은 Mimir로 수집.</figcaption>
 </figure>
 
 ## 설계 결정
 
 | 항목 | 선택 | 이유 |
 |---|---|---|
-| metric 저장소 | **Mimir distributed** — ingester 3대, 노드당 1 | ingester 중단 시 메모리의 최근 2시간 소실 — 자원상 **판정용 metric만** 분산 |
+| metric 저장소 | **Mimir distributed** — ingester 3대, 노드당 1 | ingester가 1대면 중단 시 메모리의 최근 2시간 소실 — 자원 한도로 **판정용 metric만** 분산 |
 | log · trace | **Loki · Tempo 단일** | 조사용이라 공백이 판정에 영향 없음 · WAL로 재시작 복구, 노드 유실은 감수 |
 | 원본 저장소 | **dev MinIO 파드 · stg S3(IRSA)** | 원본은 오브젝트 스토리지, 로컬은 WAL만 — stg는 파드가 IRSA로 버킷 권한 획득 |
 | stg 스택 | **stg 안에 같은 차트로 별도 구성** — 집으로 전송하지 않음 | 집 Mimir 활성 시리즈가 상한의 91.8% — 수용 불가 · 같은 차트라 대시보드 재사용 |
@@ -105,7 +106,7 @@ dev · stg에 같은 차트로 배포, **부하 테스트 판정은 모두 이 �
 
 ## 대시보드와 알림
 
-대시보드는 코드(cgv-infra `manifests/`)로 배포 — dev는 클러스터 · 호스트 · 앱, stg는 흐름(판정 · 층별 진단 · 노드) · queue · booking · 데이터. 상시 감시는 알림 담당.
+대시보드는 코드(cgv-infra `manifests/`)로 배포 — dev는 클러스터 · 호스트 · 앱, stg는 흐름(판정 · 층별 진단 · 노드) · queue · booking · 데이터. 대시보드는 조사, 상시 감시는 알림이 담당.
 
 <figure class="hl-shot" markdown="0">
   <img src="/assets/img/homelab/obs/host-phone.png" alt="충전선을 뽑은 순간 — 왼쪽 호스트 대시보드의 전원이 배터리(빨강)로 바뀌고 전력 행의 알림 상태 표시가 바뀌었으며, 오른쪽 폰 Discord에 발생 알림이 도착" loading="lazy">
@@ -123,7 +124,6 @@ dev · stg에 같은 차트로 배포, **부하 테스트 판정은 모두 이 �
 
 ## 결과
 
-- **신호별 저장소** — metric Mimir 15일 · log Loki 7일 · trace Tempo 24시간
 - **두 환경에 같은 차트 · 대시보드** — 부하 테스트 19회의 판정 · 진단 모두 stg Mimir 서버 지표 기준
 - **알림은 Discord** — 현재 값 · 조치 · 패널 이미지 포함. 클러스터 전체 중단은 Better Stack이 외부에서 감지
 - **관측 자체의 부하 실측** — 로그 비용은 디스크가 아닌 수집기 CPU, 같은 노드의 서비스 파드에 영향
