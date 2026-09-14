@@ -19,7 +19,7 @@ stg는 dev가 3만 명 부하에서 노드 한계에 도달한 뒤 Terraform으�
      점 여덟이 14초 한 바퀴 — 요청(빨강) → 이미지 push(주황) → 동기화(파랑) → 이미지 pull(주황).
      pull 이 동기화 뒤라는 순서는 움직임으로만 보인다. prefers-reduced-motion 이면 점은 숨는다.
      폰에서는 줄이면 글자가 5px 아래로 떨어져 가로로 넘겨 본다(hl-diagram-scroll). -->
-<figure class="hl-diagram hl-diagram-scroll" markdown="0">
+<figure class="hl-diagram hl-diagram-hero hl-diagram-scroll" markdown="0">
 <svg viewBox="0 0 760 350" role="img" aria-label="개발자가 머지한 코드를 데스크탑 GitLab CI가 이미지로 만들어 GitLab 레지스트리(자동)와 ECR(수동 승격)에 올리고, 각 클러스터가 자기 레지스트리에서 pull 한다. 노트북 k3s dev 안 ArgoCD가 dev와 AWS EKS stg를 동기화한다. 사용자는 dev를, 부하 발생기는 stg를 쓴다">
   <defs>
     <marker id="hla-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
@@ -188,11 +188,17 @@ stg는 dev가 3만 명 부하에서 노드 한계에 도달한 뒤 Terraform으�
 
 </div>
 
-<!-- 기록과 코드 -->
+<!-- 기록과 코드 — 위 목차와 같은 줄 모양(이름 + 구절) -->
 
 ## 기록 · 저장소
 
-* [HomeLab 시리즈](https://zed6740.tistory.com/category/HomeLab) — 온프레미스 선택 이유부터 인터넷 공개까지, 편별 구축 기록
-* [cgv-infra](https://github.com/sss654654/cgv-infra) — 클러스터 · 배포 정의, dev · stg 환경 값
-* [cgv-terraform](https://github.com/sss654654/cgv-terraform) — AWS 자원, bootstrap · stg 두 state
-* [cgv-onprem](https://github.com/sss654654/cgv-onprem) — 앱 소스, queue(Go) · booking(Spring) · frontend
+<div class="hl-index" markdown="0">
+
+  <div class="hl-index-group">
+    <a href="https://zed6740.tistory.com/category/HomeLab"><b>HomeLab 시리즈</b><span>온프레미스 선택 이유부터 인터넷 공개까지, 편별 구축 기록</span></a>
+    <a href="https://github.com/sss654654/cgv-infra"><b>cgv-infra</b><span>클러스터 · 배포 정의, dev · stg 환경 값</span></a>
+    <a href="https://github.com/sss654654/cgv-terraform"><b>cgv-terraform</b><span>AWS 자원, bootstrap · stg 두 state</span></a>
+    <a href="https://github.com/sss654654/cgv-onprem"><b>cgv-onprem</b><span>앱 소스, queue(Go) · booking(Spring) · frontend</span></a>
+  </div>
+
+</div>
