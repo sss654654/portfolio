@@ -166,7 +166,7 @@ Terraform으로 AWS 서울 리전 VPC에 EKS 노드 7대(app 4 · booking 2 · �
 
 | 항목 | 선택 | 이유 |
 |---|---|---|
-| 노드 배치 | **AZ 3개** · app 4 · booking 2(AZ별 · taint) · 관측 1(AZ 고정) | Kafka 브로커 AZ마다 1대 — 한 AZ 장애에도 과반 유지 · JVM 컴파일이 브로커를 밀어낸 booking만 전용 노드 |
+| 노드 배치 | **AZ 3개** · app 4 · booking 2(AZ별 · taint) · 관측 1(AZ 고정) | Kafka 브로커 AZ마다 1대 — AZ 장애에도 과반 유지 · booking은 JVM 컴파일이 브로커를 밀어내 분리 |
 | DB · 캐시 | **RDS Multi-AZ · ElastiCache 복제본 1** | MySQL은 prd 조건 재현(관리형 전환 · 동기 복제 쓰기 지연) · Redis 복제본은 Kafka처럼 AZ 장애 대비 |
 {:.hl-dec}
 
@@ -174,7 +174,7 @@ Terraform으로 AWS 서울 리전 VPC에 EKS 노드 7대(app 4 · booking 2 · �
 
 | 항목 | 선택 | 이유 |
 |---|---|---|
-| 파드의 AWS 권한 | **IRSA** · IMDSv2 hop limit 1 | 권한을 노드 역할에 주면 그 노드의 모든 파드가 보유 — ServiceAccount 단위로 분리, 노드 역할 접근 차단 |
+| 파드의 AWS 권한 | **IRSA** · IMDSv2 hop limit 1 | 노드 역할에 주면 그 노드의 모든 파드가 보유 — ServiceAccount 단위로 분리, 노드 역할 접근 차단 |
 | Redis 접근 | **TLS + AUTH** | 인증이 없으면 6379에 닿는 파드가 대기열 · 좌석 락 · 입장 인증 전권 보유(보안 그룹은 출발지만 검사) |
 {:.hl-dec}
 
