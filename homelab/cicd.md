@@ -6,7 +6,7 @@ description: >
 permalink: /homelab/cicd/
 ---
 
-<p class="hl-back" markdown="0"><a href="/homelab/">← 홈랩</a></p>
+<p class="hl-back" markdown="0"><a href="/homelab/">← HomeLab</a></p>
 
 GitLab 파이프라인 1개 · ArgoCD 허브 1개로 dev · stg 두 클러스터에 배포.
 dev는 머지 시 자동, stg는 수동 승격 job 실행 시 **같은 이미지** 배포 — 환경 차이는 폴더의 값뿐.

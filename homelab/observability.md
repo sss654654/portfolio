@@ -6,7 +6,7 @@ description: >
 permalink: /homelab/observability/
 ---
 
-<p class="hl-back" markdown="0"><a href="/homelab/">← 홈랩</a></p>
+<p class="hl-back" markdown="0"><a href="/homelab/">← HomeLab</a></p>
 
 metric · log · trace를 Alloy 하나로 수집하는 LGTM 스택.
 dev · stg에 같은 차트로 배포, **부하 테스트 판정은 모두 이 서버 지표 기준**.

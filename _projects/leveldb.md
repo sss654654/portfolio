@@ -9,7 +9,7 @@ links:
     url: https://github.com/sss654654/leveldb-cache-analysis
 ---
 
-<p class="hl-back" markdown="0"><a href="/projects/">← 프로젝트</a></p>
+<p class="hl-back" markdown="0"><a href="/projects/">← Projects</a></p>
 
 단국대학교 시스템 소프트웨어 연구실 학부 연구생(2022.07–12).
 Google LevelDB는 LSM-tree 기반으로, 읽기 성능이 캐시 두 계층에 좌우됩니다.

@@ -11,7 +11,7 @@ links:
     url: https://github.com/sss654654/dev_backend
 ---
 
-<p class="hl-back" markdown="0"><a href="/projects/">← 프로젝트</a></p>
+<p class="hl-back" markdown="0"><a href="/projects/">← Projects</a></p>
 
 CJ 올리브네트웍스 클라우드웨이브 6기(2025.06–09) 5인 · 3주 팀 프로젝트.
 2024년 한국시리즈 극장 생중계 예매 대기 16만 명 사례 기준, **몰리는 수요를 백엔드 처리량에 맞춰 조절하는 대기열**을 구현했습니다.

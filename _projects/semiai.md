@@ -6,7 +6,7 @@ description: >
   온프레미스 k3s 클러스터와 그 위 앱의 옵저버빌리티 — 계측·수집·대시보드
 ---
 
-<p class="hl-back" markdown="0"><a href="/projects/">← 프로젝트</a></p>
+<p class="hl-back" markdown="0"><a href="/projects/">← Projects</a></p>
 
 반도체 수율 AI 플랫폼 회사 인프라팀(2026.03–06).
 배포 환경이 docker-compose에서 k3s로 전환되던 시점으로, **대시보드와 신호 수집 경로가 없는 상태**였습니다.

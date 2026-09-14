@@ -1,6 +1,6 @@
 ---
 layout: page
-title: 홈랩
+title: HomeLab
 description: >
   온프레미스 dev · AWS stg
 permalink: /homelab/
@@ -16,9 +16,11 @@ stg는 dev가 3만 명 부하에서 노드 한계에 도달한 뒤 Terraform으�
 <!-- 구성도 — 코드가 이미지가 되어 레지스트리 둘에 오르고 각 클러스터가 pull 한다(실선).
      ArgoCD 가 dev 와 stg 를 동기화한다(점선). 사용자는 dev, 부하 발생기는 stg 로.
      상자 안은 이름과 로고만 — image-updater · webhook · 승격 job 같은 세부는 CI/CD 카드에.
+     점 여덟이 14초 한 바퀴 — 요청(빨강) → 이미지 push(주황) → 동기화(파랑) → 이미지 pull(주황).
+     pull 이 동기화 뒤라는 순서는 움직임으로만 보인다. prefers-reduced-motion 이면 점은 숨는다.
      폰에서는 줄이면 글자가 5px 아래로 떨어져 가로로 넘겨 본다(hl-diagram-scroll). -->
 <figure class="hl-diagram hl-diagram-scroll" markdown="0">
-<svg viewBox="0 0 760 330" role="img" aria-label="개발자가 머지한 코드를 데스크탑 GitLab CI가 이미지로 만들어 GitLab 레지스트리(자동)와 ECR(수동 승격)에 올리고, 각 클러스터가 자기 레지스트리에서 pull 한다. 노트북 k3s dev 안 ArgoCD가 dev와 AWS EKS stg를 동기화한다. 사용자는 dev를, 부하 발생기는 stg를 쓴다">
+<svg viewBox="0 0 760 350" role="img" aria-label="개발자가 머지한 코드를 데스크탑 GitLab CI가 이미지로 만들어 GitLab 레지스트리(자동)와 ECR(수동 승격)에 올리고, 각 클러스터가 자기 레지스트리에서 pull 한다. 노트북 k3s dev 안 ArgoCD가 dev와 AWS EKS stg를 동기화한다. 사용자는 dev를, 부하 발생기는 stg를 쓴다">
   <defs>
     <marker id="hla-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
       <path d="M0,0 L8,4 L0,8 z" fill="currentColor" opacity=".5"/>
@@ -26,11 +28,12 @@ stg는 dev가 3만 명 부하에서 노드 한계에 도달한 뒤 Terraform으�
   </defs>
 
   <!-- 개발자 → 데스크탑 GitLab CI -->
-  <rect x="10" y="20" width="108" height="52" rx="9" class="hla-box"/>
+  <rect x="10" y="20" width="98" height="52" rx="9" class="hla-box"/>
   <circle cx="30" cy="40" r="5.5" class="hla-glyph"/>
   <path d="M20,57 C20,46 40,46 40,57" class="hla-glyph"/>
   <text x="50" y="51" class="hla-t">개발자</text>
-  <line x1="118" y1="46" x2="138" y2="46" class="hla-ln" marker-end="url(#hla-arrow)"/>
+  <line x1="108" y1="46" x2="138" y2="46" class="hla-ln" marker-end="url(#hla-arrow)"/>
+  <text x="123" y="37" class="hla-s" text-anchor="middle">push</text>
 
   <rect x="140" y="20" width="480" height="52" rx="9" class="hla-box"/>
   <image href="/assets/img/icons/gitlab.svg" x="308" y="34" width="24" height="24"/>
@@ -94,7 +97,66 @@ stg는 dev가 3만 명 부하에서 노드 한계에 도달한 뒤 Terraform으�
   <image href="/assets/img/icons/k6.svg" x="652" y="228" width="18" height="18"/>
   <text x="676" y="242" class="hla-t">부하 발생기</text>
   <line x1="642" y1="237" x2="610" y2="237" class="hla-ln" marker-end="url(#hla-arrow)"/>
+
+  <!-- 흐르는 점 — 요청 둘 → 이미지 push 둘 → 동기화 둘 → 이미지 pull 둘 -->
+  <circle class="hla-dot hla-dot-u" r="4.5" opacity="0">
+    <animateMotion dur="14s" begin="1s" repeatCount="indefinite" calcMode="linear"
+      keyTimes="0;0.01;0.08;1" keyPoints="0;0;1;1" path="M118,237 L190,237"/>
+    <animate attributeName="opacity" dur="14s" begin="1s" repeatCount="indefinite"
+      keyTimes="0;0.01;0.02;0.07;0.08;1" values="0;0;1;1;0;0"/>
+  </circle>
+  <circle class="hla-dot hla-dot-u" r="4.5" opacity="0">
+    <animateMotion dur="14s" begin="1s" repeatCount="indefinite" calcMode="linear"
+      keyTimes="0;0.10;0.17;1" keyPoints="0;0;1;1" path="M642,237 L560,237"/>
+    <animate attributeName="opacity" dur="14s" begin="1s" repeatCount="indefinite"
+      keyTimes="0;0.10;0.11;0.16;0.17;1" values="0;0;1;1;0;0"/>
+  </circle>
+  <circle class="hla-dot hla-dot-g" r="4.5" opacity="0">
+    <animateMotion dur="14s" begin="1s" repeatCount="indefinite" calcMode="linear"
+      keyTimes="0;0.20;0.36;1" keyPoints="0;0;1;1" path="M108,46 L245,46 L245,132"/>
+    <animate attributeName="opacity" dur="14s" begin="1s" repeatCount="indefinite"
+      keyTimes="0;0.20;0.21;0.35;0.36;1" values="0;0;1;1;0;0"/>
+  </circle>
+  <circle class="hla-dot hla-dot-g" r="4.5" opacity="0">
+    <animateMotion dur="14s" begin="1s" repeatCount="indefinite" calcMode="linear"
+      keyTimes="0;0.38;0.56;1" keyPoints="0;0;1;1" path="M108,46 L515,46 L515,132"/>
+    <animate attributeName="opacity" dur="14s" begin="1s" repeatCount="indefinite"
+      keyTimes="0;0.38;0.39;0.55;0.56;1" values="0;0;1;1;0;0"/>
+  </circle>
+  <circle class="hla-dot hla-dot-v" r="4.5" opacity="0">
+    <animateMotion dur="14s" begin="1s" repeatCount="indefinite" calcMode="linear"
+      keyTimes="0;0.59;0.65;1" keyPoints="0;0;1;1" path="M245,289 L245,237"/>
+    <animate attributeName="opacity" dur="14s" begin="1s" repeatCount="indefinite"
+      keyTimes="0;0.59;0.60;0.64;0.65;1" values="0;0;1;1;0;0"/>
+  </circle>
+  <circle class="hla-dot hla-dot-v" r="4.5" opacity="0">
+    <animateMotion dur="14s" begin="1s" repeatCount="indefinite" calcMode="linear"
+      keyTimes="0;0.66;0.77;1" keyPoints="0;0;1;1" path="M338,289 L380,289 L380,237 L470,237"/>
+    <animate attributeName="opacity" dur="14s" begin="1s" repeatCount="indefinite"
+      keyTimes="0;0.66;0.67;0.76;0.77;1" values="0;0;1;1;0;0"/>
+  </circle>
+  <circle class="hla-dot hla-dot-g" r="4.5" opacity="0">
+    <animateMotion dur="14s" begin="1s" repeatCount="indefinite" calcMode="linear"
+      keyTimes="0;0.80;0.87;1" keyPoints="0;0;1;1" path="M245,132 L245,196"/>
+    <animate attributeName="opacity" dur="14s" begin="1s" repeatCount="indefinite"
+      keyTimes="0;0.80;0.81;0.86;0.87;1" values="0;0;1;1;0;0"/>
+  </circle>
+  <circle class="hla-dot hla-dot-g" r="4.5" opacity="0">
+    <animateMotion dur="14s" begin="1s" repeatCount="indefinite" calcMode="linear"
+      keyTimes="0;0.88;0.95;1" keyPoints="0;0;1;1" path="M515,132 L515,196"/>
+    <animate attributeName="opacity" dur="14s" begin="1s" repeatCount="indefinite"
+      keyTimes="0;0.88;0.89;0.94;0.95;1" values="0;0;1;1;0;0"/>
+  </circle>
+
+  <!-- 범례 — 한 줄 -->
+  <circle cx="16" cy="336" r="4.5" fill="#e03131"/>
+  <text x="26" y="340" class="hla-s">요청</text>
+  <circle cx="66" cy="336" r="4.5" fill="#f08c2e"/>
+  <text x="76" y="340" class="hla-s">이미지</text>
+  <circle cx="126" cy="336" r="4.5" fill="#2f6fdb"/>
+  <text x="136" y="340" class="hla-s">ArgoCD 동기화</text>
 </svg>
+<figcaption>이미지는 한 번 빌드해 dev는 GitLab 레지스트리에, stg는 같은 이미지를 수동 승격해 ECR에 저장. ArgoCD가 두 클러스터를 동기화한 뒤 각 클러스터가 자기 레지스트리에서 pull.</figcaption>
 </figure>
 
 <!-- 카드 여섯 — 글자만. 입구의 시각 요소는 위 구성도 하나로 둔다.

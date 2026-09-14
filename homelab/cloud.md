@@ -6,7 +6,7 @@ description: >
 permalink: /homelab/cloud/
 ---
 
-<p class="hl-back" markdown="0"><a href="/homelab/">← 홈랩</a></p>
+<p class="hl-back" markdown="0"><a href="/homelab/">← HomeLab</a></p>
 
 stg 환경 — dev에서 산정한 스펙을 AWS 관리형 위에 같은 이미지로 올려 5만 명까지 측정.
 컨트롤 플레인 · 로드밸런서 · DB · 캐시 · 레지스트리는 AWS 관리형, Kafka · 옵저버빌리티는 클러스터 안.

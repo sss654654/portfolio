@@ -9,7 +9,7 @@ redirect_from:
   - /homelab/security/
 ---
 
-<p class="hl-back" markdown="0"><a href="/homelab/">← 홈랩</a></p>
+<p class="hl-back" markdown="0"><a href="/homelab/">← HomeLab</a></p>
 
 dev 환경 — 부하 테스트로 stg 스펙을 산정하는 환경. 노트북 1대(RAM 32GB, 내장 Windows 유지)에 구성.
 컨트롤 플레인 · 네트워크 · 로드밸런서 · 볼륨은 **층마다 직접 선택**, 노드는 **방화벽 뒤로 격리한 뒤 포트 개방**.

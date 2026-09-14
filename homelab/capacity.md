@@ -6,7 +6,7 @@ description: >
 permalink: /homelab/capacity/
 ---
 
-<p class="hl-back" markdown="0"><a href="/homelab/">← 홈랩</a></p>
+<p class="hl-back" markdown="0"><a href="/homelab/">← HomeLab</a></p>
 
 기준 사례 — 2024년 한국시리즈 극장 생중계 예매, 대기 인원 16만 명.
 정원 · 커넥션 풀 · 메모리 상한은 측정 전 설정값 — **dev(홈랩) 1만 명 · stg(EKS) 5만 명까지 실측**.

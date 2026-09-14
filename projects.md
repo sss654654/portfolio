@@ -1,6 +1,6 @@
 ---
 layout: page
-title: 프로젝트
+title: Projects
 description: >
   회사 · 부트캠프 · 연구
 permalink: /projects/

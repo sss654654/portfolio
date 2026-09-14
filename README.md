@@ -28,9 +28,9 @@ docker run --rm -v <이 폴더>:/srv -w /srv ruby:3.2 \
 ```
 _config.yml     사이트 설정 (이름·메뉴·색)
 index.md        현관
-homelab.md      홈랩 (대표)
-projects.md     프로젝트 목록 (_projects/ 카드)
-assets/subinhong-resume.pdf   이력서 (정본은 PDF 하나 — 웹 이력서 페이지는 두지 않는다. 사이드바 "이력서"가 이 파일을 연다)
+homelab.md      HomeLab (대표)
+projects.md     Projects 목록 (_projects/ 카드)
+assets/subinhong-resume.pdf   이력서 (정본은 PDF 하나 — 웹 이력서 페이지는 두지 않는다. 클라우드 반영 전 파일이라 사이드바 메뉴에서 내려 두었다)
 _projects/      프로젝트 3장 — semiai · cgv · leveldb (홈랩은 homelab/ 카드 6장)
 assets/img/     avatar.jpg(사이드바) · photo.jpg(원본)
 ```

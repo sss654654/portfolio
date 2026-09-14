@@ -74,11 +74,11 @@ sitemap: true
 })();
 </script>
 
-데모 설정 — 대기열이 보이도록 입장 정원 60명 · 좌석 3시간마다 초기화. 구성 · 선택 근거는 [홈랩](/homelab/).
+데모 설정 — 대기열이 보이도록 입장 정원 60명 · 좌석 3시간마다 초기화. 구성 · 선택 근거는 [HomeLab](/homelab/).
 
 ## 이력
 
-* **2026.07 – 09** — [홈랩](/homelab/) — 노트북 k3s(dev) 단독 구축 · 인터넷 공개, Terraform · EKS(stg)로 확장 · **50,000명 부하 테스트 실측**
+* **2026.07 – 09** — [HomeLab](/homelab/) — 노트북 k3s(dev) 단독 구축 · 인터넷 공개, Terraform · EKS(stg)로 확장 · **50,000명 부하 테스트 실측**
 * **2026.03 – 06** — [semiai 인프라팀](/projects/semiai/) — 기구축 k3s의 LGTM 스택 · 대시보드 · Go 백엔드 계측 담당, heap profile로 **OOMKilled 원인 함수 특정**
 * <small>2026.02 — 단국대학교 소프트웨어학과 졸업</small>
 * **2025.06 – 09** — [CJ 올리브네트웍스 클라우드웨이브 6기](/projects/cgv/) — CGV 예매 대기열 · 5인 팀 · **AWS 개발계 네트워크(Terraform)** · Redis 대기열 백엔드 담당

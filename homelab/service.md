@@ -6,7 +6,7 @@ description: >
 permalink: /homelab/service/
 ---
 
-<p class="hl-back" markdown="0"><a href="/homelab/">← 홈랩</a></p>
+<p class="hl-back" markdown="0"><a href="/homelab/">← HomeLab</a></p>
 
 티케팅 서비스 — 오픈 순간 사용자 집중, 좌석 4,000석. 2024년 한국시리즈 극장 생중계 예매 대기 16만 명 기준, 목표 10만 명.
 예매 처리는 1인당 트랜잭션 · DB 커넥션을 점유해 **전체 인원을 그대로 받을 수 없는 구조**. dev · stg는 같은 이미지, 환경 값만 다름.
