@@ -157,7 +157,7 @@ redirect_from:
 
 | 항목 | 선택 | 이유 |
 |---|---|---|
-| 배포판 | **k3s** — 3대 모두 control-plane · etcd | 단일 바이너리라 8GB 노드에 서비스 메모리 확보 · 대가 — 컨트롤 플레인 · kubelet이 한 프로세스라 함께 종료 |
+| 배포판 | **k3s** — 3대 모두 control-plane · etcd | 단일 바이너리로 8GB 노드에 서비스 메모리 확보 · 대가 — 컨트롤 플레인 · kubelet 동반 종료 |
 | 파드 네트워크 | **Calico** | 기본 Flannel은 NetworkPolicy 미집행 — 규칙이 있어도 통신 허용 |
 | 로드밸런서 · 인그레스 | **MetalLB** + **Traefik 별도 설치** | 기본 ServiceLB는 노드 IP 사용 — 노드 중단 시 주소 소멸 · 번들 Traefik은 재기동 시 설정 원복 |
 | 스토리지 | **정적 PV** — 노드 디스크 직접 연결 | 기본 local-path는 폴더 공유라 디스크 지표로 사용 주체 식별 불가 · 대가 — 파드가 노드에 고정 |

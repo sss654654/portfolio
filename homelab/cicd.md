@@ -111,7 +111,7 @@ image-updater · 허브는 노트북 k3s, cgv-infra는 데스크탑 GitLab.</fig
 | 승격 | **1회 빌드 · 같은 이미지를 ECR로** · 게이트는 수동 job `publish-ecr` | 환경별로 빌드하면 부하 결과 차이의 원인 구분 불가 · job 실행이 곧 승격 결정이라 변수 게이트 불필요 |
 | 원격 클러스터 | **집 허브가 EKS를 클러스터 이름으로 배포** | EKS에서 사설망 GitLab 접근 불가 · 주소 대신 이름 지정 — 클러스터 재생성 시 주소 치환 20곳 제거 |
 | 취약점 게이트(scan) | **수정판 있는 취약점만** 머지 차단 | 패치 없는 CVE 수십 개 — 차단해도 올릴 수정판이 없어 파이프라인만 중단 |
-| 배포 권한 · 자격 | **AppProject**로 단위별 제한 · dev **SealedSecret** · stg **Secrets Manager** | 제한 없으면 ArgoCD Application 하나로 모든 자원 생성 가능 · SealedSecret은 클러스터 개인키에 묶여 stg 재사용 불가 |
+| 배포 권한 · 자격 | **AppProject**로 단위별 제한 · dev **SealedSecret** · stg **Secrets Manager** | 제한 없으면 Application 하나로 모든 자원 생성 · SealedSecret은 클러스터 개인키에 묶여 stg 재사용 불가 |
 {:.hl-dec}
 
 ## 트러블슈팅
