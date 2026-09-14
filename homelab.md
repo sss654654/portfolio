@@ -207,10 +207,10 @@ stg는 dev가 3만 명 부하에서 노드 한계에 도달한 뒤 Terraform으�
 <div class="hl-index" markdown="0">
 
   <div class="hl-index-group">
-    <a href="https://github.com/sss654654/cgv-infra"><b>GitHub · cgv-infra</b><span>클러스터 · 배포 정의, dev · stg 환경 값</span></a>
-    <a href="https://github.com/sss654654/cgv-terraform"><b>GitHub · cgv-terraform</b><span>AWS 자원, 유지용 bootstrap · 삭제용 stg 두 state</span></a>
-    <a href="https://github.com/sss654654/cgv-onprem"><b>GitHub · cgv-onprem</b><span>앱 소스, queue(Go) · booking(Spring) · frontend</span></a>
-    <a href="https://zed6740.tistory.com/category/HomeLab"><b>블로그 · HomeLab 시리즈</b><span>온프레미스 선택부터 인터넷 공개까지 구축 기록</span></a>
+    <a class="no-mark-external" href="https://github.com/sss654654/cgv-infra"><b>GitHub · cgv-infra</b><span>클러스터 · 배포 정의, dev · stg 환경 값</span></a>
+    <a class="no-mark-external" href="https://github.com/sss654654/cgv-terraform"><b>GitHub · cgv-terraform</b><span>AWS 자원, 유지용 bootstrap · 삭제용 stg 두 state</span></a>
+    <a class="no-mark-external" href="https://github.com/sss654654/cgv-onprem"><b>GitHub · cgv-onprem</b><span>앱 소스, queue(Go) · booking(Spring) · frontend</span></a>
+    <a class="no-mark-external" href="https://zed6740.tistory.com/category/HomeLab"><b>블로그 · HomeLab 시리즈</b><span>온프레미스 선택부터 인터넷 공개까지 구축 기록</span></a>
   </div>
 
 </div>
