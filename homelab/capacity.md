@@ -43,43 +43,35 @@ SLO 5개를 테스트 전에 확정하고, 로비 → 줄서기 → 예매까지
 
 - **예매 부하는 인원이 아닌 정원에 비례** — 사용자 5배(1만 → 5만)에 예매 여정 요청 **1.54배**, 정원 1,000이 booking 앞에서 입장을 묶음
 
-<!-- 2026-09-14 2.5만 명 확인 판(오픈 15:26:31 KST · 발생기 2대 × 12,500) 캡처 뒤 활성화. 시간 창 from=1789367131000 to=1789367491000.
-     결과 표의 12회와 다른 판이다 — 캡션에 밝히고, 판정 값은 서버 지표로 확인한 것만 적는다.
-     /assets/img/homelab/cap/stg25k-row0.png   흐름 0행 — 관문 다섯 + 불변식
-     /assets/img/homelab/cap/stg25k-row2.png   2행 — queue 지연 · 대기 인원
-     /assets/img/homelab/cap/stg25k-row3.png   3행 — Kafka 전파
-     /assets/img/homelab/cap/stg25k-row4.png   4행 — booking 단계별 지연 · 실패 사유
-     /assets/img/homelab/cap/stg25k-trace.png  Tempo — enter → booking 확정까지 한 요청
-<div class="hl-shots" markdown="0" aria-label="stg 흐름 대시보드와 trace, 2.5만 명 확인 판 — 화살표로 넘겨 봅니다">
+<!-- 2026-09-14 2.5만 명 확인 판(오픈 15:26:31 KST · 발생기 2대 × 12,500) — 결과 표의 12회와 다른 판.
+     서버 판정 창(오픈 −60초 → +5분) 값: 관문 전부 100% · 불변식 0 · 5xx · 403 0 · 전파 최대 0.829초 · 최대 대기 24,000.
+     0행 캡처는 시간 선택기 줄(최근 15분)을 잘라냈다 — 표시 값은 판정 창 값과 같다.
+     3행(전파)은 뺐다 — p99 추정선이 1초 선에 붙어(990ms, 실측 최대 0.829초) 설명 없이는 표의 값과 어긋나 보인다 -->
+<div class="hl-shots" markdown="0" aria-label="09-14 stg 2.5만 명 확인 판 — 흐름 대시보드와 trace, 화살표로 넘겨 봅니다">
   <figure class="hl-shot">
-    <img src="/assets/img/homelab/cap/stg25k-row0.png" alt="흐름 대시보드 0행 — 관문 다섯과 불변식, 2.5만 명 확인 판">
-    <figcaption><b>(0행 · 판정)</b> 관문 다섯과 불변식 — 09-14 2.5만 명 확인 판, 회차 창(오픈 −60초부터 +5분).</figcaption>
+    <img src="/assets/img/homelab/cap/stg25k-row0.png" alt="흐름 대시보드 0행 — 관문 다섯 100.000%, 정원 초과 0 · 미소비 잔량 0">
+    <figcaption><b>(판정)</b> 09-14 2.5만 명 확인 판 — 관문 다섯 · 불변식. 결과 표 12회와 별개 판.</figcaption>
   </figure>
   <figure class="hl-shot">
-    <img src="/assets/img/homelab/cap/stg25k-row2.png" alt="흐름 대시보드 2행 — queue 지연과 대기 인원" loading="lazy">
-    <figcaption><b>(2행 · queue)</b> 줄서기 · 순번 조회 지연과 대기 인원.</figcaption>
+    <img src="/assets/img/homelab/cap/stg25k-row2.png" alt="흐름 대시보드 2행 — 순번 조회 · 줄서기 지연 p99와 대기 · 입장 · 정원 인원" loading="lazy">
+    <figcaption><b>(queue)</b> 대기 2만 4천 명이 정원 1,000명 유지 속에 약 6분 뒤 0 · 순번 조회 p99 5ms 이하.</figcaption>
   </figure>
   <figure class="hl-shot">
-    <img src="/assets/img/homelab/cap/stg25k-row3.png" alt="흐름 대시보드 3행 — Kafka 전파" loading="lazy">
-    <figcaption><b>(3행 · 전파)</b> 입장이 booking에 닿기까지의 시간.</figcaption>
+    <img src="/assets/img/homelab/cap/stg25k-row4.png" alt="흐름 대시보드 4행 — booking 단계별 p99와 확정 성공 · 좌석 선점 409 초당 건수" loading="lazy">
+    <figcaption><b>(booking)</b> 단계별 p99 250ms 이하 · 확정 성공이 줄자 좌석 선점 409로 전환, 5xx 없음.</figcaption>
   </figure>
   <figure class="hl-shot">
-    <img src="/assets/img/homelab/cap/stg25k-row4.png" alt="흐름 대시보드 4행 — booking 단계별 지연과 실패 사유" loading="lazy">
-    <figcaption><b>(4행 · booking)</b> 예매 단계별 지연과 실패 사유.</figcaption>
-  </figure>
-  <figure class="hl-shot">
-    <img src="/assets/img/homelab/cap/stg25k-trace.png" alt="Tempo trace — 한 사용자의 enter부터 booking 확정까지" loading="lazy">
-    <figcaption><b>(trace)</b> 한 사용자의 enter → booking 확정까지 구간.</figcaption>
+    <img src="/assets/img/homelab/cap/stg25k-trace.png" alt="Tempo trace — booking POST /api/bookings에서 Kafka bookings-completed 발행, queue-go 소비와 Redis 명령까지 서비스 2개 · 21 span · 250ms" loading="lazy">
+    <figcaption><b>(trace)</b> 예매 확정 → Kafka → queue 자리 반환까지 한 trace — 서비스 2개 · 250ms.</figcaption>
   </figure>
 </div>
--->
 
 ## 병목이 옮겨 간 순서
 
 | 판 · 증상 | 원인 | 조치 → 결과 |
 |---|---|---|
 | **dev 3만** — k3s 재시작 | 사전 계산이 지목한 Redis는 44%로 여유 · 엣지 → Traefik 연결 458 → **22,866** → 노드 여유 메모리 2.3 → 1.1GB → etcd 쓰기 **4초** | 노드 8GB × 3 한계 — stg(EKS)로 이전 |
-| **stg 8회 · 1만** — 입장 후 403 **1,890건** | 신규 booking JVM 컴파일이 오픈 구간 CPU 117초 점유 · 같은 노드 Kafka 브로커 몫 7% | **booking 전용 노드그룹** + 브로커 Guaranteed → 403 **0** |
+| **stg 8회 · 1만** — 오픈 순간 전파 최대 **4.59초** | 신규 booking JVM 컴파일이 오픈 구간 CPU 117초 점유 · 경합 시 같은 노드 Kafka 브로커 몫 7% | **booking 전용 노드그룹** + 브로커 Guaranteed → 전파 최대 **0.251초** · 403 **0** |
 | **10회 · 2.5만** — 줄서기 **60.912%** | 노드 4 → 3 축소로 queue 파드 2대가 한 노드 — CPU 스케줄 대기, Redis는 여유 | 노드 4 = 파드 4 · 분산 강제 → **100.000%** |
 | **13회 · 3만** — k6 `connection reset` 다발 | 발생기 1대 pps 한도 — 초과 패킷을 오류 없이 폐기, 서버는 여유 | 발생기 4대 × 12,500명 |
 | **19회 · 5만** — SLO 통과, `enter` 1–2.5초 **13,641건** | queue 파드 4대 중 2대에 연결 **27배** 집중 → Redis 풀 대기 | **미해결** — ALB 연결 되먹임 가설, dev 3만과 같은 유형 |
@@ -98,7 +90,7 @@ SLO 5개를 테스트 전에 확정하고, 로비 → 줄서기 → 예매까지
 
 ## 기술 스택
 
-k6 · Terraform(부하 발생기) · Grafana · Mimir · Loki
+k6 · Terraform(부하 발생기) · Grafana · Mimir · Loki · Tempo
 {:.hl-more}
 
 {% include hl-nav.html %}
