@@ -8,9 +8,9 @@ permalink: /homelab/cicd/
 
 <p class="hl-back" markdown="0"><a href="/homelab/">← HomeLab</a></p>
 
-GitLab CI가 `main` 머지마다 이미지를 한 번 빌드 — check · test · scan 통과 시 등록.
-dev는 GitLab 레지스트리에 자동, stg는 수동 job `publish-ecr`로 **같은 이미지**를 ECR에 승격.
-image-updater가 새 태그를 cgv-infra에 커밋하면 노트북 ArgoCD 허브가 두 클러스터에 동기화.
+GitLab CI가 cgv-onprem(앱 소스) `main` 머지마다 이미지를 한 번 빌드 — 검사 통과 시 등록.
+dev는 자동, stg는 수동 job `publish-ecr`로 **같은 이미지**를 ECR에 승격.
+image-updater가 새 태그를 cgv-infra(배포 정의)에 커밋하면 노트북 ArgoCD 허브가 두 클러스터에 동기화.
 {:.lead}
 
 ## CI/CD 흐름
@@ -18,7 +18,7 @@ image-updater가 새 태그를 cgv-infra에 커밋하면 노트북 ArgoCD 허브
 <!-- 흐름도 — 개발자 → CI → (자동: GitLab 레지스트리 / 수동: ECR) → image-updater → cgv-infra → 허브 → (k3s dev / EKS stg).
      주황 = 이미지, 파랑 = 배포 정의 · 동기화, 회색 점선 = 폴링, 파랑 점선 = EKS API. 위아래 호 = 클러스터가 자기 레지스트리에서 pull -->
 <figure class="hl-diagram hl-diagram-lg hl-diagram-scroll" markdown="0">
-<svg viewBox="0 0 760 306" role="img" aria-label="개발자가 main 에 머지하면 GitLab CI 가 이미지를 만들어 GitLab 레지스트리(자동)와 ECR(수동)로 나눠 올린다. image-updater 가 두 레지스트리의 새 태그를 감지해 cgv-infra 에 tag 를 커밋하고, webhook 을 받은 ArgoCD 허브가 k3s dev 와 EKS stg 에 동기화한다. 각 클러스터는 자기 레지스트리에서 이미지를 받는다">
+<svg viewBox="0 0 760 334" role="img" aria-label="개발자가 main 에 머지하면 GitLab CI 가 이미지를 만들어 GitLab 레지스트리(자동)와 ECR(수동)로 나눠 올린다. image-updater 가 두 레지스트리의 새 태그를 감지해 cgv-infra 에 tag 를 커밋하고, webhook 을 받은 ArgoCD 허브가 k3s dev 와 EKS stg 에 동기화한다. 각 클러스터는 자기 레지스트리에서 이미지를 받는다">
   <defs>
     <marker id="hlm-i" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#f08c2e"/></marker>
     <marker id="hlm-d" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#2f6fdb"/></marker>
@@ -35,7 +35,8 @@ image-updater가 새 태그를 cgv-infra에 커밋하면 노트북 ArgoCD 허브
 
     <image href="/assets/img/icons/gitlab.svg" x="133" y="133" width="34" height="34"/>
     <text class="hla-c" x="150" y="186" text-anchor="middle">GitLab CI</text>
-    <text class="hla-a" x="150" y="200" text-anchor="middle">check · test · scan</text>
+    <text class="hla-a" x="150" y="200" text-anchor="middle">cgv-onprem</text>
+    <text class="hla-a" x="150" y="214" text-anchor="middle">check · test · scan</text>
   </g>
 
   <!-- 레지스트리 둘 — 자동 · 수동 -->
@@ -96,9 +97,20 @@ image-updater가 새 태그를 cgv-infra에 커밋하면 노트북 ArgoCD 허브
     <path class="hla-ln-img" d="M287,228 H300 V284 H744 V216 H731" marker-end="url(#hlm-i)"/>
     <text class="hla-a" x="507" y="300" text-anchor="middle">이미지 pull</text>
   </g>
+
+  <!-- 범례 — 선 견본 넷 -->
+  <g>
+    <line class="hla-ln-img" x1="184" y1="322" x2="210" y2="322"/>
+    <text class="hla-a" x="216" y="326">이미지</text>
+    <line class="hla-ln-def" x1="274" y1="322" x2="300" y2="322"/>
+    <text class="hla-a" x="306" y="326">배포 정의 · 동기화</text>
+    <line class="hla-ln hla-dash" x1="424" y1="322" x2="450" y2="322"/>
+    <text class="hla-a" x="456" y="326">폴링</text>
+    <line class="hla-ln-def hla-dash" x1="506" y1="322" x2="532" y2="322"/>
+    <text class="hla-a" x="538" y="326">EKS API</text>
+  </g>
 </svg>
-<figcaption>주황 — 이미지 · 파랑 — 배포 정의 · 동기화 · 회색 점선 — 폴링 · 파랑 점선 — EKS API.
-image-updater · 허브는 노트북 k3s, GitLab(CI · 레지스트리 · cgv-infra)은 데스크탑.</figcaption>
+<figcaption>image-updater · 허브는 노트북 k3s, GitLab(CI · 레지스트리 · cgv-infra)은 데스크탑.</figcaption>
 </figure>
 
 ## 설계 결정
@@ -106,8 +118,8 @@ image-updater · 허브는 노트북 k3s, GitLab(CI · 레지스트리 · cgv-in
 | 항목 | 선택 | 이유 |
 |---|---|---|
 | Git 서버 위치 | **클러스터 밖 데스크탑** — 러너 · 레지스트리 포함 | 클러스터 안이면 동반 중단 · GitHub은 사설망 webhook 불가 · 빌드 I/O가 부하 측정에 간섭 |
-| CI · CD | **분리** — 파이프라인은 이미지까지, 배포는 ArgoCD | 파이프라인이 배포하면 러너에 클러스터 전권 자격 필요 — 분리하면 배포 자격은 허브 ArgoCD에만 |
-| 브랜치 · 환경 | **trunk 하나(`main`)** · 환경은 `envs/<환경>/` 폴더 | 브랜치를 환경으로 쓰면 환경 축이 둘(브랜치 · 폴더) · 승격은 merge 대신 태그 커밋 한 줄 |
+| CI · CD | **분리** — cgv-onprem 파이프라인은 이미지까지, cgv-infra는 ArgoCD가 배포 | 파이프라인이 배포하면 러너에 클러스터 전권 자격 필요 — 분리하면 배포 자격은 허브 ArgoCD에만 |
+| 브랜치 · 환경 | **두 저장소 모두 trunk 하나(`main`)** · 환경은 cgv-infra `envs/<환경>/` 폴더 | 브랜치를 환경으로 쓰면 환경 축이 둘(브랜치 · 폴더) · 승격은 merge 대신 태그 커밋 한 줄 |
 | 승격 | **1회 빌드 · 같은 이미지를 ECR로** · 게이트는 수동 job `publish-ecr` | 환경별로 빌드하면 부하 결과 차이의 원인 구분 불가 · EKS 노드는 사설망 GitLab 레지스트리 접근 불가 |
 | 원격 클러스터 | **집 허브가 EKS를 클러스터 이름으로 배포** | EKS에서 사설망 GitLab 접근 불가 · 주소 대신 이름 지정 — 클러스터 재생성 시 주소 치환 20곳 제거 |
 | 취약점 게이트 | **수정판 있는 HIGH 이상만** 차단 — 소스(빌드 전) · 이미지(등록 전) 두 겹 | 수정판 없는 취약점까지 막으면 파이프라인이 상시 실패 — 결국 게이트를 끄게 됨 |
