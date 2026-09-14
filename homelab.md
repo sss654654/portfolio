@@ -199,12 +199,10 @@ stg는 dev가 3만 명 부하에서 노드 한계에 도달한 뒤 Terraform으�
 
 </div>
 
-<!-- 기록과 코드 — 참고 링크라 목차(들어가는 곳)와 모양을 달리해 일반 목록으로.
-     프로젝트 페이지의 저장소 표기처럼 github.com/sss654654/ 는 첫 줄에만. 외부 링크 표시는 테마가 붙인다 -->
+<!-- 기록과 코드 — 프로젝트 페이지 끝의 저장소 표기와 같은 한 줄(설명 없음, github.com/sss654654/ 는 첫 이름에만).
+     순서 infra → onprem → terraform → 블로그. 외부 링크 표시는 테마가 붙인다 -->
 
 ## 기록 · 저장소
 
-* [github.com/sss654654/cgv-infra](https://github.com/sss654654/cgv-infra) — 클러스터 · 배포 정의, dev · stg 환경 값
-* [cgv-terraform](https://github.com/sss654654/cgv-terraform) — AWS 자원, 유지용 bootstrap · 삭제용 stg 두 state
-* [cgv-onprem](https://github.com/sss654654/cgv-onprem) — 앱 소스, queue(Go) · booking(Spring) · frontend
-* [HomeLab 시리즈(블로그)](https://zed6740.tistory.com/category/HomeLab) — 온프레미스 선택부터 인터넷 공개까지 구축 기록
+[github.com/sss654654/cgv-infra](https://github.com/sss654654/cgv-infra) · [cgv-onprem(앱 소스)](https://github.com/sss654654/cgv-onprem) · [cgv-terraform](https://github.com/sss654654/cgv-terraform) · [HomeLab 시리즈(블로그)](https://zed6740.tistory.com/category/HomeLab)
+{:.hl-more}
