@@ -159,49 +159,32 @@ stg는 dev가 3만 명 부하에서 노드 한계에 도달한 뒤 Terraform으�
 <figcaption>dev · stg는 한 번 빌드한 같은 이미지를 사용 — 환경별로 빌드하면 두 환경의 부하 결과를 비교할 때 이미지 차이를 배제할 수 없음.</figcaption>
 </figure>
 
-<!-- 카드 여섯 — 글자만. 입구의 시각 요소는 위 구성도 하나로 둔다.
-     태그 = 영역 이름 · 제목 = 한 일 · 설명 = 결정이나 결과 하나.
-     순서: 환경 둘(온프레미스 · 클라우드) → 둘에 공통(CI/CD · 옵저버빌리티) → 그 위 서비스 → 부하 -->
+<!-- 목차 — 세 묶음 · 여섯 줄. 이 페이지의 그림은 위 구성도 하나뿐이라 카드 테두리 없이 목록으로 둔다.
+     묶음은 구성도와 같은 축: 좌우 클러스터 둘 = 환경 · 위 파이프라인 = 배포 · 관측 · 서비스 상자와 발생기 = 서비스 · 검증.
+     줄 = 영역 이름 + 구절 하나(결과가 있으면 결과, 없으면 그 페이지를 정하는 선택). 문장은 쓰지 않는다.
+     a 안은 inline 요소만 — 블록을 넣으면 compress_html 과 테마 앵커가 a 를 쪼갠다 -->
 
-## 구성
+## 영역별 설계 · 결과
 
-<div class="hlc-grid hlc-text" markdown="0">
+<div class="hl-index" markdown="0">
 
-  <a class="hlc-card" href="/homelab/onprem/">
-    <span class="hlc-tag">온프레미스 · dev</span>
-    <span class="hlc-title">노트북 1대 k3s HA 클러스터</span>
-    <span class="hlc-desc">Proxmox VM 3대 · OPNsense 격리망, 인터넷 개방 포트 443 · 51820</span>
-  </a>
+  <div class="hl-index-group">
+    <span class="hl-index-head">환경</span>
+    <a href="/homelab/onprem/"><b>온프레미스 · dev</b><span>노트북 1대 · VM 3대 k3s HA, 인터넷 개방 포트 2개</span></a>
+    <a href="/homelab/cloud/"><b>클라우드 · stg</b><span>Terraform · EKS, DB · 캐시는 AWS 관리형</span></a>
+  </div>
 
-  <a class="hlc-card" href="/homelab/cloud/">
-    <span class="hlc-tag">클라우드 · stg</span>
-    <span class="hlc-title">Terraform으로 구성한 AWS EKS</span>
-    <span class="hlc-desc">dev와 같은 차트 · 이미지, DB · 캐시 · 로드밸런서는 AWS 관리형</span>
-  </a>
+  <div class="hl-index-group">
+    <span class="hl-index-head">배포 · 관측 — 두 환경 공통</span>
+    <a href="/homelab/cicd/"><b>CI/CD</b><span>파이프라인 1개로 두 클러스터, dev 머지 후 3초 반영</span></a>
+    <a href="/homelab/observability/"><b>옵저버빌리티</b><span>LGTM 스택, 부하 판정 기준 지표</span></a>
+  </div>
 
-  <a class="hlc-card" href="/homelab/cicd/">
-    <span class="hlc-tag">CI/CD</span>
-    <span class="hlc-title">파이프라인 하나로 dev · stg 배포</span>
-    <span class="hlc-desc">GitLab CI · ArgoCD, dev는 머지 후 자동 · stg는 수동 승격</span>
-  </a>
-
-  <a class="hlc-card" href="/homelab/observability/">
-    <span class="hlc-tag">옵저버빌리티</span>
-    <span class="hlc-title">LGTM 스택으로 metric · log · trace 수집</span>
-    <span class="hlc-desc">dev · stg 같은 차트, 부하 테스트는 이 지표로 판정</span>
-  </a>
-
-  <a class="hlc-card" href="/homelab/service/">
-    <span class="hlc-tag">서비스</span>
-    <span class="hlc-title">대기열 · 예매 서비스 분리</span>
-    <span class="hlc-desc">queue(Go) · booking(Spring), Kafka로 입장 전달</span>
-  </a>
-
-  <a class="hlc-card" href="/homelab/capacity/">
-    <span class="hlc-tag">부하 테스트</span>
-    <span class="hlc-title">5만 명 부하 테스트 · SLO 5개 통과</span>
-    <span class="hlc-desc">dev 1만 · stg 5만 명 실측, 다음 병목은 파드당 동시 요청 수</span>
-  </a>
+  <div class="hl-index-group">
+    <span class="hl-index-head">서비스 · 검증</span>
+    <a href="/homelab/service/"><b>대기열 예매 서비스</b><span>queue(Go) · booking(Spring), Kafka로 입장 전달</span></a>
+    <a href="/homelab/capacity/"><b>부하 테스트</b><span>5만 명 · SLO 5개 통과</span></a>
+  </div>
 
 </div>
 
