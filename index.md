@@ -9,11 +9,6 @@ sitemap: true
 이후 홈랩에서 Proxmox · k3s부터 Terraform · AWS EKS까지 단독 구성한 뒤, 대기열 예매 서비스를 GitOps로 배포해 **50,000명 동시 접속**을 실측했습니다.
 {:.lead}
 
-* [이력서 PDF](/assets/subinhong-resume.pdf) — 2장
-* [홈랩](/homelab/) — k3s(dev) · EKS(stg) · GitOps · 부하 테스트
-* [프로젝트](/projects/) — 회사 · 부트캠프 · 학부 연구
-* [블로그](https://zed6740.tistory.com) — 기술 기록
-
 ## 대기열 예매 서비스 — 공개 데모
 
 <!-- 시연 영상 — 무음 자동 재생 루프, 브라우저 창 목업 프레임. 영상 클릭과 아래 버튼 둘 다 실서비스로 이동
