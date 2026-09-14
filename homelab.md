@@ -28,12 +28,12 @@ stg는 dev가 3만 명 부하에서 노드 한계에 도달한 뒤 Terraform으�
   </defs>
 
   <!-- 개발자 → 데스크탑 GitLab CI -->
-  <rect x="10" y="20" width="98" height="52" rx="9" class="hla-box"/>
-  <circle cx="30" cy="40" r="5.5" class="hla-glyph"/>
-  <path d="M20,57 C20,46 40,46 40,57" class="hla-glyph"/>
-  <text x="50" y="51" class="hla-t">개발자</text>
-  <line x1="108" y1="46" x2="138" y2="46" class="hla-ln" marker-end="url(#hla-arrow)"/>
-  <text x="123" y="37" class="hla-s" text-anchor="middle">push</text>
+  <rect x="10" y="20" width="88" height="52" rx="9" class="hla-box"/>
+  <circle cx="28" cy="40" r="5.5" class="hla-glyph"/>
+  <path d="M18,57 C18,46 38,46 38,57" class="hla-glyph"/>
+  <text x="46" y="51" class="hla-t">개발자</text>
+  <line x1="98" y1="46" x2="138" y2="46" class="hla-ln" marker-end="url(#hla-arrow)"/>
+  <text x="119" y="37" class="hla-s" text-anchor="middle">git push</text>
 
   <rect x="140" y="20" width="480" height="52" rx="9" class="hla-box"/>
   <image href="/assets/img/icons/gitlab.svg" x="308" y="34" width="24" height="24"/>
@@ -113,13 +113,13 @@ stg는 dev가 3만 명 부하에서 노드 한계에 도달한 뒤 Terraform으�
   </circle>
   <circle class="hla-dot hla-dot-g" r="4.5" opacity="0">
     <animateMotion dur="14s" begin="1s" repeatCount="indefinite" calcMode="linear"
-      keyTimes="0;0.20;0.36;1" keyPoints="0;0;1;1" path="M108,46 L245,46 L245,132"/>
+      keyTimes="0;0.20;0.36;1" keyPoints="0;0;1;1" path="M98,46 L245,46 L245,132"/>
     <animate attributeName="opacity" dur="14s" begin="1s" repeatCount="indefinite"
       keyTimes="0;0.20;0.21;0.35;0.36;1" values="0;0;1;1;0;0"/>
   </circle>
   <circle class="hla-dot hla-dot-g" r="4.5" opacity="0">
     <animateMotion dur="14s" begin="1s" repeatCount="indefinite" calcMode="linear"
-      keyTimes="0;0.38;0.56;1" keyPoints="0;0;1;1" path="M108,46 L515,46 L515,132"/>
+      keyTimes="0;0.38;0.56;1" keyPoints="0;0;1;1" path="M98,46 L515,46 L515,132"/>
     <animate attributeName="opacity" dur="14s" begin="1s" repeatCount="indefinite"
       keyTimes="0;0.38;0.39;0.55;0.56;1" values="0;0;1;1;0;0"/>
   </circle>
@@ -150,11 +150,11 @@ stg는 dev가 3만 명 부하에서 노드 한계에 도달한 뒤 Terraform으�
 
   <!-- 범례 — 한 줄 -->
   <circle cx="16" cy="336" r="4.5" fill="#e03131"/>
-  <text x="26" y="340" class="hla-s">요청</text>
-  <circle cx="66" cy="336" r="4.5" fill="#f08c2e"/>
-  <text x="76" y="340" class="hla-s">이미지</text>
-  <circle cx="126" cy="336" r="4.5" fill="#2f6fdb"/>
-  <text x="136" y="340" class="hla-s">ArgoCD 동기화</text>
+  <text x="26" y="340" class="hla-s">요청 (dev · stg)</text>
+  <circle cx="126" cy="336" r="4.5" fill="#f08c2e"/>
+  <text x="136" y="340" class="hla-s">이미지 push · pull</text>
+  <circle cx="246" cy="336" r="4.5" fill="#2f6fdb"/>
+  <text x="256" y="340" class="hla-s">ArgoCD 동기화</text>
 </svg>
 <figcaption>이미지는 한 번 빌드해 dev는 GitLab 레지스트리에, stg는 같은 이미지를 수동 승격해 ECR에 저장. ArgoCD가 두 클러스터를 동기화한 뒤 각 클러스터가 자기 레지스트리에서 pull.</figcaption>
 </figure>
