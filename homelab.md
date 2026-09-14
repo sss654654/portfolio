@@ -2,22 +2,23 @@
 layout: page
 title: 홈랩
 description: >
-  노트북 k3s(dev)와 Terraform EKS(stg) — GitLab CI가 레지스트리 두 곳에 이미지를 올리고, ArgoCD가 두 클러스터에 배포합니다
+  온프레미스(dev)와 AWS(stg) 두 환경을 직접 구축하고, 파이프라인 하나로 배포합니다
 permalink: /homelab/
 ---
 
-<!-- 오버뷰 — 환경 둘의 역할과 둘을 잇는 GitOps. 그림은 흐름도(누가 → 무엇을 → 어디로). -->
+<!-- 오버뷰 — 환경 둘의 역할 · 둘이 생긴 순서 · 둘을 잇는 GitOps. 그림은 흐름도(누가 → 무엇을 → 어디로). -->
 
-**dev** — 노트북 1대의 k3s. 개발 · 데모 시연용으로 인터넷에 공개한 환경입니다.
-**stg** — Terraform으로 구축한 AWS EKS. prd 스펙 산정과 부하 테스트 환경입니다.
-두 클러스터는 GitOps로 제어합니다 — 데스크탑 GitLab CI가 GitLab 레지스트리 · ECR에 이미지를 올리고, 노트북의 ArgoCD가 dev · stg에 배포합니다.
+**dev** — 노트북 1대의 k3s. 개발 · 데모 시연용으로 인터넷에 공개했고, 부하 테스트 1만 명을 통과했습니다.
+**stg** — Terraform으로 구축한 AWS EKS. dev가 3만 명에서 노드 한계에 닿은 뒤, prd 스펙 산정을 위해 5만 명까지 실측한 환경입니다.
+배포는 GitOps입니다 — 이미지는 GitLab 레지스트리(dev)와 ECR(stg, 수동 승격)에 올라가고, 노트북의 ArgoCD가 두 클러스터에 반영합니다.
 {:.lead}
 
-<!-- 흐름도 — 개발자 push → GitLab CI → 레지스트리 둘 → 클러스터 둘. 사용자는 dev 데모로, 발생기는 stg 로.
-     허브는 dev(같은 클러스터)와 stg(EKS API) 둘에 동기화. image-updater · webhook 같은 배관은 CI/CD 카드에.
-     점 여섯이 12초 한 바퀴 — 요청(빨강) → 이미지(주황) → 동기화(파랑). prefers-reduced-motion 이면 정지 -->
+<!-- 흐름도 — 개발자 push → GitLab CI → 레지스트리 둘(여기서 이미지가 멈춘다). 사용자는 dev 데모로, 발생기는 stg 로.
+     ArgoCD 허브가 cgv-infra 의 배포 정의를 읽어(오른쪽 · 아래를 도는 점선) dev · stg 에 동기화하고, 그 뒤 노드가 자기 레지스트리에서 pull(점선).
+     image-updater · webhook 같은 배관은 CI/CD 카드에.
+     점 여섯이 12초 한 바퀴 — 요청(빨강) → 이미지(주황, 레지스트리까지) → 동기화(파랑). prefers-reduced-motion 이면 정지 -->
 <figure class="hl-diagram" markdown="0">
-<svg viewBox="0 0 760 440" role="img" aria-label="개발자가 push 한 코드를 데스크탑 GitLab CI 가 이미지로 만들어 GitLab 레지스트리와 ECR 에 올리고, 노트북 k3s(dev)와 AWS EKS(stg)가 각각 받는다. 사용자는 dev 데모를 쓰고 부하 발생기는 stg 를 5만 명으로 시험한다. 노트북 안 ArgoCD 허브가 dev 와 stg 둘을 동기화한다">
+<svg viewBox="0 0 760 440" role="img" aria-label="개발자가 push 한 코드를 데스크탑 GitLab CI 가 이미지로 만들어 GitLab 레지스트리(자동)와 ECR(수동 승격)에 올린다. 노트북 k3s 안 ArgoCD 허브가 GitLab 의 배포 정의를 읽어 dev 와 stg 에 동기화하고, 각 클러스터 노드가 자기 레지스트리에서 이미지를 받는다. 사용자는 dev 데모를 쓰고 부하 발생기는 stg 를 5만 명으로 시험한다">
   <defs>
     <marker id="hla-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
       <path d="M0,0 L8,4 L0,8 z" fill="currentColor" opacity=".5"/>
@@ -55,10 +56,11 @@ permalink: /homelab/
     <text x="432" y="134" class="hla-c">ECR ×3</text>
     <text x="432" y="153" class="hla-s2">stg 이미지 · dev 와 같은 이미지</text>
 
-    <line x1="270" y1="164" x2="270" y2="186" class="hla-ln" marker-end="url(#hla-arrow)"/>
-    <text x="278" y="180" class="hla-s2">pull</text>
-    <line x1="490" y1="164" x2="490" y2="186" class="hla-ln" marker-end="url(#hla-arrow)"/>
-    <text x="498" y="180" class="hla-s2">pull</text>
+    <!-- 노드가 받는 선 — 동기화 뒤에 일어나므로 점선 -->
+    <line x1="270" y1="164" x2="270" y2="186" class="hla-ln hla-dash" marker-end="url(#hla-arrow)"/>
+    <text x="278" y="180" class="hla-s2">sync 뒤 pull</text>
+    <line x1="490" y1="164" x2="490" y2="186" class="hla-ln hla-dash" marker-end="url(#hla-arrow)"/>
+    <text x="498" y="180" class="hla-s2">sync 뒤 pull</text>
   </g>
 
   <!-- 클러스터 둘 -->
@@ -87,10 +89,14 @@ permalink: /homelab/
     <image href="/assets/img/icons/aws-rds.png" x="408" y="284" width="16" height="16"/>
     <image href="/assets/img/icons/aws-elasticache.png" x="408" y="302" width="16" height="16"/>
     <text x="430" y="296" class="hla-s2">RDS · ElastiCache · ALB</text>
-    <text x="430" y="313" class="hla-s2">AWS 관리형 · 5만 명 통과</text>
+    <text x="430" y="313" class="hla-s2">AWS 관리형</text>
 
     <path d="M360,300 H380 V250 H398" class="hla-ln hla-dash" fill="none" marker-end="url(#hla-arrow)"/>
     <text x="380" y="356" class="hla-s2" text-anchor="middle">허브 → stg 동기화 — EKS API · 집 공인 IP만 허용</text>
+
+    <!-- GitOps — ArgoCD 가 GitLab 의 배포 정의(cgv-infra)를 읽는다. 다른 선 · 글자와 안 겹치게 오른쪽 가장자리와 아래를 돈다 -->
+    <path d="M580,44 H752 V372 H200 V330" class="hla-ln hla-dash" fill="none" marker-end="url(#hla-arrow)"/>
+    <text x="745" y="366" class="hla-s2" text-anchor="end">배포 정의(cgv-infra) 읽기</text>
   </g>
 
   <!-- 사용자 · 부하 발생기 -->
@@ -109,7 +115,7 @@ permalink: /homelab/
     <line x1="602" y1="240" x2="592" y2="240" class="hla-ln" marker-end="url(#hla-arrow)"/>
   </g>
 
-  <!-- 흐르는 점 — 요청 둘 → 이미지 둘 → 동기화 둘 -->
+  <!-- 흐르는 점 — 요청 둘 → 이미지 둘(레지스트리까지) → 동기화 둘 -->
   <circle class="hla-dot hla-dot-u" r="4.5" opacity="0">
     <animateMotion dur="12s" begin="1.2s" repeatCount="indefinite" calcMode="linear"
       keyTimes="0;0.02;0.16;1" keyPoints="0;0;1;1" path="M40,240 L262,240"/>
@@ -124,13 +130,13 @@ permalink: /homelab/
   </circle>
   <circle class="hla-dot hla-dot-g" r="4.5" opacity="0">
     <animateMotion dur="12s" begin="1.2s" repeatCount="indefinite" calcMode="linear"
-      keyTimes="0;0.36;0.58;1" keyPoints="0;0;1;1" path="M100,50 L270,50 L270,236"/>
+      keyTimes="0;0.36;0.58;1" keyPoints="0;0;1;1" path="M100,50 L270,50 L270,136"/>
     <animate attributeName="opacity" dur="12s" begin="1.2s" repeatCount="indefinite"
       keyTimes="0;0.36;0.38;0.56;0.58;1" values="0;0;1;1;0;0"/>
   </circle>
   <circle class="hla-dot hla-dot-g" r="4.5" opacity="0">
     <animateMotion dur="12s" begin="1.2s" repeatCount="indefinite" calcMode="linear"
-      keyTimes="0;0.60;0.82;1" keyPoints="0;0;1;1" path="M100,50 L490,50 L490,236"/>
+      keyTimes="0;0.60;0.82;1" keyPoints="0;0;1;1" path="M100,50 L490,50 L490,136"/>
     <animate attributeName="opacity" dur="12s" begin="1.2s" repeatCount="indefinite"
       keyTimes="0;0.60;0.62;0.80;0.82;1" values="0;0;1;1;0;0"/>
   </circle>
@@ -152,12 +158,12 @@ permalink: /homelab/
     <circle cx="30" cy="388" r="4.5" fill="#e03131"/>
     <text x="41" y="392" class="hla-s">요청 — 사용자는 dev, 부하 발생기는 stg</text>
     <circle cx="30" cy="406" r="4.5" fill="#f08c2e"/>
-    <text x="41" y="410" class="hla-s">이미지 — push부터 클러스터까지</text>
+    <text x="41" y="410" class="hla-s">이미지 — push부터 레지스트리까지</text>
     <circle cx="30" cy="424" r="4.5" fill="#2f6fdb"/>
     <text x="41" y="428" class="hla-s">동기화 — ArgoCD → dev · stg</text>
   </g>
 </svg>
-<figcaption>이미지는 한 번 빌드해 GitLab 레지스트리 · ECR에 저장하고, 각 클러스터가 pull합니다. 배포 정의는 ArgoCD가 dev · stg에 동기화합니다.
+<figcaption>이미지는 한 번 빌드해 GitLab 레지스트리와 ECR에 저장합니다. ArgoCD가 GitLab의 배포 정의를 읽어 dev · stg에 동기화하면, 각 클러스터 노드가 자기 레지스트리에서 이미지를 받습니다.
 세부 경로(image-updater · webhook · 승격 job)는 CI/CD 카드에 있습니다.</figcaption>
 </figure>
 
