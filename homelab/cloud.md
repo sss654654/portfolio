@@ -11,7 +11,7 @@ permalink: /homelab/cloud/
 <!-- 흐름: 온프레미스 한계(노드 RAM — 3만 명에서 k3s 재시작) → 그 층(입구 · 컨트롤 플레인)을 관리형으로 넘긴 stg → 결과에서 부하 테스트로.
      설계 결정은 "온프레미스에서 바뀐 것" · "stg에서 정한 것" 두 표. 작업자가 설명할 수 없는 설정은 넣지 않는다 -->
 
-dev 3만 명 부하에서 한계였던 입구(Traefik)와 컨트롤 플레인(etcd)을 **AWS 관리형**으로 넘긴 부하 테스트 환경.
+dev 3만 명 부하에서 한계였던 입구(Traefik)와 컨트롤 플레인을 **AWS 관리형**으로 넘긴 부하 테스트 환경.
 Terraform으로 EKS 노드 7대(app 4 · booking 2 · 관측&nbsp;1)를 AZ 3개에 구성, DB · 캐시는 RDS · ElastiCache.
 서비스는 ALB · ACM으로 인터넷 <span style="white-space:nowrap">공개(443)</span> · EKS API와 Grafana는 집 공인 IP만 허용.
 {:.lead}
@@ -163,9 +163,9 @@ Terraform으로 EKS 노드 7대(app 4 · booking 2 · 관측&nbsp;1)를 AZ 3개�
 
 | 항목 | 선택 | 이유 |
 |---|---|---|
-| 입구 | MetalLB · Traefik → **ALB · ACM** | MetalLB는 VPC에서 동작 안 함 · dev 3만에서 한계였던 연결 처리를 클러스터 밖으로 |
-| 컨트롤 플레인 | k3s(노드와 겸함) → **EKS 관리형** | 노드 메모리가 차도 etcd 지연 없음 — dev 3만 재시작 원인 제거 |
-| 스토리지 | 정적 PV → **EBS gp3 동적 생성** | PVC마다 볼륨 자동 생성 · 대신 볼륨이 AZ에 묶임 |
+| 입구 | MetalLB · Traefik · cert-manager → **ALB · ACM** | MetalLB는 VPC에서 동작 안 함 · dev 3만에서 한계였던 연결 처리와 TLS 종료를 클러스터 밖으로 |
+| 컨트롤 플레인 | k3s(노드와 겸함) → **EKS 관리형** | 컨트롤 플레인이 워커 노드 밖 — dev 3만에서는 노드 과부하로 k3s가 함께 재시작 |
+| 스토리지 | 정적 PV → **EBS CSI 드라이버 · gp3 동적 생성** | PVC마다 볼륨 자동 생성 · 대신 볼륨이 AZ에 묶임 |
 | MySQL · Redis | 파드 → **RDS Multi-AZ · ElastiCache 복제본 1** | prd와 같은 관리형 구성 · AZ 장애 시 AWS가 자동 전환 |
 | Kafka · 관측 | **클러스터 안 유지** | MSK는 하루 약 $3.6 추가 · 관측은 같은 차트로 대시보드 재사용 |
 {:.hl-dec}
@@ -196,7 +196,7 @@ Terraform으로 EKS 노드 7대(app 4 · booking 2 · 관측&nbsp;1)를 AZ 3개�
   - RDS $21.38 — MySQL db.m5.large Multi-AZ
   - ElastiCache $17.38 — Redis cache.m5.large × 2(주 · 복제본)
   - EKS 컨트롤 플레인 $4.56 · EC2 기타 $4.44 · 기타 $8.23
-- **dev 3만 한계 해소** — 입구 · 컨트롤 플레인이 클러스터 밖이라 부하가 서비스 파드 · Redis · Kafka로 전달, 판정 · 병목은 [부하 테스트](/homelab/capacity/)
+- **dev 3만 한계 해소** — 입구 · 컨트롤 플레인이 클러스터 밖이라 부하가 **queue · booking · Redis · Kafka · MySQL**에 집중, 판정 · 병목은 [부하 테스트](/homelab/capacity/)
 
 ## 한계
 
