@@ -166,8 +166,8 @@ Terraform으로 AWS 서울 리전 VPC에 EKS 노드 7대(app 4 · booking 2 · �
 
 | 항목 | 선택 | 이유 |
 |---|---|---|
-| 노드 배치 | **AZ 3개** · app 4 · booking 2(AZ별 · taint) · 관측 1(AZ 고정) | Kafka 브로커를 AZ마다 1대 — 한 AZ 장애에도 과반 유지 · 오픈 시 CPU가 몰리는 booking만 전용 노드 |
-| DB · 캐시 | **RDS Multi-AZ · ElastiCache 복제본 1** | MySQL은 prd에서 파드로 운영하지 않음 · 주 장애 시 대기 · 복제본으로 전환 |
+| 노드 배치 | **AZ 3개** · app 4 · booking 2(AZ별 · taint) · 관측 1(AZ 고정) | Kafka 브로커를 AZ마다 1대 — 한 AZ 장애에도 과반 유지 · JVM 컴파일이 같은 노드 브로커를 밀어낸 booking만 전용 노드 |
+| DB · 캐시 | **RDS Multi-AZ · ElastiCache 복제본 1** | MySQL은 prd 조건 재현(관리형 전환 · 동기 복제 쓰기 지연) · Redis 복제본은 Kafka처럼 AZ 장애 대비 |
 {:.hl-dec}
 
 <div class="hl-sub" markdown="0">보안</div>
@@ -194,39 +194,19 @@ Terraform으로 AWS 서울 리전 VPC에 EKS 노드 7대(app 4 · booking 2 · �
 | 노드그룹이 **`CREATING`에서 20분 넘게 멈춤** — CloudTrail에 오류 없음 | 계정 vCPU 한도 32 소진 — 원인은 ASG scaling activities에만 기록 | 한도 **64**로 증설 → 1분 23초 뒤 ACTIVE |
 | 노드그룹 교체 후 **Mimir ingester 95분 Pending** | 서브넷 3개 지정으로 관측 노드가 2c → 2b 이동, EBS 볼륨은 2c에 고정 | 상태를 가진 노드그룹만 **단일 AZ 고정** |
 | Redis 암호화 적용 후 **인증서 오류로 연결 실패** | 전송 암호화를 켜면 엔드포인트가 `master.…`로 바뀌고 인증서도 새 이름 기준 | `REDIS_HOST` 변경, 앱 TLS를 먼저 켠 뒤 required로 — **무중단 전환** |
-| **30명이 1명으로 집계** — requestId 앞 8자 동일 | 평문 http에서 `crypto.randomUUID` 미제공 → 시각 기반 폴백 id 중복 | HTTPS 입구 + 폴백 수정 → 30명 중 **29명** 예매 |
+| **30명이 1명으로 집계** — requestId 앞 8자 동일 | 평문 http에서 `crypto.randomUUID` 미제공 → 시각 기반 폴백 id 중복 | HTTPS 입구 + 폴백 수정 → **30명 개별 집계** |
 {:.hl-tbl}
 
 ## 결과
 
-<!-- destroy 전에 콘솔 캡처 뒤 활성화 — 파일 셋:
-     /assets/img/homelab/cloud/argocd-clusters.png  허브 ArgoCD Settings → Clusters: in-cluster 와 cgv-stg 둘
-     /assets/img/homelab/cloud/eks-nodegroups.png   EKS 콘솔 cgv-stg → Compute: 노드그룹 넷(app · booking-2a · booking-2c · observability)
-     /assets/img/homelab/cloud/managed.png          RDS 인스턴스(Multi-AZ) + ElastiCache 복제 그룹(암호화 · AUTH) 한 화면 또는 둘 이어 붙임
-<div class="hl-shots" markdown="0" aria-label="stg 콘솔 — 허브의 클러스터 둘 · 노드그룹 넷 · 관리형 둘, 화살표로 넘겨 봅니다">
-  <figure class="hl-shot">
-    <img src="/assets/img/homelab/cloud/argocd-clusters.png" alt="노트북 ArgoCD 허브의 Clusters 화면 — in-cluster와 cgv-stg 두 클러스터가 등록돼 있음">
-    <figcaption><b>(허브 · 클러스터 2개)</b> 노트북 ArgoCD에 dev(in-cluster) · stg(cgv-stg) 등록 — stg는 주소가 아닌 이름으로 등록.</figcaption>
-  </figure>
-  <figure class="hl-shot">
-    <img src="/assets/img/homelab/cloud/eks-nodegroups.png" alt="EKS 콘솔 cgv-stg의 노드그룹 넷 — app 4대, booking-2a와 booking-2c 한 대씩, observability 한 대" loading="lazy">
-    <figcaption><b>(노드그룹 4개)</b> app 4 · booking 2a · booking 2c · observability — 부하 테스트 결과로 정한 구조. booking은 taint로 다른 파드 배치 차단.</figcaption>
-  </figure>
-  <figure class="hl-shot">
-    <img src="/assets/img/homelab/cloud/managed.png" alt="RDS MySQL Multi-AZ 인스턴스와 ElastiCache Redis 복제 그룹의 콘솔 화면" loading="lazy">
-    <figcaption><b>(관리형 2개)</b> 클러스터 밖 MySQL · Redis — 노드 보안 그룹에서만 3306 · 6379 허용.</figcaption>
-  </figure>
-</div>
--->
-
 - **자원 56개 · 생성 30–40분** — 부하 테스트 뒤 stg state만 삭제
 - **AWS 비용 US$151.79** — stg 운영 3일(2026-09-12 – 14), 부하 발생기 포함 · EC2 $95.80 · RDS $21.38 · ElastiCache $17.38
-- **5만 명 부하 테스트 · SLO 5개 통과** — 노드 구조를 회차별 결과로 결정 · [부하 테스트](/homelab/capacity/)
+- **5만 명 부하 수용** — 판정 · 병목은 [부하 테스트](/homelab/capacity/)
 
 ## 한계
 
 - **운영 기간 3일** — 장기 운영 · 업그레이드 · 장애 대응 경험 없음
-- **파드 단위 네트워크 제어 없음** — 데이터 보안 그룹이 노드 단위, prd는 Security Groups for Pods
+- **DB 보안 그룹은 노드 단위** — 출구 NetworkPolicy가 없는 파드(관측 Job)는 RDS에 연결됨, prd는 Security Groups for Pods
 - **허브가 집에 위치** — 집 공인 IP가 바뀌면 재적용
 - **관측 단일 AZ** — 해당 AZ 장애 시 관측 중단
 
