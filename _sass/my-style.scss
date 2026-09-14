@@ -334,8 +334,9 @@ ul.timeline > li:has(> small)::before {
   transition: transform .15s, color .15s;
 }
 .hl-index .hl-index-group a[href^="http"]::after { content: "↗" !important; }
-.hl-index .hl-index-group a:hover::after { color: var(--accent-color) !important; transform: translateX(3px); }
-.hl-index a b { font-weight: 700; color: var(--accent-color); }
+.hl-index .hl-index-group a:hover::after { color: var(--body-color) !important; transform: translateX(3px); }
+/* 이름은 본문색 굵게 — 색 강조 없이, 누를 곳 표시는 줄 끝 화살표가 맡는다 */
+.hl-index a b { font-weight: 700; color: var(--body-color); }
 .hl-index a span { font-size: .92rem; line-height: 1.6; color: var(--gray-text); word-break: keep-all; }
 .hl-index a:hover b { text-decoration: underline; text-underline-offset: 3px; }
 @media (max-width: 640px) {
