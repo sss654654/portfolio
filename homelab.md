@@ -103,7 +103,8 @@ permalink: /homelab/
     <line x1="158" y1="240" x2="168" y2="240" class="hla-ln" marker-end="url(#hla-arrow)"/>
 
     <rect x="602" y="210" width="144" height="60" rx="9" class="hla-box"/>
-    <text x="612" y="236" class="hla-t">부하 발생기 ×4</text>
+    <image href="/assets/img/icons/k6.svg" x="611" y="222" width="18" height="18"/>
+    <text x="634" y="236" class="hla-t">부하 발생기 ×4</text>
     <text x="612" y="256" class="hla-s">k6 · 5만 명 · SLO 5개</text>
     <line x1="602" y1="240" x2="592" y2="240" class="hla-ln" marker-end="url(#hla-arrow)"/>
   </g>
