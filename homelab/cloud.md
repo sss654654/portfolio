@@ -14,7 +14,7 @@ permalink: /homelab/cloud/
 
 Terraform으로 AWS 서울 리전 VPC에 EKS 노드 7대(app 4 · booking 2 · 관측&nbsp;1)를 AZ 3개에 나눠 구성.
 컨트롤 플레인 · 로드밸런서 · DB · 캐시 · 레지스트리는 **AWS 관리형**, Kafka&nbsp;·&nbsp;옵저버빌리티는 **클러스터 안**.
-서비스는 ALB · ACM으로 인터넷 공개(443) · EKS API와 Grafana는 집 공인 IP만 허용.
+서비스는 ALB · ACM으로 인터넷 <span style="white-space:nowrap">공개(443)</span> · EKS API와 Grafana는 집 공인 IP만 허용.
 {:.lead}
 
 ## 클라우드 구조
