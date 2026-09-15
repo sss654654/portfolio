@@ -2,7 +2,7 @@
 layout: page
 title: 클라우드
 description: >
-  stg · prd 스펙 산정용 부하 테스트
+  stg · 5만 명 부하 테스트 환경
 permalink: /homelab/cloud/
 ---
 

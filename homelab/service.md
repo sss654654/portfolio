@@ -161,7 +161,7 @@ permalink: /homelab/service/
 ## 결과
 
 - **queue(Go) · booking(Spring)을 Kafka로 연결한 대기열 예매 서비스 구현** — dev 공개 데모와 stg 부하 테스트를 같은 코드 · 차트로 실행, 환경 차이는 값(정원 · 커넥션 수 · 자원 한도 · 주소)뿐
-- **대기와 예매 처리가 분리된 구조** — 대기 인원은 queue가 받고 booking은 정원 인원의 예매만 처리, 예매 부하가 정원에 묶이는 것은 [부하 테스트](/homelab/capacity/)에서 확인
+- **대기와 예매 처리가 분리된 구조** — 대기 인원은 queue가 받고 예매 여정은 정원 인원만 booking에서 진행, 예매 여정 요청이 정원에 묶이는 것은 [부하 테스트](/homelab/capacity/)에서 확인
 
 ## 한계
 
