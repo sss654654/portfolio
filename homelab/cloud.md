@@ -167,7 +167,7 @@ Terraform으로 EKS 노드 7대(app 4 · booking 2 · 관측&nbsp;1)를 AZ 3개�
 | 입구 | MetalLB · Traefik · cert-manager → **ALB&nbsp;·&nbsp;ACM** | MetalLB는 VPC에서 동작 안 함 · ALB가 TLS까지 종료해 cert-manager 불필요 |
 | 쿠버네티스 | k3s(VM 3대 직접 설치) → **EKS 관리형** | k3s는 노드가 컨트롤 플레인까지 실행해 파드용 메모리 감소 — EKS는 컨트롤 플레인을 AWS가 운영 |
 | 스토리지 | 정적 PV → **EBS CSI 드라이버 · gp3 동적 생성** | PVC마다 볼륨 자동 생성 · 대신 볼륨은 생성된 AZ에서만 연결 |
-| MySQL · Redis | 파드 → **RDS Multi-AZ · ElastiCache 복제본 1** | MySQL은 prd 구성과 일치 · 둘 다 AZ 장애 시 AWS가 자동 전환 |
+| MySQL · Redis | 파드 → **RDS Multi-AZ · ElastiCache 복제본 1** | MySQL은 prd에서 쓸 관리형으로 측정 · 둘 다 AZ 장애 시 AWS가 자동 전환 |
 | Kafka · 관측 | **클러스터 안 유지** | MSK는 하루 약 $3.6 추가 · 관측은 dev와 같은 차트로 구성 |
 {:.hl-dec}
 
@@ -178,7 +178,7 @@ Terraform으로 EKS 노드 7대(app 4 · booking 2 · 관측&nbsp;1)를 AZ 3개�
 | 노드 배치 | **AZ 3개** · app 4 · booking 2(AZ별 · taint) · 관측 1(AZ 고정) | Kafka 브로커 AZ마다 1대 — AZ 장애에도 과반 유지 · booking은 JVM 컴파일이 브로커 CPU를 점유해 분리 |
 | 노드 타입 · 수 | **m5.xlarge 고정** — t 계열 · 오토스케일 없음 | 크레딧 고갈이나 자동 증설이 있으면 먼저 막힌 곳을 구분할 수 없음 |
 | 파드의 AWS 권한 | **IRSA** 역할 4개 — EBS CSI · ALB Controller · 관측 S3 · CloudWatch | 노드 역할에 주면 그 노드의 모든 파드가 보유 — ServiceAccount 단위로 분리 |
-| Redis 접근 | **TLS + AUTH** | 대기열 · 좌석 락 · 입장 인증 데이터 보호 — 인증이 없으면 6379에 닿는 파드가 전권 보유 |
+| Redis 접근 | **TLS + AUTH** | 인증이 없으면 6379에 닿는 파드 하나가 대기열 · 좌석 락 · 입장 인증을 읽고 씀 — 보안 그룹은 출발지만 확인 |
 {:.hl-dec}
 
 ## 트러블슈팅
@@ -186,24 +186,23 @@ Terraform으로 EKS 노드 7대(app 4 · booking 2 · 관측&nbsp;1)를 AZ 3개�
 | 증상 | 원인 | 조치 |
 |---|---|---|
 | 노드그룹이 **`CREATING`에서 20분 넘게 멈춤** — CloudTrail에 오류 없음 | 계정 vCPU 한도 32 소진 — 원인은 ASG scaling activities에만 기록 | 한도 **64**로 증설 → 1분 23초 뒤 ACTIVE |
-| 관측 노드 교체 후 **Mimir ingester 95분 Pending** — metric 저장 중단 | 서브넷 3개 지정으로 새 노드가 2b에 생성 — EBS 볼륨은 2c에만 연결 가능 | 관측 노드그룹을 **볼륨이 있는 AZ로 고정** |
+| 관측 노드 교체 후 **Mimir ingester 95분 Pending** — metric 저장 중단 | 노드그룹에 서브넷 3개를 지정해 새 노드가 2b에 생성 — EBS 볼륨은 2c에만 연결 가능 | 관측 노드그룹을 **볼륨이 있는 AZ로 고정** |
 {:.hl-tbl}
 
 ## 결과
 
 - **Terraform 자원 65개로 AWS EKS stg 구축** — 첫 생성 30–40분
 - **stg에서 5만 명까지 부하 테스트 수행** — 판정 · 병목은 [부하 테스트](/homelab/capacity/)
-- **AWS 비용 US$151.79 · 하루 약 US$50** — stg 3일(2026-09-12 – 14) · 부하 발생기 포함, 종료 후 잔존 자원 0(ECR · 관측 S3만 보관)
+- **AWS 비용 US$151.79 · 하루 약 US$50** — stg 3일(2026-09-12 – 14) · 부하 발생기 포함, 종료 후 stg 자원 전부 삭제(ECR · 관측 S3만 보관)
   - EC2 $95.80 — EKS 노드 m5.xlarge × 7(app 4 · booking 2 · 관측 1) · 부하 발생기 c5.2xlarge 최대 4대
   - RDS $21.38 — MySQL db.m5.large Multi-AZ
   - ElastiCache $17.38 — Redis cache.m5.large × 2(주 · 복제본)
   - EKS 컨트롤 플레인 $4.56 · EC2 기타 $4.44 · 기타 $8.23
-- **부하가 queue · booking · Redis · Kafka · MySQL에 집중** — 입구 · 컨트롤 플레인이 클러스터 밖, 판정 · 병목은 [부하 테스트](/homelab/capacity/)
 
 ## 한계
 
 - **운영 기간 3일** — 장기 운영 · 업그레이드 · 장애 대응 경험 없음
-- **노드가 퍼블릭 서브넷** — AZ별 NAT 비용 대신 보안 그룹으로 제한, prd는 프라이빗 서브넷 + NAT
+- **노드가 퍼블릭 서브넷** — AZ별 NAT 비용을 피해 보안 그룹으로 제한, prd는 프라이빗 서브넷 + AZ별 NAT
 - **DB 보안 그룹은 노드 단위** — 출구 NetworkPolicy가 없는 파드(관측 Job)도 RDS에 연결됨
 - **허브가 집에 위치** — 집 공인 IP가 바뀌면 EKS API 허용 목록 재적용
 - **관측 단일 AZ** — 해당 AZ 장애 시 관측 중단
