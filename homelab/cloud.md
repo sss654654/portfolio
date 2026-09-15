@@ -191,9 +191,9 @@ Terraform으로 EKS 노드 7대(app 4 · booking 2 · 관측&nbsp;1)를 AZ 3개�
 
 ## 결과
 
-- **Terraform 자원 65개로 AWS EKS stg 구축** — 첫 생성 30–40분 · 테스트 뒤 삭제, 잔존 자원 0(ECR · 관측 S3 버킷은 보관)
+- **Terraform 자원 65개로 AWS EKS stg 구축** — 첫 생성 30–40분
 - **stg에서 5만 명까지 부하 테스트 수행** — 판정 · 병목은 [부하 테스트](/homelab/capacity/)
-- **AWS 비용 US$151.79 · 하루 약 US$50** — 5만 명 부하 스펙 stg 3일(2026-09-12 – 14) · 부하 발생기 포함
+- **AWS 비용 US$151.79 · 하루 약 US$50** — stg 3일(2026-09-12 – 14) · 부하 발생기 포함, 종료 후 잔존 자원 0(ECR · 관측 S3만 보관)
   - EC2 $95.80 — EKS 노드 m5.xlarge × 7(app 4 · booking 2 · 관측 1) · 부하 발생기 c5.2xlarge 최대 4대
   - RDS $21.38 — MySQL db.m5.large Multi-AZ
   - ElastiCache $17.38 — Redis cache.m5.large × 2(주 · 복제본)
