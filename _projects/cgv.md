@@ -3,7 +3,7 @@ layout: page
 title: CGV 예매 대기열 시스템
 date: 2025-08-01
 description: >
-  개발계 AWS 네트워크(Terraform)와 Redis·Kinesis 대기열 백엔드(Spring Boot)
+  개발계 AWS 네트워크(Terraform)와 Redis · Kinesis 대기열 백엔드(Spring Boot)
 links:
   - title: dev_terraform
     url: https://github.com/sss654654/dev_terraform
@@ -13,7 +13,7 @@ links:
 
 <p class="hl-back" markdown="0"><a href="/projects/">← Projects</a></p>
 
-CJ 올리브네트웍스 클라우드웨이브 6기(2025.06–09) 5인 · 3주 팀 프로젝트.
+CJ 올리브네트웍스 클라우드웨이브 6기(2025.06 – 09) 5인 · 3주 팀 프로젝트.
 2024년 한국시리즈 극장 생중계 예매 대기 16만 명 사례 기준, **몰리는 수요를 백엔드 처리량에 맞춰 조절하는 대기열**을 구현했습니다.
 담당 — **AWS 개발계 네트워크 계층(Terraform)** · 대기열 백엔드(Spring Boot).
 {:.lead}
@@ -28,13 +28,13 @@ CJ 올리브네트웍스 클라우드웨이브 6기(2025.06–09) 5인 · 3주 �
 
 | 항목 | 선택 | 이유 |
 |---|---|---|
-| 서브넷 인터넷 경로 | **Public 양방향 · EKS 나가는 것만 · GitLab·DB 없음** | 소스 저장소와 DB가 같은 VPC — 서브넷마다 필요한 만큼만 개방 |
-| ECR 트래픽 | **`ecr.api`·`ecr.dkr` 엔드포인트를 서브넷마다** | 하나만 두면 인증은 되는데 pull이 NAT로 나감 · 인터페이스 엔드포인트는 서브넷 단위 ENI |
+| 서브넷 인터넷 경로 | **Public 양방향 · EKS 나가는 것만 · GitLab · DB 없음** | 소스 저장소와 DB가 같은 VPC — 서브넷마다 필요한 만큼만 개방 |
+| ECR 트래픽 | **`ecr.api` · `ecr.dkr` 엔드포인트를 서브넷마다** | 하나만 두면 인증은 되는데 pull이 NAT로 나감 · 인터페이스 엔드포인트는 서브넷 단위 ENI |
 | NAT Gateway | **2a 하나만** — 2c 라우트도 여기로 | 시간당 요금 절반 — 개발 환경이라 2a 장애 시 2c 아웃바운드 단절은 감수 |
 | 원격 state | **S3 + DynamoDB**, 별도 디렉터리 | 저장소 자신이 state에 들어가면 순환 |
 | 대기열 상태 | **Redis Sorted Set 둘** — waiting(상한 없음) · active(Pod 수 기반 정원) | score가 요청 시각이라 도착 순서 유지 · 순위 조회도 빠름 |
-| 승격 | **2초 주기 프로세서** — 빈 자리만큼 앞에서부터 | 정원이 비는 즉시가 아니라 주기로 옮겨야 Redis 왕복이 요청마다 안 늘어남 |
-| 승격 통지 | **Kinesis** — WebSocket + 폴링 이중 | 승격을 놓치면 예매 화면 진입 불가 — 24시간 재처리 보존, 연결이 끊겨도 폴링이 수신 |
+| 입장 처리 | **2초 주기 프로세서** — 빈 자리만큼 앞에서부터 | 정원이 비는 즉시가 아니라 주기로 입장시켜야 Redis 왕복이 요청마다 안 늘어남 |
+| 입장 통지 | **Kinesis** — WebSocket + 폴링 이중 | 입장 통지를 놓치면 예매 화면 진입 불가 — 24시간 재처리 보존, 연결이 끊겨도 폴링이 수신 |
 {:.hl-dec}
 
 ## 트러블슈팅
@@ -56,7 +56,7 @@ CJ 올리브네트웍스 클라우드웨이브 6기(2025.06–09) 5인 · 3주 �
 ## 한계
 
 - **CI/CD · EKS 구축과 배포계는 팀원 담당** — 파이프라인 · 클러스터 직접 구축 없음, 부하는 개발계 동작 확인까지. 클러스터 구축은 [홈랩](/homelab/onprem/), EKS 구축은 [클라우드](/homelab/cloud/)에서 보완
-- **Kinesis · WebSocket은 이 규모에 과함** — 단일 소비자라 Fan-out · 재처리 불필요, 단방향 알림에 양방향 연결은 비용만 증가
+- **Kinesis · WebSocket 기능 대부분 미사용** — 단일 소비자라 Fan-out · 재처리 불필요, 단방향 알림인데 양방향 연결 유지
 - **Client VPN을 dev 편의로 퍼블릭 서브넷 접근으로 전환** — 코드에 남은 GitLab 보안그룹 인바운드 `0.0.0.0/0`
 
 ## 기술 스택
