@@ -46,7 +46,6 @@ author:
   email:               subinhong0109@gmail.com
 
 # Add links to the sidebar.
-# 이력서 PDF 는 클라우드 반영 전 파일이라 내렸다 — 다시 쓴 뒤 Blog 앞에 Resume 로 올린다.
 menu:
   - title:             Home
     url:               /
@@ -54,6 +53,8 @@ menu:
     url:               /homelab/
   - title:             Projects
     url:               /projects/
+  - title:             Resume
+    url:               /assets/subinhong-resume.pdf
   - title:             Blog
     url:               https://zed6740.tistory.com
 
