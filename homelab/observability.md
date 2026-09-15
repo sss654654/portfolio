@@ -2,21 +2,21 @@
 layout: page
 title: 옵저버빌리티
 description: >
-  LGTM · 부하 테스트 판정의 기준 지표
+  관측 · dev 감시와 stg 부하 테스트 판정
 permalink: /homelab/observability/
 ---
 
 <p class="hl-back" markdown="0"><a href="/homelab/">← HomeLab</a></p>
 
-노드마다 Alloy 1개가 metric · log · trace를 모아 Mimir · Loki · Tempo에 저장.
-판정에 쓰는 metric만 **Mimir 분산**(ingester 3대), log · trace는 단일 구성.
-stg는 같은 차트로 **클러스터 안에 별도 구성** — 집 Mimir로 보내지 않음.
+노드마다 Alloy가 metric · log · trace를 모아 Mimir · Loki · Tempo에 저장하고 Grafana로 조회.
+dev(온프레미스) · stg(클라우드)에 **같은 차트로 각각 구성**.
+dev는 클러스터 · 호스트 감시와 알림, stg는 부하 테스트 판정용 대시보드.
 {:.lead}
 
 ## 옵저버빌리티 구조
 
-<!-- 신호 셋이 각자 레인으로 나란히 흐르고 Alloy 기둥 하나가 셋을 관통하는 구조.
-     원본 저장소 칸이 dev(MinIO) · stg(S3) 로 갈린다. 화살표 = 데이터 방향. -->
+<!-- 신호 셋이 각자 레인으로 나란히 흐르고 Alloy 기둥 하나가 셋을 관통하는 구조. 두 환경 공통.
+     원본 저장소 칸이 dev(MinIO) · stg(S3) 로 갈린다. 대시보드 · 알림은 환경별 — 결과 절. 화살표 = 데이터 방향. -->
 <figure class="hl-diagram hl-diagram-lg hl-diagram-scroll" markdown="0">
 <svg viewBox="0 0 760 312" role="img" aria-label="metric·log·trace 세 레인이 나란히 흐르고, 노드마다 도는 Alloy 기둥 하나가 셋을 모아 Mimir·Loki·Tempo로 보낸다. 세 저장소의 원본은 dev에서 MinIO, stg에서 S3에 저장되고 Grafana가 셋을 읽는다">
   <defs>
@@ -29,7 +29,7 @@ stg는 같은 차트로 **클러스터 안에 별도 구성** — 집 Mimir로 �
   <text class="hla-s2" x="38" y="84">앱 · 미들웨어 · 노드</text>
   <line class="hla-ln" x1="144" y1="68" x2="234" y2="68" marker-end="url(#hlo-n)" fill="none"/>
   <text class="hla-a" x="189" y="60" text-anchor="middle">scrape 15초</text>
-  <text class="hla-a" x="189" y="84" text-anchor="middle">피크는 5초</text>
+  <text class="hla-a" x="189" y="84" text-anchor="middle">stg queue 5초</text>
   <line class="hla-ln" x1="336" y1="68" x2="414" y2="68" marker-end="url(#hlo-n)" fill="none"/>
   <rect class="hla-box" x="418" y="40" width="158" height="56" rx="5"/>
   <image href="/assets/img/icons/mimir.svg" x="432" y="51" width="20" height="20"/>
@@ -86,10 +86,10 @@ stg는 같은 차트로 **클러스터 안에 별도 구성** — 집 Mimir로 �
   <text class="hla-t" x="685" y="90" text-anchor="middle">Grafana</text>
   <text class="hla-s" x="685" y="118" text-anchor="middle">3개 저장소 조회</text>
   <text class="hla-s2" x="685" y="162" text-anchor="middle">대시보드 — 코드</text>
-  <text class="hla-s2" x="685" y="180" text-anchor="middle">dev · stg 공통 차트</text>
-  <text class="hla-s2" x="685" y="216" text-anchor="middle">알림 — Discord</text>
+  <text class="hla-s2" x="685" y="180" text-anchor="middle">환경별로 구성</text>
+  <text class="hla-s2" x="685" y="216" text-anchor="middle">dev 알림 — Discord</text>
 </svg>
-<figcaption>화살표 — 데이터 방향. exporter를 붙일 수 없는 RDS · ElastiCache · ALB는 stg의 CloudWatch exporter가 같은 Mimir로 수집.</figcaption>
+<figcaption>화살표 — 데이터 방향. exporter를 붙일 수 없는 RDS · ElastiCache · ALB는 stg의 CloudWatch exporter가 Mimir로 수집.</figcaption>
 </figure>
 
 ## 설계 결정
@@ -98,41 +98,37 @@ stg는 같은 차트로 **클러스터 안에 별도 구성** — 집 Mimir로 �
 |---|---|---|
 | metric 저장소 | **Mimir distributed** — ingester 3대, 노드당 1 | ingester가 1대면 중단 시 메모리의 최근 2시간 소실 — 자원 한도로 **판정용 metric만** 분산 |
 | log · trace | **Loki · Tempo 단일** | 조사용이라 공백이 판정에 영향 없음 · WAL로 재시작 복구, 노드 유실은 감수 |
-| 원본 저장소 | **dev MinIO 파드 · stg S3(IRSA)** | 원본은 오브젝트 스토리지, 로컬은 WAL만 — stg는 파드가 IRSA로 버킷 권한 획득 |
-| stg 스택 | **stg 안에 같은 차트로 별도 구성** — 집으로 전송하지 않음 | 집 Mimir 활성 시리즈가 상한의 91.8% — 수용 불가 · 같은 차트라 대시보드 재사용 |
-| 부하 판정용 스크레이프 | **stg queue만 5초** | 오픈 피크가 15초 1주기 안에 끝나 표본 1개 — 5초 주기로 피크 구간 확인 |
-| 알림 기준 | **대응 조치가 있고, 놓치면 복구 불가한 것만** · 클러스터 밖 감시는 Better Stack | 한 조건만 맞으면 대시보드 확인으로 충분 · 클러스터 안 알림은 클러스터 중단 시 동반 중단 |
+| 원본 저장소 | **dev MinIO 파드 · stg S3(IRSA)** | 원본은 오브젝트 스토리지 · 로컬은 WAL만 — stg는 IRSA로 키 없이 버킷 접근 |
+| dev 알림 기준 | **조치할 수 있는 것만** Discord로 · 클러스터 밖 감시는 Better Stack | 물리 층은 재기동으로 회복 불가 · 앱 지연은 정상 범위 실측 전이라 제외 · 클러스터 안 알림은 동반 중단 |
+| stg 스택 | **stg 안에 같은 차트로 별도 구성** — 집으로 전송하지 않음 | 집 Mimir 활성 시리즈가 상한의 91.8% — stg 시리즈 수용 불가 |
+| stg 판정 대시보드 | **4개 새로 구성** — 흐름 · queue · booking · 데이터 · queue만 5초 수집 | dev 대시보드는 Traefik · 파드 DB 전제라 stg에서 행 절반이 빔 · 오픈 피크가 15초 1주기 안에 끝남 |
 {:.hl-dec}
-
-## 대시보드와 알림
-
-대시보드는 코드(cgv-infra `manifests/`)로 배포 — dev는 클러스터 · 호스트 · 앱, stg는 흐름(판정 · 층별 진단 · 노드) · queue · booking · 데이터. 대시보드는 조사, 상시 감시는 알림이 담당.
-
-<figure class="hl-shot" markdown="0">
-  <img src="/assets/img/homelab/obs/host-phone.png" alt="충전선을 뽑은 순간 — 왼쪽 호스트 대시보드의 전원이 배터리(빨강)로 바뀌고 전력 행의 알림 상태 표시가 바뀌었으며, 오른쪽 폰 Discord에 발생 알림이 도착" loading="lazy">
-  <figcaption>충전선 분리 검증 — 전원 상태 배터리(빨강) 전환, 알림 패널 상태 변경, 같은 시각 폰 Discord 알림 수신.</figcaption>
-</figure>
 
 ## 트러블슈팅
 
 | 증상 | 원인 | 조치 |
 |---|---|---|
-| 시리즈 상한 15만 도달 — metric 거절, 화면엔 오류 없이 **값만 누락** | k3s는 `:6443` · `:10250`이 **한 프로세스**라 둘 다 수집하면 같은 metric 중복 — 상한 15만의 85% | `:6443` 수집 제거 · 상한 30만. 거절 **0** |
-| 유휴 시 CPU 패키지 **92°C** — 예고 없는 전원 차단 이력, 온도 기록 없음 | 온도 · 전원은 물리 호스트 metric — VM 안에서 수집 경로 없음 | 호스트 node-exporter · 쿨러 조정 → **66°C** · 알림 90°C |
+| dev 시리즈 상한 15만 도달 — 오류 표시 없이 metric **값만 누락** | k3s는 `:6443` · `:10250`이 **한 프로세스**라 둘 다 수집하면 같은 metric 중복 — 상한 15만의 85% | `:6443` 수집 제거 · 상한 30만. 거절 **0** |
+| dev 호스트 유휴 CPU **92°C** — 예고 없는 전원 차단 이력, 온도 기록 없음 | 온도 · 전원은 물리 호스트 metric — VM 안에서 수집 경로 없음 | 호스트 node-exporter · 쿨러 조정 → **66°C** · 알림 90°C |
 | stg 2.5만 명 전파 **97.445%** — 브로커 유휴 · 메시지 대기 1.852초 | 요청 96%인 폴링마다 접근 로그 1줄 — Loki **초당 4,256줄** · 수집기 노드당 0.5코어 · booking 노드 런큐 **3.30초/초** | 성공 폴링 로그 제외 → 100.000% · 741줄/초 · 런큐 0.26 |
 {:.hl-tbl}
 
 ## 결과
 
-- **두 환경에 같은 차트 · 대시보드** — 부하 테스트 19회의 판정 · 진단 모두 stg Mimir 서버 지표 기준
-- **알림은 Discord** — 현재 값 · 조치 · 패널 이미지 포함. 클러스터 전체 중단은 Better Stack이 외부에서 감지
-- **관측 자체의 부하 실측** — 로그 비용은 디스크가 아닌 수집기 CPU, 같은 노드의 서비스 파드에 영향
+- **dev · stg에 같은 차트로 관측 스택 구축** — 수집 · 저장 · 대시보드 · 알림 규칙 전부 코드(cgv-infra)
+- **dev — 클러스터 · 호스트 · 앱 · 관측 파이프라인 대시보드 7개와 알림 8개** — 알림은 호스트 · 디스크 6 · 공개 서비스 2, Discord로 발송
+- **stg — 대시보드 4개로 부하 테스트 판정** — 회차별 판정 · 병목 진단 모두 서버 지표 기준, 결과는 [부하 테스트](/homelab/capacity/)
+
+<figure class="hl-shot" markdown="0">
+  <img src="/assets/img/homelab/obs/host-phone.png" alt="충전선을 뽑은 순간 — 왼쪽 호스트 대시보드의 전원이 배터리(빨강)로 바뀌고 전력 행의 알림 상태 표시가 바뀌었으며, 오른쪽 폰 Discord에 발생 알림이 도착" loading="lazy">
+  <figcaption>dev 알림 시험 — 충전선 분리 시 호스트 대시보드 전원 상태가 배터리(빨강)로 전환, 같은 시각 폰에 Discord 알림 도착.</figcaption>
+</figure>
 
 ## 한계
 
-- **관측 스택 자체의 모니터링 화면 없음** — 구축 중 metric이 오류 없이 누락된 사례 있음
-- **stg에 알림 규칙 미적용** — 테스트 중 수동 관찰
-- **stg RDS · ElastiCache 지표는 CloudWatch 1분 해상도 · 지연** — 5만 명 회차 오픈 구간 판정에 미사용
+- **관측 파이프라인 이상에 알림 없음** — 수집 누락은 파이프라인 대시보드로만 확인
+- **stg에 알림 규칙 미적용** — 부하 테스트 중 대시보드로 수동 관찰
+- **stg RDS · ElastiCache 지표는 CloudWatch 1분 해상도 · 수 분 지연** — 5만 명 회차 오픈 구간 판정에 미사용
 
 ## 기술 스택
 
