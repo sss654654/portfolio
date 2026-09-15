@@ -148,7 +148,6 @@ image-updater가 새 태그를 cgv-infra(배포 정의)에 커밋하면 노트�
 - **stg 이미지 롤백 불가** — image-updater가 항상 최신 빌드 선택, 문제 시 수정 후 재빌드
 - **ECR 자격이 IAM 사용자 장기 키 둘** — CI push · image-updater 조회용, GitLab이 사설 IP라 OIDC 페더레이션 불가
 - **허브가 가진 EKS 자격이 만료 없는 cluster-admin 토큰** — 교체는 수동, 허브 침해 시 EKS 전권 노출
-- **배포 정의 머지가 즉시 동기화** — 부하 테스트 중 파드 교체로 회차 1회 무효, 테스트 중 머지 금지로 운영
 
 ## 기술 스택
 
