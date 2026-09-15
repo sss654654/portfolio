@@ -68,7 +68,7 @@ image-updater가 새 태그를 cgv-infra(배포 정의)에 커밋하면 노트�
     <text class="hla-a" x="392" y="200" text-anchor="middle">새 태그 감지</text>
 
     <line class="hla-ln-def" x1="411" y1="150" x2="480" y2="150" marker-end="url(#hlm-d)"/>
-    <text class="hla-a" x="446" y="142" text-anchor="middle">tag 커밋</text>
+    <text class="hla-a" x="446" y="142" text-anchor="middle">태그 커밋</text>
 
     <image href="/assets/img/icons/gitlab.svg" x="483" y="133" width="34" height="34"/>
     <text class="hla-c" x="500" y="186" text-anchor="middle">cgv-infra</text>
@@ -118,13 +118,13 @@ image-updater가 새 태그를 cgv-infra(배포 정의)에 커밋하면 노트�
 
 | 항목 | 선택 | 이유 |
 |---|---|---|
-| Git 서버 위치 | **GitLab을 클러스터 밖 데스크탑에** — 러너 · 레지스트리 포함 | 클러스터 안이면 동반 중단 · GitHub은 사설망 webhook 불가 · 빌드 I/O가 부하 측정에 간섭 |
+| Git 서버 위치 | **GitLab을 클러스터 밖 데스크탑에** — 러너 · 레지스트리 포함 | 클러스터 안이면 장애 시 함께 중단 · 빌드 I/O가 부하 측정에 간섭 · GitHub은 사설망 webhook 불가 |
 | CI · CD | **분리** — CI는 이미지 빌드(cgv-onprem) · 배포 정의 검사(cgv-infra)까지, 배포는 ArgoCD | 파이프라인이 배포하면 러너에 클러스터 전권 자격 필요 — 분리하면 배포 자격은 허브 ArgoCD에만 |
-| 브랜치 · 환경 | **두 저장소 모두 trunk 하나(`main`)** · 환경은 cgv-infra `envs/<환경>/` 폴더 | 브랜치를 환경으로 쓰면 환경 축이 둘(브랜치 · 폴더) · 승격은 merge 대신 태그 커밋 한 줄 |
+| 브랜치 · 환경 | **두 저장소 모두 trunk 하나(`main`)** · 환경은 cgv-infra `envs/<환경>/` 폴더 | 브랜치를 환경으로 쓰면 환경 구분이 브랜치 · 폴더 두 곳에 생김 · 승격은 merge 대신 태그 커밋 한 줄 |
 | 취약점 게이트 | **수정판 있는 HIGH 이상만** 차단 — 소스(빌드 전) · 이미지(등록 전) 두 겹 | 수정판 없는 취약점까지 막으면 고칠 수단 없이 파이프라인 상시 실패 |
 | 승격 | **1회 빌드 · 같은 이미지를 ECR로** · 게이트는 수동 job `publish-ecr` | 환경별로 빌드하면 부하 결과 차이의 원인 구분 불가 · 버튼 실행 기록이 곧 승격 기록 |
 | 원격 클러스터 | **집 허브가 EKS를 클러스터 이름으로 배포** | EKS에서 사설망 GitLab 저장소 · 레지스트리 접근 불가 · 이름 지정으로 재생성 시 주소 치환 20곳 제거 |
-| 배포 권한 · 자격 | **AppProject**로 배포 범위 제한 · dev **SealedSecret** · stg는 생성 뒤 스크립트로 주입 | 제한 없으면 Application 하나로 전 자원 생성 · 봉인은 클러스터 개인키에 묶여 stg에서 복호화 불가 |
+| 배포 권한 · 자격 | **AppProject**로 배포 범위 제한 · dev **SealedSecret** · stg는 생성 뒤 스크립트로 주입 | 제한 없으면 Application 하나로 전 자원 생성 · 봉인본은 dev 클러스터 개인키로만 복호화 |
 {:.hl-dec}
 
 ## 트러블슈팅
@@ -138,13 +138,13 @@ image-updater가 새 태그를 cgv-infra(배포 정의)에 커밋하면 노트�
 
 ## 결과
 
-- **머지부터 dev · stg 배포까지 자동 경로 완성** — 배포에 `kubectl` 0회 · stg 승격 버튼 뒤 태그 커밋 93초 → 동기화 완료 21초
-- **[CI 파이프라인](https://github.com/sss654654/cgv-onprem/blob/main/.gitlab-ci.yml) 검사 · 차단 동작 확인** — 새로 오른 취약점 grpc HIGH · netty CRITICAL을 등록 전 차단, 버전 상향 후 통과
+- **머지부터 dev · stg 배포까지 GitOps 경로 완성** — 배포에 `kubectl` 0회 · stg는 승격 버튼 1회, ECR 등록 뒤 태그 커밋 93초 → 동기화 완료 21초
+- **[CI 파이프라인](https://github.com/sss654654/cgv-onprem/blob/main/.gitlab-ci.yml) 검사 · 차단 동작 확인** — 새로 공개된 취약점 grpc HIGH · netty CRITICAL을 등록 전 차단, 버전 상향 후 통과
 - **배포 저장소에 평문 시크릿 0건** — cgv-infra의 시크릿 매니페스트 19종 전부 SealedSecret 봉인본
 
 ## 한계
 
-- **자동화 토큰 3개가 2026-11-01 동시 만료** — 노드 이미지 pull · image-updater 태그 조회 · 저장소 읽기와 태그 되쓰기 동시 중단, 만료 알림 없음
+- **자동화 토큰 3개가 2026-11-01 동시 만료** — 노드 이미지 pull · image-updater 태그 조회 · 저장소 읽기와 태그 되쓰기 중단, 만료 알림 없음
 - **stg 이미지 롤백 불가** — image-updater가 항상 최신 빌드 선택, 문제 시 수정 후 재빌드
 - **ECR 자격이 IAM 사용자 장기 키 둘** — CI push · image-updater 조회용, GitLab이 사설 IP라 OIDC 페더레이션 불가
 - **허브가 가진 EKS 자격이 만료 없는 cluster-admin 토큰** — 교체는 수동, 허브 침해 시 EKS 전권 노출
