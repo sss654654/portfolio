@@ -16,7 +16,7 @@ redirect_from:
 
 노트북 1대(RAM 32GB)에 Proxmox VM으로 k3s 노드 3대(HA)와 OPNsense 방화벽을 구성.
 네트워크 · 로드밸런서 · 스토리지는 k3s 기본값 대신 **직접 선택**.
-노드는 **방화벽 뒤 격리망**에 두고, 서비스는 Cloudflare를 거쳐 공개(443) · 관리 화면은 WireGuard VPN으로만 <span style="white-space:nowrap">접근(51820)</span>.
+노드는 **방화벽 뒤 격리망**에 두고, 서비스는 Cloudflare를 거쳐 공개(443) · 관리 UI는 WireGuard VPN으로만 <span style="white-space:nowrap">접근(51820)</span>.
 {:.lead}
 
 ## 온프레미스 구조
@@ -113,7 +113,7 @@ redirect_from:
   <text x="620" y="312" text-anchor="middle" class="hla-s">stg(EKS)로 동기화</text>
 
   <!-- GitOps — 방향이 둘이라 양쪽 화살표: 당김(클러스터 → 데스크탑) · webhook(터널로) -->
-  <text x="306" y="260" class="hla-s" text-anchor="middle">pull · webhook(터널)</text>
+  <text x="306" y="260" class="hla-s" text-anchor="middle">pull · webhook(WireGuard)</text>
   <line x1="176" y1="268" x2="440" y2="268" class="hla-ln hla-dash"
         marker-start="url(#hlp-arrow-back)" marker-end="url(#hlp-arrow)"/>
 
@@ -157,43 +157,43 @@ redirect_from:
 
 | 항목 | 선택 | 이유 |
 |---|---|---|
-| 배포판 | **k3s** — 3대 모두 control-plane · etcd | 단일 바이너리로 8GB 노드에 서비스 메모리 확보 · 대가 — 컨트롤 플레인 · kubelet 동반 종료 |
+| 배포판 | **k3s** — 3대 모두 컨트롤 플레인 · etcd 겸임 | 단일 바이너리로 8GB 노드에 서비스 메모리 확보 · 대신 k3s 중단 시 컨트롤 플레인 · kubelet 동시 중단 |
 | 파드 네트워크 | **Calico** | 기본 Flannel은 NetworkPolicy 미집행 — 규칙이 있어도 통신 허용 |
-| 로드밸런서 · 인그레스 | **MetalLB** + **Traefik 별도 설치** | 기본 ServiceLB는 노드 IP 사용 — 노드 중단 시 주소 소멸 · 번들 Traefik은 재기동 시 설정 원복 |
-| 스토리지 | **정적 PV** — 노드 디스크 직접 연결 | 기본 local-path는 폴더 공유라 디스크 지표로 사용 주체 식별 불가 · 대가 — 파드가 노드에 고정 |
+| 로드밸런서 · 인그레스 | **MetalLB** + **Traefik 별도 설치** | 기본 ServiceLB는 노드 IP 사용 — 그 노드 중단 시 접속 불가 · 번들 Traefik은 재기동 시 설정 초기화 |
+| 스토리지 | **정적 PV** — 용도별 디스크를 따로 마운트 | 기본 local-path는 한 디스크 안 폴더라 디스크 지표로 용도 구분 불가 · 대신 파드가 그 노드에 고정 |
 {:.hl-dec}
 
 <div class="hl-sub" markdown="0">격리 · 공개</div>
 
 | 항목 | 선택 | 이유 |
 |---|---|---|
-| 격리 | **OPNsense 방화벽 VM** + 물리 NIC 없는 브리지 | 노드 · 데스크탑이 같은 망이면 한쪽 침해 시 상호 접근 — 격리망의 외부 경로를 방화벽 하나로 제한 |
-| 관리 접근 | **WireGuard** 터널 | Grafana · ArgoCD 도메인 미공개 — 키를 등록한 기기만 접근 |
+| 격리 | **OPNsense 방화벽 VM** + 물리 NIC 없는 브리지 | 노드 · 데스크탑이 같은 망이면 한쪽 침해 시 다른 쪽까지 접근 — 격리망 출입 경로를 방화벽 하나로 제한 |
+| 관리 접근 | **WireGuard** 터널 | 관리 UI(Grafana · ArgoCD)를 인터넷에 공개하지 않음 — 키를 등록한 기기만 접근 |
 | 공개 경로 | **Cloudflare 프록시** + 방화벽 출발지를 엣지 대역으로 제한 · 인증서 **cert-manager** | 서비스 도메인의 집 공인 IP 은닉 · 방문자 연결은 엣지에서 종료 · 엣지 → Traefik 구간도 TLS |
-| 파드 간 통신 | **NetworkPolicy 24개** — 네임스페이스별 기본 차단 | 기본값은 파드 간 전체 허용 — 앱 하나 침해 시 DB 자격까지 도달 |
+| 파드 간 통신 | **NetworkPolicy 24개** — 네임스페이스별 기본 차단 | 기본값은 파드 간 전체 허용 — 앱 하나가 침해되면 다른 네임스페이스 DB까지 연결 가능 |
 {:.hl-dec}
 
 ## 트러블슈팅
 
 | 증상 | 원인 | 조치 |
 |---|---|---|
-| `Host` 헤더만 바꾼 443 요청에 **ArgoCD 로그인 화면 200 응답** | Traefik이 `Host` 헤더로만 라우팅 — 예매 · Grafana · ArgoCD가 같은 80 · 443 뒤에 위치 | 관리 UI 라우터를 **80 전용**으로 분리 — 80은 인터넷 미개방 |
-| 노드가 신고한 **가용 메모리가 실제보다 큼** | 컨트롤 플레인이 파드가 아닌 프로세스라 kubelet 집계에서 **1,783Mi** 누락 | 예약값 k3s 2Gi · OS 512Mi → 노드당 파드 할당 **5,081Mi** |
-| 데스크탑 → 격리망 **응답 없음**, 방화벽 로그는 pass | WAN 규칙에 자동으로 붙은 `reply-to`가 같은 대역 응답을 공유기로 보냄 | 해당 규칙 `reply-to` 해제 → 손실 **0%** |
+| 외부 443 요청의 `Host` 헤더만 바꾸면 **ArgoCD 로그인 화면 응답** | Traefik이 `Host` 헤더로만 라우팅 — 예매 서비스 · Grafana · ArgoCD가 같은 80 · 443을 공유 | 관리 UI 라우터를 **80 전용**으로 분리 — 80은 인터넷 미개방 |
+| kubelet이 보고한 **파드 할당 가능 메모리가 실제보다 큼** | 컨트롤 플레인이 파드가 아닌 k3s 프로세스라 집계에서 **1,783Mi** 누락 | k3s 2Gi · OS 512Mi 예약 → 노드당 파드 할당 **5,081Mi** |
+| 데스크탑 → 격리망 **응답 없음** — 방화벽 로그는 통과(pass) | WAN 규칙에 자동으로 붙은 `reply-to`가 데스크탑(같은 대역)으로 갈 응답을 공유기로 보냄 | 그 규칙의 `reply-to` 해제 → 패킷 손실 **0%** |
 {:.hl-tbl}
 
 ## 결과
 
 - **노트북 1대에 k3s HA 클러스터 구축 · 대기열 예매 서비스 외부 공개** — `ticket.subinhong.dev`
-- **노드 1대 중단 시험에서 클러스터 유지** — etcd 3대 중 2대로 과반 유지
-- **외부 접근 차단 확인** — 포트 20개 스캔 응답 0 · 공인 IP로 443 직접 접속 시 타임아웃
+- **노드 1대 중단 시험에서 클러스터 유지** — etcd 3대 중 남은 2대가 과반
+- **공개 경로 외 외부 접근 차단 확인** — 포트 20개 스캔 응답 0 · Cloudflare를 거치지 않은 443 직접 접속은 타임아웃
 - **파드 출구를 목적지 단위로 제한** — booking은 MySQL · Redis · Kafka · 수집기 4곳만 허용
 - **클러스터 구성 전부 코드로 관리** — k3s `config.yaml` · 부트스트랩 9단계 · Helm 차트
 
 ## 한계
 
 - **노드 RAM이 부하 상한** — 3만 명 부하에서 k3s 재시작, 이후 부하 측정은 stg(EKS)
-- **관리 경로가 OPNsense 1대에 집중** — VM 중단 시 터널 · 격리망 인터넷 동시 중단
+- **외부 경로 전부가 OPNsense VM 1대에 집중** — VM 중단 시 서비스 공개 · VPN · 격리망 인터넷 동시 중단
 - **VPN 접속용 도메인은 집 공인 IP 노출** — WireGuard는 UDP라 HTTP만 중계하는 Cloudflare 프록시를 쓸 수 없음
 
 ## 기술 스택
