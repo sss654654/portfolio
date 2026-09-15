@@ -184,11 +184,11 @@ redirect_from:
 
 ## 결과
 
-- **노트북 1대에 k3s HA 클러스터 구축 · 대기열 예매 서비스 외부 공개** — `ticket.subinhong.dev`(Cloudflare 경유 HTTPS)
+- **노트북 1대에 k3s HA 클러스터 구축 · 대기열 예매 서비스 외부 공개** — `ticket.subinhong.dev`
 - **노드 1대 중단 시험에서 클러스터 유지** — etcd 3대 중 2대로 과반 유지
 - **외부 접근 차단 확인** — 포트 20개 스캔 응답 0 · 공인 IP로 443 직접 접속 시 타임아웃
 - **파드 출구를 목적지 단위로 제한** — booking은 MySQL · Redis · Kafka · 수집기 4곳만 허용
-- **클러스터 구성 전부 코드로 관리** — k3s `config.yaml` · 부트스트랩 9단계 · Helm 차트(stg와 공통)
+- **클러스터 구성 전부 코드로 관리** — k3s `config.yaml` · 부트스트랩 9단계 · Helm 차트
 
 ## 한계
 
