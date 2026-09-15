@@ -41,7 +41,7 @@ CJ 올리브네트웍스 클라우드웨이브 6기(2025.06 – 09) 5인 · 3주
 
 | 증상 | 원인 | 조치 |
 |---|---|---|
-| Consumer 폴링에 Kinesis **읽기 한도 초과 오류 반복** | 샤드 1개(초당 5회)를 Pod 6개가 폴링 · 0번 샤드만 읽어 증설로도 해소 불가 | Pod 순번으로 샤드 분배 · 필요 샤드 **2개** = Pod 10 × 초당 1회 ÷ 5회 |
+| Consumer 폴링에 Kinesis **읽기 한도 초과 오류 반복** | 샤드 1개(초당 5회)를 Pod 6개가 폴링 · 0번 샤드만 읽어 증설로도 해소 불가 | 샤드 **2개**로 증설 · Pod 순번으로 분배(Pod 10 × 초당 1회 ÷ 5회) |
 | Pod의 Kinesis 접근 거부 — IRSA가 아닌 **EC2 노드 역할**로 접근 중 | ServiceAccount annotation · 신뢰 관계는 정상 — 앱에 AWS 연동 의존성이 없어 IRSA 환경변수 미인식 | `spring-cloud-aws-starter` 의존성 추가 |
 | 인증서를 ACM에 올리고 Client VPN 연결 시 **TLS 핸드셰이크 실패** | 서버 인증서 CN이 `server` 같은 비FQDN이라 ACM이 도메인 인식 불가 | Easy-RSA PKI 재구성, FQDN CN으로 재발급 |
 | `destroy → apply` 뒤 GitLab 인스턴스에 **빈 볼륨** | `root_block_device` 인라인이라 인스턴스 교체 시 새 볼륨 생성 — 기존 볼륨은 남았지만 미연결 | 볼륨을 별도 자원으로 분리해 기존 볼륨을 import 후 연결 |
