@@ -57,7 +57,7 @@ permalink: /homelab/capacity/
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/stg25k-row2.png" alt="흐름 대시보드 2행 — 순번 조회 · 대기열 진입 지연 p99와 대기 · 입장 · 정원 인원" loading="lazy">
-    <figcaption><b>(queue)</b> 대기 2만 4천 명이 정원 1,000명 유지 속에 약 6분 뒤 0 · 순번 조회 p99 5ms 이하.</figcaption>
+    <figcaption><b>(queue)</b> 정원 1,000명을 유지하며 대기 2만 4천 명이 약 6분 뒤 0 · 순번 조회 p99 5ms 이하.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/stg25k-row4.png" alt="흐름 대시보드 4행 — booking 단계별 p99와 확정 성공 · 좌석 선점 409 초당 건수" loading="lazy">
@@ -89,7 +89,7 @@ permalink: /homelab/capacity/
 
 ## 한계
 
-- **실측 상한 5만 명** — 파드당 부하와 다음 과제(파드 간 분산)를 5만 명에서 확인해 10만 명은 계산으로 대체 · 분산 방법과 Redis 주 노드의 10만 명 부하는 미확인
+- **실측 상한 5만 명** — 5만 명에서 파드당 부하와 다음 과제(파드 간 분산)를 확인한 뒤 AWS 크레딧 소진으로 종료, 10만 명은 계산으로 대체 · 분산 방법과 Redis 주 노드의 10만 명 부하는 미확인
 - **장시간(soak) 테스트 없음** — 메모리 · 커넥션 누수 미확인
 
 ## 기술 스택

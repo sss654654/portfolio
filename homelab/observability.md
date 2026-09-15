@@ -98,7 +98,7 @@ dev는 클러스터 · 호스트 감시와 알림, stg는 부하 테스트 판�
 |---|---|---|
 | metric 저장소 | **Mimir distributed** — ingester dev 3대 · stg 1대 | ingester 1대면 중단 동안 metric 저장 중단 — dev는 3대 중 2대로 유지 · stg는 테스트 기간 한정이라 1대 |
 | log · trace | **Loki · Tempo 단일** | log · trace는 원인 조사용이라 수집 공백이 판정에 영향 없음 · WAL로 재시작 복구, 노드 유실은 감수 |
-| 원본 저장소 | **dev MinIO 파드 · stg S3(IRSA)** | 원본은 오브젝트 스토리지 · 로컬은 WAL만 — stg는 IRSA로 키 없이 버킷 접근 |
+| 원본 저장소 | **dev MinIO 파드 · stg S3(IRSA)** | 노드 디스크에는 WAL만 — 나머지는 오브젝트 스토리지에서 재생성 · stg는 IRSA로 키 없이 버킷 접근 |
 | dev 알림 기준 | **조치할 수 있는 것만** Discord로 · 클러스터 밖 감시는 Better Stack | 물리 층은 재기동으로 회복 불가 · 앱 지연은 임계 근거가 없어 제외 · 클러스터 안 알림은 동반 중단 |
 | stg 스택 | **stg 안에 같은 차트로 별도 구성** — 집으로 전송하지 않음 | 집 Mimir 활성 시리즈가 상한의 91.8% — stg 시리즈 수용 불가 |
 | stg 판정 대시보드 | **4개 새로 구성** — 흐름 · queue · booking · 데이터 · queue만 5초 수집 | dev 대시보드는 Traefik · 파드 DB 전제라 stg에서 행 절반이 빔 · 오픈 순간 급증이 15초 수집 간격 안에 끝남 |

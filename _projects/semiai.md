@@ -24,8 +24,8 @@ k3s 전환과 구축은 팀이 했고, 그 위의 LGTM 스택 구축부터 계�
 | 항목 | 선택 | 이유 |
 |---|---|---|
 | 수집기 | **Alloy 하나로 통합** — 원본 블록은 MinIO(S3 호환)에 | 수집기 넷(Prometheus · Promtail · OTel Collector · Pyroscope agent)의 설정이 제각각 |
-| 인프라 대시보드 | **3단 확인 순서** — control-plane 생존 → 비정상 Pod → 자원 임박 · 비정상 Pod는 `kube_pod_status_ready` 하나로 판정 | control-plane이 정상이어야 Pod 판정이 유효 · 실패 유형 6종 OR은 조건이 늘수록 신뢰가 떨어짐 |
-| 앱 진단 순서 | **오류 종류로 두 갈래** — 500 · panic은 trace → log / 502 · 503 · OOM은 Traefik → 그 시각 힙 flame graph · metric → trace는 path 라벨 dataLink | 파드에 닿지 못한 요청은 Traefik만 앎 · `trace_id`를 metric 라벨에 넣으면 요청마다 시계열 폭발 |
+| 인프라 대시보드 | **3단 확인 순서** — control-plane 생존 → 비정상 Pod(ready 상태 하나로 판정) → 자원 임박 | control-plane이 정상이어야 Pod 판정이 유효 · 실패 유형 6종 OR은 조건이 늘수록 신뢰가 떨어짐 |
+| 앱 진단 순서 | **오류 종류로 두 갈래** — 500 · panic은 trace → log / 502 · 503 · OOM은 Traefik → 힙 flame graph | 파드에 닿지 못한 요청은 Traefik만 앎 · metric → trace는 라벨 대신 path dataLink로 시계열 폭발 방지 |
 | profile | **Pyroscope 연속 프로파일링** — Alloy가 `/debug/pprof`를 주기 수집 | OOMKilled는 SIGKILL이라 trace · log가 flush 전에 끊김 — 죽기 직전 힙을 보려면 상시 수집 필요 |
 | 계측 범위 | **대시보드 · 알림이 참조하는 신호만** — 자동 계측과 겹치는 span · 미참조 attribute 제거 | 자동 계측과 중복이거나 참조처 없는 신호는 노이즈 · 카디널리티만 증가 |
 | 알림 기준 | **5xx 절대 건수** | 개발자만 쓰는 dev라 표본이 적어 비율 · 분위수 기준은 부적합 |
@@ -35,8 +35,8 @@ k3s 전환과 구축은 팀이 했고, 그 위의 LGTM 스택 구축부터 계�
 
 | 증상 | 원인 | 조치 |
 |---|---|---|
-| master 2대를 정지시켰는데 대시보드는 **Ready** | 노드 상태가 kube-state-metrics 경유 — 갱신이 멈춘 채 옛 값 그대로 | kubelet `:10250`을 직접 scrape한 `up`으로 판정 — etcd는 `etcd_server_has_leader` self-metric |
-| etcd · apiserver metric이 **안 잡힘** | Pod가 아니라 k3s 단일 바이너리 안의 goroutine — Service · Endpoints 자동 생성이 안 돼 ServiceMonitor 부착 불가 | 수동 Service · Endpoints · ServiceMonitor 셋 — master IP는 설치 스크립트가 `envsubst`로 주입 |
+| master 2대를 정지시켰는데 대시보드는 **Ready** | 노드 상태가 kube-state-metrics 경유 — 갱신이 멈춘 채 옛 값 그대로 | kubelet 직접 수집 `up`으로 노드 판정 · etcd는 자체 리더 metric |
+| etcd · apiserver metric이 **안 잡힘** | Pod가 아닌 k3s 프로세스 내부 — Service · Endpoints가 자동 생성되지 않아 ServiceMonitor 부착 불가 | Service · Endpoints · ServiceMonitor 직접 작성 |
 | Loki log와 Tempo trace가 같은 요청인데 **안 이어짐** | `trace_id` 키 이름이 제각각 — backend `traceid`, Traefik `trace_id` · `OtelTraceID` | Alloy `label_format`으로 키 통일, Traefik 설정 정정 |
 {:.hl-tbl}
 
