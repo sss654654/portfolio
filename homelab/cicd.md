@@ -139,7 +139,7 @@ image-updater가 새 태그를 cgv-infra(배포 정의)에 커밋하면 노트�
 ## 결과
 
 - **머지부터 dev · stg 배포까지 자동 경로 완성** — 배포에 `kubectl` 0회 · stg 승격 버튼 뒤 태그 커밋 93초 → 동기화 완료 21초
-- **취약점 게이트가 등록 전 차단 2건**(2026-09-10) — queue-go grpc HIGH · booking netty CRITICAL
+- **CI 파이프라인이 새 취약점을 등록 전 차단** — 직전 통과(09-03) 뒤 새로 오른 grpc HIGH · netty CRITICAL(09-10), 버전 상향 후 통과
 - **저장소에 평문 자격 0건** — dev 시크릿 19종은 봉인본 · stg 4종은 Secrets Manager 값과 난수로 생성
 
 ## 한계
