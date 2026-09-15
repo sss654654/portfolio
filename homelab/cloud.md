@@ -191,7 +191,7 @@ Terraform으로 EKS 노드 7대(app 4 · booking 2 · 관측&nbsp;1)를 AZ 3개�
 
 ## 결과
 
-- **stg에서 5만 명 부하 테스트 SLO 통과** — 판정 · 병목은 [부하 테스트](/homelab/capacity/)
+- **AWS EKS에 stg 구축 · 5만 명 부하 테스트 SLO 통과** — 판정 · 병목은 [부하 테스트](/homelab/capacity/)
 - **Terraform 자원 65개로 생성 · 삭제** — 첫 생성 30–40분 · 삭제 후 잔존 자원 0(ECR · 관측 S3 버킷은 보관)
 - **AWS 비용 US$151.79 · 하루 약 US$50** — 5만 명 부하 스펙 stg 3일(2026-09-12 – 14) · 부하 발생기 포함
   - EC2 $95.80 — EKS 노드 m5.xlarge × 7(app 4 · booking 2 · 관측 1) · 부하 발생기 c5.2xlarge 최대 4대
