@@ -22,7 +22,7 @@ permalink: /homelab/service/
 <figure class="hl-diagram hl-diagram-lg hl-diagram-scroll" markdown="0">
 <div class="cap-sim" id="cap-sim">
 <div class="cs-ctrl" id="cs-ctrl"><span class="cs-count" id="cs-count">관객 30 · 정원 6 · 좌석 24</span></div>
-<svg viewBox="0 0 760 562" role="img" aria-label="대기열 서비스의 한 회 — 관객이 Redis의 waiting 줄에 서고, 승격이 빈자리만큼 앞에서 꺼내 active 정원에 넣는다. admissions 메시지가 토픽을 거쳐 booking의 입장 인증(admitted)에 적히면 좌석을 살 수 있고, 확정되면 bookings-completed가 토픽을 거쳐 돌아와 active에서 빠져 자리가 빈다">
+<svg viewBox="0 0 760 562" role="img" aria-label="대기열 서비스의 한 회 — 관객이 Redis의 waiting 줄에 서고, 빈자리만큼 줄 앞에서 active 정원으로 입장한다. admissions 메시지가 토픽을 거쳐 booking의 입장 인증(admitted)에 적히면 좌석을 살 수 있고, 확정되면 bookings-completed가 토픽을 거쳐 돌아와 active에서 빠져 자리가 빈다">
   <defs>
     <marker id="cs-a" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor" opacity=".5"/></marker>
   </defs>
@@ -48,7 +48,7 @@ permalink: /homelab/service/
   <rect class="cs-slot hla-inner" x="668" y="106" width="36" height="36" rx="5"/>
   <circle class="hla-num" cx="30" cy="123" r="9"/><text class="hla-nt" x="30" y="127">1</text>
   <text class="hla-a" x="38" y="148">입장 요청</text>
-  <text class="hla-a" x="403" y="88" text-anchor="middle">승격 — 빈자리만큼 앞에서</text>
+  <text class="hla-a" x="403" y="88" text-anchor="middle">입장 — 빈자리만큼 앞에서</text>
 
   <!-- ───────── Kafka ───────── -->
   <rect class="hla-box" x="16" y="196" width="728" height="150" rx="6"/>
@@ -143,7 +143,7 @@ permalink: /homelab/service/
 </svg>
 <div class="cs-log" id="cs-log">정지 상태는 구조도, 재생 시 한 회 흐름을 표시합니다.</div>
 </div>
-<figcaption>정원(active) = 동시 입장 인원. 관객 30 · 정원 6 · 좌석 24는 시각화용 축소값 — 실제 정원은 공개 데모(dev) 60 · stg 1,000(<a href="/homelab/capacity/">부하 테스트</a>로 결정).</figcaption>
+<figcaption>정원(active) = 동시 입장 인원 — 줄(waiting)에서 빈자리만큼 입장하고, 예매 확정 통지로 자리가 반환. 관객 30 · 정원 6 · 좌석 24는 시각화용 축소값, 실제 정원은 공개 데모(dev) 60 · stg 1,000(<a href="/homelab/capacity/">부하 테스트</a>로 결정).</figcaption>
 </figure>
 
 ## 설계 결정
@@ -153,8 +153,8 @@ permalink: /homelab/service/
 | 서비스 분리 | **대기 queue(Go) · 예매 booking(Java Spring)** | 대기는 짧고 많은 요청이라 동시 처리 비용이 낮은 Go · 예매는 돈 · 정합성이라 트랜잭션이 검증된 Spring |
 | 대기열 상태 | **Redis** — 줄(waiting) · 정원(active)을 한 곳에 | 어느 queue 파드가 받아도 같은 순번 · 정원 응답 |
 | 순번 조회 | **폴링** — 순번이 뒤일수록 주기 증가(1 · 2 · 5초) | 대기 중 요청의 대부분이 순번 조회 — 먼 순번의 조회 횟수를 줄여 queue 부하 감소 |
-| 서비스 간 통신 | **Kafka 비동기** — 직접 호출 없음 | 동기 호출이면 booking 지연 · 장애가 queue로 번짐 · 처리 못 한 입장 메시지는 토픽에 보존 |
-| 좌석 확정 | **MySQL 유니크 제약** — 같은 좌석 두 번 확정 거절 | Redis 좌석 선점은 만료 · 장애로 뚫릴 수 있어 최종 판정은 DB |
+| 서비스 간 통신 | **Kafka 비동기** — 직접 호출 없음 | 동기 호출이면 booking이 느리거나 멈출 때 queue도 함께 멈춤 · 처리 못 한 입장 메시지는 토픽에 보존 |
+| 좌석 확정 | **MySQL 유니크 제약** — 같은 좌석 두 번 확정 거절 | Redis 좌석 선점은 만료 · 장애 때 같은 좌석 중복 가능 — 최종 판정은 DB |
 | 계측 | **코드 계측** — 요청 하나를 `trace_id`로 서비스 간 추적 | 기본 metric으로는 어느 서비스 · 구간이 느린지 모름 |
 {:.hl-dec}
 
@@ -165,7 +165,7 @@ permalink: /homelab/service/
 
 ## 한계
 
-- **Redis 1대가 대기열 전담** — 5만 명까지 한계 미도달(엔진 CPU 37%), 분산 구성은 미적용
+- **Redis 주 노드 1대가 대기열 전담** — 5만 명까지 한계 미도달(엔진 CPU 37%), 분산 구성은 미적용
 - **결제는 mock PG** — 실제 결제 연동 없음, 좌석 선점부터 예매 완료까지만 구현
 - **서비스 2개 규모의 MSA** — 서비스가 많을 때의 서비스 간 통신 · 배포 관리(서비스 메시 등)는 미경험
 

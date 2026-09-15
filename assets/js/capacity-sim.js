@@ -146,7 +146,7 @@
         p.slot.used = false; activeN--;
         p.el.style.opacity = '0';
         later(function () { if (p.el.parentNode) gPeople.removeChild(p.el); }, 600);
-        log('7 소비 — 자리 반환. 다음 승격이 줄 앞에서 채운다'); count();
+        log('7 소비 — 자리 반환. 줄 앞 대기자가 다음에 입장'); count();
         if (confirmed >= seats.length) finish();
       });
       if (p.adm) { p.adm.used = false; p.adm.el.style.fill = ''; p.adm = null; }   // 인증 소진(DEL) — 발행 다음
@@ -178,7 +178,7 @@
       if (n <= 0) return;
       var batch = waiting.splice(0, n);
       relayout();
-      batch.forEach(function (p) { admit(p, '2→3 승격 ' + n + '명 — 줄 앞에서 · admissions 발행'); });
+      batch.forEach(function (p) { admit(p, '2→3 입장 ' + n + '명 — 줄 앞에서 · admissions 발행'); });
     }
 
     function finish() {
