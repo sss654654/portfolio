@@ -8,14 +8,12 @@ permalink: /homelab/service/
 
 <p class="hl-back" markdown="0"><a href="/homelab/">← HomeLab</a></p>
 
-티케팅 서비스 — 오픈 순간 사용자 집중, 좌석 4,000석.
+티케팅 서비스 — 오픈 순간 사용자 집중, 좌석 4,000.
 예매 처리는 1인당 트랜잭션 · DB 커넥션을 점유해 **전체 인원을 그대로 받을 수 없는 구조** — 대기열이 입장 인원을 제한.
-[CGV 팀 프로젝트](/projects/cgv/)의 대기열(Redis waiting · active · 주기 승격)을 queue(Go) · booking(Spring) 두 서비스와 Kafka로 다시 구성.
+[CGV 팀 프로젝트](/projects/cgv/)의 대기열을 queue(Go) · booking(Spring) 두 서비스와 Kafka로 다시 구성.
 {:.lead}
 
 ## 서비스 구조
-
-**queue**(대기열)와 **booking**(예매)은 Kafka로 비동기 연결, 둘을 묶는 값은 **정원** `active`(동시 입장 인원).
 
 <!-- 실제 코드의 순환을 재현하는 시뮬레이션. 뼈대(Redis 상자·줄·정원·producer/consumer·
      토픽 레인·좌석)는 이 마크업에 있고, 움직이는 점(사람·메시지)은
@@ -145,30 +143,31 @@ permalink: /homelab/service/
 </svg>
 <div class="cs-log" id="cs-log">정지 상태는 구조도, 재생 시 한 회 흐름을 표시합니다.</div>
 </div>
-<figcaption>관객 30 · 정원 6 · 좌석 24는 시각화용 축소값 — 실제 정원은 공개 데모(dev) 60 · stg 1,000(<a href="/homelab/capacity/">부하 테스트</a>로 결정).</figcaption>
+<figcaption>정원(active) = 동시 입장 인원. 관객 30 · 정원 6 · 좌석 24는 시각화용 축소값 — 실제 정원은 공개 데모(dev) 60 · stg 1,000(<a href="/homelab/capacity/">부하 테스트</a>로 결정).</figcaption>
 </figure>
 
 ## 설계 결정
 
 | 항목 | 선택 | 이유 |
 |---|---|---|
-| queue | **Go** · dev HPA min = max = 4 · stg **4대 고정**(HPA 끔) | **요청: 짧고 많음 — 대기열**<br>goroutine 요청당 처리로 동시 처리 비용 낮음 · 네이티브 바이너리라 기동 즉시 최대 성능 · HPA는 오픈 피크보다 늦어 dev부터 4대 · stg는 CPU 70% 기준 부적합(1만 명에서 17%), 테스트 중 대수가 바뀌면 회차 비교 불가 → HPA 끔 |
-| 순번 · 현황 | **Redis 폴링** — 순번이 뒤일수록 주기 증가 | **홈 · 대기 화면이 주기적으로 조회**<br>줄 · 정원 · 현황 모두 Redis — 왕복 1–2회 · 1ms, 부하는 호출 횟수(CPU), 어느 파드든 같은 결과. 100번 밖 5초 · 20번 밖 2초 · 이내 1초 |
-| booking | **Java Spring** · dev **1대** · stg **2대** | **요청: 길고 적음 — 입장객**<br>메모리 점유 시간은 길지만 동시 요청 수는 정원으로 제한 · 전체 성공/롤백을 `@Transactional` 하나로 · stg 2대는 Flyway가 DB 잠금으로 한 대만 스키마를 적용해 가능 |
-| 서비스 간 통신 | **Kafka 비동기** — 직접 호출 없음 · 파티션 8 · RF 3 · `acks=all` | **한쪽 중단 시 다른 쪽 유지**<br>동기 호출이면 booking 중단 시 queue도 중단 · 미소비 메시지는 토픽에 보존 후 소비 · 파티션 8 = booking 2대 × 컨슈머 4 |
-| 옵저버빌리티 | **코드 계측** · 사용자당 1회 호출 경로는 기동 시 시계열을 0으로 초기화 | **기본 metric만으로는 발생 위치 파악 불가**<br>요청 수 · 지연은 metric, 사건은 log, 구간 흐름은 trace — log · trace는 `trace_id`로 연결 · 첫 요청이 오픈 피크면 `rate`가 피크를 0으로 계산(stg 5만 명 회차에서 확인) |
+| queue | **Go** — dev · stg 모두 4대 고정 | 짧고 많은 요청 — goroutine 동시 처리 · 기동 즉시 최대 성능 · HPA는 오픈 피크보다 늦어 끔 |
+| 순번 · 현황 | **Redis 폴링** — 순번이 뒤일수록 주기 증가(1 · 2 · 5초) | 상태가 전부 Redis라 어느 파드든 같은 응답 · 1ms 왕복 — 부하는 호출 횟수라 먼 순번일수록 주기 늘림 |
+| booking | **Java Spring** · dev **1대** · stg **2대** | 길고 적은 요청 — 동시 요청은 정원이 제한 · stg 2대는 Flyway DB 잠금으로 스키마 충돌 없음 |
+| 서비스 간 통신 | **Kafka 비동기** — 직접 호출 없음 · 파티션 8 · RF 3 · `acks=all` | 동기 호출이면 booking 중단이 queue로 전파 · 미소비 메시지는 토픽에 보존 |
+| 계측 | **코드 계측** — metric · log · trace를 `trace_id`로 연결 · 기동 시 시계열 0 초기화 | 기본 metric으로는 발생 위치 불명 · 첫 요청이 오픈 피크면 `rate`가 피크를 0으로 계산 |
 {:.hl-dec}
 
 ## 결과
 
-- **대기 인원과 예매 처리 분리** — 대기는 queue 4대가 받고, booking은 정원 인원만 처리
-- **dev · stg 같은 이미지** — 차이는 환경 값(정원 · 승격 배치 · 커넥션 풀 · limit · Redis 주소)뿐, 코드 · 차트 동일
-- **세 신호 코드 계측** — metric 이상 → 해당 요청의 trace · log로 추적
+- **queue(Go) · booking(Spring)을 Kafka로 연결한 대기열 예매 서비스 구현** — dev 공개 데모와 stg 부하 테스트를 같은 코드 · 차트로 실행, 환경 차이는 값(정원 · 풀 · limit · 주소)뿐
+- **정원 보장을 실제 Redis 동시성 테스트로 검증** — CI test 단계에서 queue 변경마다 실행
+- **서비스 2개를 지나는 요청을 한 trace로 추적** — 예매 확정부터 Kafka를 거쳐 queue 자리 반환까지
 
 ## 한계
 
-- **Redis 1대가 읽기 · 쓰기 전담** — 명령 처리 단일 스레드라 코어 추가 효과 없음. 5만 명까지 상한 미도달(엔진 CPU 37%). 순번 조회 Lua가 쓰기(`ZADD`)라 읽기 복제본 분산 불가 → 노드 크기로 확장
-- **dev booking · MySQL 각 1대** — 노드 RAM 8GB × 3에 여유 없음. stg는 booking 2대 · RDS Multi-AZ
+- **Redis 1대가 대기열 전담** — 명령 처리 단일 스레드, 5만 명까지 상한 미도달(엔진 CPU 37%) · 순번 조회도 쓰기 명령이라 복제본 분산 불가 → 노드 크기로 확장
+- **dev booking 1대 · 배포 방식 Recreate** — 배포마다 JVM 기동 동안(30초 이상) 5xx
+- **booking 동시성 테스트 없음** — 이중 판매 방지는 MySQL 유니크 제약에 의존
 
 ## 기술 스택
 
