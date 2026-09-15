@@ -54,14 +54,14 @@ SLO 5개를 테스트 전 확정, 로비 → 줄서기 → 예매 사용자 여�
 
 - **예매 부하는 인원이 아닌 정원에 비례** — 사용자 5배(1만 → 5만)에 예매 여정 요청 **1.54배**, 정원 1,000이 booking 동시 입장 인원의 상한
 
-<!-- 2026-09-14 2.5만 명 확인 판(오픈 15:26:31 KST · 발생기 2대 × 12,500) — 결과 표의 12회와 다른 판.
+<!-- 2026-09-14 2.5만 명 확인 회차(오픈 15:26:31 KST · 발생기 2대 × 12,500) — 결과 표의 12회와 다른 회차.
      서버 판정 창(오픈 −60초 → +5분) 값: 관문 전부 100% · 불변식 0 · 5xx · 403 0 · 전파 최대 0.829초 · 최대 대기 24,000.
      0행 캡처는 시간 선택기 줄(최근 15분)을 잘라냈다 — 표시 값은 판정 창 값과 같다.
      3행(전파)은 뺐다 — p99 추정선이 1초 선에 붙어(990ms, 실측 최대 0.829초) 설명 없이는 표의 값과 어긋나 보인다 -->
-<div class="hl-shots" markdown="0" aria-label="09-14 stg 2.5만 명 확인 판 — 흐름 대시보드와 trace, 화살표로 넘겨 봅니다">
+<div class="hl-shots" markdown="0" aria-label="09-14 stg 2.5만 명 확인 회차 — 흐름 대시보드와 trace, 화살표로 넘겨 봅니다">
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/stg25k-row0.png" alt="흐름 대시보드 0행 — 관문 다섯 100.000%, 정원 초과 0 · 미소비 잔량 0">
-    <figcaption><b>(판정)</b> 09-14 2.5만 명 확인 판 — 관문 다섯 · 불변식. 결과 표 12회와 별개 판.</figcaption>
+    <figcaption><b>(판정)</b> 09-14 2.5만 명 확인 회차 — 관문 다섯 · 불변식, 결과 표 12회와 별개.</figcaption>
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/stg25k-row2.png" alt="흐름 대시보드 2행 — 순번 조회 · 줄서기 지연 p99와 대기 · 입장 · 정원 인원" loading="lazy">
@@ -73,14 +73,14 @@ SLO 5개를 테스트 전 확정, 로비 → 줄서기 → 예매 사용자 여�
   </figure>
   <figure class="hl-shot">
     <img src="/assets/img/homelab/cap/stg25k-trace.png" alt="Tempo trace — booking POST /api/bookings에서 Kafka bookings-completed 발행, queue-go 소비와 Redis 명령까지 서비스 2개 · 21 span · 250ms" loading="lazy">
-    <figcaption><b>(trace)</b> 예매 확정 → Kafka → queue 자리 반환까지 한 trace — 서비스 2개 · 250ms.</figcaption>
+    <figcaption><b>(trace)</b> 부하 중 예매 한 건의 trace — 서비스 2개 · 21 span · 250ms.</figcaption>
   </figure>
 </div>
 
 ## 10만 명으로 가려면
 
 - **병목 축은 파드당 동시 요청 수** — 사전 계산은 두 환경 모두 Redis를 지목, 실측은 두 번 모두 동시 연결이 먼저 한계 → 조정 대상은 파드 수 · 파드당 동시 요청 상한
-- **계산상 결과** — 정원 1,000 · 승격 초당 100이면 10만 명 전원 입장 약 16분, 좌석 4,000은 약 80초에 소진 — 약 9만 6천 명은 성능이 아닌 제품 정책의 영역
+- **계산** — 정원 1,000 · 승격 초당 100이면 10만 명 전원 입장 약 16분, 좌석 4,000은 약 80초에 소진 — 약 9만 6천 명은 성능이 아닌 제품 정책의 영역
 
 ## 한계
 

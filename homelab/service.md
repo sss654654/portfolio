@@ -150,7 +150,7 @@ permalink: /homelab/service/
 
 | 항목 | 선택 | 이유 |
 |---|---|---|
-| queue | **Go** — dev · stg 모두 4대 고정 | 짧고 많은 요청 — goroutine 동시 처리 · 기동 즉시 최대 성능 · HPA는 오픈 피크보다 늦어 끔 |
+| queue | **Go** — dev · stg 모두 4대 고정 | 짧고 많은 요청 — goroutine 동시 처리 · 기동 즉시 최대 성능 · HPA는 오픈 피크보다 늦어 대수 고정 |
 | 순번 · 현황 | **Redis 폴링** — 순번이 뒤일수록 주기 증가(1 · 2 · 5초) | 상태가 전부 Redis라 어느 파드든 같은 응답 · 1ms 왕복 — 부하는 호출 횟수라 먼 순번일수록 주기 늘림 |
 | booking | **Java Spring** · dev **1대** · stg **2대** | 길고 적은 요청 — 동시 요청은 정원이 제한 · stg 2대는 Flyway DB 잠금으로 스키마 충돌 없음 |
 | 서비스 간 통신 | **Kafka 비동기** — 직접 호출 없음 · 파티션 8 · RF 3 · `acks=all` | 동기 호출이면 booking 중단이 queue로 전파 · 미소비 메시지는 토픽에 보존 |
